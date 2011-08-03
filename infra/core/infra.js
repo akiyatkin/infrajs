@@ -1,4 +1,5 @@
 var infra = {};
-infra.root = '';
+infra.ROOT = '';
+infra.NODE = false;
 
 this.infra = infra;
