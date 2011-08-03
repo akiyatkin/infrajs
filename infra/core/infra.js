@@ -1,5 +1,4 @@
-var infra = function() {
-	this.config = '';
-}
+var infra = {};
+infra.config = '';
 
 this.infra = infra;
