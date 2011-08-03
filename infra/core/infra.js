@@ -1,5 +1,5 @@
-this.config = {
-	root: ''
+var infra = function() {
+	this.config = '';
 }
 
-this.init = function () {}
+this.infra = infra;
