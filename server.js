@@ -41,7 +41,7 @@ app.all(infra.ROOT + '*', function(req, res) {
 			$ = window.$;
 			document = window.document;
 			infra.NODE = true;
-			infra.listen('onload',function(){
+			infra.listen(infra, 'onload', function() {
 				res.send(window.document.documentElement.innerHTML);
 			});
 			infra.loadJS('infra/layers.js');
