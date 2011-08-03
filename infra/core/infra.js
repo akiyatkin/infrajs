@@ -1,4 +1,4 @@
 var infra = {};
-infra.config = '';
+infra.root = '';
 
 this.infra = infra;

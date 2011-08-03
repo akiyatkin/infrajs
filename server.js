@@ -18,7 +18,7 @@ app.configure(function(){
 	//app.use(express.static(__dirname + '/../../data'));
 });
 
-app.get(infra.config.root + '*.(js|css|json|ico|png|jpeg|jpg)', function(req, res) {
+app.get(infra.root + '*.(js|css|json|ico|png|jpeg|jpg)', function(req, res) {
 	var file = __dirname + req.params[0] + '.' + req.params[1];
 	fs.readFile(file, function(err, data) {
 		if (err) {
@@ -30,7 +30,7 @@ app.get(infra.config.root + '*.(js|css|json|ico|png|jpeg|jpg)', function(req, re
 	});
 });
 
-app.all(infra.config.root + '*', function(req, res) {
+app.all(infra.root + '*', function(req, res) {
 	infra.init(req, function(ans) {
 		res.send(ans);
 	});
