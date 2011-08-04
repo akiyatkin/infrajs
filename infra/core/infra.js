@@ -236,7 +236,7 @@ infra.load=function(save_path,func,async) {//func и async deprecated
 	var load_path=this.theme(save_path);
 	if (!infra.NODE) {
 		//var exts = load_path.split('.')[-2];
-		//&& (exts[0] != 'node') && ((exts[1] != 'js') || (exts[1] != 'json'))) {
+		//&& (exts[0] != 'node') && ((exts[1] != 'js') || (exts[1] != 'json'))) 
 		var transport = function(){
 			var result = !1;
 			var actions = [
@@ -283,6 +283,201 @@ infra.load=function(save_path,func,async) {//func и async deprecated
 			infra.load[save_path] = fs.readFileSync(load_path, 'utf-8');
 		} catch (e) {}
 		return infra.load[save_path];
+	}
+}
+infra.globalEval = function(data) {
+	if(!data)return;
+	if (infra.NODE) {
+		eval(data);
+	} else {
+		// Inspired by code by Andrea Giammarchi
+		// http://webreflection.blogspot.com/2007/08/global-scope-evaluation-and-dom.html
+		var head = document.getElementsByTagName("head")[0] || document.documentElement, script = document.createElement("script");
+		script.type = "text/javascript";
+		script.text = data;
+		head.insertBefore( script, head.firstChild );
+		head.removeChild( script );
+	}
+}
+infra.loadJS = function(path,nocache,call) {//nocache используется для статистики на itlife-studio.ru
+	if(infra.buff){
+		infra.bufferAdd('loadJS',path);
+		return;
+	}
+	path=infra.replacepath(path);
+	var script=false;
+	if(this.loadJS[path]==undefined){
+		this.loadJS[path]=true;
+		if(/^http:/.test(path)){//Это крос доменный запрос
+			script=document.createElement('script');
+			script.type='text/javascript';
+			var head = document.getElementsByTagName("head")[0] || document.documentElement;
+			if(call){
+				var callback=function(){
+					callback=function(){};
+					call();
+				};
+				script.onreadystatechange= function () {     
+				   if (this.readystate == 'complete' || this.readystate == 'loaded') {     
+					  callback();
+				   }
+				}
+				script.onload = script.onerror = callback 
+			}
+			script.src=path;
+			head.insertBefore(script,head.firstChild);
+			head.removeChild(script);
+		}else{
+			var code=infra.load(path);
+			this.globalEval(code);
+		}
+	}
+	if(!script&&call)call();
+	if(nocache==='nocache')delete infra.load[path];//Удалили метку о загрузки файла... хотя метка о выполнение скрипта осталась.
+	return;
+}
+infra.unload=function(path){
+	delete this.load[path];
+	delete this.loadJSON[path];
+	delete this.loadCSS[path];
+	delete this.loadJS[path];
+	if(this.loadIMG.images){
+		delete this.loadIMG.images[path];
+	}
+}
+infra.loadJSON=function(path,r){//load, eval, nocache
+	if(infra.buff){
+		infra.bufferAdd('loadJSON',path);
+		return;
+	}
+	path=infra.replacepath(path);
+	//if(r=='reload'){//depricated
+	//	infra.unload(path);
+	//}
+	if(typeof(path)!=='string') return;
+
+	if(r=='load'){//Пофиг на всё просто загружаем снова
+		infra.unload(path);
+	}
+	if(r=='eval'){//Нужно заного выполнить оригинал
+		delete infra.loadJSON[path];
+	}
+
+	if(infra.loadJSON[path]==undefined){
+		var data=infra.load(path);
+		if(data){
+			try{
+				data=eval('('+data+')');
+			}catch(e){
+				if(this.debug)alert('JSON ошибка '+path+'\n'+e+'\n'+data);// Если json не получился будем считать что это просто строка
+				data=data;
+			}
+		}else{
+			data='';
+		}
+		infra.loadJSON[path]=data;
+	}
+	var res=infra.loadJSON[path];
+	//if(r){//depricated
+	//	delete infra.loadJSON[path];
+	//}
+	if(r=='copy'){//Возвращает копию, которую можно изменять, Будут изменяться и все предыдущие полученные объекты. А будущие уже не будут изменяться... 
+		delete infra.loadJSON[path];
+	}
+	if(r=='nocache'){
+		delete infra.load[path];
+	}
+	return res;
+}
+infra.style=function(code){
+	if(infra.style[code])return;//Почему-то если это убрать после нескольких перепарсиваний стили у слоя слетают.. 
+	infra.style[code]=true;
+	var style=document.createElement('style');//создани style с css
+	style.type = "text/css";
+	if (style.styleSheet){//
+		style.styleSheet.cssText=code;
+	}else{
+		style.appendChild( document.createTextNode(code) );
+	}
+	var head = document.getElementsByTagName("head")[0] || document.documentElement;
+	head.insertBefore(style,head.lastChild);//добавили css на страницу
+}
+infra.loadCSS=function(path,link){//Ассинхронно нельзя иначе порядок собъётся
+	if(infra.buff){
+		infra.bufferAdd('loadCSS',path);
+		return;
+	}
+	path=infra.replacepath(path);
+	if(infra.loadCSS[path])return;
+	infra.loadCSS[path]=true;
+
+	if(link){
+		var link=document.createElement('link');
+		link.rel="stylesheet";
+		link.href=infra.theme(path);
+		var head = document.getElementsByTagName("head")[0] || document.documentElement;
+		head.insertBefore(link,head.lastChild);//добавили css на страницу
+	}else{
+		var code=infra.load(path);
+		infra.style(code);
+	}
+}
+infra.loadIMG=function(path,func,func2){//Всегда ассинхронно
+	path=infra.replacepath(path);
+	path=infra.theme(path);
+	//if(/^\*/.test(path)){
+	//path='core/plugins/'+path.replace(/^\*/,'');
+	//}
+	if(!infra.loadIMG.check){
+		infra.loadIMG.process={};
+		infra.loadIMG.images={};
+		infra.loadIMG.listen={};
+		infra.loadIMG.listen2={};
+		infra.loadIMG.check=function(path){
+			if(infra.loadIMG.images[path]!==undefined){
+				if(infra.loadIMG.images[path]){
+					infra.loadIMG.listen2[path]=[];
+					while(infra.loadIMG.listen[path].length){
+						var f=infra.loadIMG.listen[path].shift();
+						f(infra.loadIMG.images[path]);
+					}
+				}else{
+					infra.loadIMG.listen[path]=[];
+					while(infra.loadIMG.listen2[path].length){
+						var f=infra.loadIMG.listen2[path].shift();
+						f();
+					}
+
+				}
+			}
+		}
+	}
+	if(!infra.loadIMG.listen[path]){
+		infra.loadIMG.listen[path]=[];
+		infra.loadIMG.listen2[path]=[];
+	}
+	if(func)infra.loadIMG.listen[path].push(func);
+	if(func2)infra.loadIMG.listen2[path].push(func2);
+	if(infra.loadIMG.process[path]==undefined){
+		infra.loadIMG.process[path]=1;
+		var img=new Image();
+		img.onload=function(){
+			infra.loadIMG.process[path]=2;
+			infra.loadIMG.images[path]=this;
+			img.onload=function(){};//delete в ie6 приводит к ошибке
+			infra.loadIMG.check(path);
+		};
+		img.src=path;
+		return;
+		setTimeout(function(){
+			if(infra.loadIMG.process[path]!==2){
+				infra.loadIMG.process[path]=0;
+				infra.loadIMG.images[path]=false;
+				infra.loadIMG.check(path);
+			}
+		},15000);
+	}else{
+		infra.loadIMG.check(path);
 	}
 }
 
