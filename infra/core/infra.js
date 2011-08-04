@@ -126,7 +126,7 @@ infra.foro=function(obj,callback,back){//Бежим по объекту
 	for(key in obj){
 		if(obj.hasOwnProperty(key))ar.push({key:key,val:obj[key]});
 	}
-	whileinfra=ar[fn]()){
+	while(el=ar[fn]()){
 		r=infra.exec(callback,'infra.foro',this,[el.val,el.key],[back]);//callback,name,context,args,more
 		if(r!==undefined)return r;
 	}
