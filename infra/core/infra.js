@@ -23,7 +23,7 @@ infra.error = function(error, callback, name, context, args, msgs, test) {
 	}
 }
 
-/* Запуск функции */
+/* Запуск функции, в которой может быть ошибка */
 infra.exec = function(callback, name, context, args, msgs, test) {
 	args=args||[];
 	try {
