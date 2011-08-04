@@ -592,18 +592,16 @@ infra.listen = function(obj,evt,callback,instart){
 
 /* Подключение контролера (check) */
 infra.check = function(layers,action){//Пробежка по слоям
-	if((this.process&&!this.wait_timer)||!this.state.obj){//Функция checkNow сейчас выполняется и в каком-то
+	if(this.process&&!this.wait_timer){//Функция checkNow сейчас выполняется и в каком-то
 		setTimeout(function(){//обработчике прошёл вызов пробежки...  Если мы добавим текущий слой в массив всех слоёв.. он начнёт участвовать в пробежке в операциях после той в которой был вызов создавший этот слой... короче не добавляем его
-			infrajs.check(layers,action);
+			infra.check(layers,action);
 		},100);//Запоминаем всё в этой ловушке...
 		return;
 	}
-	js.fora(layers,function(layer){//Если layers undefined пробежки не будет
-		
+	infra.fora(layers,function(layer){//Если layers undefined пробежки не будет
 		if(action)layer.reparseone=true;//Если указан конкретный слой, отмечаем что его нужно перепарсить если он должен быть виден
-		if(action=='reload'&&layer.data)js.unload(layer.data);//Обновление данных слоя
-		
-		if(!layer.parent&&!js.fora(this.layers,function(l){//Если parent есть значит слой уже где-то записан и будет обработан вместе с родителем
+		if(action=='reload'&&layer.data)infra.unload(layer.data);//Обновление данных слоя
+		if(!layer.parent&&!infra.fora(this.layers,function(l){//Если parent есть значит слой уже где-то записан и будет обработан вместе с родителем
 			if(layer===l)return true;
 		}))this.layers.push(layer);//Только если рассматриваемый слой ещё не добавлен
 	}.bind(this));
@@ -612,8 +610,8 @@ infra.check = function(layers,action){//Пробежка по слоям
 	if(!layers){
 		this.waits=undefined;
 	}else{
-		if(!js.fora(layers,function(nl){//Отсеиваем повторы
-			if(!js.fora(infrajs.waits,function(l){
+		if(!infra.fora(layers,function(nl){//Отсеиваем повторы
+			if(!infra.fora(infrajs.waits,function(l){
 				if(l==nl)return true;
 			}))infrajs.waits.push(nl);
 		}));
@@ -622,7 +620,7 @@ infra.check = function(layers,action){//Пробежка по слоям
 	this.process=true;
 	this.process_count++;//Счётчик сколько раз перепарсивался сайт, посмотреть можно в firebug
 	if(this.loader)this.loader.show();//Исключительный хак.. чтобы лоадер успел показаться
-	this.wait_timer=setTimeout(js.bind(this,function(){
+	this.wait_timer=setTimeout(infra.bind(this,function(){
 		$(function(){
 			this.wait_timer=false;//Все новые слои будут ждать пока не станет false
 			this.wlayers=this.waits||this.layers;//При запуске checkNow все ожидающие слои обнуляются

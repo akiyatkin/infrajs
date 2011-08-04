@@ -67,6 +67,7 @@ this.infra_event = {
 this.infra_controller = {
 	infra_check: function(test) {
 		infra.check([]);
+		infra.check([{}]);
 		test.done();
 	}
 }
