@@ -7,9 +7,12 @@
   </head>
   <body>
     <script>
+		infra.ROOT = '../../'
       nodeunit.run({
         'infra_errors': infra_errors,
-        'infra_files': infra_files
+        'infra_files': infra_files,
+        'infra_event': infra_event,
+        'infra_controller': infra_controller
       });
     </script>
   </body>

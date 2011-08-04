@@ -164,11 +164,11 @@ infra.buffer_load=[];
 infra.bufferOn=function(){
 	infra.buff=true;
 }
-infra.bufferAdd=function(type,path){
+infra.bufferAdd = function(type,path){
 	infra.buffer.push({type:type,path:path,toString:function(){return path}});
 	infra.buffer_load.push(path);
 }
-infra.bufferOff=function(){
+infra.bufferOff = function(){
 	infra.buff=false;
 	infra.loadMulti(infra.buffer_load);
 	infra.buffer_load=[];
@@ -180,7 +180,7 @@ infra.bufferOff=function(){
 		}
 	});
 }
-infra.prop=function(obj,prop,def){//Считываем из obj prop если нет вернётся def
+infra.prop = function(obj,prop,def){//Считываем из obj prop если нет вернётся def
 	/*
 		var p='asdf';
 		prop={'have':1}[p];
@@ -194,7 +194,7 @@ infra.prop=function(obj,prop,def){//Считываем из obj prop если н
 	if(obj.hasOwnProperty(prop))return obj[prop];
 	return def;
 }
-infra.replacepath=function(oldp,newp){//понадобилось для переноса core/lib/session/session.js в core/plugins/session/session.js (*session/session.js)
+infra.replacepath = function(oldp,newp){//понадобилось для переноса core/lib/session/session.js в core/plugins/session/session.js (*session/session.js)
 	var self=infra.replacepath;
 	if(newp){
 		self[oldp]=newp;
@@ -203,7 +203,7 @@ infra.replacepath=function(oldp,newp){//понадобилось для пере
 	}
 	return newp;
 }
-infra.theme=function(src){
+infra.theme = function(src){
 	if(/^\*+/.test(src)){//Начинаемся со звёздочки... значит настоящий путь надо вычислить этим занимается файл theme.php
 		//src=src.replace(/^\*+/,'*');//Оставляем одну звёздочку
 		//src='core/infra/theme.php?'+encodeURIComponent(src);//Это нужно когда путь до php с несколькоими параметрами * передаётся через theme.php Без кодирования путь будет портится, так как автоматически этот путь второй раз кодироватьс яне будет, а надо бы.. 
@@ -215,7 +215,7 @@ infra.theme=function(src){
 	}
 	return infra.ROOT+src;
 }
-infra.load=function(save_path,func,async) {//func и async deprecated
+infra.load = function(save_path,func,async) {//func и async deprecated
 	if(infra.buff){
 		infra.bufferAdd('load',save_path);
 		return;
@@ -237,7 +237,7 @@ infra.load=function(save_path,func,async) {//func и async deprecated
 	if (!infra.NODE) {
 		//var exts = load_path.split('.')[-2];
 		//&& (exts[0] != 'node') && ((exts[1] != 'js') || (exts[1] != 'json'))) 
-		var transport = function(){
+		var _transport = function(){
 			var result = !1;
 			var actions = [
 				function() {return new XMLHttpRequest()},
@@ -252,6 +252,7 @@ infra.load=function(save_path,func,async) {//func и async deprecated
 			}
 			return result
 		}
+		transport = _transport();
 		transport.open('GET', load_path, async);
 		transport.setRequestHeader("Content-Type", "text/plain; charset=UTF-8");
 		if(async){
@@ -336,7 +337,7 @@ infra.loadJS = function(path,nocache,call) {//nocache используется �
 	if(nocache==='nocache')delete infra.load[path];//Удалили метку о загрузки файла... хотя метка о выполнение скрипта осталась.
 	return;
 }
-infra.unload=function(path){
+infra.unload = function(path){
 	delete this.load[path];
 	delete this.loadJSON[path];
 	delete this.loadCSS[path];
@@ -345,7 +346,7 @@ infra.unload=function(path){
 		delete this.loadIMG.images[path];
 	}
 }
-infra.loadJSON=function(path,r){//load, eval, nocache
+infra.loadJSON = function(path,r){//load, eval, nocache
 	if(infra.buff){
 		infra.bufferAdd('loadJSON',path);
 		return;
@@ -389,7 +390,7 @@ infra.loadJSON=function(path,r){//load, eval, nocache
 	}
 	return res;
 }
-infra.style=function(code){
+infra.style = function(code){
 	if(infra.style[code])return;//Почему-то если это убрать после нескольких перепарсиваний стили у слоя слетают.. 
 	infra.style[code]=true;
 	var style=document.createElement('style');//создани style с css
@@ -402,7 +403,7 @@ infra.style=function(code){
 	var head = document.getElementsByTagName("head")[0] || document.documentElement;
 	head.insertBefore(style,head.lastChild);//добавили css на страницу
 }
-infra.loadCSS=function(path,link){//Ассинхронно нельзя иначе порядок собъётся
+infra.loadCSS = function(path,link){//Ассинхронно нельзя иначе порядок собъётся
 	if(infra.buff){
 		infra.bufferAdd('loadCSS',path);
 		return;
@@ -422,7 +423,7 @@ infra.loadCSS=function(path,link){//Ассинхронно нельзя инач
 		infra.style(code);
 	}
 }
-infra.loadIMG=function(path,func,func2){//Всегда ассинхронно
+infra.loadIMG = function(path,func,func2){//Всегда ассинхронно
 	path=infra.replacepath(path);
 	path=infra.theme(path);
 	//if(/^\*/.test(path)){
@@ -482,7 +483,154 @@ infra.loadIMG=function(path,func,func2){//Всегда ассинхронно
 }
 
 /* События */
+infra.fire = function(obj,fn,clsname,def,context){
+	infra.isexec=true;
+	context=context||obj;
+	/*if(def!==undefined&&fn){//Только для cond
+		if(context['exec_'+name]!==undefined){
+			return context['exec_'+name];//События с cond в одном забеге два раза не выполняются
+		}
+
+	}*/
+	var r=this.execute.apply(this,arguments);
+	if(def!==undefined&&fn){
+		var parts=fn.split('.');
+		if(parts.length==3){
+			var type=parts[2];//cond, before, after
+			var name=parts[1];
+		}else{
+			var name=fn;
+		}
+		context['exec_'+name]=r;
+		/*setTimeout(function(){
+			if(infrajs.isexec)setTimeout(arguments.callee,1);//alert или eval не оборвёт выполнение забега
+			else delete context['exec_'+name];
+		},1);*/
+	}
+	infra.isexec=false;
+	return r;
+};
+infra.execute = function(obj,fn,clsname,def,context,args){//args пользователь передавать не может
+	//context - в каком пространстве выполняться обработчикам
+	//clsname - имя класса объекта obj если есть.. в этом случае будет запущены события infrajs "obj.fn.before" и "obj.fn.after"
+	context=context||obj;
+	clsname=clsname||'';
+	var r;
+	
+	if(clsname){
+		if(def!==undefined){
+			var res=this.fire(this,clsname+'.'+fn+'.cond',false,def,context,args);//Руками это никогда не генерируется, будет режим без clsname Но с def
+			if(def===true){
+				if(res===false)return res;//Если кто-то вернул false будет выход. Обработка заканчивается когда кто-то вернул false.
+			}else if(def===false){
+				if(res!==true)return res;//Если никто не вернул true будет выход. Обработка заканчивается когда кто-то вернул true.
+			}
+		}
+		this.fire(this,clsname+'.'+fn+'.before',false,undefined,context,args);//Руками это никогда не генерируется
+	}
+	
+	if(!obj)alert('Нет obj в infra.execute '+arguments);
+	if(obj[fn]){
+		
+		var callback=obj[fn];
+		//js.exec=function(callback,name,context,args,back){
+		
+		r=infra.exec(callback,' обработчике объекта',context,args,['fn:'+fn,'clsname:'+clsname]);
+		
+		/*try{
+			r=callback.apply(context,args||[]);
+		}catch(e){
+			if(js.debug){
+				if(js.IE)e=e.name+':'+e.message;	
+				alert('Ошибка в обработчике объекта\n'+e+'\n------\n'+clsname+' '+fn+'\n'+callback+'\n'+context);
+			}
+		}*/
+		if(!clsname&&r!==undefined)return r;
+		
+	}
+	if(obj.listen&&obj.listen[fn]){
+		for(var i=0,l=obj.listen[fn].length;i<l;i++){
+			var callback=obj.listen[fn][i];
+			
+			r=infra.exec(callback,' очереди обработчиков listen',context,args,['fn:'+fn,'clsname:'+clsname]);
+			/*try{
+				r=callback.apply(context,args||[]);
+			}catch(e){
+				if(js.debug){
+					alert('Ошибка в очереди обработчиков listen\n'+e+'\n------\n'+clsname+' '+fn+'\n'+callback+'\n'+context);
+				}
+			}*/
+			if(!clsname&&r!==undefined)return r;
+		}
+	}
+	
+	
+	if(clsname){
+		var allfn='';
+		if(fn!==allfn){
+			r=this.fire(infrajs,allfn,false,def,context,[fn,clsname,def]);
+			if(!clsname&&r!==undefined)return r;
+		}
+	}
+	if(clsname){
+		this.fire(this,clsname+'.'+fn+'.after',false,undefined,context,args);
+	}
+	
+	
+	if(!clsname){
+		return def;//Если cond и никто ничего не сказал возвращаем то чего не ждали
+	}else{
+		return true;
+	}
+};
+infra.listen = function(obj,evt,callback,instart){
+	if(!obj)alert('Нет obj в infrajs.listen '+arguments);
+	if(obj.listen===undefined)obj.listen={};
+	if(obj.listen[evt]===undefined)obj.listen[evt]=[];
+	obj.listen[evt][instart?'unshift':'push'](callback);//instart означает добавить в начало списка
+};
 
 /* Подключение контролера (check) */
+infra.check = function(layers,action){//Пробежка по слоям
+	if((this.process&&!this.wait_timer)||!this.state.obj){//Функция checkNow сейчас выполняется и в каком-то
+		setTimeout(function(){//обработчике прошёл вызов пробежки...  Если мы добавим текущий слой в массив всех слоёв.. он начнёт участвовать в пробежке в операциях после той в которой был вызов создавший этот слой... короче не добавляем его
+			infrajs.check(layers,action);
+		},100);//Запоминаем всё в этой ловушке...
+		return;
+	}
+	js.fora(layers,function(layer){//Если layers undefined пробежки не будет
+		
+		if(action)layer.reparseone=true;//Если указан конкретный слой, отмечаем что его нужно перепарсить если он должен быть виден
+		if(action=='reload'&&layer.data)js.unload(layer.data);//Обновление данных слоя
+		
+		if(!layer.parent&&!js.fora(this.layers,function(l){//Если parent есть значит слой уже где-то записан и будет обработан вместе с родителем
+			if(layer===l)return true;
+		}))this.layers.push(layer);//Только если рассматриваемый слой ещё не добавлен
+	}.bind(this));
+
+	if(this.waits===undefined)return;//уже пробежка по всем слоям выходим
+	if(!layers){
+		this.waits=undefined;
+	}else{
+		if(!js.fora(layers,function(nl){//Отсеиваем повторы
+			if(!js.fora(infrajs.waits,function(l){
+				if(l==nl)return true;
+			}))infrajs.waits.push(nl);
+		}));
+	}
+	if(this.wait_timer)return;
+	this.process=true;
+	this.process_count++;//Счётчик сколько раз перепарсивался сайт, посмотреть можно в firebug
+	if(this.loader)this.loader.show();//Исключительный хак.. чтобы лоадер успел показаться
+	this.wait_timer=setTimeout(js.bind(this,function(){
+		$(function(){
+			this.wait_timer=false;//Все новые слои будут ждать пока не станет false
+			this.wlayers=this.waits||this.layers;//При запуске checkNow все ожидающие слои обнуляются
+			this.waits=[];
+			this.checkNow();
+			this.process=false;
+		}.bind(this));
+	}),100);//Если вызывать infrajs.check() и вместе с этим переход по ссылке проверка слоёв сработает только один раз за счёт это паузы.. два вызова объединяться за это время в один.
+}
 
 /* Загрузка расширений, могут быть разные для браузера и для клиента */
