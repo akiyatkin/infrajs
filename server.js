@@ -22,7 +22,7 @@ app.configure(function(){
 	//app.use(express.static(__dirname + '/../../data'));
 });
 
-app.get(infra.ROOT + '*.(js|css|json|ico|png|jpeg|jpg)', function(req, res) {
+app.get(infra.ROOT + '*.(css|ico|png|jpeg|jpg)', function(req, res) {
 	var file = __dirname + req.params[0] + '.' + req.params[1];
 	fs.readFile(file, function(err, data) {
 		if (err) {
@@ -40,6 +40,7 @@ app.all(infra.ROOT + '*', function(req, res) {
 			window = _window;
 			$ = window.$;
 			document = window.document;
+			infra.ROOT = '';
 			infra.NODE = true;
 			infra.listen(infra, 'onload', function() {
 				res.send(window.document.documentElement.innerHTML);
