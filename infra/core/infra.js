@@ -159,6 +159,132 @@ infra.each=function(elem,callback,back,group,key){//Возвращает undefin
 }
 
 /* Одинаковое api для загрузки слоев и расширений. */
+infra.buffer=[];
+infra.buffer_load=[];
+infra.bufferOn=function(){
+	infra.buff=true;
+}
+infra.bufferAdd=function(type,path){
+	infra.buffer.push({type:type,path:path,toString:function(){return path}});
+	infra.buffer_load.push(path);
+}
+infra.bufferOff=function(){
+	infra.buff=false;
+	infra.loadMulti(infra.buffer_load);
+	infra.buffer_load=[];
+	infra.forr(infra.buffer,function eachbuffer(o){
+		try{
+			infra[o.type](o.path);
+		}catch(e){
+			if(infra.debug)alert('Ошибка infra.bufferOff\n'+o.type+' '+o.path+'\n'+e);
+		}
+	});
+}
+infra.prop=function(obj,prop,def){//Считываем из obj prop если нет вернётся def
+	/*
+		var p='asdf';
+		prop={'have':1}[p];
+
+		- Считывание в переменную с именем аргумента функции (var не важен)
+		- неизвестного свойства объекта (об этом появляется notice в Консоли ошибок)
+		- имя свойства указано в переменной
+		0.003ms против 2.5ms
+	*/
+	if(!obj)return def;
+	if(obj.hasOwnProperty(prop))return obj[prop];
+	return def;
+}
+infra.replacepath=function(oldp,newp){//понадобилось для переноса core/lib/session/session.js в core/plugins/session/session.js (*session/session.js)
+	var self=infra.replacepath;
+	if(newp){
+		self[oldp]=newp;
+	}else{
+		newp=infra.prop(self,oldp,oldp);//Считываем из self oldp если нет будет oldp 
+	}
+	return newp;
+}
+infra.theme=function(src){
+	if(/^\*+/.test(src)){//Начинаемся со звёздочки... значит настоящий путь надо вычислить этим занимается файл theme.php
+		//src=src.replace(/^\*+/,'*');//Оставляем одну звёздочку
+		//src='core/infra/theme.php?'+encodeURIComponent(src);//Это нужно когда путь до php с несколькоими параметрами * передаётся через theme.php Без кодирования путь будет портится, так как автоматически этот путь второй раз кодироватьс яне будет, а надо бы.. 
+		src=src.replace(/^\*+/,'infra/plugins/');//Оставляем одну звёздочку
+		//src='core/infra/theme.php?'+src;
+	}else{
+		//src=encodeURI(src);
+		src=src;
+	}
+	return infra.ROOT+src;
+}
+infra.load=function(save_path,func,async) {//func и async deprecated
+	if(infra.buff){
+		infra.bufferAdd('load',save_path);
+		return;
+	}
+	save_path=infra.replacepath(save_path);
+	if(typeof(save_path)!=='string')return;
+	if(async==undefined){
+		async=!!func;
+	}
+	if(infra.load[save_path]!==undefined){
+		if(func){
+			func(infra.load[save_path]);
+			return;
+		}else{
+			return infra.load[save_path];
+		}
+	}
+	var load_path=this.theme(save_path);
+	if (!infra.NODE) {
+		//var exts = load_path.split('.')[-2];
+		//&& (exts[0] != 'node') && ((exts[1] != 'js') || (exts[1] != 'json'))) {
+		var transport = function(){
+			var result = !1;
+			var actions = [
+				function() {return new XMLHttpRequest()},
+				function() {return new ActiveXObject('Msxml2.XMLHTTP')},
+				function() {return new ActiveXObject('Microsoft.XMLHTTP')}
+			];
+			for(var i = 0; i < actions.length; i++) {
+				try{
+					result = actions[i]();
+					break;
+				} catch (e) {}	
+			}
+			return result
+		}
+		transport.open('GET', load_path, async);
+		transport.setRequestHeader("Content-Type", "text/plain; charset=UTF-8");
+		if(async){
+			transport.onreadystatechange=function(){
+				var state = transport.readyState;
+				if(state==4){
+					if(transport.status == 200){
+						infra.load[save_path]=transport.responseText;
+					}else{
+						infra.load[save_path]=null;
+					}
+					if(func)func(infra.load[save_path]);
+				}
+			}
+		}
+		transport.send(null);
+		if(!async){
+			if(transport.status == 200){
+				infra.load[save_path]=transport.responseText;
+			}else{
+				infra.load[save_path]=null;
+			}
+			if(func)func(infra.load[save_path]);
+			return infra.load[save_path];
+		}
+	} else {
+		var fs = require('fs');
+		try {
+			infra.load[save_path] = fs.readFileSync(load_path, 'utf-8');
+		} catch (e) {}
+		return infra.load[save_path];
+	}
+}
 
 /* События */
 

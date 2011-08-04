@@ -1,4 +1,3 @@
-/* Тесты обработки ошибок */
 if (!infra) { // если проверяется из консоли
 	var infra = require('../core/infra.js').infra;
 	//var sys = require('sys');
@@ -6,6 +5,7 @@ if (!infra) { // если проверяется из консоли
 }
 infra.DEBUG = true;
 
+/* Тесты обработки ошибок */
 this.infra_errors = {
 	testError : function(test) {
 		try {
@@ -30,6 +30,17 @@ this.infra_errors = {
 			test.equal('test error2', e.message, "test error2 != "+e.message);
 			test.ok(!yeserr, 'Тут должна быть ошибка');
 		}
+		test.done();
+	}
+};
+
+/* Тесты обработки файлов */
+this.infra_files = {
+	testTheme : function(test) {
+		var path = '*testfile.js';
+		var end_path = infra.theme(path);
+		test.expect(1);
+		test.equals('infra/plugins/testfile.js', end_path, "* theme error");
 		test.done();
 	}
 };
