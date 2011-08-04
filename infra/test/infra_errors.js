@@ -1,6 +1,17 @@
 if (!infra) { // если проверяется из консоли
+	var fs = require('fs');
+	var jsdom  = require('jsdom');
 	var infra = require('../core/infra.js').infra;
+	var index = fs.readFileSync('infra/test/test.html','utf-8');
 	//var sys = require('sys');
+	jsdom.env({
+		html: index,
+		done: function(errors, _window) {
+			window = _window;
+			$ = window.$;
+			document = window.document;
+		}
+	})
 	infra.NODE = true;
 }
 infra.DEBUG = true;
@@ -51,7 +62,7 @@ this.infra_files = {
 	}
 };
 
-/* Тесты обработки контроллера */
+/* Тесты обработки событий */
 this.infra_event = {
 	onevent : function(test) {
 		var r = false;
@@ -61,13 +72,43 @@ this.infra_event = {
 		infra.fire(infra,'onevent');
 		test.ok(r, 'Не сработал onevent');
 		test.done();
+	},
+	typeevent: function(test) {
+		var r=2;
+		infra.listen(infra,'type.onsome.before',function(){
+			r--;
+		});
+
+		var obj={};
+		infra.fire(obj,'onsome','type',true,infra);
+
+		var obj1={};
+		infra.fire(obj1,'onsome','type',true,infra);
+
+		if(r==0)r=true;
+		else r=false;
+		test.ok(r, 'Не сработал typeevent');
+		test.done();
 	}
 }
 
+/* Тесты обработки контроллера */
 this.infra_controller = {
-	infra_check: function(test) {
+
+	infra_check_simple: function(test) {
 		infra.check([]);
 		infra.check([{}]);
 		test.done();
+	} /*
+	,
+	infra_check: function(test) {
+		test.expect(1);
+		infra.check({div: 'infra_test', tpl: ['<div id="hi">123</div>']});
+		infra.listen(infra,'onshow',function() {
+			var div = document.getElementById('hi');
+			test.ok(!!div, "Не  вставили");
+			test.done();
+		});
 	}
+	*/
 }

@@ -6,6 +6,62 @@ infra.ROOT = ''; // Корень сайта, от которого читает�
 infra.NODE = false; // Находимся ли мы сейчас на node.js или в браузере
 infra.DEBUG = false; // Вывод отладочной информации
 
+/* Общее */
+Function.prototype.bind = function(object,arguments){
+	var that = this;
+	var func=function() {
+		return that.apply(object,arguments);
+	}
+	func.toString=function(){
+		return that.toString()+'\nbinded: '+object;
+	};
+	return func;
+}
+infra.bind=function(object,func){
+	return function() {
+		return func.apply(object,arguments)
+	}
+}
+function bindReady(handler){
+	var called = false
+	function ready() {
+		if (called) return
+		called = true
+		handler()
+	}
+	if ( document.addEventListener ) {
+		document.addEventListener( "DOMContentLoaded", function(){
+			ready()
+		}, false )
+		window.addEventListener( "load", ready(), false );
+	} else if ( document.attachEvent ) {
+		if ( document.documentElement.doScroll && window == window.top ) {
+			function tryScroll(){
+				if (called) return
+				if (!document.body) return
+				try {
+					document.documentElement.doScroll("left")
+					ready()
+				} catch(e) {
+					setTimeout(tryScroll, 0)
+				}
+			}
+			tryScroll()
+		}
+		document.attachEvent("onreadystatechange", function(){
+
+			if ( document.readyState === "complete" ) {
+				ready()
+			}
+		})
+	}
+    if (window.addEventListener)
+        window.addEventListener('load', ready, false)
+    else if (window.attachEvent)
+        window.attachEvent('onload', ready)
+    /*  else window.onload=ready */
+}
+
 /* Обработка ошибок */
 
 /* Вывод ошибки */
@@ -568,7 +624,7 @@ infra.execute = function(obj,fn,clsname,def,context,args){//args пользов�
 	if(clsname){
 		var allfn='';
 		if(fn!==allfn){
-			r=this.fire(infrajs,allfn,false,def,context,[fn,clsname,def]);
+			r=this.fire(infra,allfn,false,def,context,[fn,clsname,def]);
 			if(!clsname&&r!==undefined)return r;
 		}
 	}
@@ -584,14 +640,109 @@ infra.execute = function(obj,fn,clsname,def,context,args){//args пользов�
 	}
 };
 infra.listen = function(obj,evt,callback,instart){
-	if(!obj)alert('Нет obj в infrajs.listen '+arguments);
+	if(!obj)alert('Нет obj в infra.listen '+arguments);
 	if(obj.listen===undefined)obj.listen={};
 	if(obj.listen[evt]===undefined)obj.listen[evt]=[];
 	obj.listen[evt][instart?'unshift':'push'](callback);//instart означает добавить в начало списка
 };
 
 /* Подключение контролера (check) */
-infra.check = function(layers,action){//Пробежка по слоям
+infra.process = false;
+infra.process_count = 0;
+infra.layers=[];//Записываются только слои у которых нет родителя... 
+infra.wait_timer=false;
+infra.waits=[];
+
+infra.run=function(layers,callback,back,parent){
+	//return false - не продолжаем в текущем узле(run вернёт undefined)
+	//return 0 - совсем не продолжаем (run вернёт 0)
+	//return true - совсем не продолжаем (run вернёт true) / иначе (run вернёт undefined)
+	var r;
+	r=infra.fora(layers,function(layer){
+		if(!back){
+			//var r=this.exec(callback,layer,back,parent);
+			var r=infra.exec(callback,'Пробежка по слоям run',infra,[layer,parent],['Назад:'+back]);
+			if(r===false)return;//Ситуация когда возвращённый false просто не позволяет углубляться дальше
+			if(r!==undefined)return r;//выход
+		}
+		r=infra.foro(layer,function(val,name){
+			if(this.props.array.hasOwnProperty(name)){
+				var r=infra.run(val,callback,back,layer);
+				if(r!==undefined)return r;
+			}else if(this.props.object.hasOwnProperty(name)){
+				var r=infra.foro(val,function(v,i){
+					var r=infra.run(v,callback,back,layer);
+					if(r!==undefined)return r;
+				},back);
+				if(r!==undefined)return r;
+			}
+		}.bind(this),back);
+		if(r!==undefined)return r;
+		if(back){
+			//var r=this.exec(callback,layer,back,parent);
+			var r=infra.exec(callback,'Пробежка по слоям run',infra,[layer,parent],['Назад:'+back]);
+			if(r!==undefined)return r;
+		}
+	}.bind(this.run),back);
+	return r;
+}
+infra.checkNow = function() {
+	this.fire(this,'oninit');//В этот момент в this.layers могут добавиться новые слои от функции check.//Во всех остальных обработчиках добавляемые слои обработаются при повторной пробежке
+	this.ismainrun=false;
+	this.run(this.wlayers,function(layer){//Функция для любова слоя, подслои обрабатываются
+		delete layer.exec_onchange;//Обрабатываем слой или нет
+		delete layer.exec_onshow;//Показывается
+		delete layer.exec_onparse;//Перепарсиваеся слой или нетт
+		delete layer.exec_onshow_savemybranch;//кроме exec_onshow может быть определена ещё и эта пременнаря, означающая что текущй слой скрыт но его ветку нужно показывать
+		delete layer.fight_msg;
+	});
+	this.run(this.wlayers,function(layer,parent){//Функция для любова слоя, подслои обрабатываются
+		if(layer.parent===undefined)layer.parent=parent||false;
+		if(!layer.parent)this.ismainrun=true;//Метка о том что это пробежка начиная от корня 
+		this.fire(layer,'oninit','layer');//Перед тем как запускать oninit должен быть устанолвен parent это единственное требование ядра. Нельзя делать только один раз для каждого слоя. Состояния определяются каждый раз тут и при повторных пробежках когда состояние динамическое в child
+		if(!this.fire(layer,'onchange','layer',true))return false;//В глубь не идём //Добавляются дочернии слои, определяется data tpl is div(например показать сверху или снизу)
+	return false;
+		var r=infra.fire(infra,'layer.onshow.cond',false,1,layer);//Если подписчики ничего не вернут, будет true, Если вернут false выход, если вернёт null - значит игнорируем				//В этот момент нельзя проверять есть див на старнице или нет.
+		// if(!r) Мы не выходим даже если слой не показывается мы всё равно проверяем его детей, так как у них сработал onchange*/
+	});
+	return false;
+	this.fire(this,'onchange');
+	this.fire(this,'onparse');
+	this.run(this.wlayers,function(layer){
+		if(!layer.exec_onchange)return false;
+		if(!layer.exec_onshow)return;
+		this.fire(infra,'layer.onparse.cond',false,false,layer);
+	});
+	this.run(this.wlayers,function(layer){
+		if(!layer.showed)return;
+		if(layer.exec_onshow&&!layer.exec_onparse)return;
+		this.fire(layer,'onhide','layer');//Скрыть нужно непоказываемые слои и слои которые будут перепарсиваться
+	},true);//скрываем в обратном порядке
+
+	this.run(this.wlayers,function(layer){//Бежим в порядке свойств
+		if(!layer.exec_onchange)return false;
+		if(!layer.exec_onshow)return;
+		if(!layer.exec_onparse)return;
+
+		this.fire(layer,'onparse','layer'); //В onparse можно работать с данными 
+		//Вложенный узел может использовать какие-то данные родителя.. потому что заведомо родитель уже обработан и данные у него готовы. Родитель же использовать что-то от вложенных узлов не может потмоу что вложенные узлы могут быть не говтовы.. да и не логично это.
+		//В случае frames получается, что родитель ещё не показан и это приводит к ошибке с окнами.. title для frames окна устанавливается в onparse родителя, который на самом деле показывается после frames
+		//получение html и показ должны быть в разных обработчиках.. парсится в обычном порядке.. и только показывается с учётом frames в ином порядке
+		//frames - нужна для окон.. мы передали слой и этот слой показан и можно с эим слоем работатать. Подменить этот слой на какой-то родительский не льзя потмоу что слой используется как внутри popup так и снаружи и может быть повторно передан popup должна быть понятно это одно и тоже или разное..
+	});
+	this.run(this.wlayers,function(layer){
+		//onparse делается в порядке описания слоёв
+		//onshow делается в порядке свойств onparse может обращаться к родителям они к тому времени будут уже распаршены в том числе и в случае с frames
+		if(!layer.exec_onchange)return false;
+		if(!layer.exec_onshow)return;
+		if(!layer.exec_onparse)return;//В случае если слой был скрыт из-за того что до него просто в onchange не дошли в нём остануться старные значения и нужно yes проверять
+		var r=this.fire(layer,'oninsert','layer',true);//Свойство для вставки и чтобы перед вставкой можно было div проверить, если divа нет дальше onshow не запустится
+		if(r)r=this.fire(layer,'onshow','layer'); //Нужен для шаблонов, там эта функция выполнится до перепарсивания, Внутри функции можно изменить data. 
+	});
+	this.fire(this,'onshow');//autosave, autofocus Плагины могут после показа что-то делать со слоём// Калькулятро введёных данны. считается после подстановки из autosave данных, по этому плагин autosave подписан на infrjs.listen('layer.onshow.before');
+}
+
+infra.check = function(layers, action) { //Пробежка по слоям
 	if(this.process&&!this.wait_timer){//Функция checkNow сейчас выполняется и в каком-то
 		setTimeout(function(){//обработчике прошёл вызов пробежки...  Если мы добавим текущий слой в массив всех слоёв.. он начнёт участвовать в пробежке в операциях после той в которой был вызов создавший этот слой... короче не добавляем его
 			infra.check(layers,action);
@@ -611,9 +762,9 @@ infra.check = function(layers,action){//Пробежка по слоям
 		this.waits=undefined;
 	}else{
 		if(!infra.fora(layers,function(nl){//Отсеиваем повторы
-			if(!infra.fora(infrajs.waits,function(l){
+			if(!infra.fora(infra.waits,function(l){
 				if(l==nl)return true;
-			}))infrajs.waits.push(nl);
+			}))infra.waits.push(nl);
 		}));
 	}
 	if(this.wait_timer)return;
@@ -621,14 +772,13 @@ infra.check = function(layers,action){//Пробежка по слоям
 	this.process_count++;//Счётчик сколько раз перепарсивался сайт, посмотреть можно в firebug
 	if(this.loader)this.loader.show();//Исключительный хак.. чтобы лоадер успел показаться
 	this.wait_timer=setTimeout(infra.bind(this,function(){
-		$(function(){
+		bindReady(function(){
 			this.wait_timer=false;//Все новые слои будут ждать пока не станет false
 			this.wlayers=this.waits||this.layers;//При запуске checkNow все ожидающие слои обнуляются
 			this.waits=[];
 			this.checkNow();
 			this.process=false;
 		}.bind(this));
-	}),100);//Если вызывать infrajs.check() и вместе с этим переход по ссылке проверка слоёв сработает только один раз за счёт это паузы.. два вызова объединяться за это время в один.
+	}),100);//Если вызывать infra.check() и вместе с этим переход по ссылке проверка слоёв сработает только один раз за счёт это паузы.. два вызова объединяться за это время в один.
 }
-
 /* Загрузка расширений, могут быть разные для браузера и для клиента */
