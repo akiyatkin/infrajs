@@ -18,6 +18,7 @@ infra.DEBUG = true;
 
 /* Тесты обработки ошибок */
 this.infra_errors = {
+	/*
 	error : function(test) {
 		try {
 			infra.error(new Error('test error'), false, false, false, false, false, true);
@@ -43,10 +44,12 @@ this.infra_errors = {
 		}
 		test.done();
 	}
+	*/
 };
 
 /* Тесты обработки файлов */
 this.infra_files = {
+	/*
 	theme : function(test) {
 		var path = '*testfile.js';
 		end_path = infra.theme(path);
@@ -60,10 +63,12 @@ this.infra_files = {
 		test.equal(123, mock.a(), "loadJS error");
 		test.done();
 	}
+	*/
 };
 
 /* Тесты обработки событий */
 this.infra_event = {
+	/*
 	onevent : function(test) {
 		var r = false;
 		infra.listen(infra,'onevent',function(){
@@ -89,18 +94,45 @@ this.infra_event = {
 		else r=false;
 		test.ok(r, 'Не сработал typeevent');
 		test.done();
+	},
+	typeevent2: function(test) {
+		var obj={};
+		var r=infra.fire(infra,'testobj.ontestevt.cond',false,1,obj);
+		if(r===1)r=true;
+		else r=false;
+		test.ok(r, 'Не сработал typeevent2');
+		test.done();
 	}
+	*/
 }
 
 /* Тесты обработки контроллера */
 this.infra_controller = {
-
+	infra_run: function(test) {
+		var r1=1;
+		var r2=0;
+		var r3=0;
+		//test.expect(1);
+		infra.run([], function(){
+			r1--;
+		});
+		infra.run([{}], function(){
+			r2++;
+		});
+		infra.run([{asdf:true}], function(){
+			r3++;
+		});
+		test.ok(r1, "Не надо было заходить");
+		test.ok(r2, "Не зашли почему-то");
+		test.ok(r3, "Зашли внутрь и споткнулись");
+		test.done();
+	},
 	infra_check_simple: function(test) {
 		infra.check([]);
 		infra.check([{}]);
 		test.done();
-	} /*
-	,
+	},
+	/*
 	infra_check: function(test) {
 		test.expect(1);
 		infra.check({div: 'infra_test', tpl: ['<div id="hi">123</div>']});

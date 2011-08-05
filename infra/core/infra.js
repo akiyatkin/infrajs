@@ -661,15 +661,15 @@ infra.run=function(layers,callback,back,parent){
 	r=infra.fora(layers,function(layer){
 		if(!back){
 			//var r=this.exec(callback,layer,back,parent);
-			var r=infra.exec(callback,'Пробежка по слоям run',infra,[layer,parent],['Назад:'+back]);
+			var r=this.exec(callback,'Пробежка по слоям run',infra,[layer,parent],['Назад:'+back]);
 			if(r===false)return;//Ситуация когда возвращённый false просто не позволяет углубляться дальше
 			if(r!==undefined)return r;//выход
 		}
 		r=infra.foro(layer,function(val,name){
-			if(this.props.array.hasOwnProperty(name)){
+			if(this.run.props.array.hasOwnProperty(name)){
 				var r=infra.run(val,callback,back,layer);
 				if(r!==undefined)return r;
-			}else if(this.props.object.hasOwnProperty(name)){
+			}else if(this.run.props.object.hasOwnProperty(name)){
 				var r=infra.foro(val,function(v,i){
 					var r=infra.run(v,callback,back,layer);
 					if(r!==undefined)return r;
@@ -680,12 +680,19 @@ infra.run=function(layers,callback,back,parent){
 		if(r!==undefined)return r;
 		if(back){
 			//var r=this.exec(callback,layer,back,parent);
-			var r=infra.exec(callback,'Пробежка по слоям run',infra,[layer,parent],['Назад:'+back]);
+			var r=this.exec(callback,'Пробежка по слоям run',infra,[layer,parent],['Назад:'+back]);
 			if(r!==undefined)return r;
 		}
-	}.bind(this.run),back);
+	}.bind(this),back);
 	return r;
 }
+
+infra.run.props={//В callback все указанные списки слоёв обрабатываются после обработки слоя в котором они указаны. after и before актуально для callback2
+	//Расширяется в env.js
+	array:{},
+	object:{}//divs:true
+}
+
 infra.checkNow = function() {
 	this.fire(this,'oninit');//В этот момент в this.layers могут добавиться новые слои от функции check.//Во всех остальных обработчиках добавляемые слои обработаются при повторной пробежке
 	this.ismainrun=false;
@@ -701,11 +708,9 @@ infra.checkNow = function() {
 		if(!layer.parent)this.ismainrun=true;//Метка о том что это пробежка начиная от корня 
 		this.fire(layer,'oninit','layer');//Перед тем как запускать oninit должен быть устанолвен parent это единственное требование ядра. Нельзя делать только один раз для каждого слоя. Состояния определяются каждый раз тут и при повторных пробежках когда состояние динамическое в child
 		if(!this.fire(layer,'onchange','layer',true))return false;//В глубь не идём //Добавляются дочернии слои, определяется data tpl is div(например показать сверху или снизу)
-	return false;
 		var r=infra.fire(infra,'layer.onshow.cond',false,1,layer);//Если подписчики ничего не вернут, будет true, Если вернут false выход, если вернёт null - значит игнорируем				//В этот момент нельзя проверять есть див на старнице или нет.
 		// if(!r) Мы не выходим даже если слой не показывается мы всё равно проверяем его детей, так как у них сработал onchange*/
 	});
-	return false;
 	this.fire(this,'onchange');
 	this.fire(this,'onparse');
 	this.run(this.wlayers,function(layer){
