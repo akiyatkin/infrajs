@@ -49,7 +49,6 @@ this.infra_errors = {
 
 /* Тесты обработки файлов */
 this.infra_files = {
-	/*
 	theme : function(test) {
 		var path = '*testfile.js';
 		end_path = infra.theme(path);
@@ -63,6 +62,7 @@ this.infra_files = {
 		test.equal(123, mock.a(), "loadJS error");
 		test.done();
 	}
+	/*
 	*/
 };
 
@@ -108,6 +108,7 @@ this.infra_event = {
 
 /* Тесты обработки контроллера */
 this.infra_controller = {
+	/*
 	infra_run: function(test) {
 		var r1=1;
 		var r2=0;
@@ -133,14 +134,19 @@ this.infra_controller = {
 		test.done();
 	},
 	/*
-	infra_check: function(test) {
+	*/
+	infra_check_hi: function(test) {
 		test.expect(1);
-		infra.check({div: 'infra_test', tpl: ['<div id="hi">123</div>']});
+
+		infra.loadJS('infra/core/props/parsed.js');
+		infra.loadJS('infra/core/template.js');
+		infra.loadJS('infra/core/props/tpl.js');
+
+		infra.check({div: 'infra_test', tpl: ['<div id="hi"></div>']});
 		infra.listen(infra,'onshow',function() {
 			var div = document.getElementById('hi');
 			test.ok(!!div, "Не  вставили");
 			test.done();
 		});
 	}
-	*/
 }
