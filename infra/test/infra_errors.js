@@ -134,7 +134,6 @@ this.infra_controller = {
 		test.done();
 	},
 	/*
-	*/
 	infra_check_hi: function(test) {
 		test.expect(1);
 
@@ -147,6 +146,61 @@ this.infra_controller = {
 			var div = document.getElementById('hi');
 			test.ok(!!div, "Не  вставили");
 			test.done();
+		});
+	},
+	*/
+	infra_check_state: function(test) {
+		mock_index=[{
+			div:'base_html',
+			istate:'main',
+			tpl:['<div id="main"></div>']
+		},{
+			div:'base_html',
+			istate:'about',
+			tpl:['<div id="about"></div>']
+		}]
+		infra.check(mock_index);
+		counter=1;
+		infra.listen(infra,'onshow',function(){
+			if(counter==1){
+				var div=document.getElementById('base_html'); 
+				var html=div.innerHTML;
+				if(!html)r=true;
+				else r=false;
+				if(!r){
+					test.ok(false, 
+								"На главной показалось "+html);
+					test.done();
+					return;
+				}
+				counter=2;
+				infra.state.setHash('#$$/main');
+				infra.check();
+			}else if(counter==2){
+				var div=document.getElementById('main'); 
+				if(div)r=true;
+				else r=false;
+				if(!r){
+					test.ok(false,"Не показался div main");
+					test.done();
+					return;
+				}
+				counter=3;
+				infra.state.setHash('#$$/about');
+				infra.check();
+			}else if(counter==3){
+				var div=document.getElementById('about');
+				if(div)r=true;
+				else r=false;
+				if(!r){
+					test.ok(false,"Не показался div main");
+					test.done();
+					return;
+				}else{
+					test.ok(true,'Ништяк');
+					test.done();
+				}
+			}
 		});
 	}
 }
