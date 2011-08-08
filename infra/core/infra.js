@@ -123,9 +123,6 @@ infra.exec = function(callback, name, context, args, msgs, test) {
 	
 	undefined везде пропускается, любой return обрывает цикл
 */
-infra.foroa=function(){//depricated
-	return infra.forx.apply(this,arguments);
-}
 infra.fory=function(obj,callback,back){
 	return infra.fora(obj,function(v,i){
 		return infra.foro(v,function(el,key,group){

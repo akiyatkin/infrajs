@@ -150,12 +150,29 @@ this.infra_controller = {
 	},
 	*/
 	infra_check_state: function(test) {
+		var div=document.getElementById('infra_test');
+		if(!div){
+			test.ok(false,"Не найден див infra_test");
+			test.done();
+			return;
+		}
+		infra.loadJS('infra/core/props/parsed.js');
+		infra.loadJS('infra/core/template.js');
+		infra.loadJS('infra/core/props/tpl.js');
+		
+		infra.loadJS('infra/core/state.js');
+		infra.loadJS('infra/core/props/state.js');
+		if(!infra.state){
+			test.ok(false,"Не найдено расширение state");
+			test.done();
+			return;
+		}
 		mock_index=[{
-			div:'base_html',
+			div:'infra_test',
 			istate:'main',
 			tpl:['<div id="main"></div>']
 		},{
-			div:'base_html',
+			div:'infra_test',
 			istate:'about',
 			tpl:['<div id="about"></div>']
 		}]
@@ -163,13 +180,12 @@ this.infra_controller = {
 		counter=1;
 		infra.listen(infra,'onshow',function(){
 			if(counter==1) {
-				var div=document.getElementById('base_html'); 
+				var div=document.getElementById('infra_test'); 
 				var html=div.innerHTML;
 				if(!html)r=true;
 				else r=false;
 				if(!r){
-					test.ok(false, 
-								"На главной показалось "+html);
+					test.ok(false,"Ошибка. На главной странице показался слой привязанный к состоянию. "+html);
 					test.done();
 					return;
 				}
