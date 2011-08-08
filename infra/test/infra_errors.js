@@ -162,7 +162,7 @@ this.infra_controller = {
 		infra.check(mock_index);
 		counter=1;
 		infra.listen(infra,'onshow',function(){
-			if(counter==1){
+			if(counter==1) {
 				var div=document.getElementById('base_html'); 
 				var html=div.innerHTML;
 				if(!html)r=true;
