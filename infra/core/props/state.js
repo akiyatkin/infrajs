@@ -17,13 +17,14 @@
 	infra.listen(infra,'onchange',function(){
 		//Так как расширение external может быть загружено и позже. 
 		//Работаем с ним перед запуском
+		if(!infra.external)return;
 		infra.external.add('state',function(now,ext,layer,external,i){//проверка external в onchange
 			infra.setState(layer,'state',ext);
 			return layer[i];
 		});
 
 		infra.external.add('istate',function(now,ext,layer){
-			if(js.debug)alert('istate в external быть не может потому что istate определяет когда запускается onchange и сейчас onchange уже сработал и проверяется externals где совсем будет не втему обнаружить изменение istate \n'+layer);
+			if(infra.debug)alert('istate в external быть не может потому что istate определяет когда запускается onchange и сейчас onchange уже сработал и проверяется externals где совсем будет не втему обнаружить изменение istate \n'+layer);
 		});
 	});
 
@@ -33,12 +34,12 @@
 
 	/**
 	* layer.istate=.. - так делать нельзя
-	* нужно делать так infrajs.setState(layer,'istate','Компания'); - Компания это относительный путь от состояния родителя
+	* нужно делать так infra.setState(layer,'istate','Компания'); - Компания это относительный путь от состояния родителя
 	*/
-	infrajs.setState=function(layer,name,value){
+	infra.setState=function(layer,name,value){
 		if(!layer.dyn)layer.dyn={};
 		layer.dyn[name]=value;
-		var root=layer.parent?layer.parent[name]:infrajs.state;//От родителя всегда сможем наследовать
+		var root=layer.parent?layer.parent[name]:infra.state;//От родителя всегда сможем наследовать
 		layer[name]=root.getState(layer.dyn[name]);
 	}
 

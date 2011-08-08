@@ -18,7 +18,6 @@ infra.DEBUG = true;
 
 /* Тесты обработки ошибок */
 this.infra_errors = {
-	/*
 	error : function(test) {
 		try {
 			infra.error(new Error('test error'), false, false, false, false, false, true);
@@ -44,7 +43,6 @@ this.infra_errors = {
 		}
 		test.done();
 	}
-	*/
 };
 
 /* Тесты обработки файлов */
@@ -68,7 +66,6 @@ this.infra_files = {
 
 /* Тесты обработки событий */
 this.infra_event = {
-	/*
 	onevent : function(test) {
 		var r = false;
 		infra.listen(infra,'onevent',function(){
@@ -103,12 +100,10 @@ this.infra_event = {
 		test.ok(r, 'Не сработал typeevent2');
 		test.done();
 	}
-	*/
 }
 
 /* Тесты обработки контроллера */
 this.infra_controller = {
-	/*
 	infra_run: function(test) {
 		var r1=1;
 		var r2=0;
@@ -133,7 +128,6 @@ this.infra_controller = {
 		infra.check([{}]);
 		test.done();
 	},
-	/*
 	infra_check_hi: function(test) {
 		test.expect(1);
 
@@ -146,15 +140,17 @@ this.infra_controller = {
 			var div = document.getElementById('hi');
 			test.ok(!!div, "Не  вставили");
 			test.done();
+			infra.unlisten(infra,'onshow',arguments.callee);
 		});
 	},
-	*/
 	infra_check_state: function(test) {
 		var div=document.getElementById('infra_test');
 		if(!div){
 			test.ok(false,"Не найден див infra_test");
 			test.done();
 			return;
+		}else{
+			div.innerHTML='';
 		}
 		infra.loadJS('infra/core/props/parsed.js');
 		infra.loadJS('infra/core/template.js');
@@ -177,6 +173,7 @@ this.infra_controller = {
 			tpl:['<div id="about"></div>']
 		}]
 		infra.check(mock_index);
+			
 		counter=1;
 		infra.listen(infra,'onshow',function(){
 			if(counter==1) {
@@ -185,11 +182,12 @@ this.infra_controller = {
 				if(!html)r=true;
 				else r=false;
 				if(!r){
-					test.ok(false,"Ошибка. На главной странице показался слой привязанный к состоянию. "+html);
+					test.ok(false,"Ошибка. На главной странице показался слой привязанный к состоянию. <textarea>"+html+'</textarea>');
 					test.done();
 					return;
 				}
 				counter=2;
+				
 				infra.state.setHash('#$$/main');
 				infra.check();
 			}else if(counter==2){

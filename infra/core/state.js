@@ -231,13 +231,13 @@ history
 		},
 		callback:function(some){
 			if(this.obj==undefined){
-				infra.exec(this,'onhide'+some);
+				infra.fire(this,'onhide'+some);
 			}else if(this.old==undefined){
-				infra.exec(this,'onshow'+some);
-				infra.exec(this,'onchange'+some);
+				infra.fire(this,'onshow'+some);
+				infra.fire(this,'onchange'+some);
 			}else{
 				//if(!this.isEqual(this.obj,this.old)){
-					infra.exec(this,'onchange'+some);
+					infra.fire(this,'onchange'+some);
 				//}
 			}
 		},
@@ -502,14 +502,14 @@ history
 		document.http_now=location.protocol+'//'+location.host+location.pathname;
 		if(infra.state.hash)document.http_now+='?'+infra.state.hash;//Используется в *metrika.layer.js
 		
-		if(!infra.opera){//Без этого в opera не работают кнопки вперёд назад
+		/*if(!infra.opera){//Без этого в opera не работают кнопки вперёд назад
 			if(
 				(dehash!=hash)//В адресе недекодированный адрес
 				||(hash!==href&&hash!==infra.state.hash)){
 				location.replace(location.protocol+'//'+location.host+location.pathname+'#'+href);
 				if(!infra.safari&&!infra.IE||infra.IE>8) return;
 			}
-		}
+		}*/
 		
 		
 		

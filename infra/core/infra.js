@@ -564,7 +564,7 @@ infra.fire = function(obj,fn,clsname,def,context){
 		}
 
 	}*/
-	var r=this.execute.apply(this,arguments);
+	var r=this.fire.execute.apply(this,arguments);
 	if(def!==undefined&&fn){
 		var parts=fn.split('.');
 		if(parts.length==3){
@@ -582,7 +582,7 @@ infra.fire = function(obj,fn,clsname,def,context){
 	infra.isexec=false;
 	return r;
 };
-infra.execute = function(obj,fn,clsname,def,context,args){//args пользователь передавать не может
+infra.fire.execute = function(obj,fn,clsname,def,context,args){//args пользователь передавать не может
 	//context - в каком пространстве выполняться обработчикам
 	//clsname - имя класса объекта obj если есть.. в этом случае будет запущены события infrajs "obj.fn.before" и "obj.fn.after"
 	context=context||obj;
@@ -601,42 +601,19 @@ infra.execute = function(obj,fn,clsname,def,context,args){//args пользов�
 		this.fire(this,clsname+'.'+fn+'.before',false,undefined,context,args);//Руками это никогда не генерируется
 	}
 	
-	if(!obj)alert('Нет obj в infra.execute '+arguments);
+	if(!obj)alert('Нет obj в infra.fire.execute '+arguments);
 	if(obj[fn]){
-		
 		var callback=obj[fn];
-		//js.exec=function(callback,name,context,args,back){
-		
 		r=infra.exec(callback,' обработчике объекта',context,args,['fn:'+fn,'clsname:'+clsname]);
-		
-		/*try{
-			r=callback.apply(context,args||[]);
-		}catch(e){
-			if(js.debug){
-				if(js.IE)e=e.name+':'+e.message;	
-				alert('Ошибка в обработчике объекта\n'+e+'\n------\n'+clsname+' '+fn+'\n'+callback+'\n'+context);
-			}
-		}*/
 		if(!clsname&&r!==undefined)return r;
-		
 	}
 	if(obj.listen&&obj.listen[fn]){
 		for(var i=0,l=obj.listen[fn].length;i<l;i++){
 			var callback=obj.listen[fn][i];
-			
 			r=infra.exec(callback,' очереди обработчиков listen',context,args,['fn:'+fn,'clsname:'+clsname]);
-			/*try{
-				r=callback.apply(context,args||[]);
-			}catch(e){
-				if(js.debug){
-					alert('Ошибка в очереди обработчиков listen\n'+e+'\n------\n'+clsname+' '+fn+'\n'+callback+'\n'+context);
-				}
-			}*/
 			if(!clsname&&r!==undefined)return r;
 		}
 	}
-	
-	
 	if(clsname){
 		var allfn='';
 		if(fn!==allfn){
@@ -655,6 +632,17 @@ infra.execute = function(obj,fn,clsname,def,context,args){//args пользов�
 		return true;
 	}
 };
+infra.unlisten = function(obj,evt,callback){
+	if(!obj)return;
+	if(obj.listen===undefined)return;
+	if(obj.listen[evt]===undefined)return;
+	infra.forr(obj.listen[evt],function(call,i){
+		if(call===callback){
+			obj.listen[evt].splice(i,1);
+			return false;
+		}
+	});
+}
 infra.listen = function(obj,evt,callback,instart){
 	if(!obj)alert('Нет obj в infra.listen '+arguments);
 	if(obj.listen===undefined)obj.listen={};
