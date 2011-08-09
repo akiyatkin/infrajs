@@ -140,7 +140,7 @@ this.infra_controller = {
 				r++;
 			});
 			
-			test.ok((r==1), "У слоя после ядра оказалось больше одного свойства. Должен быть только parent. Сейчас: "+msg.join(', '));
+			test.ok((r==2), "У слоя после ядра оказалось больше двух свойств. Должены быть только parent и listen. Сейчас: "+msg.join(', '));
 			
 			test.done();
 			infra.unlisten(infra,'onshow',arguments.callee);//Отписываемся чтобы не запусалось на следующих тестах

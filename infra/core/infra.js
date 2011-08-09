@@ -555,74 +555,62 @@ infra.loadIMG = function(path,func,func2){//Всегда ассинхронно
 /*
  * События
  * */
-infra.fire = function(obj,fn,clsname,def,context){
-	infra.isexec=true;
+infra.fire = function(obj,fname,clsname,def,context){
 	context=context||obj;
-	/*if(def!==undefined&&fn){//Только для cond
-		if(context['exec_'+name]!==undefined){
-			return context['exec_'+name];//События с cond в одном забеге два раза не выполняются
-		}
-
-	}*/
 	var r=this.fire.execute.apply(this,arguments);
-	if(def!==undefined&&fn){
-		var parts=fn.split('.');
+	if(def!==undefined&&fname){//Если есть def значет это событие с условием
+		var parts=fname.split('.');
 		if(parts.length==3){
 			var type=parts[2];//cond, before, after
 			var name=parts[1];
 		}else{
-			var name=fn;
+			var name=fname;
 		}
 		context['exec_'+name]=r;
-		/*setTimeout(function(){
-			if(infrajs.isexec)setTimeout(arguments.callee,1);//alert или eval не оборвёт выполнение забега
-			else delete context['exec_'+name];
-		},1);*/
 	}
-	infra.isexec=false;
 	return r;
 };
-infra.fire.execute = function(obj,fn,clsname,def,context,args){//args пользователь передавать не может
+infra.fire.execute = function(obj,fname,clsname,def,context,args){//args пользователь передавать не может
 	//context - в каком пространстве выполняться обработчикам
-	//clsname - имя класса объекта obj если есть.. в этом случае будет запущены события infrajs "obj.fn.before" и "obj.fn.after"
+	//clsname - имя класса объекта obj если есть.. в этом случае будет запущены события infrajs "obj.fname.before" и "obj.fname.after"
 	context=context||obj;
 	clsname=clsname||'';
 	var r;
 	
 	if(clsname){
 		if(def!==undefined){
-			var res=this.fire(this,clsname+'.'+fn+'.cond',false,def,context,args);//Руками это никогда не генерируется, будет режим без clsname Но с def
+			var res=this.fire(this,clsname+'.'+fname+'.cond',false,def,context,args);//Руками это никогда не генерируется, будет режим без clsname Но с def
 			if(def===true){
 				if(res===false)return res;//Если кто-то вернул false будет выход. Обработка заканчивается когда кто-то вернул false.
 			}else if(def===false){
 				if(res!==true)return res;//Если никто не вернул true будет выход. Обработка заканчивается когда кто-то вернул true.
 			}
 		}
-		this.fire(this,clsname+'.'+fn+'.before',false,undefined,context,args);//Руками это никогда не генерируется
+		this.fire(this,clsname+'.'+fname+'.before',false,undefined,context,args);//Руками это никогда не генерируется
 	}
 	
 	if(!obj)alert('Нет obj в infra.fire.execute '+arguments);
-	if(obj[fn]){
-		var callback=obj[fn];
-		r=infra.exec(callback,' обработчике объекта',context,args,['fn:'+fn,'clsname:'+clsname]);
+	if(obj[fname]){
+		var callback=obj[fname];
+		r=infra.exec(callback,' обработчике объекта',context,args,['fname:'+fname,'clsname:'+clsname]);
 		if(!clsname&&r!==undefined)return r;
 	}
-	if(obj.listen&&obj.listen[fn]){
-		r=this.forr(obj.listen[fn],function(callback){
-			r=infra.exec(callback,' очереди обработчиков listen',context,args,['fn:'+fn,'clsname:'+clsname]);
+	if(obj.listen&&obj.listen[fname]){
+		r=this.forr(obj.listen[fname],function(callback){
+			r=infra.exec(callback,' очереди обработчиков listen',context,args,['fname:'+fname,'clsname:'+clsname]);
 			if(!clsname&&r!==undefined)return r;
 		});
 		if(r!==undefined)return r;
 	}
 	if(clsname){
 		var allfn='';
-		if(fn!==allfn){
-			r=this.fire(infra,allfn,false,def,context,[fn,clsname,def]);
+		if(fname!==allfn){
+			r=this.fire(infra,allfn,false,def,context,[fname,clsname,def]);
 			if(!clsname&&r!==undefined)return r;
 		}
 	}
 	if(clsname){
-		this.fire(this,clsname+'.'+fn+'.after',false,undefined,context,args);
+		this.fire(this,clsname+'.'+fname+'.after',false,undefined,context,args);
 	}
 	
 	
