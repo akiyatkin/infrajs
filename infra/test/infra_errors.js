@@ -130,7 +130,7 @@ this.infra_controller = {
 	},
 	infra_check_hi: function(test) {
 		test.expect(1);
-
+		infra.loadJS('infra/core/props/divenv.js');
 		infra.loadJS('infra/core/props/parsed.js');
 		infra.loadJS('infra/core/template.js');
 		infra.loadJS('infra/core/props/tpl.js');
@@ -152,6 +152,8 @@ this.infra_controller = {
 		}else{
 			div.innerHTML='';
 		}
+		
+		infra.loadJS('infra/core/props/divenv.js');
 		infra.loadJS('infra/core/props/parsed.js');
 		infra.loadJS('infra/core/template.js');
 		infra.loadJS('infra/core/props/tpl.js');
