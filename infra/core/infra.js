@@ -608,11 +608,11 @@ infra.fire.execute = function(obj,fn,clsname,def,context,args){//args польз
 		if(!clsname&&r!==undefined)return r;
 	}
 	if(obj.listen&&obj.listen[fn]){
-		for(var i=0,l=obj.listen[fn].length;i<l;i++){
-			var callback=obj.listen[fn][i];
+		r=this.forr(obj.listen[fn],function(callback){
 			r=infra.exec(callback,' очереди обработчиков listen',context,args,['fn:'+fn,'clsname:'+clsname]);
 			if(!clsname&&r!==undefined)return r;
-		}
+		});
+		if(r!==undefined)return r;
 	}
 	if(clsname){
 		var allfn='';
@@ -729,10 +729,11 @@ infra.checkNow = function() {
 		if(!layer.exec_onshow)return;
 		this.fire(infra,'layer.onparse.cond',false,false,layer);
 	});
-	this.run(this.wlayers,function(layer){
-		if(!layer.showed)return;
+	this.run(this.wlayers,function(layer){//Если слой скрыт или слой должен перепарсится у него всегда! запускается onhide.
+		
 		if(layer.exec_onshow&&!layer.exec_onparse)return;
-		this.fire(layer,'onhide','layer');//Скрыть нужно непоказываемые слои и слои которые будут перепарсиваться
+		this.fire(layer,'onhide','layer',true);//По умолчанию true то есть чтобы остановить событие нужно вернуть false в обработчике cond
+			//Скрыть нужно непоказываемые слои и слои которые будут перепарсиваться
 	},true);//скрываем в обратном порядке
 
 	this.run(this.wlayers,function(layer){//Бежим в порядке свойств
@@ -797,18 +798,6 @@ infra.check = function(layers, action) { //Пробежка по слоям, в�
 		}.bind(this));
 	}),100);//Если вызывать infra.check() и вместе с этим переход по ссылке проверка слоёв сработает только один раз за счёт это паузы.. два вызова объединяться за это время в один.
 }
-
-
-//Свойства showed Используется в admin.js
-infra.listen(infra,'layer.onhide.before',function(){
-	this.showed=false;
-});
-infra.listen(infra,'layer.onshow.after',function(){
-	this.showed=true;//В самом конце отмечается чтобы не затереть прошлое состояние.. а если onparse onshow сработали будет установлено true и так понятно
-});
-infra.listen(infra,'layer.onparse.cond',function(){
-	if(!this.showed)return 'Не показан';
-});
 
 /*
  * Загрузка расширений, могут быть разные для браузера и для клиента

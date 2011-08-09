@@ -123,10 +123,28 @@ this.infra_controller = {
 		test.ok(r3, "Зашли внутрь и споткнулись");
 		test.done();
 	},
+	
 	infra_check_simple: function(test) {
 		infra.check([]);
 		infra.check([{}]);
 		test.done();
+	},
+	infra_check_parent: function(test) {
+		var mock={};
+		infra.check(mock);
+		infra.listen(infra,'onshow',function(){
+			var r=0;
+			var msg=[];
+			infra.foro(mock,function(val,key){
+				msg.push(key);
+				r++;
+			});
+			
+			test.ok((r==1), "У слоя после ядра оказалось больше одного свойства. Должен быть только parent. Сейчас: "+msg.join(', '));
+			
+			test.done();
+			infra.unlisten(infra,'onshow',arguments.callee);//Отписываемся чтобы не запусалось на следующих тестах
+		});
 	},
 	infra_check_hi: function(test) {
 		test.expect(1);
@@ -140,10 +158,11 @@ this.infra_controller = {
 			var div = document.getElementById('hi');
 			test.ok(!!div, "Не  вставили");
 			test.done();
-			infra.unlisten(infra,'onshow',arguments.callee);
+			infra.unlisten(infra,'onshow',arguments.callee);//Отписываемся чтобы не запусалось на следующих тестах
 		});
 	},
 	infra_check_state: function(test) {
+		//Проверка перехода по странцам когда в зависимости от состояния показывается то один, то другой слой.
 		var div=document.getElementById('infra_test');
 		if(!div){
 			test.ok(false,"Не найден див infra_test");
@@ -215,7 +234,86 @@ this.infra_controller = {
 				}else{
 					test.ok(true,'Ништяк');
 					test.done();
+					
 				}
+				infra.unlisten(infra,'onshow',arguments.callee);//Отписываемся чтобы не запусалось на следующих тестах
+			}
+		});
+	},
+	infra_check_onhide: function(test) {
+		//Проверка события onhide без расширения showed
+		//В ядре событие запускается каждый раз для всех скрытых или перепаршенных слоёв..
+		
+		//Это всё уже подключено в предыдущих тестах
+		infra.loadJS('infra/core/props/divenv.js');
+		infra.loadJS('infra/core/props/parsed.js');
+		infra.loadJS('infra/core/template.js');
+		infra.loadJS('infra/core/props/tpl.js');
+		
+		infra.loadJS('infra/core/state.js');
+		infra.loadJS('infra/core/props/state.js');
+		
+		var r1=0;
+		var mock_indexhide={//Слой не покажется так как у него нет tpl (это определяется расширением tpl)
+			onhide:function(){
+				r1++;
+			}
+		}
+		var r2=0;
+		infra.listen(mock_indexhide,'onhide',function(){
+			r2++;
+		});
+		
+		infra.check(mock_indexhide);//Первая проверка
+		var counter=0;
+		infra.listen(infra,'onshow',function(){
+			counter++;
+			if(counter==1){
+				infra.check();//Вторая проверка
+			}else if(counter==2){
+				test.ok((r1==2&&r2==2),"Событие onhide сработало некорректно r1="+r1+" r2="+r2);
+				test.done();
+				infra.unlisten(infra,'onshow',arguments.callee);//Отписываемся чтобы не запусалось на следующих тестах
+			}
+		});
+	},
+	infra_check_onhide_showed: function(test) {
+		//Проверка события onhide с расширением showed
+		//Событие срабатывает только для слоёв которые сейчас показаны. Для непоказанных слоёв не срабатывает.
+		
+		//Это всё уже подключено в предыдущих тестах
+		infra.loadJS('infra/core/props/divenv.js');
+		infra.loadJS('infra/core/props/parsed.js');
+		infra.loadJS('infra/core/template.js');
+		infra.loadJS('infra/core/props/tpl.js');
+		
+		infra.loadJS('infra/core/state.js');
+		infra.loadJS('infra/core/props/state.js');
+		//Добавляем ещё расширение showed (выставляется и обрабатывается свойство showed)
+		infra.loadJS('infra/core/props/showed.js');
+		
+		var r1=0;
+		var mock_indexhide={
+			showed:true,//Создаём видимость что слоё был показан
+			onhide:function(){
+				r1++;
+			}
+		}
+		var r2=0;
+		infra.listen(mock_indexhide,'onhide',function(){
+			r2++;
+		});
+		
+		infra.check(mock_indexhide);//Первая проверка
+		var counter=0;
+		infra.listen(infra,'onshow',function(){
+			counter++;
+			if(counter==1){
+				infra.check();//Вторая проверка
+			}else if(counter==2){
+				test.ok((r1==1&&r2==1),"Событие onhide сработало некорректно r1="+r1+" r2="+r2);
+				test.done();
+				infra.unlisten(infra,'onshow',arguments.callee);//Отписываемся чтобы не запусалось на следующих тестах
 			}
 		});
 	}
