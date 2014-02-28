@@ -1,0 +1,226 @@
+{
+	"child":{
+		"tpltpl":["<h1>{state.name}</h1><p>Статья на сайте не найдена.</p><p><a href='?'>Перейти на главную страницу</a></p>"],
+		"autoedittpl":{"fast":"{infra.conf.files.folder_pages}{state.name}"},
+		"showanimate":true,
+		"layers":{
+			"seo":{
+				"tpl":"*files/files.php?type=pages&id={.}&show",
+				"link":"{.}",
+				"name":"Страница в разделе Информация",
+				"schema":{
+					"type":"string",
+					"title":"Имя файла"
+				},
+				"defitems":"*files/files.php?type=pages&seo"
+			},
+			"tplcheck":true,
+			"autoedittpl":{"fast":"{infra.conf.files.folder_pages}{state.name}"},
+			"tpltpl":"*files/files.php?type=pages&id={state.name}&show&redirect=1"
+		}
+	},
+	"childs":{
+		"Error404":{
+			"jsontpl":"*/files/errors.php?code=404&src={~encode(infra.State.get())}",
+			"tpl":["<h1>404 Страница не найдена</h1><p>'/{data.path}'</p>"]
+		},
+		"Error403":{
+			"jsontpl":"*/files/errors.php?code=403&src={~encode(infra.State.get())}",
+			"tpl":["<h1>403 Доступ запрещён</h1><p>'/{data.path}'</p>"]
+		},
+		"Информация":{
+			"seo":{
+				"link":"Информация",
+				"name":"Раздел информация",
+				"items":[{
+					"data":true
+				}]
+			},
+			"tpl":["<h1>Информация</h1><div id='allevents'></div>"],
+			"autoedittpl":{"fast":"infra.conf.files.folder_pages}"},
+			"divs":{
+				"allevents":{
+					"json":"*files/files.php?type=pages&list&lim=0,10",
+					"tpl":"*files/files.tpl",
+					"tplroot":"PAGES",
+					"childs":{
+						"Архив":{
+							"json":"*files/files.php?type=pages&list",
+							"tpl":"*files/files.tpl",
+							"tplroot":"PAGES"
+						}
+					}
+				}
+			}
+		},
+		"Файлы":{
+			"seo":{
+				"link":"файлы",
+				"name":"Файлы для скачивания",
+				"items":[{
+					"data":true
+				}]
+			},
+			"tpl":["<h1>Размещённые на сайте файлы</h1><div id='allevents'></div>"],
+			"autoedittpl":{"fast":"{infra.conf.files.folder_files}"},
+			"divs":{
+				"allevents":{
+					"json":"*files/files.php?type=files&list&lim=0,20",
+					"tpl":"*files/files.tpl",
+					"tplroot":"FILES",
+					"childs":{
+						"Архив":{
+							"json":"*files/files.php?type=files&list",
+							"tpl":"*files/files.tpl",
+							"tplroot":"FILES"
+						}
+					}
+				}
+			}
+		},
+		"Блог":{
+			"tpl":["<div id='blogtitle'></div><div id='allblog'></div>"],
+			"autoedittpl":{"fast":"{infra.conf.files.folder_blog}"},
+			"divs":{
+				"blogtitle":{
+					"tpl":["<h1>Блог</h1>"]
+				},
+				"allblog":{
+					"tpl":"*files/files.tpl",
+					"tplroot":"PAGES",
+					"json":"*files/files.php?type=blog&list&lim=0,10",
+					"config":{
+						"link":"Блог/"
+					},
+					"seo":{
+						"link":"Блог",
+						"name":"Блог",
+						"items":[{
+							"data":true
+						}]
+					},
+					"child":{
+						"showanimate":true,
+						"seo":{
+							"tpl":"*files/files.php?type=blog&id={.}&show",
+							"link":"Блог/{.}",
+							"name":"Запись в блоге",
+							"schema":{
+								"type":"string",
+								"title":"Имя файла"
+							},
+							"defitems":"*files/files.php?type=blog&seo"
+						},
+						"tpltpl":"*files/files.php?type=blog&show&redirect=1&id={state.name}",
+						"autoedittpl":{ "fast":"{infra.conf.files.folder_blog}{state.name}" },
+						"divs":{
+							"blogtitle":{
+								"tpl":["<a href='?Блог'>Блог</a>"]
+							}
+						}
+					},
+					"childs":{
+						"Архив":{
+							"json":"*files/files.php?type=blog&list",
+							"tpl":"*files/files.tpl",
+							"tplroot":"PAGES",
+							"config":{
+								"link":"Блог/"
+							}
+						}
+					}
+				}
+			}
+		},
+		"События":{
+			"tpl":["<div id='eventtitle'></div><div id='allevents'></div>"],
+			"autoedittpl":{"fast":"{infra.conf.files.folder_events}"},
+			"divs":{
+				"eventtitle":{
+					"tpl":["<h1>События</h1>"]
+				},
+				"allevents":{
+					"tpl":"*files/files.tpl",
+					"tplroot":"PAGES",
+					"json":"*files/files.php?type=events&list&lim=0,10",
+					"seo":{
+						"link":"События",
+						"name":"События",
+						"items":[{
+							"data":true
+						}]
+					},
+					"config":{
+						"link":"События/"
+					},
+					"child":{
+						"showanimate":true,
+						"seo":{
+							"tpl":"*files/files.php?type=events&id={.}&show",
+							"link":"События/{.}",
+							"name":"Запись в событиях",
+							"schema":{
+								"type":"string",
+								"title":"Имя файла"
+							},
+							"defitems":"*files/files.php?type=events&seo"
+						},
+						"tpltpl":"*files/files.php?type=events&show&redirect=1&id={state.name}",
+						"autoedittpl":{ "fast":"{infra.conf.files.folder_events}{state.name}" },
+						"divs":{
+							"eventtitle":{
+								"tpl":["<a href='?События'>События</a>"]
+							}
+						}
+					},
+					"childs":{
+						"Архив":{
+							"json":"*files/files.php?type=events&list",
+							"tpl":"*files/files.tpl",
+							"tplroot":"PAGES",
+							"config":{
+								"link":"События/"
+							}
+						}
+					}
+				}
+			}
+		},
+		"Тексты":{
+			"tpl":["<div id='ftitle'></div><div id='fall'></div>"],
+			"autoedittpl":{"fast":"{infra.conf.files.folder_texts}"},
+			"divs":{
+				"ftitle":{
+					"tpl":["<h1>Текстовые блоки на сайте</h1>"]
+				},
+				"fall":{
+					"tpl":"*files/files.tpl",
+					"tplroot":"PAGES",
+					"json":"*files/files.php?type=texts&list&lim=0,10",
+					"config":{
+						"link":"Тексты/"
+					},
+					"child":{
+						"tpltpl":"*files/files.php?type=texts&show&redirect=1&id={state.name}",
+						"autoedittpl":{ "fast":"{infra.conf.files.folder_texts}{state.name}" },
+						"divs":{
+							"ftitle":{
+								"tpl":["<a href='?Тексты'>Тексты</a>"]
+							}
+						}
+					},
+					"childs":{
+						"Архив":{
+							"json":"*files/files.php?type=texts&list",
+							"tpl":"*files/files.tpl",
+							"tplroot":"PAGES",
+							"config":{
+								"link":"Тексты/"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

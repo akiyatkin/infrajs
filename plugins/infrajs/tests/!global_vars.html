@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<head>
+	<script type="text/javascript" src="../../../../infra/lib/jquery/jquery.js"></script>
+	<script type="text/javascript">
+		(function(){
+			var globalvars={};
+			window.test=function(ar){
+				var count=0;
+				for(var i in window){
+					if(!globalvars.hasOwnProperty(i)&&ar.indexOf(i)==-1&&!/jQuery/.test(i))alert('Неизвестная переменная: '+i);
+					count++;
+				}
+				for(var i=0,l=ar.length;i<l;i++){
+					if(!window.hasOwnProperty(ar[i])&&!/jQuery/.test(ar[i]))alert('Не найдена предусмотренная переменная: '+ar[i]);
+				}
+				var r=((count-ar.length)-fcount);
+				if(r!=0){
+					window.test.err=true;
+					alert('Новых-непонятных-лишних-непредвиденных переменных: '+((count-ar.length)-fcount));
+				}
+			}
+			var fcount=0;
+			for(var i in window){
+				globalvars[i]=true;
+				fcount++;
+			}
+		})();
+	</script>
+	<script type="text/javascript" src="../../../../infra/plugins/infra/infra.js"></script>
+	<script>
+		ROOT='../../../../';
+		(function(){
+			var ar=['ROOT','js','amvar'];
+			infra.load('infra/plugins/infrajs/infrajs.js');
+			ar=ar.concat(['infrajs']);
+			infra.load('infra/plugins/infrajs/default.js');
+			ar=ar.concat([
+				'state','session','contacts','statist',
+				'onhashchange' //Косяк jquery.history
+			]);
+			test(ar);
+			
+			ar=ar.concat([
+				'jQueryXXXXXX',//jquery создаёт какую-то хрень
+				
+			]);
+
+
+			infrajs.listen(infrajs,'onshow',function(){
+				test(ar);
+				if(!window.test.err)alert('ok');
+			});
+			infrajs.check({});
+		
+		})();
+		
+	</script>
+</head>
+<body style="margin:100px">
+	<div style="border:solid 1px gray; margin:20px 0; padding:10px;">
+		Тест на количество переменных в глобальном пространстве. 
+	</div>
+</body>

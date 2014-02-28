@@ -1,0 +1,29 @@
+<script type="text/javascript">
+	ROOT='../../../../';
+</script>
+<script type="text/javascript" src="../js.php"></script>
+
+<h1 id="res" style="color:red;">ERROR</h1>
+<div id="main"></div>
+<script type="text/javascript">
+	var obj={};
+	var testcounter=0;
+	infra.fire(obj,'ontest');
+	infra.handle(obj,'ontest',function(){
+		testcounter++;
+	});
+	infra.wait(obj,'ontest',function(){
+		testcounter++;
+	});
+	infra.listen(obj,'ontest',function(){
+		testcounter++;
+	});
+	infra.fire(obj,'ontest');
+	
+	var good=function(){
+		var res=document.getElementById('res');
+		res.innerHTML='PASS';
+		res.style.color="green";
+	}
+	if(testcounter==4)good();
+</script>

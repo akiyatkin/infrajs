@@ -1,0 +1,68 @@
+<!-- Copyright (c) 2005 Rob Lanphier.
+See http://robla.net/2005/jsonwidget/LICENSE for license (BSD style)
+-->
+
+
+<html>
+ 
+<head>
+ 
+<title>JSON widget prototype</title>
+
+
+<script src="json.js"></script> 
+<script src="jsonedit.js"></script> 
+
+<link rel="stylesheet" type="text/css" href="jsonwidget.css" />
+
+<script type="text/javascript" language="javascript">
+
+function sample_init(){
+	var schema={
+		title:'Меню',
+		type:'array',
+		items:{
+			title:'Пункт',
+			type:'object',
+			properties:{
+				name:{required:true,title:'Название',type:'string'},
+				href:{required:true,title:'Ссылка',type:'string'}
+			}
+		}
+	};
+	ta=document.getElementById('je_source2');
+	jsonedit(ta,schema);
+}
+
+</script>
+
+</head>
+ 
+
+<body onload="sample_init();">
+	<div>
+		<form method='POST'>
+<textarea id="je_source2" rows="30" cols="80">
+	[
+	  {
+	    "name":"1111",
+	    "href":"asdf"
+	  },
+	  {
+	    "name":"2222",
+	    "href":""
+	  },
+	  {
+	    "name":"3333",
+	    "href":""
+	  }
+	]
+</textarea>
+			<p> <input type="submit" value="Submit JSON"/> </p>
+		</form>
+	</div>
+
+
+</body>
+</html>
+

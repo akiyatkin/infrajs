@@ -1,0 +1,63 @@
+html {
+	overflow-y:scroll;
+}
+body {
+	margin:0;
+}
+.alert {
+	color:#d53e07;
+}
+img.left {
+	float:left;
+	margin:0 5px 5px 0;
+}
+img.right {
+	float:right;
+	margin:0 0 5px 5px;
+}
+.a {
+	cursor:pointer;
+	color:#1B5579;
+	border-bottom:dashed 1px #1B5579;
+}
+
+a img {
+	border:none;
+}
+td,th {
+	vertical-align:top;
+}
+table.common {
+	border:none;
+	border:solid 1px gray;
+	margin-top:10px;
+	margin-bottom:10px;
+	border-spacing:0;
+}
+table.common td.com,table.common th.com {
+	border:none;
+	border-left:dotted 1px gray;
+	border-bottom:dotted 1px gray;
+	padding:3px 5px;
+}
+table.common tr.bottom td.com,table.common tr.bottom th.com {
+	border-bottom:none;
+}
+table.common .first {
+	border-left:none;
+}
+table.common .bottom {
+	border-bottom:none;
+}
+table.common thead td.com,table.common thead th.com {
+	font-weight:bold;
+	text-align:center;
+	vertical-align:middle;
+}
+table.common tr.odd td.com, table.common tr.odd th.com {
+	background-color: #e9eedd;
+}
+table.common p {
+	margin:0;
+	padding:0;
+}

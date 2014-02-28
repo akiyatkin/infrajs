@@ -1,0 +1,25 @@
+{
+	"layers":{
+		"tpl":["x<div id='a'></div><div id='b'></div><div id='c'></div>"],
+		"div":"main"
+	},
+	"childs":{
+		"test":{
+			"div":"a",
+			"tpl":["x"]
+		}
+	},
+	"divs":{
+		"b":[{
+			"tpl":["x"]
+		},{
+			"tpl":["x"]
+		}]
+	},
+	"child":{
+		"external":{
+			"div":"c",
+			"tpltpl":["x"]
+		}
+	}
+}

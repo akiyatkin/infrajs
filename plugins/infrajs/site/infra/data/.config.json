@@ -1,0 +1,19 @@
+{
+	"debug":true,
+	"admin":{
+		"login":"kvant",
+		"password":"ghbdtn",
+		"email":"info@itlf.ru",
+		"support":"info@itlf.ru"
+	},
+	"infrajs":{
+		"scroll":false,
+		"scrollup":true
+	},
+	"imager":{
+		"waterlim":15000
+	},
+	"files":{
+		"imgmaxwidth":600
+	}
+}

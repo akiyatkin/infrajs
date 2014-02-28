@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>localStorage</title>
+	</head>
+	<body style="padding:50px 100px">
+		<h1>
+			Проверка localStorage
+		</h1>
+		<h2 id="res" style="color:red;">ERROR</h2>
+		<p>
+			Хотя бы один раз надо нажать F5 если error. 
+			<br>http://jsfiddle.net/jbfh9/3/
+		</p>
+		<script>
+		var good=function(){
+			var res=document.getElementById('res');
+			res.innerHTML='PASS';
+			res.style.color="green";
+		}
+		try{
+			var t=window.localStorage.getItem('test');
+			console.log(t);
+			if(!t)t=0;
+			window.localStorage.setItem('test',Number(t)+1);
+			if(t)good();
+		}catch(e){
+			console.log(e);
+		}
+		</script>
+	</body>
+	
+</html>

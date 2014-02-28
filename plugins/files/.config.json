@@ -1,0 +1,18 @@
+{
+	"files":{
+		"pub":["folder_files","folder_pages","folder_events","folder_texts","folder_blog"],
+		"folders":{
+			"*Информация/":"info",
+			"*Блог/":"info",
+			"*Тексты/":"info",
+			"*События/":"info",
+			"*Файлы/":"files" 
+		},
+		"folder_files":"*Файлы/",
+		"folder_pages":"*Информация/",
+		"folder_events":"*События/",
+		"folder_texts":"*Тексты/",
+		"folder_blog":"*Блог/",
+		"imgmaxwidth":600
+	}
+}

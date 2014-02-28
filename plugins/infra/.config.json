@@ -1,0 +1,29 @@
+{
+	"debug":1,
+	"infra":{
+		"rootisfolder":true
+	},
+	"admin":{
+		"login":"some",
+		"password":"som",
+		"email":"info@itlf.ru",
+		"support":"aky.pp.ru@gmail.com",
+		"from":""
+	},
+	"/http":{
+		"sitehost":"",
+		"siteroot":"",
+		"honeydomains":["localhost","127.0.0.1"],
+		"port":""
+	},
+	"/memcache":{
+		"host":"127.0.0.1",
+		"port":"11211"
+	},
+	"/mysql":{
+		"host":"mysql.itlf.ru",
+		"database":"some",
+		"user":"some",
+		"password":"pass"
+	}
+}

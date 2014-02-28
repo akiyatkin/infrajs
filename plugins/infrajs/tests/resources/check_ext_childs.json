@@ -1,0 +1,14 @@
+{
+	"external":{
+		"child":{
+			"div":"main2",
+			"tpl":["child x"]
+		},
+		"childs":{
+			"test":{
+				"div":"main1",
+				"tpl":["childs x"]
+			}
+		}
+	}
+}

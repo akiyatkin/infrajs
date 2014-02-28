@@ -1,0 +1,12 @@
+{
+	"childs":{
+		"test":{
+			"div":"main1",
+			"tpl":["childs x"]
+		}
+	},
+	"child":{
+		"div":"main2",
+		"tpl":["child x"]
+	}
+}

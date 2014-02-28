@@ -1,0 +1,25 @@
+<head>
+	<script type="text/javascript" src="../../infra/infra.js"></script>
+	<script>
+		ROOT='../../../../';
+		infra.load('*slide/slide.js');
+		infra.load('infra/lib/jquery/jquery.js');
+		var slide=new Slide('*slide/tests/Слайды/',100,100);
+		slide.rnd=false;
+		$(function(){
+			slide.get(function(){
+				$('#imgs').append(slide.img);
+				slide.get(function(){
+					$('#imgs').append(slide.img);
+					slide.get(function(){
+						$('#imgs').append(slide.img);
+						if($('#imgs').find('img').length==3)alert('ok');
+					});
+				});
+			},'О компании');
+		});
+	</script>
+</head>
+<body>
+	<div id="imgs"></div>
+</body>

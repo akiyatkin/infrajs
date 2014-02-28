@@ -1,0 +1,20 @@
+{
+	"infrajs":{
+		"pub":["seoname","seoforall","scroll","scrollup","onlyclient"],
+		"seoname":"",
+		"seoforall":false,
+		"scroll":false,
+		"scrollup":false,
+		"onlyserver":false,
+		"onlyclient":false
+	},
+	"scroll":{
+		"pub":["scrollFromTop"],
+		"scrollFromTop":0
+	},
+	"htaccess":{
+		"www":false
+	},
+	"layout":{
+	}
+}

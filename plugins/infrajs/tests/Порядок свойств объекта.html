@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Режим браузера</title>
+		<script type="text/javascript">
+			ROOT='../../../../';
+		</script>
+		<script type="text/javascript" src="../initjs.php"></script>
+		<script>
+			var good=function(){
+				var res=document.getElementById('res');
+				res.innerHTML='PASS';
+				res.style.color="green";
+			}
+			function init(){
+				var obj={
+					a:1,
+					b:2,
+					c:3
+				}
+				delete obj.b;
+				for(var i in obj){
+					if(i=='b'){
+						console.log('Удалёное свойство остаётся в объекте');
+						return;
+					}
+				}
+				obj.b='Новое значение';
+				var list=[];
+				for(var i in obj)list.push(i);
+				console.log(list);
+				if(list[2]!='b'){
+					console.log('В новом порядке свойство не установлиось');
+					return;
+				}
+				good();
+			}
+		</script>
+	</head>
+	<body style="padding:50px 100px" onload="init()">
+		<h1 id="res" style="color:red;">ERROR</h1>
+
+	</body>
+</html>

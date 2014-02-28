@@ -1,0 +1,156 @@
+<?php
+//Обработка onshow и onhide, tpl, data, onlyclient, onlyserver, tplclientparse, parsed, datacheck, tplcheck
+//infrajs_parsedAdd
+//infrajs_parsed
+global $infra;
+global $infrajs;
+function infrajs_tplonlyclient(&$layer){
+	$parent=$layer;
+	while($parent){
+		if(@$parent['onlyclient'])return true;
+		$parent=@$parent['parent'];
+	}
+}
+function infrajs_tplrootTpl(&$layer){
+	$prop='tplroot';
+	$proptpl=$prop+'tpl';
+	if(!isset($layer[$proptpl]))return;
+	$p=$layer[$proptpl];
+	if(is_array($layer[$proptpl])){
+		$p=infra_template_parse($p,$layer);
+		$layer[$prop]=array($p);
+	}else{
+		$layer[$prop]=infra_template_parse(array($p),$layer);
+	}
+}
+function infrajs_tpldatarootTpl(&$layer){
+	$prop='dataroot';
+	$proptpl=$prop.'tpl';
+	if(!isset($layer[$proptpl]))return;
+	$p=$layer[$proptpl];
+	$layer[$prop]=infra_template_parse(array($p),$layer);
+}
+function infrajs_tplTpl(&$layer){
+	$prop='tpl';
+	$proptpl=$prop.'tpl';
+	if(@!$layer[$proptpl])return;
+	$p=$layer[$proptpl];
+	$ar=is_array($p);
+	if(!$ar)$p=array($p);
+	$p=infra_template_parse($p,$layer);
+	if($ar)$layer[$prop]=array($p);	
+	else $layer[$prop]=$p;	
+}
+function infrajs_tplJson(&$layer){
+	$prop='json';
+	$proptpl=$prop.'tpl';
+	if(@!$layer[$proptpl])return;
+	$p=$layer[$proptpl];
+	$ar=is_array($p);
+	if(!$ar)$p=array($p);
+	$p=infra_template_parse($p,$layer);
+	if($ar)$layer[$prop]=array($p);	
+	else $layer[$prop]=$p;		
+}
+function &infrajs_getData(&$layer){//Используется в propcheck.js
+	if(!isset($layer['json']))return $layer['data'];
+	$data=@$layer['json'];
+	if(infra_isAssoc($data)===false){//Если массив то это просто строка в виде данных
+		$data=infra_loadTEXT($data[0]);
+	}else if(is_string($data)){
+		$data=&infra_loadJSON($data);//Забираем для текущего клиента что-то..
+	}
+	return $data;
+}
+function infrajs_getTpl(&$layer){
+	$tpl=$layer['tpl'];
+	if(is_string($tpl)){
+
+		$tpl=infra_loadTEXT($tpl);//M доп параметры после :
+		
+	}else if(is_array($tpl)){
+		$tpl=$tpl[0];
+	}else{
+		$tpl='';
+	}
+	if(!$tpl)$tpl='';
+	return $tpl;
+}
+
+function infrajs_getHtml(&$layer){//Вызывается как для основных так и для подслойв tpls frame. Расширяется в tpltpl.prop.js
+	//if(@$layer['tplclient'])return '';
+	$row=infrajs_parsed($layer);
+	//$row=$_SERVER['QUERY_STRING'],$layer['unick'];
+	//Нельзя кэшировать слои в которых показываются динамические данные, данные пользователя определяется заголовком у данных
+	//Кэш создаётся от любого пользователя.
+	//Чтобы узнать что кэш делать не нужно... это знают данные они либо js либо php
+	//При загрузки данных те должны выкидывать заголовки не кэшировать, либо не выкидывать если это просто парсер Excel
+	//Нас интересует зависит ли html слоя от пользователя, если зависит кэшировать нельзя
+	//Зависит если используется $_SESSION, infra_session, infra_admin
+	//примечательно что конект к базе не запрещает кэширование этого слоя
+	//Узнавать о всём этом мы будем по заголовкам
+	//Так чтобы следующий слой взялся уже нормально заголовки нужно заменять... 
+	//Тем более заменять заголовки нужно в любом случае если кэшируется чтобы и браузер кэшировал
+
+	//Проблема при первом session_get конект к базе и вызов session_init в следующем подключении init не вызывается 
+	//но для следующего подключения нам нужно понять что есть динамика// По этому загловки отправляются в том числе и руками в скритпах  Cache-Control:no-cache
+	
+	$dhtml=infra_admin_cache('infrajs_getHtml',function() use(&$layer){
+		global $infrajs;
+		$infrajs['layer']=&$layer;//в скриптах будет доступ к последнему вставленному слою
+		//Здесь мог быть установлен infrajs['com'] его тоже нужно вернуть/ А вот после loadTEXT мог быть кэш и ничего не установится
+		$html=_infrajs_getHtml($layer);
+		return array($html,$infrajs['com']);
+	},array($row));//Кэш обновляемый с последней авторизацией админа определяется строкой parsed слоя
+	$html=$dhtml[0];
+
+	$infrajs['com']=$dhtml[1];//Применять надо здесь вне кэша getHTML
+	
+	return $html;
+}
+function _infrajs_getHtml(&$layer){//Вызывается как для основных так и для подслойв tpls frame. Расширяется в tpltpl.prop.js
+
+	if(@$layer['data']||@$layer['json']||@$layer['tpls']||@$layer['tplroot']){
+		$tpls=infra_template_make($layer['tpl']);//С кэшем перепарсивания
+		global $infra,$infrajs;
+		$infrajs['com']=$infra['com'];
+		$repls=array();//- подшаблоны для замены, Важно, что оригинальный распаршеный шаблон не изменяется
+		infra_fora($layer['tplsm'],function(&$repls,$tm){//mix tpl
+			$t=infra_template_make($tm);//С кэшем перепарсивания
+			array_push($repls,$t);
+			//for(var i in t)repls[i]=t[i];//Нельзя подменять в оригинальном шаблоне, который в других местах может использоваться без подмен
+			//^ из-за этого обработчики указанные в tplsm срабатывают постоянно, так как нельзя поставить отметку о том что обработчик сохранён
+		},array(&$repls));
+		
+		$layer['data']=&infrajs_getData($layer);//подменили строку data на объект data
+
+
+		$alltpls=array(&$repls,&$tpls);
+
+		$html=infra_template_exec($tpls,$layer,@$layer['tplroot'],@$layer['dataroot']);
+	}else{
+
+		$tpl=infrajs_getTpl($layer);
+
+
+		global $infra,$infrajs;
+		$infrajs['com']=$infra['com'];
+		$html=$tpl;
+	}
+	if(!$html)$html='';
+	return $html;
+
+}
+function infrajs_tplJsonCheck(&$layer){
+		if(@$layer['data']&&!is_null(@$layer['jsoncheck'])){
+			$data=&infrajs_getData($layer);
+			if(@$layer['jsoncheck']){//Если true значит да только если данные есть
+				if(!$data||(!is_null($data['result'])&&!$data['result']))return false;
+			}else if(@!$layer['jsoncheck']){//Если false Значит да только если данных нет
+				if(!$data||!$data['result'])return;
+				else return false;
+			}
+		}
+	}
+
+?>

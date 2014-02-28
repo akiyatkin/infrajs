@@ -1,0 +1,33 @@
+<script type="text/javascript">
+	ROOT='../../../../';
+</script>
+<script type="text/javascript" src="../js.php"></script>
+<script type="text/javascript">
+	infra.State.init();
+	if(location.search=='?test'){
+		location.href=location.pathname;
+	}
+	testcounter=0;
+	testvalues={
+		"0":"",
+		"1":"test"
+	}
+	infra.handle(infra.State,'onchange',function(){
+		var val=infra.State.get();
+		if(testvalues[testcounter]==val){
+			testcounter++;
+			if(testcounter>1){
+				good();
+			}else{
+				infra.State.go('?test');
+			}
+		}
+	});
+	var good=function(){
+		var res=document.getElementById('res');
+		res.innerHTML='PASS';
+		res.style.color="green";
+	}
+</script>
+<h1 id="res" style="color:red;">ERROR</h1>
+<div id="main"></div>

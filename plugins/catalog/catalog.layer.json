@@ -1,0 +1,119 @@
+{
+	"tpl":"*catalog/catalog.tpl",
+	"tplroot":"groups",
+	"json":"*catalog/catalog.php?type=rubrics",
+	"autoedittpl":{ "fast":"{infra.conf.catalog.dir}"},
+	
+	"child":[{
+		"tpl":"*catalog/catalog.tpl",
+		"tplroot":"search",
+		"jsontpl":"*catalog/catalog.php?type=search&val={state.name}&prod={config.sel}",
+		"autoedittpl":{ "fast":"{infra.conf.catalog.dir}" },
+		"linktpl":"{istate}",
+		"seotpl":{"link":"{istate.parent}/{{.}}"},
+		"conf_prod":true,
+		"parsedtpl":"{config.sel}",
+		"configtpl":{
+			"sel":"{config.sel|(state.name|)}"
+		},
+		"seo":{
+			"name":"Группа каталога",
+			"json":"*catalog/catalog.php?type=search&val={.}",
+			"tpl":["<h1>{title}</h1><p>{descr}</p>"],
+			"schema":{
+				"type":"string"
+			},
+			"items":[{	
+				"data":"Каталог"
+			},{	
+				"data":"Новинки"
+			}],
+			//массив items, все данные с дефолтными значениями всего благодаря чему можно получить уникальный контент.php
+			"defitems":"*catalog/catalog.php?type=seo&val=search"
+		},
+		"subs":{
+			"BREAD":{
+				"tpl":"*catalog/catalog.tpl",
+				"tplroot":"BREAD",
+				"conf_prod":true,
+				"jsontpl":"*catalog/catalog.php?type=bread&val={state.name}&prod={config.sel}",
+				"parsedtpl":"{config.sel}",
+				"configinherit":"true"
+			}
+		}
+		
+	},{
+		"child":{
+			"tpl":"*catalog/catalog.tpl",
+			"tplroot":"pos",
+			"autoedittpl":{ "fast":"*Каталог/{state.parent.name}/{state.name}/" },
+			"jsontpl":"*catalog/catalog.php?type=pos&val={state.parent.name}&art={state.name}",
+			"seotpl":{"link":"{istate.parent.parent}/{{producer}}/{{article}}"},
+			"seo":{
+				"name":"Позиция каталога",
+				"json":"*catalog/catalog.php?type=pos&val={producer}&art={article}",
+				"tpl":["<h1>{pos.Производитель} {pos.Артикул}</h1>{pos.texts::t}{t:}{.}"],
+				"schema":{
+					"type":"object",
+					"properties":{
+						"producer":{
+							"title":"Производитель",
+							"type":"string",
+							"required":true
+						},
+						"article":{
+							"title":"Артикул",
+							"type":"string",
+							"required":true
+						}
+					}
+					
+				},
+				"defitems":"*catalog/catalog.php?type=seo&val=pos"
+			}
+		}
+	}],
+
+	"childs":{
+		"Поиск":{
+			"tpl":"*catalog/catalog.tpl",
+			"tplroot":"find",
+			"autosavename":"search",
+			"myenv":{
+				"cat_search":false
+			}
+		},
+		"Производители":{
+			"tpl":"*catalog/catalog.tpl",
+			"tplroot":"producers",
+			"json":"*catalog/catalog.php?type=producers",
+			"autoedit":{ "fast":"*Тексты/Производители"},
+
+			"seotpl":{
+				"link":"{istate}",
+				"json":"{json}"
+			},
+			"seo":{
+				"name":"Все производители в каталоге",
+				"defitems":"*catalog/catalog.php?type=seo&val=producers",
+				"tpl":["{text}"]
+			}
+		},
+		"Статистика":{
+			"tpl":"*catalog/catalog.tpl",
+			"tplroot":"stat",
+			"json":"*catalog/catalog.php?type=stat",
+			"autoedit":{ "fast":"*Тексты/Статистика поиска по каталогу"},
+			"seotpl":{
+				"link":"{istate}",
+				"json":"{json}"
+			},
+			"seo":{
+				"name":"Статистика поиска по каталогу",
+				"defitems":"*catalog/catalog.php?type=seo&val=stat",
+				"tpl":["{text}"]
+			}
+			
+		}
+	}
+}

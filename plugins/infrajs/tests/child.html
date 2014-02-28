@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!--
+	<script src="http://ie.microsoft.com/testdrive/HTML5/CompatInspector/inspector.js"></script> 
+	-->
+	<script type="text/javascript">
+		ROOT='../../../../';
+	</script>
+	<script type="text/javascript" src="../initjs.php"></script>
+</head>
+<body style="padding:50px 100px">
+<h1 id="res" style="color:red;">ERROR</h1>
+<div id="main"></div>
+
+<script type="text/javascript">
+
+	function makeit(){
+		if(location.search!='?asdfx'){
+			//Как быть с проверкой если ajax смена адреса не работает
+			location.href=location.pathname+'?asdfx';
+			return;
+		}
+		infra.State.init();
+		var conf=infra.conf;
+		conf.infrajs.onlyclient=true;
+		window.layers={
+			"tpl":["x <a href='?asdfx'>adsfx</a> <a href='?qwerxx'>qwerxx</a><div id='a'></div>"],
+			"div":"main",
+			"child":{
+				"div":"a",
+				"tpltpl":["{state.name}"]
+			}
+		};
+		infrajs.checkAdd(layers);
+		infra.handle(infra.State,'onchange',function(){
+			infrajs.check();
+		});
+		
+		var calcx=function(){
+			var main=document.getElementById('main');
+			var html=$(main).text();
+			var r=html.split("x");
+			return r.length-1;
+		}
+		var good=function(){
+			var res=document.getElementById('res');
+			res.innerHTML='PASS';
+			res.style.color="green";
+		}
+		infra.handle(infrajs,'onshow',function(){
+			if(good.ready)return;
+			var count1=5;//3 икса
+			var count2=6;//3 икса
+				
+			var c=calcx();
+			if(location.search=='?asdfx'){//Первый
+				if(count1==c){
+					infra.State.go('?qwerxx');
+				}else{
+					good.ready=true;
+				}
+			}else{//Второй
+				good.ready=true;
+				if(count2==c){
+					good();
+				}
+			}
+		});
+	}
+	if(history.pushState)makeit();
+	else alert('Нет history.pushState');
+</script>
+</body>
+</html>

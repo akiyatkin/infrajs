@@ -1,0 +1,15 @@
+{
+	'any':{ },
+	'menu':{
+		title:'Меню',
+		type:'array',
+		items:{
+			title:'Пункт',
+			type:'object',
+			properties:{
+				name:{required:true,title:'Название',type:'string'},
+				href:{required:true,title:'Ссылка',type:'string'}
+			}
+		}
+	}
+}
