@@ -89,4 +89,6 @@ function &infra_config($sec=false){
 	$infra_config['secure']=$data;
 	return $infra_config[$sec];
 }
+$conf=infra_config();
+date_default_timezone_set($conf['infra']['timezone']);
 ?>

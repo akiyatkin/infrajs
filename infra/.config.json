@@ -1,7 +1,8 @@
 {
 	"debug":1,
 	"infra":{
-		"rootisfolder":true
+		"rootisfolder":true,
+		"timezone":"Europe/Moscow"
 	},
 	"admin":{
 		"login":"some",
