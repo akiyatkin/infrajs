@@ -18,6 +18,6 @@ $output[]='<b>'.$com.'</b>';
 exec($com,$output,$return);
 $output[]='return '.$return;
 
-echo '<pre>';
+echo '<h1>GIT pull</h1><pre>';
 print_r($output);
 ?>
