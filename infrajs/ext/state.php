@@ -2,7 +2,7 @@
 //Свойство dyn, state, istate
 //infra.load('*infrajs/ext/external.js');//Уже должен быть
 global $infrajs;
-infra_wait($infrajs,'oncheck',function(){
+infra_wait($infrajs,'oninit',function(){
 	infrajs_externalAdd('child','layers');
 	infrajs_externalAdd('childs',function(&$now,&$ext){//Если уже есть значения этого свойства то дополняем
 		if(!$now)$now=array();

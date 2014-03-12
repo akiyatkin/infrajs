@@ -12,7 +12,7 @@
  * object значит что subs будет восприниматься как объект свойства которого это массивы слоёв
  */
 global $infrajs;
-infra_wait($infrajs,'oncheck',function(){
+infra_wait($infrajs,'oninit',function(){
 	infrajs_runAddKeys('subs');
 	/**
 	 * subs, указанное в external, объединяется с основным описанием также, как свойство divs (как именно не помню)

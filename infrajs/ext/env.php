@@ -1,6 +1,6 @@
 <?php
 	global $infra,$infrajs;
-	infra_wait($infrajs,'oncheck',function(){
+	infra_wait($infrajs,'oninit',function(){
 		//Обработка envs, envtochild, myenvtochild, envframe
 		infrajs_externalAdd('myenv','config');//Обрабатывается также как config
 		infrajs_externalAdd('env','');//Никак не обрабатывается.. будет установлено только если нечего небыло

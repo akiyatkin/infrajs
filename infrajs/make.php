@@ -7,25 +7,25 @@
 	infra_State_set($query);
 
 //========================
-//infrajs oncheck
+//infrajs oninit
 //========================
 	//=======wait=====//
-	infra_wait($infrajs,'oncheck',function(){
+	infra_wait($infrajs,'oninit',function(){
 
 		//div
 		infrajs_div_init();
 	});
 	
-	infra_wait($infrajs,'oncheck',function(){	
+	infra_wait($infrajs,'oninit',function(){	
 		//config
 		infrajs_configinit();
 	});
-	infra_wait($infrajs,'oncheck',function(){	
+	infra_wait($infrajs,'oninit',function(){	
 		//parsed
 		infrajs_parsedinit();
 	});
 	//=======listen=====//
-	infra_listen($infrajs,'oncheck',function(&$layer){
+	infra_listen($infrajs,'oninit',function(&$layer){
 		//seo
 		infrajs_seo_init();
 	});
@@ -45,6 +45,10 @@
 		//infrajs
 		$store=&infrajs_store();
 		$layer['store']=array('counter'=>$store['counter']);
+	});
+	infra_listen($infra,'layer.oninit',function(&$layer){
+		//unick
+		infrajs_unickSet($layer);
 	});
 	infra_listen($infra,'layer.oninit',function(&$layer){//это из-за child// всё что после child начинает плыть. по этому надо state каждый раз определять, брать от родителя.
 		//state
@@ -109,10 +113,7 @@
 		//state
 		if(is_null($layer['istate']->obj))return false;
 	});
-	infrajs_isAdd('check',function(&$layer){
-		//unick
-		infrajs_unickSet($layer);
-	});
+	
 	
 
 //========================
@@ -190,7 +191,10 @@
 		//env myenvtochild
 		infrajs_envmytochild($layer);
 	});
-	
+//========================
+// infrajs oncheck
+//========================
+
 //========================
 //layer is show
 //========================

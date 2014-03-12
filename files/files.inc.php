@@ -180,7 +180,7 @@ function _files_list($dir,$start,$count,$exts){
 				$rr=infra_loadJSON('*pages/mht/mht.php?preview=1&src='.infra_toutf($dir).$file.$re);
 				if(!$rr)echo $file.'<br>';
 			}else if(in_array($ext,array('docx'))){
-				$rr=infra_loadJSON('*pages/docx.php?preview=1&src='.infra_toutf($dir).$file.$re);
+				$rr=infra_loadJSON('*pages/docx.php?preview=1&nocom&src='.infra_toutf($dir).$file.$re);
 			}
 
 			$rr['size']=round($size/1000000,2);

@@ -119,94 +119,165 @@
 		</table>
 		<input type="submit" style="display:none;">
 	</form>
-{search:}
-	<div id="BREAD"></div>
-	{data.result?data:searchgood?data:searchbad}
-	<script type="text/javascript">
-		infra.wait(infrajs,'onshow',function(){
-
-			var inp=$('[name=search]');
-			var val=infra.State.getState().child.child.name;
-			inp.val(val).change();
-		});
-	</script>
-	{searchbad:}
-		<h1>{val}</h1>
+{SEARCH:}
+		<script>
+			if(!window.catalog)window.catalog={ 
+				search:'Значение поиска',
+				path:['Путь','До','Группы']
+			};
+			infra.wait(infrajs,'oncheck',function(){
+				var layer=infrajs.getUnickLayer({unick});
+				window.catalog.search=infra.State.getState().child.child.name;
+				infra.when(layer,'onshow',function(){
+					var data=infrajs.getData(layer);
+					if(!data.path)data.path=[];
+					window.catalog.path=data.path;
+					
+				});
+			});
+		</script>
+		{data.result?data:searchgood?data:searchbad}
+		{searchbad:}
+			<h1>{val}</h1>
+			<p>
+				К сожалению ничего не найдено.
+			</p>
+			<p>
+				<a href="?{state.parent}">{state.parent.name}</a>
+			</p>
+			{text}
+		{isproducer:}producer
+		{isgroup:}group
+		{issearch:}search
+		{searchgood:}
 		
-		<p>
-			К сожалению ничего не найдено.
-		</p>
-		<p>
-			<a href="?{state.parent}">{state.parent.name}</a>
-		</p>
-		{text}
-	{searchgood:}
-		<style>
-			.position {
-				margin-bottom:40px;
-			}
-		</style>
-		<h1>{title}</h1>
-		<p>{descr}</p>
-		<p style="text-align:right">{parent:cat_childsp}</p>
-		<p>{childs::cat_childs}</p>
-		<div style="background-color:white; padding:20px 30px;">
-			{list::cat_item}
-		</div>
-		{text}
-		<p>
-			{text?childs::cat_childs}
-		</p>
-		{cat_childs:}
-			<a style="font-size:16px; line-height:24px;" href="?{state.parent}/{title}" title="Показать группу «{title}»">{title}</a>{~last()|:br}
-		{cat_childsp:}
-			<a href="?{state.parent}{title!:Каталог?:cat_plink}" title="Показать группу «{title}»">{title}</a>{~last()|:br}
-		{br:}<br>
-		{cat_plink:}/{title}
+				{parent:cat_childsp}
+				{data.is=:isproducer?:Производитель}{data.is=:isgroup?:Группа}{data.is=:issearch?:Поиск}
+				<h1 style="margin-bottom:0">{data.val}</h1>
+				{~length(data.bread.prods)?:search_prods}
+				{~length(data.bread.groups)?:search_groups}
+				<div style="margin-bottom:5px">{data.count} {~words(data.count,:позиция,:позиции,:позиций)}</div>
+			
+			{:groupsonly}
+			<div style="background-color:white; padding:20px 30px;">
+				{list::cat_item}
+			</div>
+			<h1>{title}</h1>
+			<p>{descr}</p>
+			{text}
+			{text?:groupsonly}
+			{cat_childs:}
+				<a style="font-size:16px; line-height:24px;" href="?{state.parent}/{title}" title="Показать группу «{title}»">{title}</a>{~last()|:br}
+			{cat_childsp:}
+				<a href="?{state.parent}{title!:Каталог?:cat_plink}" title="Показать группу «{title}»">{title}</a>{~last()|:br}
+			{br:}<br>
+			{cat_plink:}/{title}
+		{search_groups:}
+			<table cellspacing="0" cellpadding="0" style="margin:5px 0 10px 0;">
+				{data.bread.groups::bread_group}
+			</table>
+		{search_prods:}
+			<div style="font-size:12px;">
+				Производители: {data.bread.prods::bread_prod}
+			</div>
+			<script type="text/javascript">
+				infra.when(infrajs,'onshow',function(){
+					var layer=infrajs.getUnickLayer('{unick}');
+					if(!layer.config)layer.config={ };
+					var data=infrajs.getData(layer);
+					if(data.prodpage){
+						layer.config.sel=layer.state.name;
+					}
+					$('#'+layer.div).find('.someprod').click(function(){
+						var sel=$(this).data('name');
+						if(layer.config.sel==sel){
+							layer.config.sel='ПРОДУКЦИЯ';
+						}else{
+							layer.config.sel=sel;						
+						}
+						infrajs.run(infrajs.getAllLayers(),function(l){
+							if(!layer.conf_prod)return;
+							if(!l.config)l.config={ };
+							l.config.sel=layer.config.sel;
+						});
+						infrajs.check();
+					});
+				});
+			</script>
+		{bread_prod:}
+			<button style="padding:4px 8px; cursor:pointer; margin-right:6px; {.=data.sel?:bread_sel2}" data-name="{.}" class="someprod{.=data.sel?: sel}">
+				{.}
+			</button> 
+		{bread_sel2:} border: 2px inset gray;
+		{bread_sel:} font-weight:bold
+		{bread_logo:}<a href="?{state.parent}/{data.sel}"><img class="right" style="margin:5px" src="infra/plugins/imager/imager.php?h=40&or=img/bg.png&src=*Каталог/{data.sel}/"></a>
+		{bread_group:}
+			{$even()?:s_tr}
+			<td style="padding:2px 10px 2px 0;{title=state.name?:bread_sel}"><a href="?{state.parent}/{title}">{name}</a></td>
+			{$odd()?:e_tr}
 {groupsonly:}
-	<h1>{conf_title|:Продукция}</h1>
+	
 	
 	<style>
-		.catgrouplist td {
-			text-align:center;
+		.catgrouplist .img {
 			vertical-align:middle;
-			padding:5px 0px;
+			width:100px;
+			padding:4px;
+			height:90px;
+			text-align:center;
+			background-color:white;
 		}
-		.catgrouplist td.img {
-			padding:5px;
-			padding-right:10px;
-		}
-		.catgrouplist td.name {
+		.catgrouplist .name {
 			text-align:left;
 			font-family:Premjera;
 			vertical-align:middle;
 			font-size:20px;
+			padding-left:4px;
 		}
-		.catgrouplist td {
-			border-top:1px solid #EEEEEE;
+		.catgrouplist {
+			border-bottom:1px solid #EEEEEE;
 		}
-		.catgrouplist .sep {
-			width:10px;
-			border-right:1px solid #EEEEEE;
+		.catgrouplist a {
+			display:block;
+			width:300px;
+			float:left;
+		}
+		.catgrouplist .over {
+			background-color: #EEEEEE;
+			background: linear-gradient(#126FA8, #144F8F);
+			color:white;
 		}
 	</style>
-	<table class="catgrouplist" cellspacing="0" cellpadding="0">
+	<div class="catgrouplist">
 		{data.childs::groups_group}
-	</table>
+		<div style="clear:both"></div>
+	</div>
+	<script>
+		infra.when(infrajs,'onshow',function(){
+			var layer=infrajs.getUnickLayer({unick});
+			$('#'+layer.div).find('.catgrouplist a').hover(function(){
+				$(this).addClass('over');
+			},function(){
+				$(this).removeClass('over');
+			});
+		});
+	</script>
 	
-{groups_group:}{~leftOver(~key,:2)??:sTR}
-		<td class="img">
-			<a href="?{state}/{title}">
-				<img src="infra/plugins/imager/imager.php?w=200&h=80&src={infra.conf.catalog.dir}{pos.producer}/{pos.article}/&or=*imager/empty">
-			</a>
-		</td>
-		<td class="name"><a href="?{state}/{title}">{name}</a></td>
-		{~leftOver(~key,:2)?:eTR?:mTD}
-	{sTR:}<tr>
-	{eTR:}</tr>
-	{mTD:}<td class="sep"></td>
-	
+{groups_group:}
+	<a href="{infra.conf.catalog.link}/{title}">
+		<table>
+			<tr>
+				<td class="img">
+					<img  src="infra/plugins/imager/imager.php?w=100&h=80&src={infra.conf.catalog.dir}{pos.producer}/{pos.article}/&or=*imager/empty">
+				</td>
+				<td class="name">
+					{name}
+				</td>
+			</tr>
+		</table>
+	</a>
 {groups:}
+	<h1>{conf_title|:Продукция}</h1>
 	{:groupsonly}
 	<div style="margin-top:15px; margin-bottom:15px;">
 		{data.childs::cat_group}
@@ -232,7 +303,11 @@
 {logo:}
 	<img src="infra/plugins/imager/imager.php?w=300&src={infra.conf.catalog.dir}{Производитель}/{article}/" style="margin:0 0 5px 5px;">
 {cat_item:}
-	
+	<style>
+		.position {
+			margin-bottom:40px;
+		}
+	</style>
 	<div class="position">
 			<div style="text-align:right">{time?~date(:j F Y,time)}</div>
 			<a class="href" href="?{state.parent}/{Производитель}/{article}">
@@ -275,10 +350,6 @@
 			<img  src="infra/plugins/imager/imager.php?w=100&h=100&src={infra.conf.catalog.dir}{Производитель}/&or=*imager/empty" />
 		</a>
 	</div>
-{country:}<	<div style="text-align:right; font-size: 11px; margin-top:5px;">
-		{producer.Страна|}
-	</div>
-
 
 
 
@@ -398,56 +469,8 @@
 	</div>
 	-->
 
-{BRt:}{data.prod?:someprod a}
-{BRs:}{data.prod?:ПРОДУКЦИЯ?data.val}
-{BREAD:}
-	<div class="border4" style="font-size:14px; margin-top:5px; margin-bottom:10px;">
-		<div style="padding: 8px 0 8px 0; border-bottom:1px #EEE solid">
-			<table cellspacing="0" cellpadding="0" style="width:100%">
-				<tr>
-				<td>
-					<span style="margin-right:10px;" data-name="ПРОДУКЦИЯ" style="color:black">{data.val|:ПРОДУКЦИЯ}</span><br>{data.prods::bread_prod}
-				</td>
-				<td style="text-align:right">
-				</td></tr>
-			</table>
-		</div>
-		<script type="text/javascript">
-			infra.when(infrajs,'onshow',function(){
 
-				var layer=infrajs.getUnickLayer('{unick}');
-				if(!layer.config)layer.config={ };
-				var data=infrajs.getData(layer);
-				if(data.prodpage){
-					layer.config.sel=layer.state.name;
-				}
-				$('#'+layer.div).find('.someprod').click(function(){
-					var sel=$(this).data('name');
-					if(layer.config.sel==sel){
-						layer.config.sel='ПРОДУКЦИЯ';
-					}else{
-						layer.config.sel=sel;						
-					}
-					infrajs.run(infrajs.getAllLayers(),function(l){
-						if(!layer.conf_prod)return;
-						if(!l.config)l.config={ };
-						l.config.sel=layer.config.sel;
-					});
-					infrajs.check();
-				});
-			});
-		</script>
-		{data.sel?:bread_logo}
-		<table cellspacing="0" cellpadding="0" style="margin:5px 0 10px 0;">
-		{data.groups::bread_group}
-		</table>
-	</div>
-	{bread_prod:}<span style="margin-right:10px; {.=data.sel?:bread_sel}" data-name="{.}" class="someprod a{.=data.sel?: sel}">{.}</span>{~last()|: }
-	{bread_sel:} font-weight:bold
-	{bread_logo:}<a href="?{state.parent}/{data.sel}"><img class="right" style="margin:5px" src="infra/plugins/imager/imager.php?h=40&or=img/bg.png&src=*Каталог/{data.sel}/"></a>
-	{bread_group:}
-		{$even()?:s_tr}
-		<td style="padding:2px 10px 2px 0;{title=state.name?:bread_sel}"><a href="?{state.parent}/{title}">{name}</a></td>
-		{$odd()?:e_tr}
+	
+	
 {s_tr:}<tr>
 {e_tr:}</tr>

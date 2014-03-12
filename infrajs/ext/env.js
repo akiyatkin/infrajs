@@ -1,4 +1,4 @@
-	infra.wait(infrajs,'oncheck',function(){
+	infra.wait(infrajs,'oninit',function(){
 		infrajs.externalAdd('myenv','config');//Обрабатывается также как config
 		infrajs.externalAdd('env','');//Никак не обрабатывается.. будет установлено только если нечего небыло
 		infrajs.externalAdd('envs','childs');//Объединяется так же как childs

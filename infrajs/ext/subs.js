@@ -9,7 +9,7 @@
  * Теперь infrajs.run(layers) будет бегать по слоям описанным и в свойстве subs
  * object значит что subs будет восприниматься как объект свойства которого это массивы слоёв
  */
-infra.wait(infrajs,'oncheck',function(){
+infra.wait(infrajs,'oninit',function(){
 	infrajs.runAddKeys('subs');
 	infrajs.externalAdd('subs','divs');
 });

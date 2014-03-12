@@ -163,21 +163,25 @@ infrajs.check=function(layers){//Пробежка по слоям
 	}
 	
 	store.wlayers=wlayers;
-	infra.fire(infrajs,'oncheck');//loader
+	infra.fire(infrajs,'oninit');//loader
 	
 	
 	infrajs.run(infrajs.getWorkLayers(),function(layer,parent){//Запускается у всех слоёв в работе которые wlayers
 		if(parent)layer['parent']=parent;//Не обрабатывается ситуация когда check снутри иерархии
-		infra.fire(layer,'layer.oninit');
+		infra.fire(layer,'layer.oninit');//устанавливается state
 		if(infrajs.is('check',layer)){
 			infra.fire(layer,'layer.oncheck');//нельзя запускать is show так как ожидается что все oncheckb сделаются и в is будут на их основе соответствующие проверки
 		}
 	});//разрыв нужен для того чтобы можно было наперёд определить показывается слой или нет. oncheck у всех. а потом по порядку.
 
+	infra.fire(infrajs,'oncheck');//момент когда доступны слои для подписки и какой-то обработки
+
 	infrajs.run(infrajs.getWorkLayers(),function(layer){//С чего вдруг oncheck у всех слоёв.. надо только у активных		
 		if(infrajs.is('show',layer)){
 			if(!infrajs.is('rest',layer)){
+				
 				infra.fire(layer,'layer.onshow');//Событие в котором вставляется html
+				infra.fire(layer,'onshow');//своевременное выполнение infrajs.when onshow в кэше html когда порядок слоёв не играет роли
 				//при клике делается отметка в конфиге слоя и слой парсится... в oncheck будут подстановки tpl и isRest вернёт false
 			}//onchange показанный слой не реагирует на изменение адресной строки, нельзя привязывать динамику интерфейса к адресной строке, только черещ перепарсивание
 		}else if(layer.showed){

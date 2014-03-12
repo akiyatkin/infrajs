@@ -86,8 +86,9 @@
 		
 		$conf=infra_config();
 		$data=cat_init();
-		$ans=array(
+		$ans=array(//Оригинальные значения
 			'val'=>$val,
+			'prod'=>$prod,
 			'type'=>$type,
 			'art'=>$art
 		);
@@ -142,109 +143,6 @@
 			}
 		}else if($type=='bread'){
 			
-			$groups=array();
-			$prods=array();
-
-			if($val){
-				$d=xls_runGroups($data,function(&$g) use($val){
-					if(infra_strtolower($g['title'])==$val)return $g;
-				});
-				if(!$d)$d=&$data;
-			}else{
-				$d=&$data;
-			}
-
-			xls_runPoss($d,function(&$prods, &$pos){
-				$prods[infra_strtolower($pos['Производитель'])]=$pos['Производитель'];
-			},array(&$prods));
-			
-
-			$prodpage=isset($prods[$val]);
-			if(!$prodpage){
-				$conf=infra_config();
-				if(infra_theme($conf['catalog']['dir'].$val.'/')){
-					$prodpage=true;
-				}
-			}
-
-			if($prod){
-				$ans['sel']=$prods[$prod];//Правильное имя параметра sel - клик пользователя
-				if(!$ans['sel'])$prod='';
-			}
-			if($prodpage){
-				$ans['sel']=$prods[$val];//Правильное имя параметра sel - клик пользователя
-			}
-
-			$prods=array_values($prods);
-
-			$ans['prodpage']=$prodpage;
-
-			if($prodpage){
-				$prod=$val;
-				$prods=array();
-			}
-			
-			if($prod){//Выбран производитель
-				infra_forr($data['childs'],function(&$groups,$prod, &$g){//Оставляем тольк те группы в которхы есть этот производитель
-						xls_runPoss($g,function(&$groups,$prod, &$pos) use($g){
-							$p=mb_strtolower($pos['Производитель']);
-							if($p==$prod){
-								$title=$g['title'];
-								$name=$g['descr']['Наименование'];
-								if(!$name)$name=$title;
-								if(!$title)return;
-								$groups[]=array('name'=>$name,'title'=>$title);
-								return false;
-							}
-						},array(&$groups,$prod));
-				},array(&$groups,$prod));
-			}
-
-			$ans['prods']=$prods;
-			
-			if(!$prodpage){
-				/*if($prod&&$val&&$val!=='каталог'){//Надо убедится что выбранная группа в принципе содержит хоть одного такого производителя	
-					if(!infra_forr($groups,function($g) use($val){
-						if(infra_strtolower($g['title'])==$val)return true;
-					})){
-						$prod='';
-						$ans['prod']=$prod;
-					}
-				}
-				echo '<pre>';
-				var_dump($groups);
-				exit;*/
-
-				if(!$prod){
-					$groups=array();
-					infra_forr($data['childs'],function(&$groups,$prod, &$g){
-						$name=$g['descr']['Наименование'];
-						$title=$g['title'];
-						if(!$name)$name=$title;						
-						$groups[]=array('name'=>$name,'title'=>$title);
-					},array(&$groups,$prod));
-
-				
-				}
-				
-				$search=infra_loadJSON('*catalog/catalog.php?type=search&val='.$val);
-				if($search['is']=='search'){
-					$poss=$search['list'];
-					$groups=array();
-					$prods=array();
-					infra_forr($poss,function(&$prods,&$groups,&$pos){
-						$title=$pos['group_title'];
-						$name=$pos['group_name'];	
-						$prods[$pos['Производитель']]=$pos['Производитель'];
-						$groups[$name]=array('name'=>$name,'title'=>$title);
-					},array(&$prods,&$groups));
-					$groups=array_values($groups);
-					$ans['prods']=array_keys($prods);
-				}
-					
-			}
-			
-			$ans['groups']=$groups;
 			
 		}else if($type=='available'){
 			$available=infra_loadJSON($conf['catalog']['available']);
@@ -381,14 +279,14 @@
 				$ans['items']=$items;
 			}
 		}else if($type=='search'){
+			//Результат бывает group producer search change
+			//
 			$ans['list']=array();
 			if($val=='изменения'){
+				$ans['is']='change';
 				$ans['result']=1;
 				$ans['title']='Последние изменения';
 				$ans['descr']='Последнии позиций, у которых изменился текст полного описания.';
-				
-				//Смотрим дату изменения папки для каждой позиции кэшируем на изменение XLS файлов как всё здесь...
-				//Позиции без папок игнорируются
 				return $ans;
 			}
 			$group=&xls_runGroups($data,function(&$val,&$group){
@@ -398,9 +296,13 @@
 			if($group){
 				$ans['is']='group';
 				$ans['result']=1;
-				$ans['title']=$group['name'];
+				$ans['path']=$group['path'];
+				$ans['name']=$group['name'];//имя группы длинное
+				$ans['title']=$group['title'];//Имя группы подходящее для FS и длины листа в Excel
 				$ans['descr']=@$group['descr']['Описание группы'];
 				$ans['list']=$group['data'];
+
+
 
 				if($group['parent_title']){
 					/*$parent=&xls_runGroups($data,function($val,&$group){
@@ -435,7 +337,15 @@
 								$posscount++;
 							});
 						}
-						$ans['childs'][]=array('title'=>$v['title']);
+						$pos=&xls_runPoss($v,function&(&$pos){
+							return $pos;
+						});
+						if($pos){
+							$pos=array('article'=>$pos['article'],'producer'=>$pos['Производитель']);
+						}else{
+							$pos=array();
+						}
+						$ans['childs'][]=array('name'=>$v['name'],'title'=>$v['title'],'pos'=>$pos);
 					}
 				}
 				//Есть левый prod и перешли в группу где нет этого прода. группа найдена но нет подгрупп и нет позиций
@@ -455,13 +365,13 @@
 					$ans['is']='producer';
 					$prods=xls_init2($conf['catalog']['prod']);
 
-					$prod=&xls_runPoss($prods,function($val, &$prod){
+					$producer=&xls_runPoss($prods,function($val, &$prod){
 						if(infra_strtolower($prod['Производитель'])==$val)return $prod;
 					},array($val));
 
 					
-					if($prod){
-						$name=$prod['Производитель'];
+					if($producer){
+						$name=$producer['Производитель'];
 					}else if(sizeof($poss)){
 						$name=$poss[0]['Производитель'];
 					}else{
@@ -471,10 +381,9 @@
 						$name=$folder;
 					}
 					$ans['parent']=array('title'=>'Каталог');
-					$ans['producer']=true;
 					$ans['title']='Производитель '.$name;
 					$ans['result']=1;
-					$ans['descr']=@$prod['Описание группы'];
+					$ans['descr']=@$producer['Описание группы'];
 					$ans['list']=$poss;
 
 					$list=infra_loadJSON('*pages/list.php?onlyname=1&e=mht,docx,tpl&src='.CATDIR.$name.'/');
@@ -483,6 +392,7 @@
 					}
 				}else{//ищим позиции подходящие под запрос
 					$ans['is']='search';
+					$ans['parent']=array('title'=>'Каталог');
 					$data=xls_init2(CATDIR,array('Имя файла'=>$conf['catalog']['Имя файла'],'Ссылка parent'=>true));
 					cat_prepareData($data);
 					$v=explode(' ',$val);
@@ -516,7 +426,29 @@
 					$ans['text']='*pages/get.php?'.CATDIR.$val;
 				}
 			}
-			if(!$ans['producer']&&$prod){
+			
+
+
+
+			//BREAD
+			$bread=array();
+			
+			$prods=array();
+			if($ans['is']=='group'){
+				xls_runPoss($group,function(&$pos) use(&$prods){
+					$prods[infra_strtolower($pos['Производитель'])]=$pos['Производитель'];
+				});
+			}else if($ans['is']=='search'){
+				infra_forr($ans['list'],function(&$pos) use(&$prods){
+					$prods[infra_strtolower($pos['Производитель'])]=$pos['Производитель'];
+				});
+			}else{
+				xls_runPoss($data,function(&$pos) use(&$prods){
+					$prods[infra_strtolower($pos['Производитель'])]=$pos['Производитель'];
+				});
+			}
+
+			if(($ans['is']!='producer')&&$prod){
 				$list2=array();
 				for($i=0,$l=sizeof($ans['list']);$i<$l;$i++){
 					if($prod==infra_strtolower($ans['list'][$i]['Производитель'])){
@@ -524,10 +456,116 @@
 					}
 				}
 				$ans['list']=$list2;
-				$ans['descr'].='<p>Найдено позиций: '.($posscount+sizeof($ans['list']).'</p>');
+				//$ans['descr'].='<p>Найдено позиций: '.($posscount+sizeof($ans['list'])).'</p>';
 			}else{
-				$ans['descr'].='<p>Найдено позиций: '.($posscount+sizeof($ans['list']).'</p>');
+				//$ans['descr'].='<p>Найдено позиций: '.($posscount+sizeof($ans['list'])).'</p>';
 			}
+
+			$ans['count']=$posscount+sizeof($ans['list']);
+
+			$prodpage=isset($prods[$val]);
+			if(!$prodpage){
+				$conf=infra_config();
+				if(infra_theme($conf['catalog']['dir'].$val.'/')){
+					$prodpage=true;
+				}
+			}
+
+			if($prod){
+				$ans['sel']=$prods[$prod];//Правильное имя параметра sel - клик пользователя
+				if(!$ans['sel'])$prod='';
+			}
+			if($prodpage){
+				$ans['sel']=$prods[$val];//Правильное имя параметра sel - клик пользователя
+			}
+
+			$prods=array_values($prods);
+			//if(sizeof($prods)<2)$prods=array();
+
+			$bread['prodpage']=$prodpage;
+
+			if($prodpage){
+				$prod=$val;
+				$prods=array();
+			}
+			$groups=array();
+			if($ans['sel']){//Выбран производитель
+				if($ans['is']=='group'&&sizeof($ans['path'])<2){//Группа 1ого уровня
+					infra_forr($data['childs'],function(&$groups,$prod, &$g){//Оставляем тольк те группы в которхы есть этот производитель
+							xls_runPoss($g,function(&$groups,$prod, &$pos) use($g){
+								$p=mb_strtolower($pos['Производитель']);
+								if($p==$prod){
+									$title=$g['title'];
+									$name=$g['descr']['Наименование'];
+									if(!$name)$name=$title;
+									if(!$title)return;
+									$groups[]=array('name'=>$name,'title'=>$title);
+									return false;
+								}
+							},array(&$groups,$prod));
+					},array(&$groups,$prod));
+				}
+			}
+
+			$bread['prods']=$prods;
+			
+			if(!$prodpage){
+				/*if($prod&&$val&&$val!=='каталог'){//Надо убедится что выбранная группа в принципе содержит хоть одного такого производителя	
+					if(!infra_forr($groups,function($g) use($val){
+						if(infra_strtolower($g['title'])==$val)return true;
+					})){
+						$prod='';
+						$ans['prod']=$prod;
+					}
+				}
+				echo '<pre>';
+				var_dump($groups);
+				exit;*/
+
+				/*if(!$prod){
+					$groups=array();
+					infra_forr($data['childs'],function(&$groups,$prod, &$g){
+						$name=$g['descr']['Наименование'];
+						$title=$g['title'];
+						if(!$name)$name=$title;						
+						$groups[]=array('name'=>$name,'title'=>$title);
+					},array(&$groups,$prod));
+				}*/
+				
+				
+				/*if($prod&&$ans['is']=='search'){
+					$poss=$ans['list'];
+					$groups=array();
+					$prods=array();
+					infra_forr($poss,function(&$prods,&$groups,&$pos){
+						$title=$pos['group_title'];
+						$name=$pos['group_name'];	
+						$prods[$pos['Производитель']]=$pos['Производитель'];
+						$groups[$name]=array('name'=>$name,'title'=>$title);
+					},array(&$prods,&$groups));
+					$groups=array_values($groups);
+					$ans['prods']=array_keys($prods);
+				}*/
+					
+			}
+			if($ans['sel']&&$ans['is']!='producer'){
+				unset($ans['title']);
+				unset($ans['text']);
+				unset($ans['descr']);
+				if(!$ans['list']){
+					if($ans['is']=='group'){
+						$list=array();
+						xls_runPoss($group,function(&$pos) use(&$list,&$ans){
+							if($pos['Производитель']!=$ans['sel'])return;
+							$list[]=$pos;
+						});
+						$ans['list']=$list;
+					}
+				}
+			}
+			if(sizeof($groups)==1)$groups=array();
+			$bread['groups']=$groups;
+			$ans['bread']=$bread;
 
 		}else if($type=='producers'){
 			$prods=array();

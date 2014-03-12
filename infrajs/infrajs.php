@@ -74,7 +74,7 @@ function infrajs_check(&$layers=null){//Пробежка по слоям
 		$store['wlayers']=$store['alayers'];
 	}
 
-	infra_fire($infrajs,'oncheck');//loader, сборка событий
+	infra_fire($infrajs,'oninit');//сборка событий
 
 
 
@@ -89,13 +89,14 @@ function infrajs_check(&$layers=null){//Пробежка по слоям
 		
 	},array(&$store));//разрыв нужен для того чтобы можно было наперёд определить показывается слой или нет. oncheck у всех. а потом по порядку.
 
-
+	infra_fire($infrajs,'oncheck');//момент когда доступны слои по getUnickLayer
 	
 	infrajs_run(infrajs_getWorkLayers(),function(&$layer){//С чего вдруг oncheck у всех слоёв.. надо только у активных
 		if(infrajs_is('show',$layer)){			
-
+			
 			//Событие в котором вставляется html		
 			infra_fire($layer,'layer.onshow');//при клике делается отметка в конфиге слоя и слой парсится... в oncheck будут подстановки tpl и isRest вернёт false
+			infra_fire($layer,'onshow');
 			//onchange показанный слой не реагирует на изменение адресной строки, нельзя привязывать динамику интерфейса к адресной строке, только черещ перепарсивание
 		}
 	});//у родительского слоя showed будет реальное а не старое

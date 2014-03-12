@@ -1,6 +1,6 @@
 //Свойство dyn, state, istate, link
 //infra.load('*infrajs/props/external.js');//Уже должен быть
-infra.wait(infrajs,'oncheck',function(){
+infra.wait(infrajs,'oninit',function(){
 	infrajs.externalAdd('child','layers');
 	infrajs.externalAdd('childs',function(now,ext){//Если уже есть значения этого свойства то дополняем
 		if(!now)now={};

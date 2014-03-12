@@ -97,7 +97,7 @@ if(@$_GET['id']){//Загрузка файла
 				//Критерий что у работает сборка.. работаем сейчас в пространстве infrajs_check()
 				//Подписка на события infra_wait(infra,oninit) во всех остальных случаях событие не сработает. и подписка потеряется. а в нужном случае сразу выполнится			
 				global $infrajs;
-				infra_wait($infrajs,'oncheck',function() use(&$res,$type){
+				infra_wait($infrajs,'oninit',function() use(&$res,$type){
 					$conf=infra_config();
 					$r=infra_view_getRoot(ROOT);
 					

@@ -3,7 +3,7 @@
 	//Нужно для уникальной идентификации какого-то слоя. Для хранения данных слоя в глобальной области при генерации слоя на сервере и его отсутствия на клиенте. Slide
 	global $unick_counter;
 	global $infra,$infrajs;
-	infra_wait($infrajs,'oncheck',function(){
+	infra_wait($infrajs,'oninit',function(){
 		//session и template
 		global $infra_template_scope;
 		$fn=function($unick){

@@ -193,8 +193,8 @@ function &xls_runGroups(&$data,$callback,$args=array(),$back=false,$i=0,&$group=
 		$r=call_user_func_array($callback,array_merge($args,array(&$data,$i,&$group)));
 		if(!is_null($r))return $r;
 	}
-	$r=&infra_forr($data['childs'],function($callback,$back,$args, &$val,$i,&$group){
-		return xls_runGroups($val,$callback,$args, $back,$i,$group);
+	$r=&infra_forr($data['childs'],function($callback,$back,$args, &$val,$i) use(&$data){
+		return xls_runGroups($val,$callback,$args, $back,$i,$data);
 	},array($callback,$back,$args),$back);
 	if(!is_null($r))return $r;
 	
@@ -313,14 +313,7 @@ function xls_processPossFilter(&$data,$props){//Если Нет какого-т�
 		$data['data']=$d;
 	},array(&$props));
 }
-function xls_processPossPath(&$data){//
-	//используется path групп
-	xls_runPoss($data,function(&$pos){
-		$data=&$pos['group'];
-		$pos['path']=$data['path'];
-		$pos['path'][]=$data['title'];
-	});
-}
+
 function xls_processPossBe(&$data,$check1,$check2){//Если у позиции нет поля check1.. то оно будет равнятся полю check2
 	//используется data
 	xls_runPoss($data,function($check1,$check2, &$pos){	
@@ -445,15 +438,7 @@ function xls_processGroupCalculate(&$data){
 		},array(&$data));
 	},array(),true);
 };
-function xls_processGroupPath(&$main){
-	xls_runGroups($main,function(&$data){
-		$data['path']=array();
-		if(@$data['parent']&&@$data['parent']['parent']){
-			$data['path']=array_merge($data['parent']['path']);
-			$data['path'][]=$data['parent']['title'];
-		}
-	});
-};
+
 function xls_processClassEmpty(&$data,$clsname){
 	xls_runGroups($data,function($clsname,&$gr){
 		$poss=array();
@@ -806,9 +791,26 @@ function &xls_init2($path,$config=array()){//Возвращает полност
 			unset($pos['group']);
 		});
 	}
-
+	xls_runGroups($data,function(&$data,$i,&$group){//path
+		if(!$group){
+			$data['path']=array();
+		}else{
+			$data['path']=$group['path'];
+			$data['path'][]=$data['title'];
+		}
+	});
 	return $data;
 };
+
+
+
+
+
+
+
+
+
+
 
 function &xls_init($path,$musthaveproducers=null){//Возвращает полностью гототовый массив
 	$config=array();
@@ -892,4 +894,21 @@ function &xls_init($path,$musthaveproducers=null){//Возвращает пол�
 
 	return $data;
 };
+function xls_processGroupPath(&$main){
+	xls_runGroups($main,function(&$data){
+		$data['path']=array();
+		if(@$data['parent']&&@$data['parent']['parent']){
+			$data['path']=array_merge($data['parent']['path']);
+			$data['path'][]=$data['parent']['title'];
+		}
+	});
+};
+function xls_processPossPath(&$data){//
+	//используется path групп
+	xls_runPoss($data,function(&$pos){
+		$data=&$pos['group'];
+		$pos['path']=$data['path'];
+		$pos['path'][]=$data['title'];
+	});
+}
 ?>

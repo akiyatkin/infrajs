@@ -8,7 +8,7 @@
 	//tplroot
 	//parsed
 
-	infra.wait(infrajs,'oncheck',function(){
+	infra.wait(infrajs,'oninit',function(){
 		infrajs.parsedAdd('dataroot');
 		infrajs.parsedAdd('tplroot');
 		infrajs.parsedAdd('envval');

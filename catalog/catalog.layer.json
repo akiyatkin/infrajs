@@ -6,15 +6,15 @@
 	
 	"child":[{
 		"tpl":"*catalog/catalog.tpl",
-		"tplroot":"search",
-		"jsontpl":"*catalog/catalog.php?type=search&val={state.name}&prod={config.sel}",
+		"tplroot":"SEARCH",
+		"jsontpl":"*catalog/catalog.php?type=search&val={istate.name}&prod={config.sel}",
 		"autoedittpl":{ "fast":"{infra.conf.catalog.dir}" },
 		"linktpl":"{istate}",
 		"seotpl":{"link":"{istate.parent}/{{.}}"},
 		"conf_prod":true,
 		"parsedtpl":"{config.sel}",
 		"configtpl":{
-			"sel":"{config.sel|(state.name|)}"
+			"sel":"{config.sel|(istate.name|)}"
 		},
 		"seo":{
 			"name":"Группа каталога",
@@ -30,18 +30,7 @@
 			}],
 			//массив items, все данные с дефолтными значениями всего благодаря чему можно получить уникальный контент.php
 			"defitems":"*catalog/catalog.php?type=seo&val=search"
-		},
-		"subs":{
-			"BREAD":{
-				"tpl":"*catalog/catalog.tpl",
-				"tplroot":"BREAD",
-				"conf_prod":true,
-				"jsontpl":"*catalog/catalog.php?type=bread&val={state.name}&prod={config.sel}",
-				"parsedtpl":"{config.sel}",
-				"configinherit":"true"
-			}
 		}
-		
 	},{
 		"child":{
 			"tpl":"*catalog/catalog.tpl",

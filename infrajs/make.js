@@ -35,33 +35,33 @@
 // infrajs oncheck
 //========================
 	//==========wait====//
-	infra.wait(infrajs,'oncheck',function(layer){
+	infra.wait(infrajs,'oninit',function(layer){
 		//show
 		infrajs.show_init();
 	});
-	infra.wait(infrajs,'oncheck',function(){
+	infra.wait(infrajs,'oninit',function(){
 		//config
 		infrajs.configinit();
 	})
-	infra.wait(infrajs,'oncheck',function(){
+	infra.wait(infrajs,'oninit',function(){
 		//onsubmit
 		infrajs.onsubmitinit();
 	});
-	infra.wait(infrajs,'oncheck',function(){
+	infra.wait(infrajs,'oninit',function(){
 		//parsed
 		infrajs.parsedinit();
 	});
 	//==========listen====//
-	infra.listen(infrajs,'oncheck',function(){
+	infra.listen(infrajs,'oninit',function(){
 		//loader
 		infra.loader.show();
 	});
-	infra.listen(infrajs,'oncheck',function(layer){
+	infra.listen(infrajs,'oninit',function(layer){
 		//tpl
 		var store=infrajs.store();
 		store.divs={};
 	});
-	infra.wait(infrajs,'oncheck',function(){
+	infra.wait(infrajs,'oninit',function(){
 		//autoedit
 		infrajs.autoeditInit();	
 	});
@@ -75,11 +75,18 @@
 		infrajs.external.check(layer);
 	});
 	infra.listen(infra,'layer.oninit',function(layer){
+		//config
+		infrajs.configinherit(layer);
+	});
+	infra.listen(infra,'layer.oninit',function(layer){
 		//infrajs
 		var store=infrajs.store();
 		layer['store']={'counter':store['counter']};
 	});
-	
+	infra.listen(infra,'layer.oninit',function(layer){
+		//unick
+		infrajs.unickSet(layer);
+	});
 	infra.listen(infra,'layer.oninit',function(layer){//это из-за child// всё что после child начинает плыть. по этому надо state каждый раз определять, брать от родителя.
 		//state
 		if(!layer['dyn']){//Делается только один раз
@@ -135,10 +142,7 @@
 		//state
 		if(!layer['istate']['obj'])return false;
 	});
-	infrajs.isAdd('check',function(layer){
-		//unick
-		infrajs.unickSet(layer);
-	});
+	
 	infrajs.isAdd('check',function(layer){
 		//tpl
 		if(layer['onlyserver'])return false;
@@ -168,10 +172,7 @@
 		//subs
 		infrajs.subMake(layer);
 	});
-	infra.listen(infra,'layer.oncheck',function(layer){
-		//config
-		infrajs.configinherit(layer);
-	});
+	
 	infra.listen(infra,'layer.oncheck',function(layer){
 		//config
 		infrajs.configtpl(layer);
@@ -245,6 +246,10 @@
 		//show
 		infrajs.show_animate(layer);
 	});
+//========================
+// infrajs oncheck
+//========================
+
 //========================
 // layer is show
 //========================	
@@ -358,7 +363,6 @@
 		if(!infrajs.is('show',layer))return true;//На случай если забежали окольными путями к слою который не показывается (вообще в check это исключено, но могут быть другие забеги)
 
 		var r=infrajs.divparentIsRest(layer);
-		if(layer.debug)console.log(infrajs.store().divs);
 		return r;
 	});
 	

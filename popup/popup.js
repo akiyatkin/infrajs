@@ -1,4 +1,4 @@
-infra.wait(infrajs,'oncheck',function(){
+infra.wait(infrajs,'oninit',function(){
 	infrajs.parsedAdd('popupis');
 });
 infrajs.popup_memorize=function(code){

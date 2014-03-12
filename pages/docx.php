@@ -472,7 +472,9 @@
 		//Следующий кэш в getHtml там подгружается html с помощью infra_loadTEXT
 		//и Ещё один главный кэш в check но там уже всё будет применено, а сейчас у нас весит команда для env и что с ней делать?
 		//Эта же команда обработана и вставлена в javascript html
-		@header('infra-com:'.infra_json_encode($com));
+		if(!isset($_GET['nocom'])){
+			@header('infra-com:'.infra_json_encode($com));
+		}
 
 		if($type=='norm'){
 			echo $html;

@@ -1,6 +1,6 @@
 //global:(bool);// проверка есть tpl или нет. Если tpl будет загружен пустой слой не покажется
 //globalignoredata:(bool); загружать повторно данные или нет
-infra.wait(infrajs,'oncheck',function(){
+infra.wait(infrajs,'oninit',function(){
 	infrajs.externalAdd('global','external');
 	infrajs.parsedAdd(function(layer){
 		if(!layer.global)return '';

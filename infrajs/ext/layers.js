@@ -1,4 +1,4 @@
 //Свойство layers
-infra.wait(infrajs,'oncheck',function(){
+infra.wait(infrajs,'oninit',function(){
 	infrajs.runAddList('layers');	
 });

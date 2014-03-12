@@ -6,7 +6,7 @@
 //autosave="0" не использовать автосохранение для данного слоя
 //autosavebreak="1" позволять у поля сбрасывать автососхранение
 
-infra.wait(infrajs,'oncheck',function(){
+infra.wait(infrajs,'oninit',function(){
 	infrajs.externalAdd('autosave',function(now,ext,layer,external){
 		if(external.inheritance){
 			now=ext;//Если есть метка о наследовании, то просто сохраняем указатель
