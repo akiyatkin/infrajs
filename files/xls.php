@@ -183,9 +183,14 @@ function &xls_make($path){
 	},array(&$groups));
 	return $groups;
 }
-function &xls_runPoss(&$data,$callback,$args=array(),$back=false,$i=0,&$group=false){
+function &xls_runPoss(&$data,$callback,$args=array(),$back=false){
 	return xls_runGroups($data,function($back,$callback,$args, &$group){
-		return infra_forr($group['data'],$callback,$args);
+
+		return infra_forr($group['data'],function(&$pos,$i) use($args,$callback,&$group){
+			$r=call_user_func_array($callback,array_merge($args,array(&$pos,$i,&$group)));
+			if(!is_null($r))return $r;
+		});
+
 	},array($back,$callback,&$args),$back);
 }
 function &xls_runGroups(&$data,$callback,$args=array(),$back=false,$i=0,&$group=false){
@@ -349,7 +354,7 @@ function xls_processPossMore(&$data,$props){
 			else $more[$name]=&$val;
 		},array(&$p,&$prop,&$more));
 		if($more)$p['more']=&$more;
-		$group[$i]=&$p;
+		$group['data'][$i]=&$p;
 	},array(&$props));
 }
 

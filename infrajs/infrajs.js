@@ -187,7 +187,7 @@ infrajs.check=function(layers){//Пробежка по слоям
 		}else if(layer.showed){
 			//Правильная форма события (conteiner,name,obj)
 			infra.fire(layer,'layer.onhide'); //нужно для autosave
-			infra.fire(layer,'onhide');
+			infra.fire(layer,'onhide');//сбросить catalog когда скрылся слой поиска в каталоге
 		}
 		layer.showed=infrajs.is('show',layer);//Свойства showed. Нужно знать предыдущее значение isShow с последней проверки. Используется в admin.js
 	});//у родительского слоя showed будет реальное а не старое, назад showed проверять нельзя

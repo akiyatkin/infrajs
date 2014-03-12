@@ -125,14 +125,21 @@
 				search:'Значение поиска',
 				path:['Путь','До','Группы']
 			};
+
 			infra.wait(infrajs,'oncheck',function(){
+
 				var layer=infrajs.getUnickLayer({unick});
 				window.catalog.search=infra.State.getState().child.child.name;
+
+				infra.when(layer,'onhide',function(){
+					window.catalog.search='';
+					window.catalog.path=[];
+				});
+
 				infra.when(layer,'onshow',function(){
 					var data=infrajs.getData(layer);
 					if(!data.path)data.path=[];
 					window.catalog.path=data.path;
-					
 				});
 			});
 		</script>
@@ -415,6 +422,29 @@
 	</style>
 	{data.result?data.pos:start}
 {start:}
+	<script>
+			if(!window.catalog)window.catalog={ 
+				search:'Значение поиска',
+				path:['Путь','До','Группы']
+			};
+
+			infra.wait(infrajs,'oncheck',function(){
+
+				var layer=infrajs.getUnickLayer({unick});
+				window.catalog.search=infra.State.getState().child.child.name;
+
+				infra.when(layer,'onhide',function(){
+					window.catalog.search='';
+					window.catalog.path=[];
+				});
+
+				infra.when(layer,'onshow',function(){
+					var data=infrajs.getData(layer);
+					if(!data.path)data.path=[];
+					window.catalog.path=data.path;
+				});
+			});
+		</script>
 	<div id="position">
 		<div style="float:right">
 		{:producer}

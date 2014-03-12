@@ -118,11 +118,13 @@
 			$ans['childs']=$data;
 		}else if($type=='pos'){
 			$ans['pos']=false;
-			$pos=&xls_runPoss($data,function(&$val,&$art,&$pos){
+			$pos=&xls_runPoss($data,function(&$val,&$art, &$pos,$i,&$group) {
 				if(infra_strtolower($pos['Производитель'])!==$val)return;
 				if(infra_strtolower($pos['article'])!==$art)return;
+				$pos['path']=$group['path'];
 				return $pos;
 			},array(&$val,&$art));
+
 			if($pos){
 				$name=infra_strtolower($pos['Производитель']);
 				$prods=xls_init2($conf['catalog']['prod']);
@@ -136,6 +138,7 @@
 
 				$ans['result']=1;
 				$ans['pos']=&$pos;
+				$ans['path']=$pos['path'];
 
 				
 				//$pos['images']=infra_load('*pages/list.php?src='.$conf['catalog']['dir'].$pos['Производитель'].'/'.$pos['article'].'/&onlyname=1&e=jpg,png,gif','fj');
