@@ -160,7 +160,7 @@
 		
 				{parent:cat_childsp}
 				{data.is=:isproducer?:Производитель}{data.is=:isgroup?:Группа}{data.is=:issearch?:Поиск}
-				<h1 style="margin-bottom:0">{data.val}</h1>
+				<h1 style="margin-bottom:5px; margin-top:5px;">{data.val}</h1>
 				{~length(data.bread.prods)?:search_prods}
 				{~length(data.bread.groups)?:search_groups}
 				<div style="margin-bottom:5px">{data.count} {~words(data.count,:позиция,:позиции,:позиций)}</div>
@@ -249,11 +249,7 @@
 			width:300px;
 			float:left;
 		}
-		.catgrouplist .over {
-			background-color: #aaaaaa;
-			background: linear-gradient(#126FA8, #144F8F);
-			color:white;
-		}
+		
 	</style>
 	<div class="catgrouplist">
 		{data.childs::groups_group}
@@ -263,9 +259,9 @@
 		infra.when(infrajs,'onshow',function(){
 			var layer=infrajs.getUnickLayer({unick});
 			$('#'+layer.div).find('.catgrouplist a').hover(function(){
-				$(this).addClass('over');
+				$(this).addClass('bigbtnover');
 			},function(){
-				$(this).removeClass('over');
+				$(this).removeClass('bigbtnover');
 			});
 		});
 	</script>

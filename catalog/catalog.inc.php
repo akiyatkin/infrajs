@@ -3,6 +3,7 @@
 		$conf=infra_config();
 		$data=infra_cache(array($conf['catalog']['dir']),'cat_init',function(){
 			$conf=infra_config();
+
 			$data=&xls_init2($conf['catalog']['dir'],array('Имя файла'=>$conf['catalog']['Имя файла']));
 			cat_prepareData($data);
 			return $data;

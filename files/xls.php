@@ -488,13 +488,13 @@ function xls_processGroupMiss(&$data){
 		return false;
 	}
 
-	xls_runGroups($data,function(&$gr,$i,&$childs){
+	xls_runGroups($data,function(&$gr,$i,&$group){
 		if(@$gr['miss']&&@$gr['parent']){
 			//Берём детей missгруппы и переносим их в родительскую
 			infra_forr($gr['childs'],function(&$parent, &$g){
 				$g['parent']=&$parent;
 			},array(&$gr['parent']));
-			array_splice($childs,$i,1,$gr['childs']);
+			array_splice($group['childs'],$i,1,$gr['childs']);
 
 			infra_forr($gr['data'],function(&$parent, &$p){
 				$p['group']=&$parent;
@@ -508,7 +508,6 @@ function xls_processGroupMiss(&$data){
 		//	$arr[]=&$gr;
 		}
 	},array(),true);//Если бежим вперёд повторы несколько раз находим, так как добавляем в конец// Если бежим сзади рушится порядок
-
 }
 function _xls_sort($a,$b){
 	return ($a < $b) ? -1 : ($a > $b) ? 1 : 0;
@@ -743,7 +742,7 @@ function &xls_init2($path,$config=array()){//Возвращает полност
 
 	xls_processGroupFilter($data);//Объединяются группы с одинаковым именем, Удаляются пустые группы
 
-	
+
 
 	xls_processGroupMiss($data);//Группы miss(производители) расформировываются
 
@@ -806,114 +805,4 @@ function &xls_init2($path,$config=array()){//Возвращает полност
 	});
 	return $data;
 };
-
-
-
-
-
-
-
-
-
-
-
-function &xls_init($path,$musthaveproducers=null){//Возвращает полностью гототовый массив
-	$config=array();
-	if(is_array($musthaveproducers))$config=$musthaveproducers;
-
-	if(is_null($musthaveproducers))$musthaveproducers=true;
-	if(infra_isAssoc($path)===true)return $path;
-	$parent=false;
-	$data=_xls_createGroup('Каталог',$parent,'set');//Сделали группу в которую объединяются все остальные
-	$data['miss']=true;//Если в группе будет только одна подгруппа она удалится... подгруппа поднимится на уровень выше
-	
-	$ar=array();		
-	infra_fora($path,function(&$ar, $path){
-		$f=infra_theme($path);
-		if($f&&is_file(ROOT.$f)){
-			$ar[]=$path;
-		}else if($f&&is_dir(ROOT.$f)){
-			$files=glob(ROOT.$f.'*');
-			infra_forr($files,function($path,&$ar, $file){
-				$file=pathinfo($file,PATHINFO_BASENAME);
-				if($file{0}=='.')return;
-				$ext=strtolower(pathinfo($file,PATHINFO_EXTENSION));
-				if($ext=='xls')$ar[]=$path.infra_toutf($file);
-			},array($path,&$ar));
-		}
-	},array(&$ar));
-	
-	infra_forr($ar,function(&$data, $path){
-		$d=&xls_make($path);
-		if(!$d)return;
-		$d['parent']=&$data;
-		$data['childs'][]=&$d;
-	},array(&$data));
-
-
-	//if(data.childs.length==1)data=data.childs[0];
-
-	xls_processDescr($data);
-	
-	xls_processPoss($data);
-	/*xls_runGroups($data,function(&$group){
-		unset($group['parent']);
-	});
-	echo '<pre>';
-	print_r($data);
-	exit;*/
-
-	if(@$config['Артикул']){
-		xls_processPossBe($data,'Артикул',$config['Артикул']);//Если есть что-то из этого то второе будет такимже если второго нет
-	}
-
-	xls_processClass($data,'Производитель',$musthaveproducers);//Должен быть обязательно
-
-	xls_processPossBe($data,'Артикул','Наименование');//Если есть что-то из этого то второе будет такимже если второго нет
-
-	xls_processPossFilter($data,array('Артикул'));//Обязательно должны быть
-	xls_processPossBe($data,'Артикул','Наименование');//Если есть что-то из этого то второе будет такимже если второго нет
-	xls_processPossFS($data,array('Артикул'=>'Артикул'));//Заменяем левые символы в свойстве
-
-
-	//infra.forr(data.childs,function(d){console.log(d.title)});
-	//this.run(data,function(d){ console.log(d.descr)});
-	xls_processGroupMiss($data);//Группы miss(производители) расформировываются
-	if(@$config['upper']){
-		xls_runGroups($data,function(&$group){
-			$group['title']=strtoupper($group['title']);
-		});
-	}
-
-
-	xls_processGroupFilter($data);//Объединяются группы с одинаковым именем, Удаляются пустые группы
-	xls_processGroupCalculate($data);//Добавляются свойства count groups сколько позиций и групп группы должны быть уже определены... почищены...				
-	
-	xls_processGroupPath($data);
-	xls_processPossPath($data);
-
-	if(@!$config['Основные колонки'])$config['Основные колонки']=array('Производитель','Наименование','Описание','Артикул');
-	$config['Основные колонки'][]='path';
-	$config['Основные колонки'][]='group';
-	xls_processPossMore($data,$config['Основные колонки']);//позициям + more		
-
-	return $data;
-};
-function xls_processGroupPath(&$main){
-	xls_runGroups($main,function(&$data){
-		$data['path']=array();
-		if(@$data['parent']&&@$data['parent']['parent']){
-			$data['path']=array_merge($data['parent']['path']);
-			$data['path'][]=$data['parent']['title'];
-		}
-	});
-};
-function xls_processPossPath(&$data){//
-	//используется path групп
-	xls_runPoss($data,function(&$pos){
-		$data=&$pos['group'];
-		$pos['path']=$data['path'];
-		$pos['path'][]=$data['title'];
-	});
-}
 ?>

@@ -27,6 +27,7 @@ a img {
 td,th {
 	vertical-align:top;
 }
+
 table.common {
 	border:none;
 	border:solid 1px gray;
@@ -60,4 +61,9 @@ table.common tr.odd td.com, table.common tr.odd th.com {
 table.common p {
 	margin:0;
 	padding:0;
+}
+.bigbtnover {
+	background-color: #aaaaaa;
+	background: linear-gradient(#126FA8, #144F8F);
+	color:white !important;
 }

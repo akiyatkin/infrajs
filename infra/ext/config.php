@@ -32,29 +32,40 @@ function &infra_config($sec=false){
 
 			$d=file_get_contents(ROOT.$src.$name.'/.config.json');
 			$d=infra_json_decode($d);
-			if(is_array($d))foreach($d as $k=>$v) {
+			if(is_array($d))foreach($d as $k=>&$v) {
 				if(@!is_array($data[$k]))$data[$k]=array();
-				if(is_array($v)) foreach($v as $kk=>$vv)$data[$k][$kk]=$vv;
-				else $data[$k]=$v;
-			}
-		}
-		if(is_file(ROOT.'infra/layers/.config.json')){
-			$d=file_get_contents(ROOT.'infra/layers/.config.json');
-			$d=infra_json_decode($d);
-			if(is_array($d))foreach($d as $k=>$v) {
-				if(@!is_array($data[$k]))$data[$k]=array();
+				if(isset($d[$k]['pub'])&&isset($data[$k]['pub'])){
+					$d[$k]['pub']=array_unique(array_merge($d[$k]['pub'],$data[$k]['pub']));
+				}
 				if(is_array($v)) foreach($v as $kk=>$vv)$data[$k][$kk]=$vv;
 				else $data[$k]=$v;
 			}
 		}
 
+		if(is_file(ROOT.'infra/layers/.config.json')){
+			$d=file_get_contents(ROOT.'infra/layers/.config.json');
+			$d=infra_json_decode($d);
+			if(is_array($d))foreach($d as $k=>&$v) {
+				if(@!is_array($data[$k]))$data[$k]=array();
+				if(isset($d[$k]['pub'])&&isset($data[$k]['pub'])){
+					$d[$k]['pub']=array_unique(array_merge($d[$k]['pub'],$data[$k]['pub']));
+				}
+				if(is_array($v)) foreach($v as $kk=>$vv)$data[$k][$kk]=$vv;
+				else $data[$k]=$v;
+			}
+		}
 		$d=file_get_contents(ROOT.'infra/data/.config.json');
 		$d=infra_json_decode($d);
-		if(is_array($d))foreach($d as $k=>$v) {
+
+		if(is_array($d))foreach($d as $k=>&$v) {
 			if(@!is_array($data[$k]))$data[$k]=array();
+			if(isset($d[$k]['pub'])&&isset($data[$k]['pub'])){
+				$d[$k]['pub']=array_unique(array_merge($d[$k]['pub'],$data[$k]['pub']));
+			}
 			if(is_array($v)) foreach($v as $kk=>$vv)$data[$k][$kk]=$vv;
 			else $data[$k]=$v;
 		}
+
 		/*
 		if(!$data['http'])$data['http']=array();
 		if(!$data['http']['sitehost'])$data['http']['sitehost']=$_SERVER['HTTP_HOST'];
