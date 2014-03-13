@@ -1,3 +1,20 @@
+
+if (!Function.prototype.bind){
+	Function.prototype.bind = function(object,arguments){
+		var that = this;//функция у которой нужно сделать this как object
+
+		var func=function() {
+			return that.apply(object,arguments);
+		}
+		if(!func.binded){
+			func.binded=true;//Первый bind важней второго
+			func.toString=function(){
+				return that.toString()+'\nbinded: '+object;//Два бинда не должны приводить к рекурсии
+			};
+		}
+		return func;
+	}
+}
 infra.foro=function(obj,callback,back){//Бежим по объекту
 	if(!obj||typeof(obj)!=='object')return;
 	var r,ar=[],key,el,fn=back?'pop':'shift';

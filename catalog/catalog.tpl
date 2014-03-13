@@ -250,7 +250,7 @@
 			float:left;
 		}
 		.catgrouplist .over {
-			background-color: #EEEEEE;
+			background-color: #aaaaaa;
 			background: linear-gradient(#126FA8, #144F8F);
 			color:white;
 		}
