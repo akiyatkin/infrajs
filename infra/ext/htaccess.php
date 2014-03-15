@@ -37,6 +37,9 @@ infra_admin_cache('htaccess',function($ht){
 
 
 
+		$text.='<ifModule mod_php.c>'."\n";
+		$text.="\n";
+
 		$text.='#register_globals'."\n";
 		$text.='php_flag register_globals 0'."\n";
 		$text.="\n";
@@ -56,6 +59,8 @@ infra_admin_cache('htaccess',function($ht){
 		
 		$text.='#magic_quotes_gpc'."\n";
 		$text.='php_flag magic_quotes_gpc 0'."\n";
+		$text.="\n";
+		$text.='</ifModule>'."\n";
 		$text.="\n";
 
 		$text.='#list'."\n";
