@@ -33,13 +33,12 @@ function infra_cache_fullrmdir($delfile){
 if(is_file(ROOT.'infra/update')){//Файл появляется после заливки из svn и если с транка залить без проверки на продакшин, то файл зальётся и на продакшин
 		infra_admin_time_set();
 		@unlink(ROOT.'infra/update');
-		//$r=@infra_cache_fullrmdir('infra/cache/');
-		//if(!$r)header('infra-update:Fail');
-		//else 
-			header('infra-update:OK');
+		$r=@infra_cache_fullrmdir('infra/cache/');
+		if(!$r)header('infra-update:Fail');
+		else header('infra-update:OK');
 }
 if(!is_dir(ROOT.'infra/cache/')){
-	mkdir(ROOT.'infra/cache/',0755);//Создаём если нет папку infra/cache
+	mkdir(ROOT.'infra/cache/');//Создаём если нет папку infra/cache
 	if(!is_dir(ROOT.'infra/cache/')){
 		die('Не удалось создать папку infra/cache/, пользователю от которого запущен процесс php нужно дать права на редактирование папки с сайтом');
 	}

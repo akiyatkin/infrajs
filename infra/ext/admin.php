@@ -72,6 +72,7 @@ function infra_admin($break=null,$ans=array('msg'=>'Требуется авто�
 }
 function infra_admin_time_set($t=null){
 	$dir='infra/cache/';
+	@mkdir(ROOT.'infra/cache/');
 	if(is_null($t))$t=time();
 	$adm=array("time"=>$t);
 	file_put_contents(ROOT.$dir.'last_admin.json',infra_json_encode($adm));
