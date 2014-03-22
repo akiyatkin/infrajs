@@ -965,6 +965,28 @@ infra.template={
 			if(!n&&n!=0)n=def;
 			return n;
 		},
+		'~cost':function(cost){
+			cost=String(cost);
+			var ar=cost.split(',');
+			if(ar.length==2){
+				var rub=ar[0];
+				var cop=ar[1];
+				if(cop.length==1){
+					cop+='0';
+				}
+				if(rub.length>4){ //1000
+					var l=rub.length;
+					rub=rub.substr(0,l-3)+'&nbsp;'+rub.substr(l-3,l);
+				}
+				cost=rub+','+cop;
+			}else{
+				if(cost.length>4){ //1000
+					var l=cost.length;
+					cost=cost.substr(0,l-3)+'&nbsp;'+cost.substr(l-3,l);
+				}
+			}
+			return cost;
+		},
 		'infra':{
 			'theme':function(path){
 				return infra.theme(path);

@@ -14,17 +14,17 @@
 	"/http":{
 		"sitehost":"",
 		"siteroot":"",
-		"honeydomains":["localhost","127.0.0.1"],
-		"port":""
+		"honeydomains":["localhost","127.0.0.1"]
 	},
 	"/memcache":{
 		"host":"127.0.0.1",
 		"port":"11211"
 	},
 	"/mysql":{
+		"user":"some",
 		"host":"mysql.itlf.ru",
 		"database":"some",
-		"user":"some",
-		"password":"pass"
+		"password":"pass",
+		"port":"3306"
 	}
 }

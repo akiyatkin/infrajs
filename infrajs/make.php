@@ -120,42 +120,53 @@
 //layer oncheck
 //========================
 	infra_listen($infra,'layer.oncheck',function(&$layer){
+		//counter
+		if(@!$layer['counter'])$layer['counter']=0;
+	});
+	infra_listen($infra,'layer.oncheck',function(&$layer){//В onchange слоя может не быть див// Это нужно чтобы в external мог быть определён div перед тем как наследовать div от родителя	
+		//div
+		if(@!$layer['div']&&@$layer['parent'])$layer['div']=$layer['parent']['div'];
+	});
+	infra_listen($infra,'layer.oncheck',function(&$layer){//Без этого не показывается окно cо стилями.. только его заголовок.. 
+		//div
+		infra_forx($layer['divs'],function(&$l,$div){
+			if(@!$l['div'])$l['div']=$div;
+		});	
+	});
+
+	infra_listen($infra,'layer.oncheck',function(&$layer){
 		//autosave
 		if(infrajs_tplonlyclient($layer))return;
 		infrajs_autosaveRestore($layer);
 	});
-	/*infra_listen($infra,'layer.oncheck',function(&$layer){//onchange вызывается только у слоёв у которых есть соответствующий state, до проверки external
-		//external
-		//infrajs_externalCheck($layer);
-	});*/
-	infra_listen($infra,'layer.oncheck',function(&$layer){
-		//counter
-
-		if(@!$layer['counter'])$layer['counter']=0;
-	});
-	/*infra_listen($infra,'layer.oncheck',function(&$layer){	
-		//state link
-		if(isset($layer['linktpl']))$layer['link']=infra_template_parse(array($layer['linktpl']),$layer);
-	});	*/
-	
-
-
 
 	
-	infra_listen($infra,'layer.oncheck',function(&$layer){//Заменяем пустые слои иначе они считаются пустыми массивами в которых слоёв нет
+
+	/*infra_listen($infra,'layer.oncheck',function(&$layer){//Заменяем пустые слои иначе они считаются пустыми массивами в которых слоёв нет
 		//subs
 		if(@!$layer['subs'])return;
 		infra_foro($layer['subs'],function(&$val){
 			if(!$val||!is_array($val))$val=array('_'=>'notempty');
 		});
-	});
+	});*/
 	infra_listen($infra,'layer.oncheck',function(&$layer){//external уже проверен
 		//subs
 		infrajs_subMake($layer);
 	});
+
 	infra_listen($infra,'layer.oncheck',function(&$layer){//external уже проверен
 		//config
 		infrajs_configtpl($layer);
+	});
+	infra_listen($infra,'layer.oncheck',function(&$layer){//В onchange слоя может не быть див// Это нужно чтобы в external мог быть определён div перед тем как наследовать div от родителя	
+		//div
+		if(@!$layer['div']&&@$layer['parent'])$layer['div']=$layer['parent']['div'];
+	});
+	infra_listen($infra,'layer.oncheck',function(&$layer){//Без этого не показывается окно cо стилями.. только его заголовок.. 
+		//div
+		infra_forx($layer['divs'],function(&$l,$div){
+			if(@!$l['div'])$l['div']=$div;
+		});	
 	});
 	infra_listen($infra,'layer.oncheck',function(&$layer){
 		//div
@@ -191,6 +202,7 @@
 		//env myenvtochild
 		infrajs_envmytochild($layer);
 	});
+
 //========================
 // infrajs oncheck
 //========================
@@ -277,21 +289,11 @@
 //========================
 //layer onshow
 //========================
-	infra_listen($infra,'layer.oncheck',function(&$layer){
+	infra_listen($infra,'layer.onshow',function(&$layer){
 		//counter
 		$layer['counter']++;
 	});
-	infra_listen($infra,'layer.oncheck',function(&$layer){//В onchange слоя может не быть див// Это нужно чтобы в external мог быть определён div перед тем как наследовать div от родителя	
-		//div
-		if(@!$layer['div']&&@$layer['parent'])$layer['div']=$layer['parent']['div'];
-	});
-
-	infra_listen($infra,'layer.oncheck',function(&$layer){//Без этого не показывается окно cо стилями.. только его заголовок.. 
-		//div
-		infra_forx($layer['divs'],function(&$l,$div){
-			if(@!$l['div'])$l['div']=$div;
-		});	
-	});
+	
 	infra_listen($infra,'layer.onshow',function(&$layer){
 		//tpl
 		if(infrajs_tplonlyclient($layer))return;

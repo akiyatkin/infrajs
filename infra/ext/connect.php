@@ -6,8 +6,9 @@ function &infra_db($debug=false){
 		$config=@$config['mysql'];
 		$ans=array();
 		if(!$config)return $ans;
+		if(!$config['user'])return $ans;
 		try {
-			@$db=new PDO('mysql:host='.$config['host'].';dbname='.$config['database'], $config['user'], $config['password']);
+			$db=new PDO('mysql:host='.$config['host'].';dbname='.$config['database'].';port='.$config['port'], $config['user'], $config['password']);	
 			$db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 			if($debug){
 				$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

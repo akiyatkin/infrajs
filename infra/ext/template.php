@@ -1019,6 +1019,28 @@ $infra_template_scope=array(
 		if(!$n&&$n!=0)$n=$def;
 		return $n;
 	},
+	'~cost'=>function($cost){
+		$cost=(string)$cost;
+		$ar=explode('.',$cost);
+		if(sizeof($ar)==2){
+			$rub=$ar[0];
+			$cop=$ar[1];
+			if(strlen($cop)==1){
+				$cop.='0';
+			}
+			if(strlen($rub)>4){//1000
+				$l=strlen($rub);
+				$rub=substr($rub,0,$l-3).'&nbsp;'.substr($rub,$l-3,$l);
+			}
+			$cost=$rub.','.$cop;
+		}else{
+			if(strlen($cost)>4){//1000
+				$l=strlen($cost);
+				$cost=substr($cost,0,$l-3).'&nbsp;'.substr($cost,$l-3,$l);
+			}
+		}
+		return $cost;
+	}
 );
 $fn=function($path){ 
 	return infra_theme($path,'fu'); 

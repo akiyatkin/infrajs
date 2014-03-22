@@ -2,10 +2,15 @@
 Загружаются все файлы в initjs.php
 */	
 	infra.State.init();
+	infra.require('infra/lib/statist/statist.php');//чтобы не попадать в кэш
 //========================
 // infra.State onchange
 //========================
 
+	infra.handle(infra.State,'onchange',function(){
+		//statist
+		statist.sent();
+	});
 	infra.listen(infra.State,'onchange',function(){
 		//scroll
 		var scrollFromTop=0;
@@ -148,32 +153,21 @@
 //========================
 // layer oncheck
 //========================
-	infra.listen(infra,'layer.oncheck',function(layer){//Свойство counter должно быть до tpl чтобы counter прибавился а потом парсились
-		//counter
-		if(!layer.counter)layer.counter=0;
-	});
-	infra.listen(infra,'layer.oncheck',function(layer){//Без этого не показывается окно cо стилями.. только его заголовок.. 
-		//div
-		infra.forx(layer.divs,function(l,key){
-			if(!l.div)l.div=key;
-		});
-	});
-	infra.listen(infra,'layer.oncheck',function(layer){//В onchange слоя может не быть див// Это нужно чтобы в external мог быть определён div перед тем как наследовать div от родителя	
-		//div
-		if(!layer.div&&layer.parent)layer.div=layer.parent.div;
-	});
 	infra.listen(infra,'layer.oncheck',function(layer){
 		//autosave
 		infrajs.autosaveRestore(layer);
 	});
-	
+	infra.listen(infra,'layer.oncheck',function(layer){//Свойство counter должно быть до tpl чтобы counter прибавился а потом парсились
+		//counter
+		if(!layer.counter)layer.counter=0;
 
-	/*infra.listen(infra,'layer.oncheck',function(layer){//php {} возвращает как []
+	});
+	infra.listen(infra,'layer.oncheck',function(layer){//php {} возвращает как []
 		//subs
 		infra.foro(layer.subs,function(val,key,group){
 			if(typeof(val)!=='object')group[key]={};
 		});
-	});*/
+	});
 	infra.listen(infra,'layer.oncheck',function(layer){//external уже проверен
 		//subs
 		infrajs.subMake(layer);
@@ -213,9 +207,17 @@
 		infrajs.envtochild(layer)
 	});
 	
+	infra.listen(infra,'layer.oncheck',function(layer){//В onchange слоя может не быть див// Это нужно чтобы в external мог быть определён div перед тем как наследовать div от родителя	
+		//div
+		if(!layer.div&&layer.parent)layer.div=layer.parent.div;
+	});
 	
-	
-	
+	infra.listen(infra,'layer.oncheck',function(layer){//Без этого не показывается окно cо стилями.. только его заголовок.. 
+		//div
+		infra.forx(layer.divs,function(l,key){
+			if(!l.div)l.div=key;
+		});
+	});
 	infra.listen(infra,'layer.oncheck',function(layer){
 		//div
 		infrajs.divtpl(layer);
