@@ -1,9 +1,9 @@
 <?php
 	@define('ROOT','../../../../');
 	require_once(ROOT.'infra/plugins/infra/infra.php');
-		
 	infra_require('*infra/ext/template.php');
 	$tpls=infra_loadJSON('*infra/tests/resources/templates.json');
+	
 
 	function getmicrotime(){ 
 	    list($usec, $sec) = explode(" ", microtime()); 
@@ -30,7 +30,7 @@
 		echo '</td><td>';
 
 		if($r===$t['res'])echo '"<b>'.htmlentities($r).'</b>"';
-		else echo '<span style="color:red; font-weight:bold">"<b>'.htmlentities($r).'</b>" надо "<b>'.htmlentities($t['res']).'</b>"</span>';
+		else echo '<span style="color:red; font-weight:bold"><b>"'.htmlentities($r).'"</b></span><br>"<b style="color:gray">'.htmlentities($t['res']).'</b>"';
 		echo '</td><td>';
 		echo infra_json_encode($data);
 		echo '</td><td>';

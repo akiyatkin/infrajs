@@ -3,6 +3,7 @@ define('ROOT','../../../');
 require_once(ROOT.'infra/plugins/infra/infra.php');
 infra_admin(true);
 $plugs='infra/plugins/';
+
 $list=infra_loadJSON('*pages/list.php?src='.$plugs.'&f=0&d=1&onlyname=1');
 $ans=array();
 foreach($list as $plugin){
@@ -22,6 +23,7 @@ foreach($list as $plugin){
 	}
 }
 infra_require('*infra/ext/template.php');
+
 //echo "<pre>";
 //print_r($ans);
 $html=infra_template_parse('*infra/tests.tpl',$ans);

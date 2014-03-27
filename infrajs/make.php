@@ -3,8 +3,8 @@
 	global $infrajs,$infra;
 	$query=$_SERVER['QUERY_STRING'];
 	$query=urldecode($query);
-	
 	infra_State_set($query);
+	
 
 //========================
 //infrajs oninit
@@ -108,9 +108,11 @@
 		//infrajs это исключение
 		if(!$layer)return false;//Может быть когда вернулись с check к родителю который ещё ниразу небыл в работе
 		if(!infrajs_isWork($layer))return false;//Нет сохранённого результата, и слой не в работе, если работа началась с infrajs.check(layer) и у layer есть родитель, который не в работе
+
 	});
 	infrajs_isAdd('check',function(&$layer){
 		//state
+
 		if(is_null($layer['istate']->obj))return false;
 	});
 	
@@ -171,6 +173,7 @@
 	infra_listen($infra,'layer.oncheck',function(&$layer){
 		//div
 		infrajs_divtpl($layer);
+
 
 	});
 	infra_listen($infra,'layer.oncheck',function(&$layer){

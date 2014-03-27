@@ -13,8 +13,10 @@
 	</div>
 </div>
 <script>
+	if(popup.layer.config){
 		var w=popup.layer.config.width;
 		if(w)w=w+'px';
 		else w='auto';
 		$('#'+popup.frame.div).css('width',w);
+	}
 </script>

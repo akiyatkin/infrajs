@@ -1,9 +1,11 @@
 		
 
 	infra.template.test=function(k){
-		infra.load('*infra/ext/template.js','fex');
+		infra.unload('*infra/ext/template.js');
+		infra.require('*infra/ext/template.js');
 		infra.template.test=arguments.callee;
-		var tpls=infra.load('*infra/tests/templates.json','fjx');
+		infra.unload('*infra/tests/resources/templates.json');
+		var tpls=infra.loadJSON('*infra/tests/resources/templates.json');
 		infra.forr(tpls,function(t,key){
 			if(typeof(k)!=='undefined'&&key!==k)return;
 			
@@ -30,3 +32,4 @@
 			if(typeof(k)!=='undefined')console.log(data);
 		});
 	}
+	infra.template.test.good=true;

@@ -14,19 +14,28 @@ function infra_seq_short($val,$offen=INFRA_SEQ_OFFEN,$seldom=INFRA_SEQ_SELDOM){/
 }
 
 function infra_seq_right($val,$offen=INFRA_SEQ_OFFEN,$seldom=INFRA_SEQ_SELDOM){//Возвращает массив - правильную запись последовательности
+
 	if(!is_array($val)){
 		if(!is_string($val))$val='';
 		$val=explode($offen,$val);
 
-		infra_forr($val,function($s,$i,&$group) use($seldom,$offen){
-			$group[$i]=str_replace($seldom,$offen,$s);
+		infra_forr($val,function(&$s,$i) use($seldom,$offen){
+			$s=str_replace($seldom,$offen,$s);
 		});
+		if($val[sizeof($val)-1]==='')array_pop($val);
+		if($val[0]==='')array_shift($val);
+
+		$val=array_values($val);
 	}
 	$res=array();
-	infra_forr($val,function(&$res,$s){
-		if($s==='')return;
-		$res[]=$s;
-	},array(&$res));
+	for($i=0,$l=sizeof($val);$i<$l;$i++){
+		$s=$val[$i];
+		if($s===''&&sizeof($res)!=0&&$res[$i-1]!==''){//Сами себя не должны отменять
+			array_pop($res);
+		}else{
+			$res[]=$s;
+		}
+	}
 	return $res;
 }
 function &infra_seq_set(&$obj,$right,&$val){
@@ -41,7 +50,7 @@ function &infra_seq_get(&$obj,&$right,$start=0,$end=NULL,$make=false){//полу
 	if(is_null($end))$end=sizeof($right);
 	$r=null;
 	if($end===$start)return $obj;
-	if(is_null($obj))return $r;
+	if(is_null($obj))return $r;//Даже если make мы не изменим ссылку null на obj в javascript так что и тут так
 
 	if(is_array($obj)){
 		if($make&&(@!is_array($obj[$right[$start]])))$obj[$right[$start]]=array();

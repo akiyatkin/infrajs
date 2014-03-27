@@ -10,10 +10,14 @@ infra.seq={
 		if(typeof(val)=='string')return val;
 		if(!val||typeof(val)!='object'||val.constructor!=Array)val=[];
 		var nval=[];
+		if(val[0]=='')nval.push('');
 		infra.forr(val,function(s){ 
 			s=String(s);
 			nval.push(s.replace(offen,seldom));
 		});
+
+		
+
 		return nval.join(offen);
 	},
 	right:function(val,offen,seldom){//Возвращает массив - правильную запись последовательности
@@ -25,12 +29,23 @@ infra.seq={
 			infra.forr(val,function(s,i){
 				val[i]=s.replace(seldom,offen);//Знак offen используется часто и должна быть возможность его указать в строке без специального смысла.. вот для этого и используется знак seldom 
 			});
+			if(val[val.length-1]==='')val.pop();
+			if(val[0]==='')val.shift();
 		}
 		var res=[];
-		infra.forr(val,function(s){//удаляются пустые
-			if(s==='')return;
+		for(var i=0,l=val.length;i<l;i++){
+			var s=val[i];
+			if(s===''&&res.length!=0&&res[i-1]!==''){
+				//if()break;
+				res.pop();
+			}else{
+				res.push(s);
+			}
+		}
+		/*infra.forr(val,function(s){//удаляются пустые
+			//if(s==='')return;
 			res.push(s);//Знак offen используется часто и должна быть возможность его указать в строке без специального смысла.. вот для этого и используется знак seldom 
-		});
+		});*/
 		return res;
 	},
 	set:function(obj,right,val){

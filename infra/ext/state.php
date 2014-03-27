@@ -17,6 +17,7 @@ class infra_State{
 		//Если передаётся просто имя, оно должно быть в массиве ['asd.asd'] иначе оно распознается как ['asd','asd']
 		if(is_object($state_mix))return $state_mix;
 		$state_right=infra_seq_right($state_mix);
+		
 
 		if(sizeof($state_right)==0){
 			return $this;
@@ -78,6 +79,7 @@ class infra_State{
 			$state=&$that->getState(array($s));
 			$state->prepare($obj,$old);
 		},array(&$this));
+
 	}
 	function notify(){//Восходящая система событий от родителя к детям / потом /asdf потом /asdf/asdf
 		if(is_null($this->obj)){
@@ -172,13 +174,14 @@ class infra_State{
 			}
 		}
 
-
+		
 		if(is_array($param)){
 			$this->merge($obj2,$param);
 		}else{
 			$obj2=&$param;
 		}
 		$obj1=&$this->merge($obj1,$obj2); //obj1 сейчас есть объект правильной адресной строки с учётом состояния и указаний 1$ 2$
+
 		return $obj1;
 	}
 	function &merge(&$obj1,&$obj2){//Объединяет два объекта  в третий... obj1 меняется
@@ -265,8 +268,15 @@ function infra_State_set($href,$auto=false){//href без # ? типа asdf/asdf
 
 	$stor=&infra_State_store();
 	$stor['query']=$query;
+	
+
+	
 	$state->prepare($obj,$state->obj);
+	
 	$state->notify();
+
+	
+
 }
 function &infra_State_store(){
 	global $infra_store_state;

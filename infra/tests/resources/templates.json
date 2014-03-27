@@ -1,5 +1,25 @@
 [
 	{
+		"com":"{..name}",
+		"data":{"some":"!","name":"Good"},
+		"tpl":"{some:a}{a:}{..name}{.}",
+		"res":"Good!"
+	},{
+		"com":"{..name}",
+		"data":{"some":{"foo":{}},"name":"Good"},
+		"tpl":"{some:a}{a:}{foo:b}{b:}{..name}",
+		"res":""
+	},{
+		"com":"{..name}",
+		"data":{"some":{"foo":{}},"name":"Good"},
+		"tpl":"{some:a}{a:}{foo:b}{b:}{...name}",
+		"res":"Good"
+	},{
+		"com":"{..name}",
+		"data":{"some":{"foo":{},"name":"Very"},"name":"Good"},
+		"tpl":"{some:a}{a:}{foo:b}{b:}{..name} {...name}",
+		"res":"Very Good"
+	},{
 		"com":"&",
 		"tpl":"{:a&:b??:asdf}{a:}",
 		"res":"asdf"
@@ -13,7 +33,7 @@
 		"res":"{some}"
 	},{
 		"com":"Цифра 0 - false",
-		"tpl":"{$length($obj())}{$length($obj())??:asdf}",
+		"tpl":"{~length(~obj())}{~length(~obj())??:asdf}",
 		"res":"0asdf"
 	},{
 		"com":"Пустой массив, объект это true",
@@ -21,27 +41,27 @@
 		"data":{"full":["1"],"empty":[],"obj":{}},
 		"res":"a1aa"
 	},{
-		"com":"$key",
-		"tpl":"{::s}{s:}{$key}",
+		"com":"~key",
+		"tpl":"{::s}{s:}{~key}",
 		"data":["1","2"],
 		"res":"01"
 	},{
-		"com":"$key",
-		"tpl":"{::s}{s:}{$key:a}{a:}{.}",
+		"com":"~key",
+		"tpl":"{::s}{s:}{~key:a}{a:}{.}",
 		"data":["1","2"],
 		"res":"01"
 	},{
 		"com":"some берётся относительно val используется в глубине и some может не определяться из-за этого",
-		"tpl":"{val:a}{a:}{$obj(:obj,$obj).obj(:name,some).name}",
+		"tpl":"{val:a}{a:}{~obj(:obj,~obj).obj(:name,some).name}",
 		"res":"asdf",
 		"data":{"val":{"some":"asdf"},"name":"asdf"}
 	},{
-		"tpl":"{$obj(:obj,$obj).obj(:name,:asdf).name}",
+		"tpl":"{~obj(:obj,~obj).obj(:name,:asdf).name}",
 		"res":"asdf"
 	},{
-		"tpl":"{'data':a}{a:}{..name}",
-		"res":"asdf",
-		"data":{"data":{},"name":"asdf"}
+		"tpl":"{data::a}{a:}{...name}",
+		"res":"aa",
+		"data":{"data":[{"some":1},{"some":1}],"name":"a"}
 	},{
 		"tpl":"{(:asdf):a}{a:}{.}",
 		"res":"asdf"
@@ -50,19 +70,19 @@
 		"res":"a.c",
 		"data":{"b":"c"}
 	},{
-		"tpl":"{$obj(:val,auto,:s,:x).s}",
+		"tpl":"{~obj(:val,auto,:s,:x).s}",
 		"res":"x"
 	},{
-		"com":"Без точки не должен браться текущий объект.. пусто это $false",
+		"com":"Без точки не должен браться текущий объект.. пусто это ~false",
 		"tpl":"{}",
 		"res":"",
 		"data":"asdf"
 	},{
-		"tpl":"{$true}",
+		"tpl":"{~true}",
 		"res":"",
 		"data":"asdf"
 	},{
-		"tpl":"{$true?.}",
+		"tpl":"{~true?.}",
 		"res":"asdf",
 		"data":"asdf"
 	},{
@@ -88,10 +108,10 @@
 		"tpl":"{:d?:1?:2}{d:}0",
 		"res":"1"
 	},{
-		"tpl":"{$obj(:name,:asdf).name}",
+		"tpl":"{~obj(:name,:asdf).name}",
 		"res":"asdf"
 	},{
-		"tpl":"{$obj(:name,asdf).name}",
+		"tpl":"{~obj(:name,asdf).name}",
 		"res":""
 	},{
 		"tpl":"{name=title?:yes}",
@@ -116,17 +136,17 @@
 		"res":"0",
 		"data":["0"]
 	},{
-		"tpl":"{$obj(:name,:Tom):a}{a:}{name}!",
+		"tpl":"{~obj(:name,:Tom):a}{a:}{name}!",
 		"res":"Tom!"
 	},{
-		"tpl":"{$obj(:name,:Tom):a}{a:}{:b}{b:}{name}!",
+		"tpl":"{~obj(:name,:Tom):a}{a:}{:b}{b:}{name}!",
 		"res":"Tom!"
 	},{
-		"tpl":"{$obj(:name,:asdf,:).name}!",
+		"tpl":"{~obj(:name,:asdf,:).name}!",
 		"res":"asdf!"
 	},{
 		"com":"Афигенная ошибка. прошлые данные подменяют данные для следующего шаблона, которых нет.",
-		"tpl":"{$indexOf(:asdf,:s)}{\"data\":descr}{descr:}{}",
+		"tpl":"{~indexOf(:asdf,:s)}{\"data\":descr}{descr:}{}",
 		"res":"1"
 	},{
 		"tpl":"{a?d?:b?:asdf}",
@@ -179,8 +199,8 @@
 		"data":{"some":"name","list":{"name":{"ik":"asdf"}}},
 		"res":"asdf"
 	},{
-		"com":"{} - подстановки в имени, B имени шаблона нельзя ','- (:sdf,:asd) передача шаблона как параметра. '?=<>|!\"' - условия в которых шаблоны участвуют {:a=:a?:a?:b}. '[]' - {a[:a]} путь из шаблона берётся ",
-		"tpl":"{:#()@$%^&*-_+\\\/}{#()@$%^&*-_+\\\/:}a",
+		"com":"{name:} - подстановки в имени, B имени шаблона name нельзя использовать ','- (:sdf,:asd) передача шаблона как параметра. '?&=<>|!\"' - условия в которых шаблоны участвуют {:a=:a?:a?:b}. '[]' - {a[:a]} путь из шаблона берётся ",
+		"tpl":"{:#()~@$%^*-_+\\\/}{#()~@$%^*-_+\\\/:}a",
 		"res":"a"
 	},{
 		"com":"",
@@ -190,18 +210,18 @@
 		"tpl":"{:f()}{f():}asdf",
 		"res":"asdf"
 	},{
-		"tpl":"{$odd()|:a}",
+		"tpl":"{~odd()|:a}",
 		"res":"a"
 	},{
 		"com":"Условие передаваемой в шаблон переменной",
 		"tpl":"{'data':a}",
 		"res":""
 	},{
-		"tpl":"{$even()|:a}",
+		"tpl":"{~even()|:a}",
 		"res":""
 	},{
 		"com":"Функция в условии",
-		"tpl":"{::s}{s:}{$last()|:a}",
+		"tpl":"{::s}{s:}{~last()|:a}",
 		"data":["1","2"],
 		"res":"a"
 	},{
@@ -218,8 +238,8 @@
 		"res":""
 	},{
 		"tpl":"{list::a}{a:}{name}",
-		"data":{"list":[{"name":"a"},{"name":"s"}]},
-		"res":"as"
+		"data":{"list":[{"name":"a"},{"name":"s"},{"name":"s"}]},
+		"res":"ass"
 	},{
 		"tpl":"{:lis{a}}{list:}asdf",
 		"data":{"a":"t"},
@@ -238,9 +258,25 @@
 		"data":{"data":{"a1":"t"},"n":1},
 		"res":"t"
 	},{
-		"tpl":"{::plugin}{plugin:}{~obj(:folder,$key,:list,.).list::item}{item:}{...folder}.{$key}={.} {$last()?:last}",
+		"tpl":"{::plugin}{plugin:}{~obj(:list,.).list::item}{item:}{~key}={.}",
 		"data":{"data":["name"]},
-		"res":"data.0=name last"
+		"res":"0=name"
+	},{
+		"tpl":"{::plugin}{plugin:}{~obj(:val,:some,:list,list).list::item}{item:}{...val}{.}",
+		"data":{"good":{"list":["!"]}},
+		"res":"some!"
+	},{
+		"tpl":"{::plugin}{plugin:}{~obj(:val,~key,:good,.).good::item}{item:}{...val}{.}",
+		"data":{"good":["!"]},
+		"res":"good!"
+	},{
+		"tpl":"{::plugin}{plugin:}{~obj(:folder,~key):item}{item:}{folder}",
+		"data":{"data":["name"]},
+		"res":"data"
+	},{
+		"tpl":"{data.list:plugin}{plugin:}{.}{...val}",
+		"data":{"data":{"list":"name","val":1}},
+		"res":"name"
 	},{
 		"tpl":"{data.list::plugin}{plugin:}{.}{...val}",
 		"data":{"data":{"list":["name"],"val":1}},

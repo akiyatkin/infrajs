@@ -2,10 +2,14 @@
 @define('ROOT','../../../../');
 require_once(ROOT.'infra/plugins/infra/infra.php');
 
-
-
-
 infra_require('*infra/ext/state.php');
+
+infra_State_set('');
+$state=infra_State_getState('');
+$f=$state->obj;
+
+
+
 
 infra_State_set('?test');
 
@@ -23,10 +27,12 @@ $r=$r&&$r2;
 
 $state=infra_State_getState('test');
 $state2=infra_State_getState('test2');
-if($r&&!is_null($state->obj)&&is_null($state2->obj)){
+if($f==Null&&$r&&!is_null($state->obj)&&is_null($state2->obj)){
 	echo '<h1 style="color:green">PASS</h1>';
 }else{
 	echo '<h1 style="color:red">ERROR</h1>';
 }
+
+
 
 ?>

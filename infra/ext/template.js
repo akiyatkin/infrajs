@@ -84,7 +84,7 @@ infra.template={
 		if(exp)res[res.length-1]+='{'+exp;
 		return res;
 	},
-	analysis:function(ar){
+	analysis:function(group){
 		/*
 		 *  as.df(sdf[as.d()])
 		 *  as.df   (  sdf[    as.d  ()    ]  )
@@ -93,7 +93,7 @@ infra.template={
 		 *
 		 * 'as.df',[ 'sdf[as.d',[] ],']'
 		 * */
-		infra.forr(ar,function(exp,i,group){
+		infra.forr(group,function(exp,i){
 			if(typeof(exp)=='string')return;
 			else exp=exp[0];
 
@@ -303,7 +303,7 @@ infra.template={
 		}else{
 			var right=this.getPath(conf,v);//Относительный путь
 
-			var p=conf['dataroot'].concat(right);
+			var p=infra.seq.right(conf['dataroot'].concat(right));
 
 			var scope=infra.template.scope;
 			if(p[p.length-1]=='$key'){
@@ -367,6 +367,7 @@ infra.template={
 		if(d['fn']){
 			var func=this.getValue(conf,d['fn']);//как у функции сохранить this
 			if(typeof(func)=='function'){
+
 				var param=[];
 				for(var i=0,l=d['var'].length;i<l;i++){//Количество переменных
 					if(!d['var'].hasOwnProperty(i))continue;//когда такое
@@ -422,9 +423,13 @@ infra.template={
 		return v;
 	},
 	test:function(){
-		infra.unload('*infra/tests/templates.js');
-		infra.require('*infra/tests/templates.js');
-		infra.template.test.apply(this,arguments);
+		infra.unload('*infra/tests/resources/templates.js');
+		infra.require('*infra/tests/resources/templates.js');
+		if(infra.template.test.good){
+			infra.template.test.apply(this,arguments);
+		}else{
+			console.log('Ошибка, загрузки тестов');
+		}
 	},
 	getValue:function(conf,d,term){//Передаётся элемент подшаблона
 		if(typeof(d)=='string') return d;
@@ -557,11 +562,18 @@ infra.template={
 		if(fnnow)res['orig']=fnnow+'('+res['orig']+')';
 		else fnnow='';
 
+		
+		if(fnnow){
+			res['fn']=this.parseBracket(fnnow);//в имени функции могут содержаться замены xinsert asdf[xinsert1].asdf. Запятые в имени не обрабатываются. Массив как с запятыми но нужен только нулевой элемент, запятых не может быть/ Они уже отсеяны
+			
+		}
 
-		if(fnnow)res['fn']=this.parseBracket(fnnow);//в имени функции могут содержаться замены xinsert asdf[xinsert1].asdf. Запятые в имени не обрабатываются. Массив как с запятыми но нужен только нулевой элемент, запятых не может быть/ Они уже отсеяны
+			
+		
 
 
 		exp=this.parseStaple(exp);
+
 
 		//Сюда проходит выражение exp без скобок, с заменами их на псевдо переменные
 		var l=exp.length;
@@ -571,6 +583,7 @@ infra.template={
 		}
 
 		var cond=exp.split(',');
+
 		if(cond.length>1){//Найдена запятая {some,:print}
 			res['var']=[];
 			infra.forr(cond,function(c){
@@ -640,15 +653,20 @@ infra.template={
 			res['b']=this.parseexp(cond1);
 			return res;
 		}
+		
 		this.parseBracket(exp,res);
+
 		return res;
 	},
 	parseBracket:function(exp,res){
+		
 		if(typeof(res)=='undefined'){
-			res={};
+			var res={};
 			res['orig']=exp;
 		}
+
 		res['var']=this.parseCommaVar(exp);
+		
 		return res;
 	},
 	parseCommaVar:function(v){//Ищим запятые
@@ -663,9 +681,9 @@ infra.template={
 		//Второй массив - переменная
 		//Далее это попадает в infra_template_getVar
 
-		v=v.split(',');//Запятые могут быть только на первом уровне, все вложенные запятые заменены на xinsert
+		if(v=='')v=[];
+		else v=v.split(',');//Запятые могут быть только на первом уровне, все вложенные запятые заменены на xinsert
 		var res=[];
-
 		infra.fora(v,function(v){//запятые
 			var r=infra.template.parsevar(v);
 			res.push(r);
@@ -684,7 +702,6 @@ infra.template={
 				infra.template.checkInsert(vv['var']);
 			}
 		});
-		window.test=false;
 	},
 	parsevar:function(v){//Ищим скобки as.df[asdf[y.t]][qwer][ert]   asdf[asdf][asdf]
 		if(v=='')return undefined;
@@ -816,7 +833,10 @@ infra.template={
 			if(obj.constructor===Array)return obj.length;
 			if(obj&&typeof(obj)=='object'){
 				var c=0;
-				for(var i in obj)c++;
+				for(var i in obj){
+					if(!obj.hasOwnProperty(i))continue;
+					c++;
+				}
 				return c;
 			}
 			if(obj.length!=undefined)return obj.length;
@@ -965,7 +985,10 @@ infra.template={
 			if(!n&&n!=0)n=def;
 			return n;
 		},
-		'~cost':function(cost){
+		'~cost':function(cost,inp){
+			if(inp)inp=' ';
+
+			else inp='&nbsp;';
 			cost=String(cost);
 			var ar=cost.split(',');
 			if(ar.length==2){
@@ -976,13 +999,13 @@ infra.template={
 				}
 				if(rub.length>4){ //1000
 					var l=rub.length;
-					rub=rub.substr(0,l-3)+'&nbsp;'+rub.substr(l-3,l);
+					rub=rub.substr(0,l-3)+inp+rub.substr(l-3,l);
 				}
 				cost=rub+','+cop;
 			}else{
 				if(cost.length>4){ //1000
 					var l=cost.length;
-					cost=cost.substr(0,l-3)+'&nbsp;'+cost.substr(l-3,l);
+					cost=cost.substr(0,l-3)+inp+cost.substr(l-3,l);
 				}
 			}
 			return cost;

@@ -44,7 +44,8 @@ function infrajs_setState(&$layer,$name,&$value){
 	}else{
 		$root=&infra_State_getState();
 	}
-	$layer[$name]=&$root->getState(array($layer['dyn'][$name]));
+	if($layer['dyn'][$name])$layer[$name]=&$root->getState(array($layer['dyn'][$name]));
+	else $layer[$name]=&$root;
 }
 /*
 function infrajs_stateChilds(&$layer){//oncheck

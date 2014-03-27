@@ -81,7 +81,7 @@ function infra_template_prepare($template){
 
 	return $res;
 }
-function infra_template_analysis(&$ar){
+function infra_template_analysis(&$group){
 	/*
 	 *  as.df(sdf[as.d()])
 	 *  as.df   (  sdf[    as.d  ()    ]  )
@@ -90,7 +90,7 @@ function infra_template_analysis(&$ar){
 	 *
 	 * 'as.df',[ 'sdf[as.d',[] ],']'
 	 * */
-	infra_forr($ar,function($exp,$i,&$group){
+	infra_forr($group,function($exp,$i) use(&$group){
 		if(is_string($exp))return;
 		else $exp=$exp[0];
 
@@ -117,7 +117,9 @@ function infra_template_analysis(&$ar){
 			$group[$i]=$exp;
 			return;
 		}
+
 		$group[$i]=infra_template_parseexp($exp);
+		
 		/*
 		 * a[b(c)]()
 		 * a[(b(c))]()
@@ -130,6 +132,7 @@ function infra_template_analysis(&$ar){
 }
 function infra_template_parse($url,&$data=array(),$tplroot='root',&$dataroot='',$tplempty='root'){
 	$tpls=infra_template_make($url,$tplempty);
+	
 	$text=infra_template_exec($tpls,$data,$tplroot,$dataroot);
 	return $text;
 }
@@ -191,6 +194,10 @@ function &infra_template_make($url,$tplempty='root'){
 
 	$ar=infra_template_prepare($template);
 	infra_template_analysis($ar);
+
+
+
+
 
 	$tpls=infra_template_getTpls($ar,$tplempty);
 	//$res=infra_template_parseEmptyTpls($tpls);
@@ -306,7 +313,7 @@ function &infra_template_getPath(&$conf,$var){//dataroot это прощитан
 function infra_template_getVar(&$conf,$var=array()){//dataroot это прощитанный путь до переменной в котором нет замен
 	//$var содержит вставки по типу ['asdf',['asdf','asdf'],'asdf'] то есть это не одномерный массив. asdf[asdf.asdf].asdf
 	//var одна переменная
-
+	
 	if(is_null($var)){
 		//if($checklastroot)$conf['lastroot']=false;//Афигенная ошибка. получена переменная и далее идём к шаблону переменной для которого нет, узнав об этом lastroot не сбивается и шаблон дальше загружается с переменной в lastroot {$indexOf(:asdf,:s)}{data:descr}{descr:}{}	
 		$value='';
@@ -314,9 +321,12 @@ function infra_template_getVar(&$conf,$var=array()){//dataroot это прощи
 	}else{
 		global $infra_template_scope;
 		$right=infra_template_getPath($conf,$var);
-
-
+		
 		$p=array_merge($conf['dataroot'],$right);
+		
+		
+		$p=infra_seq_right($p);
+		
 
 		if(@(string)$p[sizeof($p)-1]=='$key'){
 			$value=$conf['dataroot'][sizeof($conf['dataroot'])-1];
@@ -333,7 +343,9 @@ function infra_template_getVar(&$conf,$var=array()){//dataroot это прощи
 			$root=array('kinsert',(string)$n);
 
 		}else{
+
 			$value=infra_seq_get($conf['data'],$p);//Относительный путь от данных
+			
 			if(!is_null($value))$root=$p;
 
 			if(is_null($value)&&sizeof($p)){
@@ -412,6 +424,7 @@ function infra_template_getCommaVar(&$conf,&$d,$term=false){
 	}
 }
 function infra_template_getOnlyVar(&$conf,&$d,$term,$i=0){
+
 	if(@is_array($d['tpl'])){ //{asdf():tpl}
 		$ts=array($d['tpl'],$conf['tpls']);
 		$tpl=infra_template_exec($ts,$conf['data'],'root',$conf['dataroot']);
@@ -426,18 +439,24 @@ function infra_template_getOnlyVar(&$conf,&$d,$term,$i=0){
 			$h=infra_template_exec($conf['tpls'],$conf['data'],$tpl,$droot);
 		}else{
 			infra_foru($v,function(&$d,&$h,&$conf,&$lastroot,&$tpl, &$v,$k){
+
 				$droot=array_merge($lastroot,array($k));
 				$h.=infra_template_exec($conf['tpls'],$conf['data'],$tpl,$droot);
 			},array(&$d,&$h,&$conf,&$lastroot,&$tpl));
 		}
 		$v=$h;
 	}else{
+		
 		$r=infra_template_getVar($conf,$d['var'][$i]);
+
+		
 		$v=$r['value'];
 		if(!$term&&is_null($v)){
 			$v='';
 		}
+
 	}
+	
 	return $v;
 }
 function infra_template_getValue(&$conf,&$d,$term=false){
@@ -576,6 +595,7 @@ function infra_template_parseexp($exp,$term=false,$fnnow=null){// Приорит
 	if($fnnow)$res['fn']=infra_template_parseBracket($fnnow);//в имени функции может содержать замены xinsert asdf[xinsert1].asdf. Массив как с запятыми но нужен только нулевой элемент, запятых не может быть/ Они уже отсеяны
 
 	$exp=infra_template_parseStaple($exp);
+	
 
 	//Сюда проходит выражение exp без скобок, с заменами их на псевдо переменные
 	$l=strlen($exp);
@@ -636,6 +656,7 @@ function infra_template_parseexp($exp,$term=false,$fnnow=null){// Приорит
 			$sym=$s;
 		}
 	}
+
 	if($sym){
 		$cond=explode($sym,$exp,3);
 		$res['cond']=$sym;
@@ -643,15 +664,20 @@ function infra_template_parseexp($exp,$term=false,$fnnow=null){// Приорит
 		$res['b']=infra_template_parseexp($cond[1]);
 		return $res;
 	}
+	
 	infra_template_parseBracket($exp,$res);
+
 	return $res;
 }
 function infra_template_parseBracket($exp,&$res=null){
+
 	if(is_null($res)){
 		$res=array();
 		$res['orig']=$exp;
 	}
+
 	$res['var']=infra_template_parseCommaVar($exp);
+	
 	return $res;
 }
 function infra_template_parseCommaVar($var){//Разбиваем на запятые
@@ -669,13 +695,18 @@ function infra_template_parseCommaVar($var){//Разбиваем на запят
 	//Второй массив - переменная
 	//Далее это попадает в infra_template_getVar
 
-	$ar=explode(',',$var);//Запятые могут быть только на первом уровне, все вложенные запятые заменены на xinsert
+	
+	if($var=='')$ar=array();
+	else $ar=explode(',',$var);//Запятые могут быть только на первом уровне, все вложенные запятые заменены на xinsert
 	$res=array();
+	
+	
 
-	infra_fora($ar,function(&$res, $v){
+	infra_fora($ar,function($v) use(&$res,&$var){
 		$r=infra_template_parsevar($v);
+		
 		$res[]=$r;
-	},array(&$res));
+	});
 	infra_template_checkInsert($res);
 	return $res;
 }
@@ -727,13 +758,11 @@ function infra_template_parsevar($var){//Ищим скобки as.df[asdf[y.t]][
 				if($r['multi'])$tpl=substr($tpl,1);
 				$r['tpl']=infra_template_make(array($tpl));
 				if(!isset($r['tpl']['root']))$r['tpl']['root']=array('');
-				if(!isset($r['tpl']['root$css']))$r['tpl']['root$css']=array('');
-				if(!isset($r['tpl']['root$onparse']))$r['tpl']['root$onshow']=array('');
 				return array($r);
 			}
 
 		}
-
+		
 		if($start)$name.=$sym;
 		if($sym==='['){
 			if($start){
@@ -745,7 +774,10 @@ function infra_template_parsevar($var){//Ищим скобки as.df[asdf[y.t]][
 		}
 		if(!$start)$str.=$sym;
 	}
+
 	$res[]=$str;
+
+		
 	$r=array();
 	foreach($res as $v){
 		if(is_string($v)){
@@ -754,6 +786,8 @@ function infra_template_parsevar($var){//Ищим скобки as.df[asdf[y.t]][
 				$r[]=$rrr;
 			}else{
 				$t=infra_seq_right($v);
+
+				
 				//a.b[b.c][c]
 				//[a,b,[b,c],[c]]
 				//b,[b,c]
@@ -1019,7 +1053,9 @@ $infra_template_scope=array(
 		if(!$n&&$n!=0)$n=$def;
 		return $n;
 	},
-	'~cost'=>function($cost){
+	'~cost'=>function($cost,$inp=''){
+		if($inp)$inp=' ';
+		else $inp='&nbsp;';
 		$cost=(string)$cost;
 		$ar=explode('.',$cost);
 		if(sizeof($ar)==2){
@@ -1030,13 +1066,13 @@ $infra_template_scope=array(
 			}
 			if(strlen($rub)>4){//1000
 				$l=strlen($rub);
-				$rub=substr($rub,0,$l-3).'&nbsp;'.substr($rub,$l-3,$l);
+				$rub=substr($rub,0,$l-3).$inp.substr($rub,$l-3,$l);
 			}
 			$cost=$rub.','.$cop;
 		}else{
 			if(strlen($cost)>4){//1000
 				$l=strlen($cost);
-				$cost=substr($cost,0,$l-3).'&nbsp;'.substr($cost,$l-3,$l);
+				$cost=substr($cost,0,$l-3).$inp.substr($cost,$l-3,$l);
 			}
 		}
 		return $cost;

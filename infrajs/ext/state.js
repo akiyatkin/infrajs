@@ -28,7 +28,10 @@ infrajs.setState=function(layer,name,value){
 	if(!layer.dyn)layer.dyn={};
 	layer.dyn[name]=value;
 	var root=layer.parent?layer.parent[name]:infra.State.getState();//От родителя всегда сможем наследовать
-	layer[name]=root.getState([layer.dyn[name]]);
+
+	
+	if(layer.dyn[name])layer[name]=root.getState([layer.dyn[name]]);
+	else layer[name]=root;
 }
 /*infrajs.stateChilds=function(layer){//oncheck
 	infra.forx(layer['childs'],function(l,key){//У этого childs ещё не взять external
