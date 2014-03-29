@@ -7,6 +7,5 @@
 	<li>Проверка кэша по заголовку infrajs-cache:FAIL если кэша нет.</li>
 	<li>docx вставка нескольких значений окружения {env:company} {envdiv:contacts}.</li>
 	<li>Карта сайта автоматическая, нужно корректно указывать путь в robots.txt на продакшин</li>
-	<li>файл infra/update отмечает заход админа и иницирует обновлние кэша infra-update:OK</li>
-	<li>Поправлено возвращение ссылок фукнциями infra_forr и тп. call_user_func_array заменена.</li>
+	<li>файл infra/update отмечает заход админа и иницирует обновлние кэша infra-update:OK</li>	
 </ul>
