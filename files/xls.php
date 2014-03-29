@@ -7,7 +7,7 @@
 *
 * **Подключение**
 
-	$xls=infra_load('*files/xls.php','r');
+	infra_require('*files/xls.php');
 
 * **Использование**
 
@@ -86,14 +86,15 @@ function &xls_make($path){
 	if(!$data)return;
 	$p=explode('/',$path);
 	$title=array_pop($p);
+	$title=preg_replace('/^\*/','',$title);
 	$title=preg_replace('/\.\w{0,3}$/','',$title);
 
 	$title=preg_replace('/^\d*\s*/','',$title);
+
 	$title=infra_toutf($title);
 
 	
 	$parent=false;
-
 	$groups=_xls_createGroup($title,$parent,'book');
 
 	infra_foro($data,function(&$groups, &$data,$title){//Бежим по листам
@@ -734,12 +735,17 @@ function &xls_init2($path,$config=array()){//Возвращает полност
 	if(@!is_array($config['Подготовить для адреса']))$config['Подготовить для адреса']=array('Артикул'=>'article');
 	xls_processPossFS($data,$config['Подготовить для адреса']);//Заменяем левые символы в свойстве
 	if(!isset($config['Имя файла']))$config['Имя файла']='Группа';//Группа остаётся, а производитель попадает в описание каждой позиции
+
+	
+
 	if(@$config['Имя файла']=='Производитель')xls_processClass($data,'Производитель',true);//Должен быть обязательно miss раставляется
-	else xls_processClassEmpty($data,'Производитель');
+	else {
+		//xls_processClassEmpty($data,'Производитель');
+	}
 
 
 
-
+	
 	xls_processGroupFilter($data);//Объединяются группы с одинаковым именем, Удаляются пустые группы
 
 

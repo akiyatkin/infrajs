@@ -168,7 +168,8 @@ function _files_list($dir,$start,$count,$exts){
 			if($file[0]=='~')continue;
 			if($file=='Thumbs.db')continue;
 			if(!is_file(ROOT.$dir.$file))continue;
-			$rr=infra_nameinfo($file);
+			$rr=infra_nameinfo(infra_toutf($file));
+			echo 1;
 			if($exts&&!in_array($rr['ext'],$exts))continue;
 			$size=filesize(ROOT.$dir.$file);
 			$file=infra_toutf($file);

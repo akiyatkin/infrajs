@@ -19,7 +19,6 @@ if(!isset($_GET['src'])){
 	<?php
 }else{
 
-	infra_require('*pages/cache.inc.php');
 	$src=infra_theme($_GET['src']);
 	$data=pages_cache(array($src),'readxls',array(
 		$src,
@@ -39,10 +38,6 @@ if(!isset($_GET['src'])){
 	/*echo '<pre>';
 	print_r(infra_tophp($data123));
 	exit;*/
-	if($FROM_PHP){
-		return $data;
-	}else{
-		echo infra_tojs($data);
-	}
+	return infra_echo($data);
 }
 ?>

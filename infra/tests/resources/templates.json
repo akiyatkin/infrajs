@@ -1,5 +1,15 @@
 [
 	{
+		"com":"{list::} скрытое условие {false:tpl} шаблон tpl не покажется с false данными, 0 считается нормальным значением",
+		"data":{"list":[false,null,"y",1,0,"",true]},
+		"tpl":"{list::a}{a:}{~key}",
+		"res":"2346"
+	},{
+		"com":"{list::} если нужно передать в шаблон false значит нужно оборачивать в объект {val:false} который сам по себе будет true",
+		"data":{"list":{"0":false,"1":null,"2":"y","3":1,"4":0,"5":"","6":true,"object":false}},
+		"tpl":"{list::a}{a:}{~key}",
+		"res":"2346"
+	},{
 		"com":"{..name}",
 		"data":{"some":"!","name":"Good"},
 		"tpl":"{some:a}{a:}{..name}{.}",

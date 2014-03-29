@@ -16,7 +16,7 @@ infra.wait(infra,'AUTOEDIT',function(){
 infrajs.seo_checkseolinktpl=function(layer){
 	if(!layer.seotpl)return;
 	if(!layer.seo)layer.seo={};
-	var props=['link','json'];
+	var props=['link','json','name','title'];
 	for(var i=0,l=props.length; i<l;i++){
 		if(layer.seotpl[props[i]])layer.seo[props[i]]=infra.template.parse([layer.seotpl[props[i]]],layer);
 	}

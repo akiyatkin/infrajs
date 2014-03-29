@@ -58,7 +58,7 @@
 			{preview}
 			<table class="common">
 				<tr>
-				<td> <a href="?{state}/{name}">Читать&nbsp;полностью</a></td><td>|</td>
+				<td> <a href="?{config.link}{name}">Читать&nbsp;полностью</a></td><td>|</td>
 				<td><nobr><a title="Короткая ссылка" href="?{config.link}{id}">{location.host}{location.pathname}?{config.link}{id}</a></nobr></td>
 				<td>|</td>
 				<td style="text-align:right">{date:Pdate}</td></tr>

@@ -7,7 +7,7 @@
 function infrajs_seo_checkseolinktpl(&$layer){
 	if(!isset($layer['seotpl']))return;
 	if(!isset($layer['seo']))$layer['seo']=array();
-	$props=array('link','json','tpl');
+	$props=array('link','json','name','title');
 	for($i=0,$l=sizeof($props);$i<$l;$i++){
 		if(isset($layer['seotpl'][$props[$i]]))$layer['seo'][$props[$i]]=infra_template_parse(array($layer['seotpl'][$props[$i]]),$layer);
 	}

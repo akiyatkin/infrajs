@@ -37,12 +37,13 @@
 				}]
 			},
 			"tpl":["<h1>Информация</h1><div id='allevents'></div>"],
-			"autoedittpl":{"fast":"infra.conf.files.folder_pages}"},
+			"autoedittpl":{"fast":"{infra.conf.files.folder_pages}"},
 			"divs":{
 				"allevents":{
 					"json":"*files/files.php?type=pages&list&lim=0,10",
 					"tpl":"*files/files.tpl",
 					"tplroot":"PAGES",
+					"state":"..",
 					"childs":{
 						"Архив":{
 							"json":"*files/files.php?type=pages&list",

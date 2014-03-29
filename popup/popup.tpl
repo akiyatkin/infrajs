@@ -2,7 +2,6 @@
 	<script>
 		infra.loadCSS('*popup/popup.css');
 	</script>
-	
 	<div class="title drag"><span class="close" onclick="popup.close()">[Закрыть]</span></div>
 	<div class='pop_border'><div id="popup_body"></div></div>
 	<div class="esc popup_esc">
