@@ -35,8 +35,10 @@ function files_article($src){
 	//youtube
 	$ptube=files_ptube();
 	$pattern='/(<a.*href="'.$ptube.'".*>)'.$ptube.'(<\/a>)/i';
-	$youtpl = <<<END	<iframe width="640" height="480" src="http://www.youtube.com/embed/{3}?rel=0" frameborder="0" allowfullscreen></iframe>END;
-	//$youtpl = <<<END	<object width="640" height="480"><param name="movie" value="//www.youtube.com/v/{3}?version=3&amp;hl=ru_RU"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="//www.youtube.com/v/{3}?version=3&amp;hl=ru_RU" type="application/x-shockwave-flash" width="640" height="480" allowscriptaccess="always" allowfullscreen="true"></embed></object> END;
+
+	$youtpl = <<<END
+<iframe width="640" height="480" src="http://www.youtube.com/embed/{3}?rel=0" frameborder="0" allowfullscreen></iframe>
+END;
 
 	do{
 		$match=array();
