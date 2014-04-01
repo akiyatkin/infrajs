@@ -174,7 +174,7 @@ infrajs.check=function(layers){//Пробежка по слоям
 		}
 	});//разрыв нужен для того чтобы можно было наперёд определить показывается слой или нет. oncheck у всех. а потом по порядку.
 
-	infra.fire(infrajs,'oncheck');//момент когда доступны слои для подписки и какой-то обработки
+	infra.fire(infrajs,'oncheck');//момент когда доступны слои для подписки и какой-то обработки, доступен unick
 
 	infrajs.run(infrajs.getWorkLayers(),function(layer){//С чего вдруг oncheck у всех слоёв.. надо только у активных		
 		if(infrajs.is('show',layer)){

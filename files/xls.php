@@ -669,6 +669,9 @@ $config=array(
 	);
  * */
 function &xls_init2($path,$config=array()){//Возвращает полностью гототовый массив
+	return xls_init($path,$config);
+}
+function &xls_init($path,$config=array()){//Возвращает полностью гототовый массив
 	//if(infra_isAssoc($path)===true)return $path;//Это если переданы уже готовые данные вместо адреса до файла данных
 	
 	$parent=false;
