@@ -960,6 +960,7 @@ infra.template={
 		'$odd':function(){
 			return infra.template.scope['~odd'].apply(this,arguments);
 		},
+
 		'~odd':function(){
 			return !infra.template.scope['~even']();
 		},
@@ -967,15 +968,7 @@ infra.template={
 			return infra.template.scope['~first'].apply(this,arguments);
 		},
 		'~first':function(){
-			var conf=infra.template.moment;
-			var dataroot=conf['dataroot'].concat();
-			var key=dataroot.pop();
-			var obj=infra.seq.get(conf['data'],dataroot);
-
-			var k=infra.foru(obj,function(v,key){
-				return key;
-			});
-			return (k===key);
+			
 		},
 		'$Number':function(){
 			return infra.template.scope['~Number'].apply(this,arguments);

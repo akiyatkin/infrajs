@@ -134,19 +134,12 @@ infra.session={
 		//nlist это корректный список {name:'',value:''}
 		if(repl){
 			this.data=this.make(nlist,{});
-			var list=[];
-			infra.fora(nlist,function(li){
-				list.push(li);
-			});
+			var list=this.right(nlist);
 		}else{
 			this.data=this.make(nlist,this.data);
 			var list=this.storageLoad();
-			infra.fora(nlist,function(li){
-				infra.forr(list,function(li2,i){//Нужно стереть упоминание о предыдущем установленном значении
-					if(infra.seq.short(li2.name)==infra.seq.short(li.name))return list.splice(i,1);
-				});
-				list.push(li);//и добавляем новое значение
-			});
+			list.push(nlist);
+			list=this.right(list);
 		}
 		var dataname=this._getName('data');
 		this.stor.save(dataname,list);
@@ -160,22 +153,12 @@ infra.session={
 				return callback();
 			}
 			var timename=this._getName('time');
-			var view=infra.view;
-			
-			view.setCookie(timename,ans.time);//Время определяется на сервере, выставляется на клиенте
+			infra.view.setCookie(timename,ans.time);//Время определяется на сервере, выставляется на клиенте
 			
 			//По сути тут set(news) но на этот раз просто sync вызываться не должен, а так всё тоже самое
 			this.storageSave(ans.news);
 			
-			if(ans.sentall){
-				if(!this.get('__verify__')){
-					var list={name:infra.seq.right('__verify__'),value:1}
-					this.storageSave(list);
-				}
-				this.syncreq(this.storageLoad(),sync,callback);
-			}else{
-				callback();
-			}
+			callback();
 		}.bind(this);
 		var data={//id и time берутся из кукисов на сервере
 			list:this.source(list)
@@ -203,6 +186,12 @@ infra.session={
 	logout:function(){
 		var view=infra.view;
 		this.storageSave([],true);
+
+		var sentname=this._getName('sent');
+		var waitname=this._getName('wait');
+		this.stor.save(waitname,false);
+		this.stor.save(sentname,false);
+
 		view.setCookie(this._getName('time'));//Время определяется на сервере, выставляется на клиенте
 		view.setCookie(this._getName('id'));
 		view.setCookie(this._getName('pass'));
@@ -214,6 +203,17 @@ infra.session={
 	getTime:function(){//Нужно для определения последнего сеанса связи с сервером
 		var view=infra.view;
 		return view.getCOOKIE(this._getName('time'));
+	},
+	right:function(list){
+		var rsent=[]; 
+		infra.fora(list,function(li){
+			var short=infra.seq.short(li.name);
+			if(infra.forr(rsent,function(rli){
+				if(infra.seq.short(rli.name)==short)return true;
+			}))return;
+			rsent.unshift(li);
+		},true);
+		return rsent;
 	},
 	sync:function(list,sync,callback){
 		if(!callback)callback=function(){};
@@ -230,25 +230,36 @@ infra.session={
 		else if(wait&&!list) 	wait=wait;
 		else if(!wait&&list)	wait=[list];
 		else if(!wait&&!list)	wait=[];
-
-		if(sync!='async'){//Если просто вызыван sync с одним параметром или без
+		wait=this.right(wait);
+		var conf=infra.config();
+		if(conf.session.sync&&sync!='async'){//Если просто вызыван sync с одним параметром или без
 			this.stor.save(sentname,wait);//Всё записалось в sent и после успешной отправки очистится
 			this.stor.save(waitname,false);//wait становится пустым, но пока будет отправка он может наполняться
-			return this.syncreq(list,sync,function(err){
+			return this.syncreq(wait,'sync',function(err){
 				if(err){
+					this.stor.save(waitname,wait);
+					this.stor.save(sentname,false);
 					//this.syncreq(list,sync,arguments.callee);
+					callback(err);
 				}else{
 					this.stor.save(sentname,false);//Всё записалось в sent и после успешной отправки очистится
-				       	callback();
+					callback(err);
 				}
 			}.bind(this));//синхронно вызываем сразу, вразрез с асинхронными
 		}
 
 
 		this.stor.save(waitname,wait);
-	
-		if(this.syncing)return this.syncing.push(callback);//при ошибке сессия больше не обновляется.. обработчике копятся.. и тп..
-		else this.syncing=[callback];
+		if(!conf.session.sync){
+			callback(false);
+			return;
+		}
+		if(this.syncing){
+			this.syncing.push(callback);//при ошибке сессия больше не обновляется.. обработчике копятся.. и тп..
+			return;
+		}else{
+			this.syncing=[callback];
+		}
 	
 		var next=function(){//Возвращается был новый запрос или нет.
 			var sent=this.stor.load(sentname);//в sent хранится что уже в процессе отправления
@@ -257,29 +268,31 @@ infra.session={
 		
 			if(!sent)sent=[];//Далее собираем всё в sent очищаем wait
 			if(wait)sent.push(wait);//sent и wait могут быть одновременно если был разрыв связи при прошлом запросе
+
+			sent=this.right(sent);
 			
-			var rsent=[]; 
-			infra.fora(sent,function(li){
-				var short=infra.seq.short(li.name);
-				if(infra.forr(rsent,function(rli){
-					if(infra.seq.short(rli.name)==short)return true;
-				}))return;
-				rsent.unshift(li);
-			},true);
-			sent=rsent;
 			this.stor.save(sentname,sent);//Всё записалось в sent и после успешной отправки очистится
 			this.stor.save(waitname,false);//wait становится пустым, но пока будет отправка он может наполняться
 		
 			this.syncreq(sent,sync,function(err){
+				this.stor.save(sentname,false);
 				if(err){
 					//setTimeout(next,5000);
+					var wait=this.stor.load(waitname);
+					if(wait)sent.push(wait);//добавили текущий sent в начало wait
+					this.stor.save(waitname,this.right(sent));
+
+					//фильтр натыкали а позиции показались без фильтра
+					var calls=this.syncing;
+					infra.forr(calls,function(ca){ ca(true) });
+					this.syncing=false;
+					conf.session.sync=false;//Ошибка отправка на сервер больше не будет работать пока не обновится страница
 				}else{
-					this.stor.save(sentname,false);
 					var r=next();
 					if(!r){//А если был запрос, попадём сюда снова после его окончания
 						var calls=this.syncing;//Чтоб небыло замыканий прежде чем запускать обработчики очищается syncing
 						this.syncing=false;
-						infra.forr(calls,function(ca){ ca() });
+						infra.forr(calls,function(ca){ ca(false) });
 						infra.fire(this,'onchange');
 					}
 				}
@@ -340,7 +353,7 @@ infra.session={
 		return val;
 	},
 	set:function(name,value,sync){
-		if(this.get(name)===value)return;
+		//if(this.get(name)===value)return; //если сохранена ссылка то изменение её не попадает в базу данных и не синхронизируется
 		var li={name:infra.seq.right(name),value:value};
 		if(li.name[0]=='safe')return false;
 		//При set делается 2 действия

@@ -51,6 +51,7 @@ function infra_session_syncreq($list){ //новое значение, //Отпр
 	if(!$infra_session_lasttime)$infra_session_lasttime=1;
 	else $infra_session_lasttime=time()+10000;
 
+	
 	$data=array( //id и time берутся из кукисов на сервере 
 		'time'=>$infra_session_lasttime,
 		'list'=>infra_json_encode($list)
@@ -66,6 +67,7 @@ function infra_session_syncreq($list){ //новое значение, //Отпр
 
 	infra_unload($src);
 	$ans=infra_loadJSON($src);
+
 	$_POST=$oldPOST;
 	$_REQUEST=$oldREQ;
 
@@ -87,7 +89,9 @@ function infra_session_getTime(){
 }
 function infra_session_sync($list=false){
 	$session_id=infra_session_getId();
+	
 	if(!$session_id&&!$list)return;//Если ничего не устанавливается и нет id то sync не делается
+
 	infra_session_syncreq($list);
 }
 
@@ -108,7 +112,7 @@ function infra_session_get($name='',$def=null){
 	else return $val;
 }
 function infra_session_set($name,$value){
-	if(infra_session_get($name)===$value)return;
+	//if(infra_session_get($name)===$value)return; //если сохранена ссылка то изменение её не попадает в базу данных и не синхронизируется
 	$li=array('name'=>infra_seq_right($name),'value'=>$value);
 	global $infra_session_data;
 	infra_session_make($li,$infra_session_data);

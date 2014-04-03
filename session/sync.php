@@ -14,7 +14,7 @@
 	}catch(Exception $e){
 		$db=false;
 	}
-	
+
 	if(!$db)return infra_echo($ans,'Нет соединения с базой данных. Сессия только в браузере.',0);
 	$conf=infra_config();
 	$conf=$conf['http'];
@@ -51,6 +51,7 @@
 		}
 	}
 	//Здесь session_id проверенный
+
 	if($session_id&&$timelast<$time){
 		$sql='select name, value, unix_timestamp(time) as time from ses_records where session_id=? and time>from_unixtime(?) order by time';
 		$stmt=$db->prepare($sql);
@@ -60,13 +61,18 @@
 			$ans['is']['news']=!!$news;
 			$ans['news']=$news;
 			infra_forr($ans['news'],function(&$v){
-				$v['value']=infra_json_decode($v['value']);
+				if($v['value']=='null'){
+					$v['value']=null;
+				}else{
+					$v['value']=infra_json_decode($v['value']);
+				}
 				$v['name']=infra_seq_right($v['name']);
 			});
 		}
 	}
 	
 	$ans['is']['list']=!!$list;
+
 	if($list){
 		if(!$session_id){
 

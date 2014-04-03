@@ -33,13 +33,11 @@ $src=infra_theme($isrc);
 
 $src=infra_toutf($src);
 
-$fdata=infra_srcinfo($src);
-
+$fdata=infra_srcinfo($isrc);
 $name=preg_replace('/\.\w{0,4}$/','',$fdata['file']);
 
 	
 $isrc=$fdata['folder'].$name;
-
 if($src){
 	@header('Content-Type: text/html; charset=utf-8');
 	if(isset($exts[$ext])){//Расширение уже было 
@@ -52,15 +50,14 @@ if($src){
 			$ext='tpl';
 			$info=infra_loadTEXT($exts[$ext].$isrc.'.'.$ext);
 			if(!$info){
-
 				$ext='html';
 				$info=infra_loadTEXT($exts[$ext].$isrc.'.'.$ext);
 				if(!$info){
 					$ext='docx';
 					$info=infra_loadTEXT($exts[$ext].$isrc.'.'.$ext);
-
 					if(!$info){
 						$ext='mht';
+
 						$info=infra_loadTEXT($exts[$ext].$isrc.'.'.$ext);
 					}
 				}
