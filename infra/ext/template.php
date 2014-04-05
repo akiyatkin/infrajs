@@ -906,11 +906,20 @@ $infra_template_scope=array(
 		global $infra_template_scope;
 		return call_user_func_array($infra_template_scope['~inArray'],$args);
 	},
+	
 	'~inArray'=>function($val,$arr){
 		if(!$arr)return false;
 		if(is_array($arr)){
 			return in_array($val,$arr);
 		}
+	},
+	'~match'=>function($exp,$val){
+		preg_match('/'.$exp.'/',$val,$match);
+		return $match;
+	},
+	'~test'=>function($exp,$val){
+		$r=preg_match('/'.$exp.'/',$val);
+		return !!$r;
 	},
 	'~lower'=>function($str){
 		return mb_strtolower($str);

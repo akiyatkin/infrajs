@@ -217,8 +217,9 @@
 		//infrajs
 		if(!infrajs_is('check',$layer))return false;
 	});
-	infrajs_isAdd('show',function($layer){
+	infrajs_isAdd('show',function(&$layer){
 		//is
+		infrajs_istplparse($layer);
 		return infrajs_isCheck($layer);
 	});
 	infrajs_isAdd('show',function(&$layer){

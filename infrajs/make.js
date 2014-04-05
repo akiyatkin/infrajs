@@ -257,6 +257,7 @@
 	});
 	infrajs.isAdd('show',function(layer){
 		//is
+		infrajs.istplparse(layer);
 		return infrajs.isCheck(layer);
 	});
 	infrajs.isAdd('show',function(layer){

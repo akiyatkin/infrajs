@@ -9,6 +9,14 @@
 		if($is=='0')$is=false;//В шаблоне false не удаётся вернуть
 		return $is;
 	}
+	function infrajs_istplparse(&$layer){
+		$prop='is';
+		$proptpl=$prop.'tpl';
+		if(!isset($layer[$proptpl]))return;
+		$p=$layer[$proptpl];
+		$p=infra_template_parse(array($p),$layer);
+		$layer[$prop]=$p;
+	}
 /*
 (function(){
 //Свойство is 

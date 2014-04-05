@@ -3,6 +3,14 @@ infrajs.isCheck=function(layer){
 	if(is=='0')is=false;//В шаблоне false не удаётся вернуть
 	return is;
 }
+infrajs.istplparse=function(layer){
+	var prop='is';
+	var proptpl=prop+'tpl';
+	if(!layer[proptpl])return;
+	var p=layer[proptpl];
+	p=infra.template.parse([p],layer);
+	layer[prop]=p;
+}
 /*(function(){
 //Свойство is 
 

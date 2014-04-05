@@ -858,6 +858,17 @@ infra.template={
 				});
 			}
 		},
+		'~_regexps':{},
+		'~match':function(exp,val){
+			var obj=infra.template.scope['~_regexps'];
+			if(!obj[exp])obj[exp]=new RegExp(exp);
+			return String(val).match(obj[exp]);
+		},
+		'~test':function(exp,val){
+			var obj=infra.template.scope['~_regexps'];
+			if(!obj[exp])obj[exp]=new RegExp(exp);
+			return obj[exp].test(String(val));
+		},
 		'~lower':function(str){
 			if(!str)return '';
 			return str.toLowerCase();
