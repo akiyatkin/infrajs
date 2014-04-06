@@ -70,9 +70,9 @@ function infra_strtolower($str){
 }
 
 function infra_json_decode($json){
-	$json = preg_replace("#(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|([\s\t]//.*)|(^//.*)#", '', $json);
-	$data = json_decode($json, true, 512);//JSON_BIGINT_AS_STRING в javascript тоже нельзя такие цифры... архитектурная ошибка.
-	if($json&&!$data&&!in_array($json,array('false','{}','[]','','0'))){
+	$json2 = preg_replace("#(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|([\s\t]//.*)|(^//.*)#", '', $json);
+	$data = json_decode($json2, true, 512);//JSON_BIGINT_AS_STRING в javascript тоже нельзя такие цифры... архитектурная ошибка.
+	if($json2&&!$data&&!in_array($json2,array('false','{}','[]','""','0'))){
 		echo '<h1>json decode error</h1>';
 		echo "\n".'<pre>'."\n";
 		var_dump($json);
