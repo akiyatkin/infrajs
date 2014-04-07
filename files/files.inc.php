@@ -15,11 +15,11 @@ function files_search($dir,$str){//Найти указанный в $str фай�
 	return array();
 }
 function files_ptube(){
-	$ptube='http.*youtube\.com.*watch.*=(\w+).*';
+	$ptube='http.*youtube\.com.*watch.*=([\w\-]+).*';
 	return $ptube;
 }
 function files_ptube2(){
-	$ptube='http.{0,1}:\/\/youtu\.be\/(\w+)';
+	$ptube='http.{0,1}:\/\/youtu\.be\/([\w\-]+)';
 	return $ptube;
 }
 function files_article($src){
