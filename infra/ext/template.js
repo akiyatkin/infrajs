@@ -993,8 +993,9 @@ infra.template={
 			if(inp)inp=' ';
 
 			else inp='&nbsp;';
+			if(!cost)cost='';
 			cost=String(cost);
-			var ar=cost.split(',');
+			var ar=cost.split(/[,\.]/);
 			if(ar.length==2){
 				var rub=ar[0];
 				var cop=ar[1];
