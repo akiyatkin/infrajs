@@ -103,10 +103,10 @@
 		</table>
 		{data.isfile?:getfile}
 		<div style="border-top:dotted 1px gray; margin-top:5px;"></div>
+		<small>{data.isfile?:editishelp?:editishelpis}</small>
 		<table style="margin-top:5px; margin-bottom:5px;">
 			<tr><td style="vertical-align:middle">{data.isfile?:Заменить?:Создать}</td>
 				<td><input type="file" value="Обновить" name="file"></td></tr>
-			<tr><td colspan=2><small>{data.isfile?:editishelp?:editishelpis}</small></td></tr>
 		</table>
 		{:submit}Сохранить{:/submit}
 		{:/form}
