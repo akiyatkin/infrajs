@@ -4,8 +4,13 @@
 infrajs.onsubmitinit=function(){
 	infrajs.parsedAdd(function(layer){//parsed должен забираться после установки msg config-a
 		if(!layer.onsubmit)return '';
-		if(!layer.config||!layer.config.ans||!layer.config.ans.msg)return '';
-		return layer.config.ans.msg;		
+		if(!layer.config||!layer.config.ans)return '';
+		var str=layer.config.ans.msg;
+		if(!str)str='';
+		if(layer.config.ans.time){
+			str+=layer.config.ans.time;
+		}
+		return str;		
 	});
 }
 infrajs.setonsubmit=function(layer){
@@ -27,6 +32,7 @@ infrajs.setonsubmit=function(layer){
 
 		if(infra.loader)infra.loader.show();
 		setTimeout(function(){// Надо чтобы все обработчики повесились на onsubmit и сделали всё что нужно с отправляемыми данными и только потом отправлять
+			//autosave должен примениться
 			infra.require('infra/lib/jquery/jquery.form.js');
 			form.ajaxSubmit({
 				dataType:'json',
@@ -51,7 +57,7 @@ infrajs.setonsubmit=function(layer){
 					}
 					layer.config.ans=ans;
 					if(infra.loader)infra.loader.hide();
-					//infra.fire(layer,'layer.onsubmit');
+					infra.fire(layer,'onsubmit');//в layers.json указывается onsubmit:true, а в tpl осуществляется подписка на событие onsubmit и обработка
 					if(typeof(layer.onsubmit)=='function'){
 						layer.onsubmit(layer);
 					}else{

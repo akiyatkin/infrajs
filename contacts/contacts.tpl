@@ -20,7 +20,7 @@
 					<input value="{phone}" name="phone" type="text"><br />
 					<label>Текст письма<span>*</span></label>
 					<textarea name="text" cols=35 rows=5></textarea>
-					<div class="answer"><b class="alert">{config.ans.msg}<b></div>
+					<div class="answer"><b class="alert">{config.ans.msg}</b></div>
 					<center class="sub_center">
 						<input class="submit" value="Отправить" type="submit"> <br>
 					</center>
