@@ -394,6 +394,9 @@ function infra_template_getVar(&$conf,$var=array()){//dataroot это прощи
 }
  */
 global $infra_template_moment;
+function infra_template_bool($var=false){
+	return ($var||$var==='0');
+}
 function infra_template_getCommaVar(&$conf,&$d,$term=false){
 	//Приходит var начиная от запятых в $d
 	if(@$d['fn']){
@@ -401,7 +404,7 @@ function infra_template_getCommaVar(&$conf,&$d,$term=false){
 		if(is_callable($func)){
 			$param=array();
 			for($i=0,$l=sizeof($d['var']);$i<$l;$i++){//Количество переменных
-				if(@$d['var'][$i]['orig']){
+				if(infra_template_bool($d['var'][$i]['orig'])){
 					$v=infra_template_getValue($conf,$d['var'][$i],$term);
 					$param[]=$v;
 				}else if($d['var']){
@@ -840,6 +843,12 @@ $infra_template_scope=array(
 			$y=$st{0}.$st{1};
 			$m=$st{2}.$st{3};
 			$d=$st{4}.$st{5};
+			$time=mktime(12,12,12,$m,$d,$y);
+		}
+		if(strlen($st)==8){
+			$y=$st{0}.$st{1}.$st{2}.$st{3};
+			$m=$st{4}.$st{5};
+			$d=$st{6}.$st{7};
 			$time=mktime(12,12,12,$m,$d,$y);
 		}
 		$r=date($format,$time);
