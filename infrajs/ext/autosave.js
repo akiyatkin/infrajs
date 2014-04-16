@@ -1,6 +1,5 @@
 //Скрипт. Точка это разделитель. Могут проблемы когда имя свойства файл расширением,
 //autosavename - путь где сохраняются данные,
-//autosave:{} данные первоначальныи и инициирующее свойство
 //
 //Атрибуты 
 //autosave="0" не использовать автосохранение для данного слоя
@@ -20,7 +19,7 @@ infra.wait(infrajs,'oninit',function(){
 	});
 	/*infrajs.parsedAdd(function(layer){
 		//Работы в itlife выбранная работа сохраняется но дальше слой не должен перепарсиваться... всё обрабатывается на кликах
-		if(!layer.autosave)return '';
+		if(!layer.autosavename)return '';
 		if(!window.JSON)return '';
 		return JSON.stringify(layer.autosave);
 		//сохранённое значение формы, а на сервере стоит из-за этого запрет на кэширование, так как обращение к сессии
@@ -29,6 +28,7 @@ infra.wait(infrajs,'oninit',function(){
 });
 
 (function(){
+
 	var autosave={
 		getInps:function(div){
 			return $('#'+div).find('select, [type=search], [type=email], [type=password], [type=text], [type=checkbox], textarea').filter('[autosave!=0]').filter('[name!=]');
@@ -38,12 +38,12 @@ infra.wait(infrajs,'oninit',function(){
 		* exc массив свойств которые очищать не нужно и нужно сохранить.. 
 		*/
 		clear:function(layer){//Если autosave у двух слоёв одинаковый нельзя нарушать связь
-			if(!layer.autosave)return;
+			if(!layer.autosavename)return;
 			layer.autosave={};
 			infra.session.set(layer.autosavename,layer.autosave);
 		},
 		get:function(layer,name,def){//blinds
-			if(!layer.autosave)return def;
+			if(!layer.autosavename)return def;
 			if(!name)name='';
 			var val=infra.session.get(layer.autosavename+'.'+name);
 			if(val===undefined)return def;
@@ -54,7 +54,7 @@ infra.wait(infrajs,'oninit',function(){
 			location.href=location.href;//Чтобы сбросить autosave в слоях
 		},
 		set:function(layer,name,val){//skoroskidka, rte.layer.js
-			if(!layer.autosave)return;
+			if(!layer.autosavename)return;
 			infra.session.set(layer.autosavename+'.'+name,val);
 
 			var right=infra.seq.right(name);
@@ -64,7 +64,6 @@ infra.wait(infrajs,'oninit',function(){
 		loadAll:function(layer){
 			var inps=autosave.getInps(layer.div).filter('[autosave]');
 			inps.each(function(){
-
 				var inp=$(this);
 				var name=inp.attr('name');
 				var val=autosave.getVal(inp);
@@ -78,7 +77,7 @@ infra.wait(infrajs,'oninit',function(){
 			
 		},
 		saveAll:function(layer){
-			if(!layer.autosave)return;
+			if(!layer.autosavename)return;
 			var inps=autosave.getInps(layer.div).filter('[autosave]');
 
 			inps.each(function(){
@@ -152,8 +151,9 @@ infra.wait(infrajs,'oninit',function(){
 			}
 			layer.autosave={};
 		}
-		if(!layer.autosave)return;
-		if(!layer.autosavename)layer.autosavename='autosave';
+		
+		if(!layer.autosavename)return;
+
 		var val=infrajs.autosave.get(layer)||{};//Загружается сессия и устанавливается в слой в текущий вкладке
 		
 		layer.autosave=val;//В обработчиках onchange уже можно использовать данные из autosave
@@ -164,7 +164,7 @@ infra.wait(infrajs,'oninit',function(){
 		}
 	}
 	infrajs.autosaveHand=function(layer){
-		if(!layer.autosave)return;
+		if(!layer.autosavename)return;
 		var inps=autosave.getInps(layer.div).not('[autosave]').attr('autosave',1);//Берём input тольо не обработанные
 		inps.each(function(){
 			var inp=this;
@@ -185,17 +185,19 @@ infra.wait(infrajs,'oninit',function(){
 		//Функция сохраняет все значение, а не только того элемента на ком она сработала
 
 		autosave.loadAll(layer);//Востанавливаем то что есть в autosave, При установки нового занчения срабатывает change
-		
+
+		//change может программно вызываться у множества элементов. это приводит к тормозам.. нужно объединять
 		inps.change(function(){//Всё на change.. при авто изменении нужно вызывать событие change
 			//autosave.saveAll(layer);
 			var inp=$(this);
-			var name=inp.attr('name');
-			if(!name)return;
+			var name=inp.attr('name');//getInps проверяет чтобы у всех были name
 			//this.removeAttribute('notautosaved');//должно быть отдельное событие которое при малейшем измееннии поля ввода будет удалять это свойство //Если свойства этого нет, то сохранять ничего не нужно
+
 			var val=autosave.getVal(inp);
-			var nowval=autosave.get(layer,name);
+			//var nowval=autosave.get(layer,name);
 			//if(!nowval)nowval='';
 			//if(val===nowval)return;
+			
 			autosave.bracket(inp,true);
 			autosave.set(layer,name,val);
 		});//Подписались на события inputов onchange
@@ -210,7 +212,7 @@ infra.wait(infrajs,'oninit',function(){
 	*/
 	/*infra.listen(infra,'layer.onhide',function(){//rte.layer.js сохраняется autosave в onhide - подставляетяс texarea после редактора
 		var layer=this;
-		if(!layer.autosave)return;
+		if(!layer.autosavename)return;
 		if(layer.autosaveonhide===false)return;
 		autosave.saveAll(layer);
 	});*/

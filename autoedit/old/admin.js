@@ -136,7 +136,6 @@ window.ADMIN=function(type,id,param){
 					ADMIN.clear();
 				}
 			},
-			autosave:true,
 			autosavename:save,
 			config:config,
 			autofocus:true,

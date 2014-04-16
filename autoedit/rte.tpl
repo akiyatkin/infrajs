@@ -381,7 +381,7 @@
 				if(!conf.delimglayer){
 					conf.delimglayer={
 						config:conf,
-						autosave:{ },
+						autosavename:'autosave',
 						tpl:'*autoedit/rte.tpl',
 						tplroot:'delimg',
 						global:['files'],

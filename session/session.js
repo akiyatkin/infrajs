@@ -130,19 +130,56 @@ infra.session={
 		if(!res)res=[];
 		return res;
 	},
-	storageSave:function(nlist,repl){//set
-		//nlist это корректный список {name:'',value:''}
+	dataSave:function(nlist,repl){
 		if(repl){
 			this.data=this.make(nlist,{});
-			var list=this.right(nlist);
 		}else{
 			this.data=this.make(nlist,this.data);
+		}
+	},
+	storageSave2:function(nlist,repl){//set
+		//nlist это корректный список {name:'',value:''}
+		if(repl){
+			var list=this.right(nlist);
+		}else{
 			var list=this.storageLoad();
 			list.push(nlist);
 			list=this.right(list);
 		}
 		var dataname=this._getName('data');
 		this.stor.save(dataname,list);
+	},
+	storage_repl:false,
+	storage_process:false,
+	storage_wait:[],
+	storageSave:function(nlist,repl){//set
+		//nlist это корректный список {name:'',value:''}
+		if(repl){
+			this.storage_repl=true;
+			this.storage_wait=[nlist];
+		}else{
+			this.storage_wait.push(nlist);
+		}
+		if(!this.storage_process){
+			this.storage_process=true;
+			var that=this;
+			setTimeout(function(){
+				that.storage_process=false;
+				var repl=that.storage_repl;
+				that.storage_repl=false;
+				var nlist=that.storage_wait;
+				that.storage_wait=[];
+				if(repl){
+					var list=that.right(nlist);
+				}else{
+					var list=that.storageLoad();
+					list.push(nlist);
+					list=that.right(list);
+				}
+				var dataname=that._getName('data');
+				that.stor.save(dataname,list);
+			},1);
+		}
 	},
 	syncreq:function(list,sync,callback){//новое значение, //Отправляется пост на файл, который записывает и возвращает данные
 		var cb=function(ans){
@@ -157,19 +194,19 @@ infra.session={
 			
 			//По сути тут set(news) но на этот раз просто sync вызываться не должен, а так всё тоже самое
 			this.storageSave(ans.news);
+			this.dataSave(ans.news);
 			
 			callback();
 		}.bind(this);
 		var data={//id и time берутся из кукисов на сервере
 			list:this.source(list)
 		}
-		var async=(sync=='async');
 		var load_path=infra.theme('*session/sync.php');
 
 		$.ajax({
 			url:load_path,
 			timeout:120000,
-			async: async,
+			async: !sync,
 			type:'POST',
 			data:data,
 			dataType: 'json',
@@ -186,6 +223,7 @@ infra.session={
 	logout:function(){
 		var view=infra.view;
 		this.storageSave([],true);
+		this.data={};
 
 		var sentname=this._getName('sent');
 		var waitname=this._getName('wait');
@@ -215,27 +253,65 @@ infra.session={
 		},true);
 		return rsent;
 	},
+	wait:[],
+	callbacks:[],
+	process:false,
+	process_timer:false,
 	sync:function(list,sync,callback){
 		if(!callback)callback=function(){};
 		if(!this.getId()&&(!list||(list.constructor==Array&&list.length==0))){//Если ничего не устанавливается и нет id то sync не делается
 			return callback();
 		}
-		
-	
+
+		this.wait.push(list);
+		if(typeof(callback)=='function')this.callbacks.push(callback);
+		var that=this;
+		if(!sync){
+			var list=that.wait;
+			that.wait=[];
+			if(that.process){
+				clearTimeout(that.process_timer);
+				that.process=false;
+			}
+			that._sync(list,sync,function(){
+				for(var i=0,l=that.callbacks.length;i<l;i++){
+					that.callbacks[i]();
+				}
+				that.callbacks=[];
+			});
+		}else{
+			if(that.process)return;
+			that.process=true;
+			clearTimeout(that.process_timer);
+			that.process_timer=setTimeout(function(){
+				that.process=false;
+				var list=that.wait;
+				that.wait=[];
+				that._sync(list,sync,function(){
+					for(var i=0,l=that.callbacks.length;i<l;i++){
+						that.callbacks[i]();
+					}
+					that.callbacks=[];
+				});
+			},1);
+		}
+	},
+	_sync:function(list,sync,callback){
 		var sentname=this._getName('sent');
 		var waitname=this._getName('wait');
-	
-		var wait=this.stor.load(waitname);
+		
+
+		var wait=this.stor.load(waitname);//Задержка
 		if(wait&&list)		wait.push(list);
 		else if(wait&&!list) 	wait=wait;
 		else if(!wait&&list)	wait=[list];
 		else if(!wait&&!list)	wait=[];
 		wait=this.right(wait);
 		var conf=infra.config();
-		if(conf.session.sync&&sync!='async'){//Если просто вызыван sync с одним параметром или без
+		if(conf.session.sync&&sync){//Если просто вызыван sync с одним параметром или без
 			this.stor.save(sentname,wait);//Всё записалось в sent и после успешной отправки очистится
 			this.stor.save(waitname,false);//wait становится пустым, но пока будет отправка он может наполняться
-			return this.syncreq(wait,'sync',function(err){
+			return this.syncreq(wait,false,function(err){
 				if(err){
 					this.stor.save(waitname,wait);
 					this.stor.save(sentname,false);
@@ -248,8 +324,9 @@ infra.session={
 			}.bind(this));//синхронно вызываем сразу, вразрез с асинхронными
 		}
 
-
+		
 		this.stor.save(waitname,wait);
+
 		if(!conf.session.sync){
 			callback(false);
 			return;
@@ -352,17 +429,19 @@ infra.session={
 		if(val===undefined)return def;
 		return val;
 	},
-	set:function(name,value,sync){
+	set:function(name,value,async){
 		//if(this.get(name)===value)return; //если сохранена ссылка то изменение её не попадает в базу данных и не синхронизируется
 		var li={name:infra.seq.right(name),value:value};
 		if(li.name[0]=='safe')return false;
 		//При set делается 2 действия
-		this.storageSave(li);//1
-		if(typeof(sync)=='function'){
-			this.sync(li,'async',sync);//2
-		}else{
-			this.sync(li,sync||'async',function(){ });//2
-		}
+		
+
+		this.storageSave(li);//Задержка!!!!
+		this.dataSave(li);
+		var fn=async;
+		if(typeof(fn)!=='function')fn=function(){};
+
+		this.sync(li,!async,fn);//2 true синхронно
 	},
 	getValue:function(name,def){//load для <input value="...
 		var value=this.get(name);

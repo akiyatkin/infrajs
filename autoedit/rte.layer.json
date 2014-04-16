@@ -26,7 +26,6 @@
 		jsontpl:'*pages/list.php?src={config.folder}&onlyname=2&e=jpg,png,gif',
 		config:{},
 		autosavenametpl:'{parent.autosavename}',
-		autosave:{},
 		global:['files']
 	}
 }

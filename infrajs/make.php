@@ -136,11 +136,11 @@
 		});	
 	});
 
-	infra_listen($infra,'layer.oncheck',function(&$layer){
-		//autosave
-		if(infrajs_tplonlyclient($layer))return;
-		infrajs_autosaveRestore($layer);
-	});
+	//infra_listen($infra,'layer.oncheck',function(&$layer){
+		//autosave на сервере нет такого объекта у слоёв autosave и это не приводит к запрету кэширования
+		//if(infrajs_tplonlyclient($layer))return;
+		//infrajs_autosaveRestore($layer);
+	//});
 
 	
 
