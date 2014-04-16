@@ -271,8 +271,8 @@
 	
 	infrajs_isAdd('show',function(&$layer){
 		//env
-
 		if(@!$layer['env']){
+			if(infrajs_tplonlyclient($layer))return;
 			infrajs_getHtml($layer);
 			global $infrajs;
 			if(isset($infrajs['com']['env'])){
