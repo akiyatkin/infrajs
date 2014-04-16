@@ -266,8 +266,8 @@ infra.session={
 		this.wait.push(list);
 		if(typeof(callback)=='function')this.callbacks.push(callback);
 		var that=this;
-		if(!sync){
-			var list=that.wait;
+		if(sync){
+			list=that.wait;
 			that.wait=[];
 			if(that.process){
 				clearTimeout(that.process_timer);
@@ -311,7 +311,7 @@ infra.session={
 		if(conf.session.sync&&sync){//Если просто вызыван sync с одним параметром или без
 			this.stor.save(sentname,wait);//Всё записалось в sent и после успешной отправки очистится
 			this.stor.save(waitname,false);//wait становится пустым, но пока будет отправка он может наполняться
-			return this.syncreq(wait,false,function(err){
+			return this.syncreq(wait,sync,function(err){
 				if(err){
 					this.stor.save(waitname,wait);
 					this.stor.save(sentname,false);
@@ -429,7 +429,7 @@ infra.session={
 		if(val===undefined)return def;
 		return val;
 	},
-	set:function(name,value,async){
+	set:function(name,value,sync){
 		//if(this.get(name)===value)return; //если сохранена ссылка то изменение её не попадает в базу данных и не синхронизируется
 		var li={name:infra.seq.right(name),value:value};
 		if(li.name[0]=='safe')return false;
@@ -438,10 +438,9 @@ infra.session={
 
 		this.storageSave(li);//Задержка!!!!
 		this.dataSave(li);
-		var fn=async;
+		var fn=sync;
 		if(typeof(fn)!=='function')fn=function(){};
-
-		this.sync(li,!async,fn);//2 true синхронно
+		this.sync(li,!!sync,fn);//2 true синхронно
 	},
 	getValue:function(name,def){//load для <input value="...
 		var value=this.get(name);
