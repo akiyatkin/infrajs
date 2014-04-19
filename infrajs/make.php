@@ -270,6 +270,10 @@
 	
 	
 	infrajs_isAdd('show',function(&$layer){
+		//counter должно быть до getHtml
+		$layer['counter']++;
+	});
+	infrajs_isAdd('show',function(&$layer){
 		//env
 		if(@!$layer['env']){
 			if(infrajs_tplonlyclient($layer))return;
@@ -293,10 +297,6 @@
 //========================
 //layer onshow
 //========================
-	infra_listen($infra,'layer.onshow',function(&$layer){
-		//counter
-		$layer['counter']++;
-	});
 	
 	infra_listen($infra,'layer.onshow',function(&$layer){
 		//tpl

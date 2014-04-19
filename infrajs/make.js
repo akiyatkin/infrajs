@@ -311,9 +311,11 @@
 		return r;
 	});
 	infrajs.isAdd('show',function(layer){
-		//env
+		//env, counter
 		if(!layer.env){
+			layer.counter++;
 			infrajs.getHtml(layer);//чтобы установилось свойство infrajs['com'] после загрузки шаблонов
+			layer.counter--;//На самом деле ещё неизвестно... но если html и будет вставляться то counter дальше приибваться
 			if(infrajs['com']&&infrajs['com']['env']){
 				var envs=infrajs['com']['env'];
 				if(!layer['myenv'])layer['myenv']={};
