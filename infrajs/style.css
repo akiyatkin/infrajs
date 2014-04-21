@@ -44,7 +44,7 @@ table.common td.com,table.common th.com {
 table.common tr.bottom td.com,table.common tr.bottom th.com {
 	border-bottom:none;
 }
-table.common .first {
+table.common tr td.first {
 	border-left:none;
 }
 table.common .bottom {

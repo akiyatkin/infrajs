@@ -4,16 +4,12 @@ infra.wait(infra,'AUTOEDIT',function(){
 		name:'SEO оптимизация',
 		click:function(){
 			infra.require('*seo/seo.js');
-
-			
-
-
 			infrajs.SEO('seo');
 		}
 	})
 });
 
-infrajs.seo_checkseolinktpl=function(layer){
+/*infrajs.seo_checkseolinktpl=function(layer){
 	if(!layer.seotpl)return;
 	if(!layer.seo)layer.seo={};
 	var props=['link','json','name','title'];
@@ -31,7 +27,7 @@ infrajs.seo_checkseolinktpl=function(layer){
 		infra.code_save('popup','infra.require("*seo/seo.js");infrajs.SEO("'+layer.config.type+'","'+layer.config.id+'");');
 	}
 }*/
-infrajs.seo_init=function(){
+/*infrajs.seo_init=function(){
 	var store=infrajs.store();	
 	store['seolayer']=false;
 }
@@ -50,4 +46,4 @@ infrajs.seo_apply=function(){
 	var title=layer.seo.name
 	if(layer.seo.title)title=layer.seo.title;
 	if(title)document.title=title;
-}
+}*/

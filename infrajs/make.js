@@ -23,7 +23,7 @@
 	});
 	infra.listen(infra.State,'onchange',function(layer){
 		//seo
-		infrajs.seo_init();
+		//infrajs.seo_init();
 	});
 
 //========================
@@ -185,7 +185,7 @@
 	});
 	infra.listen(infra,'layer.oncheck',function(layer){
 		//seo
-		infrajs.seo_checkseolinktpl(layer);
+		//infrajs.seo_checkseolinktpl(layer);
 	});
 	/*infra.listen(infra,'layer.oncheck',function(layer){	
 		//state link
@@ -441,7 +441,7 @@
 	});
 	infra.listen(infra,'layer.onshow',function(layer){
 		//seo
-		infrajs.seo_now(layer);
+		//infrajs.seo_now(layer);
 	});
 	infra.listen(infra,'layer.onshow',function(layer){
 		//autoview

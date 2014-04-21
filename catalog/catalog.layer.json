@@ -10,7 +10,9 @@
 		"jsontpl":"*catalog/catalog.php?type=search&val={istate.name}&prod={config.sel}",
 		"autoedittpl":{ "fast":"{infra.conf.catalog.dir}" },
 		"linktpl":"{istate}",
-		"seotpl":{"link":"{istate.parent}/{{.}}"},
+		"seotpl":{
+			"link":"{istate.parent}/{{.}}"
+		},
 		"conf_prod":true,
 		"parsedtpl":"{config.sel}",
 		"configtpl":{
