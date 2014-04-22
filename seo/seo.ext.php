@@ -11,12 +11,39 @@ function infrajs_seo_init(){//Делается при каждой пробеж�
 	$store['seo']=array();
 	$store['seolayer']=array();
 	infra_admin_cache('infrajs_seo_init',function(){
+		$data=array();
+		$data['host']=$_SERVER['HTTP_HOST'];
+		$data['root']=infra_view_getRoot(ROOT);
+		$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots');
+		$html.="\n";
+
 		if(!is_file(ROOT.'robots.txt')){
-			$data=array();
-			$data['host']=$_SERVER['HTTP_HOST'];
-			$data['root']=infra_view_getRoot(ROOT);
-			$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots');
 			file_put_contents(ROOT.'robots.txt',$html);
+		}else{//Проверка что sitemap корректный
+
+			$robots=file(ROOT.'robots.txt');
+			$res=false;
+			foreach($robots as $num=>$line){
+				$r=explode(':',$line,2);
+				$r[0]=trim($r[0]);
+				if($r[0]=='sitemap'){
+
+					$res=true;
+					$path=trim($r[1]);
+					$r=explode('/',$path,4);
+					$host=$r[2];
+					if($host!==$data['host']){
+						$robots[$num]=$html;
+						$html=implode("",$robots);
+						file_put_contents(ROOT.'robots.txt',$html);
+					}
+				}
+			}
+			if(!$res){//ненайдена запись sitemap
+				$robots[]=$html;//"\r\n"
+				$html=implode("",$robots);
+				file_put_contents(ROOT.'robots.txt',$html);
+			}
 		}
 	});
 }
