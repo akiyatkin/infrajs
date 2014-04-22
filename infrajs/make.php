@@ -97,8 +97,8 @@
 	});*/
 	infra_listen($infra,'layer.oninit',function(&$layer){
 		//seo
-		infrajs_seo_checkopt($layer);
 		infrajs_seo_checkseolinktpl($layer);
+		infrajs_seo_checkopt($layer);
 		infrajs_seo_collectLayer($layer);
 
 	});
