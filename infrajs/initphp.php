@@ -18,6 +18,7 @@
 	infra_require('*infrajs/ext/unick.php');//
 	infra_require('*infrajs/ext/is.php');//
 	infra_require('*infrajs/ext/env.php');//
+	infra_require('*infrajs/ext/css.php');//
 	infra_require('*infrajs/ext/autosave.php');//
 	infra_require('*infrajs/ext/config.php');//
 	infra_require('*infrajs/ext/parsed.php');//

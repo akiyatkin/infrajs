@@ -1,12 +1,15 @@
 <?php
-//Свойство css
-	if(function_exists('infrajs_external_add'))infrajs_external_add('css','external');
-	global $infra;
-	infra_listen($infra,'layer.oninsert',function($layer){
-		if(@!$layer['css'])return;
-		infra_fora($layer['css'],function(&$layer, $css){
-			$code=infra_load($css,'ft');
+//Свойство css	
+	
+	function infrajs_csscheck(&$layer){
+		if(!isset($layer['css']))return;
+		$sotre=infrajs_store();
+		if(!$store['css'])$store['css']=array();
+		if($store['css'][$css])return;
+		infra_fora($layer['css'],function($css) use(&$layer,&$store){			
+			$store['css'][$css]=true;
+			$code=infra_loadTEXT($css);
 			infra_html('<style>'.$code.'</style>',$layer['div']);
-		},array(&$layer));
-	});
+		});
+	}
 ?>

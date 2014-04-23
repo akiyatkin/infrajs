@@ -304,6 +304,11 @@
 		$layer['html']=infrajs_getHtml($layer);
 	});
 	infra_listen($infra,'layer.onshow',function(&$layer){
+		//css
+		if(infrajs_tplonlyclient($layer))return;
+		infrajs_csscheck($layer);	
+	});
+	infra_listen($infra,'layer.onshow',function(&$layer){
 		//tpl
 		if(infrajs_tplonlyclient($layer))return;
 		global $infrajs;

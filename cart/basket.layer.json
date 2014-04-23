@@ -1,0 +1,7 @@
+{
+	"onlyclient":true,
+	"tpl":"*cart/client.tpl",
+	"global":"cat_basket",
+	"json":"*cart/client.php",
+	"tplroot":"basket"
+}

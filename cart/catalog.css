@@ -1,0 +1,28 @@
+.price {
+	/*зелёненькая цена*/
+	white-space: nowrap;
+	float:left;
+	padding:0 4px;
+	/*width:100px;*/
+	height: 30px;
+	background-color: #89b906;
+	color: white;
+	font: 18px "Open sans", sans-serif;
+	text-align: center;
+	line-height: 29px;
+	/*margin-right:10px;*/
+}
+.basket_img {
+	padding:0;
+	width: 30px;
+	height: 30px;
+	background-image: url(infra/plugins/cart/images/basket_img.png);
+    background-repeat: no-repeat;
+    cursor:pointer;
+    font-size:0;
+}
+.basket_img_sel,
+.basket_img_over {
+	background-image: url(infra/plugins/cart/images/basket_active.png);
+    background-repeat: no-repeat;
+}

@@ -3,7 +3,7 @@
 	infra_wait($infrajs,'oninit',function(){
 		//Обработка envs, envtochild, myenvtochild, envframe
 		infrajs_externalAdd('myenv','config');//Обрабатывается также как config
-		infrajs_externalAdd('env','');//Никак не обрабатывается.. будет установлено только если нечего небыло
+		//infrajs_externalAdd('env','');//Никак не обрабатывается.. будет установлено только если нечего небыло
 		infrajs_externalAdd('envs','childs');//Объединяется так же как childs
 
 		infrajs_runAddKeys('envs');//Теперь бегаем и по envs свойству

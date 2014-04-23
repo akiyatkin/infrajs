@@ -382,8 +382,13 @@
 	});
 	infra.listen(infra,'layer.onshow',function(layer){//До того как сработает событие самого слоя в котором уже будут обработчики вешаться
 		//tpl
-		if(infrajs.ignoreDOM(layer))return;		
+		if(infrajs.ignoreDOM(layer))return;
 		layer.html=infrajs.getHtml(layer);		
+	});
+	infra.listen(infra,'layer.onshow',function(layer){
+		//css
+		if(infrajs.ignoreDOM(layer))return;
+		infrajs.csscheck(layer);	
 	});
 	infra.listen(infra,'layer.onshow',function(layer){//До того как сработает событие самого слоя в котором уже будут обработчики вешаться
 		//tpl
