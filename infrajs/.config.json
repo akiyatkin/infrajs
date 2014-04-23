@@ -1,6 +1,7 @@
 {
 	"infrajs":{
-		"pub":["seoname","seoforall","scroll","scrollup","onlyclient"],
+		"pub":["producer","seoname","seoforall","scroll","scrollup","onlyclient"],
+		"producer":"Создание&nbsp;сайта&nbsp;&mdash;&nbsp;<a href='http://itlife-studio.ru'>Айтилайф</a>",
 		"seoname":"",
 		"seoforall":false,
 		"scroll":false,

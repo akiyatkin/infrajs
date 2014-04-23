@@ -9,7 +9,10 @@
 	{:form}
 		<input type="hidden" name="admin" value="{data.admin?:1?:0}">
 		<table>
-			<tr><td style="height:22px; vertical-align:middle" colspan=2>Административный режим <b>{data.admin?:включён?:выключeн}</b> </td></tr>
+			<tr><td style="height:22px; vertical-align:middle" colspan=2>
+				Сайт работает в <b>{infra.conf.debug?:отладочном?:рабочем}</b> режиме.<br>
+				Административный режим <b>{data.admin?:включён?:выключeн}.</b> 
+			</td></tr>
 			{data.admin|:admin_form}
 		</table>
 		<div style="margin-bottom:10px">

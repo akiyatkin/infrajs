@@ -98,7 +98,9 @@
 	infra_listen($infra,'layer.oninit',function(&$layer){
 		//seo
 		infrajs_seo_checkseolinktpl($layer);
+		infrajs_seo_checkopt($layer);
 		infrajs_seo_collectLayer($layer);
+
 	});
 //========================
 //layer is check
@@ -270,6 +272,10 @@
 	
 	
 	infrajs_isAdd('show',function(&$layer){
+		//counter должно быть до getHtml
+		$layer['counter']++;
+	});
+	infrajs_isAdd('show',function(&$layer){
 		//env
 		if(@!$layer['env']){
 			if(infrajs_tplonlyclient($layer))return;
@@ -293,10 +299,6 @@
 //========================
 //layer onshow
 //========================
-	infra_listen($infra,'layer.onshow',function(&$layer){
-		//counter
-		$layer['counter']++;
-	});
 	
 	infra_listen($infra,'layer.onshow',function(&$layer){
 		//tpl

@@ -4,6 +4,49 @@
 Карта сайта обновляется при клике и если файла вообще нет
 */
 @define('ROOT','../../../');
+
+
+function infrajs_seo_init(){//Делается при каждой пробежки
+	$store=&infrajs_store();
+	$store['seo']=array();
+	$store['seolayer']=array();
+	infra_admin_cache('infrajs_seo_init',function(){
+		$data=array();
+		$data['host']=$_SERVER['HTTP_HOST'];
+		$data['root']=infra_view_getRoot(ROOT);
+		$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots');
+		$html.="\n";
+
+		if(!is_file(ROOT.'robots.txt')){
+			file_put_contents(ROOT.'robots.txt',$html);
+		}else{//Проверка что sitemap корректный
+
+			$robots=file(ROOT.'robots.txt');
+			$res=false;
+			foreach($robots as $num=>$line){
+				$r=explode(':',$line,2);
+				$r[0]=trim($r[0]);
+				if($r[0]=='sitemap'){
+
+					$res=true;
+					$path=trim($r[1]);
+					$r=explode('/',$path,4);
+					$host=$r[2];
+					if($host!==$data['host']){
+						$robots[$num]=$html;
+						$html=implode("",$robots);
+						file_put_contents(ROOT.'robots.txt',$html);
+					}
+				}
+			}
+			if(!$res){//ненайдена запись sitemap
+				$robots[]=$html;//"\r\n"
+				$html=implode("",$robots);
+				file_put_contents(ROOT.'robots.txt',$html);
+			}
+		}
+	});
+}
 function infrajs_seo_checkseolinktpl(&$layer){
 	if(!isset($layer['seotpl']))return;
 	if(!isset($layer['seo']))$layer['seo']=array();
@@ -12,21 +55,53 @@ function infrajs_seo_checkseolinktpl(&$layer){
 		if(isset($layer['seotpl'][$props[$i]]))$layer['seo'][$props[$i]]=infra_template_parse(array($layer['seotpl'][$props[$i]]),$layer);
 	}
 }
-//Время Здоровье Результат Функциональность План
-function infrajs_seo_init(){//Делается при каждой пробежки
-	$store=&infrajs_store();
-	$store['seo']=array();
-	$store['seolayer']=array();
-	infra_admin_cache('infrajs_seo_init',function(){
-		if(!is_file(ROOT.'robots.txt')){
-			$data=array();
-			$data['host']=$_SERVER['HTTP_HOST'];
-			$data['root']=infra_view_getRoot(ROOT);
-			$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots');
-			file_put_contents(ROOT.'robots.txt',$html);
+function infrajs_seo_checkopt(&$layer){
+	if(!isset($layer['seo']))return;
+	$seo=&$layer['seo'];
+	if(!$seo['name']){
+		if($layer['tplroot']){
+			$seo['name']=$layer['tplroot'];
+		}else if($layer['tpl']){
+			$seo['name']=$layer['tpl'];
+		}else{
+			die("У seo необходио указать name. Слой:".$seo['name']);
 		}
-	});
+	}
+	$seo['name']=infra_State_forFS($seo['name']);
+	if(!isset($seo['link'])){
+		$seo['link']=$layer['istate']->toString();
+		if(preg_match("/###/",$seo['link'])){
+			die("Невозможно автоматически определить Link Необходимо указать в layers.json ".$seo['link'].". Слой:".$seo['name']);
+		}
+	}
+	if(isset($seo['schema'])){
+		if(!isset($seo['items'])&&!isset($seo['defitems'])){
+			die("Если указан schema должно быть указано items или defitems. Слой:".$seo['name']);
+		}
+	}
+	if(!isset($seo['schema'])&&!isset($seo['items'])){
+		$item=array(
+			"data"=>true,
+			"keywords"=>$seo['keywords'],
+			"title"=>$seo['title'],
+			"description"=>$seo['description']
+		);
+		unset($seo['keywords']);
+		unset($seo['title']);
+		unset($seo['description']);
+		$seo['items']=array($item);
+	}
 }
+
+function infrajs_seo_collectLayer(&$layer){
+	if(!isset($layer['seo']))return;
+	$store=&infrajs_store();
+	$store['seo'][$layer['seo']['name']]=$layer['seo'];
+}
+
+
+
+
 
 function infrajs_seo_now(&$layer){
 	if(!isset($layer['seo']))return;
@@ -34,19 +109,39 @@ function infrajs_seo_now(&$layer){
 	$store['seolayer']=&$layer;
 
 }
+function infrajs_seo_save(){
+	infra_admin_cache('infrajs_seo_save',function(){
+		$store=&infrajs_store();
+		$dir='infra/cache/seo/';
+		if(is_dir(ROOT.$dir)){
+			$list=infra_loadJSON('*pages/list.php?src='.$dir.'&onlyname=1');
+			foreach($list as $file){
+				unlink(ROOT.$dir.infra_tofs($file));
+			}
+			$r=rmdir(ROOT.$dir);
+			if(!$r){
+				$conf=infra_config();
+				if($conf['debug'])die('Не удалось удалить папку '.$dir);
+			}
+
+		}
+		mkdir(ROOT.$dir);
+		foreach($store['seo'] as $name=>$seo){
+			file_put_contents(ROOT.$dir.infra_tofs($name).'.json',infra_json_encode($seo));
+		}
+	});
+}
 function infrajs_seo_apply(){
 	$store=&infrajs_store();
 	$layer=&$store['seolayer'];
 	if(!$layer)return;
 	$seo=$layer['seo'];
-	if(!isset($layer['link'])){
-		if(!isset($layer['linktpl']))$layer['linktpl']='{istate}';
-		$layer['link']=infra_template_parse(array($layer['linktpl']),$layer);
-	}
+
+	$reallink=$layer['istate']->toString();
 
 	$item=$seo;
 	if(isset($seo['name'])){
-		$id=$seo['name'].'|'.$layer['link'];
+		$id=$seo['name'].'|'.$reallink;
 		$r=infra_loadJSON('*seo/seo.php?type=item&id='.$id);
 		$item=$r['item'];
 	}
@@ -87,42 +182,6 @@ function infrajs_seo_apply(){
 	infra_html($html,true);
 	
 }
-function infrajs_seo_collectLayer(&$layer){
-	if(!isset($layer['seo']))return;
-	if(!isset($layer['seo']['name'])){
-		$conf=infra_config();
-		if($conf['debug'])die('Свойству seo обязательно требуется параметр name <pre>'.print_r($layer,true));
-		return;
-	}
-	if(!isset($layer['seo']['link'])){//Если link не указан считаем что он постоянный
-		$conf=infra_config();
-		if($conf['debug'])die('Свойству seo обязательно требуется параметр link <pre>'.print_r($layer,true));
-		return;
-	}
 
-	$store=&infrajs_store();
-	$store['seo'][$layer['seo']['name']]=$layer['seo'];
-}
-function infrajs_seo_save(){
-	infra_admin_cache('infrajs_seo_save',function(){
-		$store=&infrajs_store();
-		$dir='infra/cache/seo/';
-		if(is_dir(ROOT.$dir)){
-			$list=infra_loadJSON('*pages/list.php?src='.$dir.'&onlyname=1');
-			foreach($list as $file){
-				unlink(ROOT.$dir.infra_tofs($file));
-			}
-			$r=rmdir(ROOT.$dir);
-			if(!$r){
-				$conf=infra_config();
-				if($conf['debug'])die('Не удалось удалить папку '.$dir);
-			}
 
-		}
-		mkdir(ROOT.$dir);
-		foreach($store['seo'] as $name=>$seo){
-			file_put_contents(ROOT.$dir.infra_tofs($name).'.json',infra_json_encode($seo));
-		}
-	});
-}
 ?>

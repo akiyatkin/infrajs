@@ -23,7 +23,7 @@
 	});
 	infra.listen(infra.State,'onchange',function(layer){
 		//seo
-		infrajs.seo_init();
+		//infrajs.seo_init();
 	});
 
 //========================
@@ -185,7 +185,7 @@
 	});
 	infra.listen(infra,'layer.oncheck',function(layer){
 		//seo
-		infrajs.seo_checkseolinktpl(layer);
+		//infrajs.seo_checkseolinktpl(layer);
 	});
 	/*infra.listen(infra,'layer.oncheck',function(layer){	
 		//state link
@@ -311,9 +311,11 @@
 		return r;
 	});
 	infrajs.isAdd('show',function(layer){
-		//env
+		//env, counter
 		if(!layer.env){
+			layer.counter++;
 			infrajs.getHtml(layer);//чтобы установилось свойство infrajs['com'] после загрузки шаблонов
+			layer.counter--;//На самом деле ещё неизвестно... но если html и будет вставляться то counter дальше приибваться
 			if(infrajs['com']&&infrajs['com']['env']){
 				var envs=infrajs['com']['env'];
 				if(!layer['myenv'])layer['myenv']={};
@@ -444,7 +446,7 @@
 	});
 	infra.listen(infra,'layer.onshow',function(layer){
 		//seo
-		infrajs.seo_now(layer);
+		//infrajs.seo_now(layer);
 	});
 	infra.listen(infra,'layer.onshow',function(layer){
 		//autoview
