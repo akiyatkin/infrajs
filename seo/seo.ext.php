@@ -131,6 +131,11 @@ function infrajs_seo_save(){
 		}
 	});
 }
+function infrajs_seo_value($value){//load для <input value="...
+	if(!$value)$value='';
+	$value=preg_replace('/"/','&quot;',$value);
+	return $value;
+}
 function infrajs_seo_apply(){
 	$store=&infrajs_store();
 	$layer=&$store['seolayer'];
@@ -156,27 +161,27 @@ function infrajs_seo_apply(){
 
 		$r=preg_match('/<meta.*name=.{0,1}'.$name.'.{0,1}.*>/i',$html);
 		if(!$r){
-			$html=str_ireplace('<head>',"<head>\n<meta name=\"".$name.'" content="'.$item[$name].'">',$html);
+			$html=str_ireplace('<head>',"<head>\n<meta name=\"".$name.'" content="'.infrajs_seo_value($item[$name]).'">',$html);
 		}else{
-			$html=preg_replace('/(<meta.*name=.{0,1}'.$name.'.{0,1})(.*>)/i','<meta name="'.$name.'" content="'.$item[$name].'" >',$html);
+			$html=preg_replace('/(<meta.*name=.{0,1}'.$name.'.{0,1})(.*>)/i','<meta name="'.$name.'" content="'.infrajs_seo_value($item[$name]).'" >',$html);
 		}
 	}
 	$name='description';//stencil//
 	if(isset($item[$name])){
 		$r=preg_match('/<meta.*name=.{0,1}'.$name.'.{0,1}.*>/i',$html);
 		if(!$r){
-			$html=str_ireplace('<head>',"<head>\n<meta name=\"".$name.'" content="'.$item[$name].'">',$html);
+			$html=str_ireplace('<head>',"<head>\n<meta name=\"".$name.'" content="'.infrajs_seo_value($item[$name]).'">',$html);
 		}else{
-			$html=preg_replace('/(<meta.*name=.{0,1}'.$name.'.{0,1})(.*>)/i','<meta name="'.$name.'" content="'.$item[$name].'" >',$html);
+			$html=preg_replace('/(<meta.*name=.{0,1}'.$name.'.{0,1})(.*>)/i','<meta name="'.$name.'" content="'.infrajs_seo_value($item[$name]).'" >',$html);
 		}
 	}
 	$name='title';//stencil//
 	if(isset($item[$name])){
 		$r=preg_match('/<title>/i',$html);
 		if(!$r){
-			$html=str_ireplace('<head>',"<head>\n<title>".$item[$name].'</title>',$html);
+			$html=str_ireplace('<head>',"<head>\n<title>".infrajs_seo_value($item[$name]).'</title>',$html);
 		}else{
-			$html=preg_replace('/<title>.*<\/title>/i','<title>'.$item[$name].'</title>',$html);
+			$html=preg_replace('/<title>.*<\/title>/i','<title>'.infrajs_seo_value($item[$name]).'</title>',$html);
 		}
 	}
 	infra_html($html,true);
