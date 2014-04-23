@@ -53,7 +53,7 @@ function infrajs_seo_list(){
 function infrajs_seo_getSeo($name,$link=false){
 	return infra_admin_cache('infrajs_seo_get',function($name,$link){
 		return _infrajs_seo_getSeo($name,$link);
-	},array($name));
+	},array($name),isset($_GET['re']));
 }
 function infrajs_seo_getSeoItem($name,$link){
 	$seo=infrajs_seo_getSeo($name);
@@ -127,7 +127,6 @@ function _infrajs_seo_getSeo($name){
 	if(!isset($def['items']))$def['items']=array();
 	$def['name']=$seo['name'];
 	foreach($def['items'] as &$item){
-
 		$item['link']=infra_template_parse(array($linktpl),$item['data']);
 		$item['def']=true;
 	}
@@ -207,6 +206,7 @@ function _infrajs_seo_getSeo2($name){
 	
 	if(isset($seo['defitems'])){
 		$def=infra_loadJSON($seo['defitems']);
+
 	}else{
 		$def=array();
 	}
