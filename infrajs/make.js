@@ -388,6 +388,10 @@
 		layer.html=infrajs.getHtml(layer);		
 	});
 	infra.listen(infra,'layer.onshow',function(layer){
+		//js
+		infrajs.jscheck(layer);	
+	});
+	infra.listen(infra,'layer.onshow',function(layer){
 		//css
 		if(infrajs.ignoreDOM(layer))return;
 		infrajs.csscheck(layer);	

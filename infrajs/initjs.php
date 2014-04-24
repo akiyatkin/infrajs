@@ -41,6 +41,7 @@
 		$html.=$require('*infrajs/ext/autoview.js');
 		$html.=$require('*infrajs/ext/code.js');
 		$html.=$require('*infrajs/ext/css.js');
+		$html.=$require('*infrajs/ext/js.js');
 		$html.=$require('*infrajs/ext/layers.js');//		
 		$html.=$require('*infrajs/ext/unick.js');//
 		$html.=$require('*infrajs/ext/is.js');//

@@ -1,5 +1,7 @@
 {
 	"onlyclient":true,
+	"css":"*cart/catalog.css",
+	"js":"*cart/catalog.js",
 	"tpl":"*cart/client.tpl",
 	"global":"cat_basket",
 	"json":"*cart/client.php",

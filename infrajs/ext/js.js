@@ -1,15 +1,9 @@
 //Свойство js
-	if(infrajs.external)infrajs.external.add('js',function(now,ext){
-		infra.fora(ext,function(script){
-			infra.load(script,'e');
-		});
+infrajs.jscheck=function(layer){
+	if(!layer.js) return;
+	//Загружаем внешние обработки свойств
+	infra.fora(layer.js,function(script){
+		infra.require(script);
 	});
-	infra.listen(infra,'layer.oninit',function(){
-		var layer=this;
-		if(layer.js){//Загружаем внешние обработки свойств
-			infra.fora(layer.js,function(script){
-				infra.load(script,'e');
-			});
-			delete layer.js;
-		}
-	});
+	delete layer.js;
+}

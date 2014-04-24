@@ -1,11 +1,15 @@
 {
 	"tpl":"*cart/catalog.tpl",
+	"css":"*cart/catalog.css",
+	"js":"*cart/catalog.js",
 	"tplroot":"groups",
 	"json":"*cart/catalog.php?type=rubrics",
 	"autoedittpl":{ "fast":"{infra.conf.catalog.dir}"},
 	"divs":{
 		"filters":{
 			"env":"filters",
+			"css":"*cart/catalog.css",
+			"js":"*cart/catalog.js",
 			"global":"cat_filters",
 			"autosavename":"filters",
 			"tpl":"*cart/filters.tpl",
@@ -14,6 +18,8 @@
 	},
 	"child":[{
 		"tpl":"*cart/search.tpl",
+		"css":"*cart/catalog.css",
+		"js":"*cart/catalog.js",
 		"global":"cat_search",
 		"jsontpl":"*cart/search.php?val={state.name}&page={~match(:exp,state.child.name)[:1]}{exp:}^p(\\d+)$",
 		"autoedittpl":{ "fast":"{infra.conf.catalog.dir}" },
@@ -44,6 +50,8 @@
 	},{
 		"child":{
 			"tpl":"*cart/catalog.tpl",
+			"css":"*cart/catalog.css",
+			"js":"*cart/catalog.js",
 			"tplroot":"pos",
 			"istpl":"{~test(:exp,state.name)??:1}{exp:}^p\\d+$",
 			"autoedittpl":{ "fast":"*Каталог/{state.parent.name}/{state.name}/" },
@@ -76,6 +84,8 @@
 	
 	"childs":{
 		"Корзина":{
+			"css":"*cart/catalog.css",
+			"js":"*cart/catalog.js",
 			"tpl":"*cart/client.tpl",
 			"autosavename":"user",
 			"json":"*cart/client.php",
@@ -90,6 +100,8 @@
 			}
 		},
 		"Поиск":{
+			"css":"*cart/catalog.css",
+			"js":"*cart/catalog.js",
 			"tpl":"*cart/catalog.tpl",
 			"tplroot":"find",
 			"autosavename":"search",
@@ -98,6 +110,8 @@
 			}
 		},
 		"Производители":{
+			"css":"*cart/catalog.css",
+			"js":"*cart/catalog.js",
 			"tpl":"*cart/catalog.tpl",
 			"tplroot":"producers",
 			"json":"*cart/catalog.php?type=producers",
@@ -114,6 +128,8 @@
 			}
 		},
 		"Статистика":{
+			"css":"*cart/catalog.css",
+			"js":"*cart/catalog.js",
 			"tpl":"*cart/catalog.tpl",
 			"tplroot":"stat",
 			"json":"*cart/catalog.php?type=stat",
