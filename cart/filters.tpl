@@ -3,8 +3,8 @@
 	<script>
 		infra.require('infra/lib/jquery-ui/js/jquery-ui-1.10.4.custom.js');
 	</script>
-	<div style="margin-bottom:5px; float:right">{:cancelbtn}</div>
-	<div style='margin-bottom:18px; color:gray; font: 24px "Open sans", sans-serif;'>Фильтры</div>
+	
+	
 	<style>
 		.filters {
 			font-family:Tahoma;
@@ -27,6 +27,9 @@
 		.filters .check {
 			cursor:pointer;
 		}
+		.filters .cancel {
+			font-size:12px;
+		}
 		.filters .cancel,
 		.filters .admitmove,
 		.filters .admit {
@@ -42,17 +45,18 @@
 		}
 
 	</style>
-	
-	{:admit}
-	{data.params::option}
-	<table style="width:100%; height:32px;">
-		<tr><td style="vertical-align:middle">
-			{:cancelbtn}
-		</td><td style="text-align:right">
-			{:admitbtn}
-	</td></tr>
-	</table>
-	
+	<div class="filters">
+		<h1>Фильтры {:cancelbtn}</h1>
+		{:admit}
+		{data.params::option}
+		<table style="width:100%; height:32px;">
+			<tr><td style="vertical-align:middle">
+				{:cancelbtn}
+			</td><td style="text-align:right">
+				{:admitbtn}
+		</td></tr>
+		</table>
+	</div>
 	<div style="text-align:right; margin-bottom:6px;">
 		
 	</div>
@@ -100,7 +104,7 @@
 	
 	<table style="width:100%" cellpadding="0" cellspacing="0">
 		<tr>
-		<td style="width:100%"><div class="slider{~key}"></div></td>
+		<td style="width:100%"><div id="slider{~key}"></div></td>
 		<td style="font-size:10px; padding-left:10px;">&nbsp;{~cost(max)}</td>
 		</tr>
 	</table>
@@ -109,9 +113,9 @@
 		infra.when(infrajs,'onshow',function(){
 			var layer=infrajs.getUnickLayer('{unick}');
 			var counter={counter};
-			var div=$('#'+layer.div).find('#option{~key}');
-			var sl=div.find(".slider{~key}");
-			var inp=div.find("#amount{~key}");
+			var div=$(document.getElementById('option{~key}'));
+			var sl=$(document.getElementById('slider{~key}'));
+			var inp=$(document.getElementById('amount{~key}'));
 			var yes=div.find('.yes').find('input');
 			//yes.prop('checked',true);
 			var no=div.find('.no').find('input');
@@ -295,7 +299,7 @@
 	<script>
 		infra.when(infrajs,'onshow',function(){
 			var layer=infrajs.getUnickLayer('{unick}');
-			var div=$('#'+layer.div).find('#option{~key}');
+			var div=$(document.getElementById('option{~key}'));
 			var yes=div.find('.yes').find('input');
 			//yes.prop('checked',true).change();
 			var no=div.find('.no').find('input');

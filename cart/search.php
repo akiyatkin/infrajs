@@ -37,8 +37,9 @@ else $reverse=1;
 
 
 $args=array($val,$check,$sort,$reverse);
-$ans=infra_cache($cond,'catalog_search_php_page',function($val,$check,$sort,$reverse) use(&$cond){
+$ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$reverse) use(&$cond){
 	$ans=cat_search($val);//свой кэш, без страниц
+
 	$yes=$check['yes'];
 	unset($check['yes']);
 	$no=$check['no'];
@@ -228,6 +229,5 @@ if(sizeof($ans['list']))$ans['result']=1;
 if(isset($ans['text'])){
 	$ans['text']=infra_loadTEXT($ans['text']);
 }
-
 return infra_echo($ans);
 ?>

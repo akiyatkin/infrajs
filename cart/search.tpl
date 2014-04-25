@@ -14,9 +14,7 @@
 			}
 		</style>
 		<p style="float:right">{parent:cat_childsp}</p>
-		<h1>{title}</h1>
-
-		<div style="margin-bottom:10px;">{count} {~words(count,:позиция,:позиции,:позиций)}</div>
+		<h1>{title} <span style="font-size:12px;">{count} {~words(count,:позиция,:позиции,:позиций)}</span></h1>
 		{~length(filters)?filters:cat_filters}
 		{childs?:cat_groups}
 		{pages>:1?:cat_numbers}
@@ -318,7 +316,7 @@
 					</td>
 				</table>
 			</a>
-		{catchimg:}<img src="infra/plugins/imager/imager.php?w=100&h=60&src={infra.conf.catalog.dir}{pos.producer}/{pos.article}/">
+		{catchimg:}<img src="infra/plugins/imager/imager.php?w=100&h=60&src={infra.conf.catalog.dir}{pos.producer}/{pos.article}/&or=*imager/empty">
 		{tr:}<tr>{/tr:}</tr>
 		{cat_childsp:}
 			<a style="color:gray" href="?{state.parent}/{title}" title="Показать группу {~lower(title)}">{title}</a>{~last()|:br}
@@ -326,7 +324,6 @@
 	{cat_groups:}
 		<div class="catgrouplist">
 			{childs::cat_child}
-			<div style="clear:both"></div>	
 			<style>
 				.catgrouplist .name {
 					vertical-align:middle;
@@ -342,7 +339,7 @@
 				}
 				.catgrouplist a {
 					float:left; 
-					width:316px; 
+					width:350px; 
 					display:block;
 				}
 			</style>

@@ -16,7 +16,7 @@
 		$params['Производитель']=array();
 		$groups=array();
 		$more=array();//параметры дополнительные
-
+		$count=sizeof($data['list']);
 		foreach($data['list'] as &$pos){
 			unset($pos['Код']);
 			unset($pos['Артикул']);
@@ -44,6 +44,7 @@
 
 		foreach($list as &$pos){
 			foreach($pos['more'] as $k=>$p){
+				//if(preg_match("/['\"\/]/",$k))continue;
 				$more[$k][$p]++;
 			}
 			foreach($pos['params'] as $k=>$p){
@@ -53,20 +54,34 @@
 		
 
 		foreach($params as $k=>$p){
-			$params[$k]=cat_option($params[$k]);
+			$params[$k]=cat_option($params[$k],$count);
+			if(!$params[$k]){
+				unset($params[$k]);
+				continue;
+			}
 			$params[$k]['name']=$k;
 		}
 		foreach($more as $k=>$p){
-			$params[$k]=cat_option($more[$k]);
+			$params[$k]=cat_option($more[$k],$count);
+			if(!$params[$k]){
+				unset($params[$k]);
+				continue;
+			}
 			$params[$k]['more']=true;
 			$params[$k]['name']=$k;
 		}
-		$groups=cat_option($groups);
+		$groups=cat_option($groups,$count);
 		$groups['name']='Группы';
 		$groups['group']=true;
 		$params['Группы']=$groups;
 		
-		$ans['count']=sizeof($list);
+
+		usort($params,function($p1,$p2){
+			if($p1['yes']==$p2['yes'])return 0;
+			if($p1['yes']<$p2['yes'])return 1;
+			else return -1;
+		});
+		$ans['count']=$count;
 		$ans['params']=$params;
 		return $ans;
 	},array($search,sizeof($data['list'])),isset($_GET['re']));

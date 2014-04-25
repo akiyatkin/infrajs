@@ -224,6 +224,6 @@
 {itemnocost:}<a style="color:white" href="?Контакты менеджеров">Уточнить</a>
 {basket:}
 	<div id="basket_text">
-		В <a href="?client">корзине</a>
+		В <a href="?Каталог/Корзина">корзине</a>
 		<span class="bold_basket">{data.allcount}</span> {~words(data.allcount,:позиция,:позиции,:позиций)}<br> Сумма <span class="bold_basket">{data.allsum} руб.</span>
 	</div>

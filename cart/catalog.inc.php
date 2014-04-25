@@ -6,7 +6,7 @@
 		if($parent)return _cat_init(true);
 		$conf=infra_config();
 
-		$cond=array($conf['cart']['dir'],$conf['cart']['1c'],$conf['cart']['prod']);
+		$cond=array($conf['cart']['dir']);
 		
 		$res=infra_cache($cond,'cat_init',function(){
 			return _cat_init();
@@ -16,74 +16,28 @@
 	function _cat_init($parent=false){
 
 		$conf=infra_config();
-		$p=array('more'=>true,'Известные колонки'=>array('Наименование','Артикул','Производитель','Цена','Валюта','Купить','Описание','Код','Продажа'));
+		$p=array('more'=>true,'Известные колонки'=>array('Наименование','Артикул','Производитель','Описание'));
 		$p['Ссылка parent']=$parent;
-
 		$data=xls_init($conf['cart']['dir'],$p);
-		xls_runGroups($data,function(&$gr){
+		
+		xls_runGroups($data,function(&$gr,$i,&$parent){//Имя листа или файла короткое и настоящие имя группы прячится в descr. но имя листа или файла также остаётся в title
 			$gr['name']=$gr['descr']['Наименование'];
 			if(!$gr['name'])$gr['name']=$gr['title'];
+			if(!$gr['tparam'])$gr['tparam']=$parent['tparam'];
 		});
-		$prods=xls_init($conf['cart']['prod']);
-		
-
-		$price=&xls_make($conf['cart']['1c']);
-		xls_processPoss($price);
-		$conn=array();
-		xls_runPoss($price,function(&$conn,&$pos){
-			$conn[$pos['Номенклатура.Код']]=&$pos;
-		},array(&$conn));
-
-		
-				
-		$pos['Подпись']=@$prods['descr']['Подпись'];
-		xls_runPoss($data,function(&$pos,$i,&$group) use(&$conn,&$prods){
-			$pos['path']=$group['path'];
-			$code=@$pos['Код'];
-			if(isset($conn[$code])){
-				if(isset($conn[$code]['Номенклатура.Полное наименование']))$pos['Описание']=$conn[$code]['Номенклатура.Полное наименование'];
-				if(isset($conn[$code]['Оптовая'])){
-					$pos['sync']=true;
-					$pos['Цена']=$conn[$code]['Оптовая'];
-					$pos['Валюта']="руб.";
-				}
-				if(isset($conn[$code]['Номенклатура']))$pos['Описание']=$conn[$code]['Номенклатура'];
-			}
-			
-			if(!isset($pos['Валюта']))return;
-			if($pos['Валюта']==='$'||$pos['Валюта']==='usd'){
-				$pos['Цена']=$prods['descr']['usd']*$pos['Цена'];
-				$pos['Валюта']='руб.';
-			}
-			if($pos['Валюта']==='eur'){
-				$pos['Цена']=$prods['descr']['eur']*$pos['Цена'];
-				$pos['Валюта']='руб.';
-			}
-			if($pos['Валюта']!='руб.'){
-				unset($pos['Цена']);
-				unset($pos['Валюта']);
-				return;
-			}
-			unset($pos['Валюта']);
-			/*if($pos['Цена']){
-				$cost=(string)$pos['Цена'];
-				$ar=explode('.',$cost);
-				if(sizeof($ar)==2){
-					$rub=$ar[0];
-					$cop=$ar[1];
-					if(strlen($cop)==1){
-						$cop.='0';
-					}
-					$pos['Цена']=$rub.','.$cop;
-				}
-			}*/
-
+		xls_runPoss($data,function(&$pos,$i,&$group){
+			if(isset($pos['Назначение']))return;
+			if(!isset($group['tparam']))return;
+			$pos['Назначение']=explode(',',$group['tparam']);
+		});
+		xls_runGroups($data,function(&$gr){
+			unset($gr['tparam']);
 		});
 		return $data;
 	}
 	function cat_getpos($prodart){
 		$conf=infra_config();
-		return infra_cache(array($conf['cart']['dir'],$conf['cart']['1c']),'cat_getpos',function($prodart){
+		return infra_cache(array($conf['cart']['dir']),'cat_getpos',function($prodart){
 			$data=&cat_init();
 			return xls_runPoss($data,function(&$pos) use($prodart){
 				if($prodart==$pos['Производитель'].' '.$pos['article']){
@@ -106,11 +60,13 @@
 			$conf=infra_config();
 			$srh=infra_cache(array($conf['cart']['dir'],$conf['cart']['1c']),'cat_search_cache',function($val){
 				$data=cat_init();
+
 				$srh=array('list'=>array(),'is'=>false);
 				$srh['time']=time();
 				$group=&xls_runGroups($data,function(&$val,&$group){
 					if(infra_strtolower($group['title'])==$val)return $group;
 				},array(&$val));
+
 				if($val=='изменения'){
 					$srh['is']='change';
 					//Смотрим дату изменения папки для каждой позиции кэшируем на изменение XLS файлов как всё здесь...
@@ -144,29 +100,19 @@
 						$poss[]=&$pos;
 					});
 					$srh['list']=$poss;
-					
 				}else{
 
 					$dir=infra_theme(CATDIR.$val.'/');
 					$poss=array();
-					xls_runPoss($data,function(&$poss,&$val,&$pos){
+					xls_runPoss($data,function(&$poss,&$val,&$pos) use(&$poss,&$val){
 						if(infra_strtolower(@$pos['Производитель'])==$val){
 							$poss[]=&$pos;
 						}
-					},array(&$poss,&$val));
+					});
 
 					if($dir||sizeof($poss)){
 						$srh['is']='producer';
-						$prods=xls_init($conf['cart']['prod']);
-
-						$prod=&xls_runPoss($prods,function($val, &$prod){
-							if(infra_strtolower($prod['Производитель'])==$val)return $prod;
-						},array($val));
-
-						
-						if($prod){
-							$name=$prod['Производитель'];
-						}else if(sizeof($poss)){
+						if(sizeof($poss)){
 							$name=$poss[0]['Производитель'];
 						}else{
 							$dir=infra_toutf($dir);
@@ -174,7 +120,6 @@
 							$folder=$p[sizeof($p)-2];
 							$name=$folder;
 						}
-						
 						$srh['name']=$name;
 						$srh['list']=$poss;
 					}else{//ищим позиции подходящие под запрос
@@ -188,7 +133,6 @@
 							$str.=' '.$pos['Описание'];
 							$str=infra_strtolower($str);
 							foreach($v as $s)if(strstr($str,$s)===false)return;
-							unset($pos['parent']);
 							$poss[]=&$pos;
 						});
 						if(sizeof($poss)){
@@ -206,7 +150,7 @@
 		$srh['val']=$vval;
 		return $srh;
 	}
-	function cat_option($opt){
+	function cat_option($opt,$count){
 		foreach($opt as $value=>$s)break;
 		$opt=array('values'=>$opt);
 		$min=$value;
@@ -214,12 +158,13 @@
 		$yes=0;
 		foreach($opt['values'] as $v=>$c){
 			if($v)$yes+=$c;
+			else $no++;
 		}
 		
 		$opt['yes']=$yes;
 
 		$type=false;
-		foreach($opt['values'] as $val=>$c){
+		foreach($opt['values'] as $val=>$c){//Слайдер
 			if(is_string($val)){
 				$type='string';
 				break;
@@ -246,6 +191,20 @@
 		}
 		$opt['type']=$type;
 		if($opt['type']=='string'){
+			if($count>$yes*100){//Если отмеченных менее 1% то такие опции не показываются
+				return array();
+			}
+			$r=true;
+			foreach($opt['values'] as $v){//Когда всех значений по 1
+				if($v!=1){
+					$r=false;
+					break;
+				}
+			}
+			if($r){//Единичные опции
+				$opt['values']=array();
+			}
+			
 			if(sizeof($opt['values'])>10){
 				$opt['values_more']=array_slice($opt['values'],6,sizeof($opt['values'])-6,true);
 				$opt['values']=array_slice($opt['values'],0,6,true);
