@@ -113,7 +113,7 @@
 		infra.when(infrajs,'onshow',function(){
 			var layer=infrajs.getUnickLayer('{unick}');
 			var counter={counter};
-			var div=$(document.getElementById('option{~key}'));
+			var div=$(document.getElementById('option{name}'));
 			var sl=$(document.getElementById('slider{~key}'));
 			var inp=$(document.getElementById('amount{~key}'));
 			var yes=div.find('.yes').find('input');
@@ -299,7 +299,7 @@
 	<script>
 		infra.when(infrajs,'onshow',function(){
 			var layer=infrajs.getUnickLayer('{unick}');
-			var div=$(document.getElementById('option{~key}'));
+			var div=$(document.getElementById('option{name}'));
 			var yes=div.find('.yes').find('input');
 			//yes.prop('checked',true).change();
 			var no=div.find('.no').find('input');
@@ -313,7 +313,6 @@
 					ignore=false;
 				}
 			});
-			
 			div.find('.val input').change(function(){
 				if(ignore)return;
 				if(div.find('.val :checked').length){
