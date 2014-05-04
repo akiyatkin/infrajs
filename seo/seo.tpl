@@ -188,7 +188,9 @@
 			<h2>Контент страницы</h2>
 			{data.text|:et_notext}
 		</div>
-	{et_notext:}<i>Нет содержание для <b>{data.name}</b></i>
+	{et_notext:}{data.tpl?:et_yestpl?:et_notpl}
+	{et_yestpl:}<i>Cодержание для <b>{data.name}</b> не найдено <br><b>{data.tpl}</b></i>
+	{et_notpl:}<i>Для слоя <b>{data.name}</b> не указано где искать содержание</i>
 	{et_def:}<div style="font-size:12px; padding:2px; color:gray;text-align:left; width:500px; border:dotted 1px gray;">
 					<div style=" ">
 						{.}

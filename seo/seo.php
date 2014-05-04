@@ -109,13 +109,9 @@
 			//Распарсить json. Нет itemslist, Нет item не найден
 			//item обязательно должен быть либо в дефолтных, либо в созданных, либо в itemslist
 			if(isset($seo['tpl'])){
+				$tpl=infra_template_parse(array($seo['tpl']),$da);
+				$ans['tpl']=$tpl;
 
-				
-				if(is_string($seo['tpl'])){
-					$tpl=infra_template_parse(array($seo['tpl']),$da);
-				}else{
-					$tpl=$seo['tpl'];
-				}
 
 				if(isset($seo['json'])){
 					$json=infra_template_parse(array($seo['json']),$da);
