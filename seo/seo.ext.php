@@ -59,13 +59,7 @@ function infrajs_seo_checkopt(&$layer){
 	if(!isset($layer['seo']))return;
 	$seo=&$layer['seo'];
 	if(!$seo['name']){
-		if($layer['tplroot']){
-			$seo['name']=$layer['tplroot'];
-		}else if($layer['tpl']){
-			$seo['name']=$layer['tpl'];
-		}else{
-			die("У seo необходио указать name. Слой:".$seo['name']);
-		}
+		die("У seo необходио указать name. Слой:".$layer['tpl'].':'.$layer['tplroot']);
 	}
 	$seo['name']=infra_State_forFS($seo['name']);
 	if(!isset($seo['link'])){

@@ -8,15 +8,17 @@
 		infra.wait(infrajs,'onshow',function(){
 
 			var store=infrajs.store();
-			var layer=store['seolayer'];
+			//слой который сейчас определяет seo это последний показываемый слой с seo параметрами
+			var layer=false;
+			infrajs.run(infrajs.getAllLayers(),function(l){
+				if(!l.showed)return;
+				if(!l.seo)return;
+				layer=l;
+			});
 			if(!layer)return;
 			var name=layer['seo']['name'];
-			if(!name)return;
-			if(!layer['linktpl']){
-				layer['linktpl']='{{istate}}';
-			}
-			layer['link']=infra.template.parse([layer['linktpl']],layer);
-			var link=layer['link'];
+			var linktpl='{{istate}}';
+			var link=infra.template.parse([linktpl],layer);			
 			var	tpl='*seo/seo.tpl';
 			var obj={
 				title:link||'Главная',
