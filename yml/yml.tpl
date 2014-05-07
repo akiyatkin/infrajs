@@ -26,7 +26,7 @@
  	<category id="{id}" parentId="{parentId}">{title}</category>
  {pos:}
  	<offer type="vendor.model" id="{id}" available="true">
-		<url>http://{...site}?Каталог/{Производитель}/{article}</url>
+		<url>http://{...site}?{~encode(:Каталог)}/{~encode(Производитель)}/{article}</url>
 		<price>{Цена}</price>
 		<currencyId>RUB</currencyId>
 		<categoryId>{categoryId}</categoryId >

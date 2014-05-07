@@ -81,6 +81,15 @@
 		xls_runPoss($data,function(&$pos){
 			$conf=infra_config();
 			xls_preparePosFiles($pos,$conf['cart']['dir'], array('Производитель','article') );
+			foreach($pos['images'] as $k=>$v){
+				$src=$pos['images'][$k];
+				$p=explode('/',$src);
+				foreach($p as $i=>$n){
+					$p[$i]=urlencode($n);
+					$p[$i]=preg_replace('/\+/','%20',$p[$i]);
+				}
+				$pos['images'][$k]=implode('/',$p);
+			}
 		});
 		return yml_parse($data);
 	}
