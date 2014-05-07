@@ -46,7 +46,7 @@ History
 				  if ($if_modified_since == $last_modified) {
 					// кэш браузера до сих пор актуален
 					header('HTTP/1.0 304 Not Modified');
-					header('Cache-Control: max-age=8640000, must-revalidate');
+					//header('Cache-Control: max-age=8640000, must-revalidate');
 					exit;
 				  }
 				}
