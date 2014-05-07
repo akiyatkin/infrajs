@@ -10,7 +10,7 @@
 		
 		$res=infra_cache($cond,'cat_init',function(){
 			return _cat_init();
-		},array());
+		});
 		return $res;
 	}
 	function _cat_init($parent=false){
@@ -22,6 +22,7 @@
 		
 		xls_runGroups($data,function(&$gr,$i,&$parent){//Имя листа или файла короткое и настоящие имя группы прячится в descr. но имя листа или файла также остаётся в title
 			$gr['name']=$gr['descr']['Наименование'];
+			$gr['data']=array_reverse($gr['data']);
 			if(!$gr['name'])$gr['name']=$gr['title'];
 			if(!$gr['tparam'])$gr['tparam']=$parent['tparam'];
 		});
