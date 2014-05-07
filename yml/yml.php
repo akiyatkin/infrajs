@@ -21,6 +21,9 @@
 		if(!$conf['yml'])die('Требуется конфиг yml');
 		if(!$conf['yml']['name'])die('В конфиге yml требуется указать name. Наименование компании без организационный формы');
 		if(!$conf['yml']['company'])die('В конфиге yml требуется указать company, название компании с организационной формой ООО и тп');
+		xls_runPoss($data,function(&$pos){
+			$pos['Описание']=yml_tostr($pos['Описание']);
+		});
 		xls_runGroups($data,function(&$group,$i,&$parent) use(&$gid,&$groups){
 			$group['id']=++$gid;
 			if($parent){
@@ -48,28 +51,45 @@
 		$html=infra_template_parse('*yml/yml.tpl',$d);
 		return $html;
 	}
+	function yml_tostr($str){
+		$str=preg_replace('/&/','&amp;',$str);
+		$str=preg_replace('/</','&lt;',$str);
+		$str=preg_replace('/>/','&gt;',$str);
+		$str=preg_replace('/"/','&quot;',$str);
+		$str=preg_replace("/'/",'&apos;',$str);
+		return $str;
+	}
 	function yml_init(){
-		infra_require('*catalog/catalog.inc.php');
+		infra_require('*cart/catalog.inc.php');
 		$data=cat_init();
+
 		xls_runGroups($data,function(&$group,$i,&$parent){
-			$group['data']=array_filter($group['data'],function(&$pos){
+			$group['data']=array_filter($group['data'],function(&$pos){//Убираем позиции у которых не указана цена
 				if(!$pos['Цена'])return false;
 				return true;
 			});
 		});
+
 		xls_runGroups($data,function(&$group,$i,&$parent){			
-			if($group['childs']){
+			if(!$group['childs']){
 				$group['childs']=array_filter($group['childs'],function(&$g){
 					if(!$g['data'])return false;
 					return true;
 				});
 			}
 		},array(),true);
+		xls_runPoss($data,function(&$pos){
+			$conf=infra_config();
+			xls_preparePosFiles($pos,$conf['cart']['dir'], array('Производитель','article') );
+		});
 		return yml_parse($data);
 	}
 	if(isset($_GET['show'])){
+		$html=infra_cache(array($conf['cart']['dir']),'ymlshow',function(){
+			return yml_init();
+		},array(),isset($_GET['re']));
 		header("Content-type: text/xml");
-		echo yml_init();
+		echo $html;
 		
 	};
 ?>
