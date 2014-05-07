@@ -16,7 +16,7 @@
 		{groups::category}	
 		
 	</categories>
-	<offers>
+	<offers type="vendor.model">
 		{poss::pos}	
 		
 	</offers>
