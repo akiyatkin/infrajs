@@ -16,7 +16,7 @@
 		{groups::category}	
 		
 	</categories>
-	<offers type="vendor.model">
+	<offers>
 		{poss::pos}	
 		
 	</offers>
@@ -25,7 +25,7 @@
  {category:}
  	<category id="{id}" parentId="{parentId}">{title}</category>
  {pos:}
- 	<offer id="{id}" available="true" bid="21">
+ 	<offer type="vendor.model" id="{id}" available="true">
 		<url>http://{...site}?Каталог/{Производитель}/{article}</url>
 		<price>{Цена}</price>
 		<currencyId>RUB</currencyId>
