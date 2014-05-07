@@ -18,7 +18,7 @@ function infra_admin_modified(){
 	  if ($if_modified_since<=$last_modified) {
 		// кэш браузера до сих пор актуален
 		header('HTTP/1.0 304 Not Modified');
-		header('Cache-control: max-age=8640000, must-revalidate');
+		//header('Cache-control: max-age=8640000, must-revalidate');
 		exit;
 	  }
 	}
