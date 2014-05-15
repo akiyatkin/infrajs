@@ -60,51 +60,6 @@
 		$html.=$require('*infra/ext/tablecommon.js');
 
 		
-		
-
-		//	$conf=infra_config('secure');
-		//if(!$conf['infrajs'])$conf['infrajs']=array();
-//		$html.=<<<END
-//			infra.wait(infrajs,'oncheck',function(){
-//				
-//			});
-//END;
-/*
-
-//Скролл слева и прокрутка при кликах
-		$html.=$require('*infrajs/ext/scroll.js');
-		$sconf=$conf['infrajs']['scroll'];
-		$sconfs=infra_tojs($sconf);
-		$html.=<<<END
-			infra.wait(infra,'oninit',function(){
-				window.roller.init($sconfs);      
-			});
-			infra.wait(infra,'oninit',function(){
-				infra.listen(infra.State,'onchange',function(){
-					setTimeout(function(){
-						if(infrajs.scroll!==false)window.roller.goTop();      
-						delete infrajs.scroll;
-					},1);
-				});
-			});
-END;
-
-		$html.=$require('*infrajs/ext/is.js');
-		
-		
-		$html.=$require('*infrajs/ext/js.js');
-		
-		
-		$html.=$require('*infrajs/ext/toString.js');
-		$html.=$require('*infrajs/ext/loaded.js');
-		$html.=$require('*infrajs/ext/ext.js');
-		
-		$html.=$require('*infrajs/ext/css.js');
-		$html.=$require('*infrajs/ext/autoview.js');
-		
-		
-		
-		*/
 		$html.=$require('*infrajs/ext/scroll.js');
 			
 

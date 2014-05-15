@@ -5,8 +5,8 @@ infra.seq={
 	seldom:'·',
 	offen:'.',
 	short:function(val,offen,seldom){//Возвращает строку - короткая запись последовательности
-		offen=offen||this.offen;
-		seldom=seldom||this.seldom;
+		offen=offen||infra.seq.offen;
+		seldom=seldom||infra.seq.seldom;
 		if(typeof(val)=='string')return val;
 		if(!val||typeof(val)!='object'||val.constructor!=Array)val=[];
 		var nval=[];
@@ -21,8 +21,8 @@ infra.seq={
 		return nval.join(offen);
 	},
 	right:function(val,offen,seldom){//Возвращает массив - правильную запись последовательности
-		offen=offen||this.offen;
-		seldom=seldom||this.seldom;
+		offen=offen||infra.seq.offen;
+		seldom=seldom||infra.seq.seldom;
 		if(!val||typeof(val)!=='object'||val.constructor!==Array){
 			if(typeof(val)!='string')val='';
 			val=val.split(offen);
@@ -53,7 +53,7 @@ infra.seq={
 		var i=right.length-1;
 		if(i==-1)return val;
 		if(make&&(!obj||typeof(obj)!=='object')&&typeof(obj)!=='function')obj={};
-		var need=this.get(obj,right,0,i,make);
+		var need=infra.seq.get(obj,right,0,i,make);
 		if(!make&&(need&&typeof(need)=='object'))delete need[right[i]];
 		if(make)need[right[i]]=val;
 		return obj;
@@ -68,7 +68,7 @@ infra.seq={
 		if((obj&&typeof(obj)=='object')||typeof(obj)=='function'){
 			if(((obj===location||(!obj.hasOwnProperty))&&obj[right[start]])||obj.hasOwnProperty(right[start])){
 				//в ie у location есть свойство hasOwnProperty но все свойства не являются собственными у location. в ff у location нет метода hasOwnProperty
-				return this.get(obj[right[start]],right,++start,end,make);
+				return infra.seq.get(obj[right[start]],right,++start,end,make);
 			}
 		}
 	}

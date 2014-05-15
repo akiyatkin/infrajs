@@ -1,8 +1,8 @@
 <?php
 	@define('ROOT','../../../');
 	require_once(ROOT.'infra/plugins/infra/infra.php');
-	infra_load('*infra/ext/seq.php','r');
-	infra_load('*session/session.php','r');
+	infra_require('*infra/ext/seq.php');
+	infra_require('*session/session.php');
 
 	$ans=array();
 	$id=$_REQUEST['id'];

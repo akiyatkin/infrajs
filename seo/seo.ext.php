@@ -119,7 +119,7 @@ function infrajs_seo_save(){
 			}
 
 		}
-		mkdir(ROOT.$dir);
+		@mkdir(ROOT.$dir);
 		foreach($store['seo'] as $name=>$seo){
 			file_put_contents(ROOT.$dir.infra_tofs($name).'.json',infra_json_encode($seo));
 		}

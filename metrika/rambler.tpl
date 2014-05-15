@@ -2,7 +2,7 @@
 <span id="documentwrite"></span>
 <span id="documentwrite"></span>
 <script type="text/javascript">
-	infra.wait(infra,'oninit',function(){
+	infra.wait(infrajs,'onshow',function(){
 		//stencill
 		var src='http://counter.rambler.ru/top100.jcn?{config.id}';
 		(function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; 

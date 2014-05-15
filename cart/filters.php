@@ -44,10 +44,11 @@
 
 		foreach($list as &$pos){
 			foreach($pos['more'] as $k=>$p){
-				//if(preg_match("/['\"\/]/",$k))continue;
+				if(!cat_isSpecified($p))continue;
 				$more[$k][$p]++;
 			}
 			foreach($pos['params'] as $k=>$p){
+				if(!cat_isSpecified($p))continue;
 				$params[$k][$p]++;
 			}
 		}

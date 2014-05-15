@@ -1,7 +1,7 @@
 {root:}
 <span id="documentwrite"></span>
 <script type="text/javascript">
-	infra.wait(infra,'oninit',function(){
+	infra.wait(infrajs,'onshow',function(){
 		document.write("<a href='http://www.liveinternet.ru/click' "+
 		"target=_blank><img src='//counter.yadro.ru/hit?t44.6;r"+
 		escape(document.referrer)+((typeof(screen)=="undefined")?"":

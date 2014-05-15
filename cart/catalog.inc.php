@@ -26,10 +26,27 @@
 			if(!$gr['name'])$gr['name']=$gr['title'];
 			if(!$gr['tparam'])$gr['tparam']=$parent['tparam'];
 		});
+
 		xls_runPoss($data,function(&$pos,$i,&$group){
 			if(isset($pos['Назначение']))return;
 			if(!isset($group['tparam']))return;
 			$pos['Назначение']=explode(',',$group['tparam']);
+			infra_fora($pos['Назначение'],function(&$v){
+				$v=trim($v);
+			});
+			$pos['Назначение']=array_filter($pos['Назначение'],function($v){
+				if(!$v)return false;
+				return true;
+			});
+			if(!$pos['article']){
+				if(isset($pos['more']['Код'])){
+					$pos['article']=infra_State_forFS($pos['more']['Код']);
+				}else if(isset($pos['more']['Штрих-Код'])){
+					$pos['article']=infra_State_forFS($pos['more']['Штрих-Код']);
+				}else if(isset($pos['Наименование'])){
+					$pos['article']=infra_State_forFS($pos['Наименование']);
+				}
+			}
 		});
 		xls_runGroups($data,function(&$gr){
 			unset($gr['tparam']);
@@ -151,6 +168,10 @@
 		$srh['val']=$vval;
 		return $srh;
 	}
+	function cat_isSpecified($val=null){
+		if(is_null($val)||$val==='')return false;
+		return true;
+	}
 	function cat_option($opt,$count){
 		foreach($opt as $value=>$s)break;
 		$opt=array('values'=>$opt);
@@ -158,10 +179,9 @@
 		$max=$value;
 		$yes=0;
 		foreach($opt['values'] as $v=>$c){
-			if($v)$yes+=$c;
-			else $no++;
+			if($v)$yes+=$c;//у позиции несколько групп включая родительские yes мало чего значит
+					
 		}
-		
 		$opt['yes']=$yes;
 
 		$type=false;
@@ -192,7 +212,7 @@
 		}
 		$opt['type']=$type;
 		if($opt['type']=='string'){
-			if($count>$yes*100){//Если отмеченных менее 1% то такие опции не показываются
+			if($count>$yes*10){//Если отмеченных менее 10% то такие опции не показываются
 				return array();
 			}
 			$r=true;

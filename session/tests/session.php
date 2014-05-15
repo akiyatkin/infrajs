@@ -1,7 +1,4 @@
-<script>
-	window.ROOT='../../../../';
-</script>
-<script src="../../../../infra/plugins/infrajs/initjs.php"></script>
+
 <?php
 
 @define('ROOT','../../../../');

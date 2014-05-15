@@ -946,6 +946,12 @@ infra.template={
 			for(i=0,l=args.length;i<l;i++) n+=Number(args[i]);
 			return n;
 		},
+		'~array':function(){
+			var args=arguments;
+			var ar=[];
+			for(i=0,l=args.length;i<l;i++) ar.push(args[i]);
+			return ar;
+		},
 		'~multi':function(){
 			var args=arguments;
 			var n=1;
@@ -1015,13 +1021,14 @@ infra.template={
 			}
 			return cost;
 		},
-		'infra':{
-			'theme':function(path){
+		"infra":{
+			"theme":function(path){
 				return infra.theme(path);
 			},
-			/*"admin":function(){
-				return infra.admin();
-			},*/
+			"seq":{
+				"short":infra.seq.short,
+				"right":infra.seq.right
+			},
 			'srcinfo':infra.srcinfo,
 			'conf':infra.conf,
 			'view':{

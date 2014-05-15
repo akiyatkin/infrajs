@@ -23,6 +23,7 @@ $count=8;
 
 $check=infra_session_get('filtersadmit',array());
 
+
 $val=strip_tags(@$_GET['val']);
 
 $page=(int)$_GET['page'];
@@ -41,8 +42,10 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 	$ans=cat_search($val);//свой кэш, без страниц
 
 	$yes=$check['yes'];
+	if(!$yes)$yes=array();
 	unset($check['yes']);
 	$no=$check['no'];
+	if(!$no)$no=array();
 	unset($check['no']);
 
 	$filters=array();
@@ -51,16 +54,37 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 	$ispos=array();
 	$ispos['Производитель']=true;
 	$ispos['Цена']=true;
+
+	foreach($yes as $key=>$val){
+		if(!isset($check[$key])){
+			$check[$key]=array();
+		}
+	}
+	foreach($no as $key=>$val){
+		if(!isset($check[$key])){
+			$check[$key]=array();
+		}
+	}
+	
+
 	foreach($check as $name=>$v){
-		if(!$v)continue;
-		if(isset($yes[$name])&&!$yes[$name]){//Только сейчас фильтруем
-			$noval=!isset($no[$name])||$no[$name];
+		//if(!$v)continue;
+		$noval=$no[$name];
+		$yesval=$yes[$name];
+		if(!$v&&!$noval&&!$yesval)continue;
+
+
+		
+
+		if(!$yesval){//Только сейчас фильтруем
+
+		
 			$poss=array();
 			$fil=array('name'=>$name);
-			if(isset($no[$name])){
-				$fil['no']=!$noval;
-			}
-			if(is_string($v)){//Диапазон
+			$fil['no']=$noval;
+			$fil['yes']=$yesval;
+			if(!is_array($v)){//Диапазон
+				$v=(string)$v;
 				$fil['slide']=true;
 				$r=explode('—',$v);
 				$min=preg_replace('/\D/', '', $r[0]);
@@ -77,6 +101,7 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 			}else{
 				if($isgroup[$name]){
 					$values=array();
+
 					foreach($v as $key=>$is)if($is)$values[]=$key;
 					$fil['values']=$values;
 
@@ -90,18 +115,42 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 					}
 
 				}else{
+					
 					$values=array();
 					foreach($v as $key=>$is)if($is)$values[]=$key;
 					$fil['values']=$values;
 					foreach($ans['list'] as &$pos){
 						$obj=$ispos[$name]?$pos:$pos['more'];
-						if(($noval&&(!isset($obj[$name])||is_null($obj[$name])))||(isset($obj[$name])&&in_array($obj[$name],$values))){
+						$specified=cat_isSpecified($obj[$name]);
+						if(
+							(
+								!$specified&&$noval
+							)||
+							(
+								$specified&&in_array($obj[$name],$values)
+							)
+						){
 							$poss[]=&$pos;
 						}
 					}
 
 				}
 			}
+			$filters[]=$fil;
+			$ans['list']=$poss;
+		}else if(!$noval){//yes true, noval false, нужны только указанные
+			$fil=array('name'=>$name);
+			$fil['no']=$noval;
+			$fil['yes']=$yesval;
+			echo sizeof($ans['list']);
+			exit;
+			foreach($ans['list'] as &$pos){
+				$obj=$ispos[$name]?$pos:$pos['more'];
+				//if(isset($obj[$name])&&!is_null($obj[$name])){
+				if(isset($obj[$name])){
+					$poss[]=&$pos;
+				}
+			}			
 			$filters[]=$fil;
 			$ans['list']=$poss;
 		}	
@@ -222,6 +271,9 @@ if($pages<$page)$page=$pages;
 $ans['page']=$page;
 $ans['pages']=$pages;
 $ans['count']=sizeof($ans['list']);
+
+
+
 
 $ans['numbers']=cat_numbers($page,$pages,11);
 $ans['list']=array_slice($ans['list'],($page-1)*$count,$count);

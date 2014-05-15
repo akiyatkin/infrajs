@@ -284,7 +284,9 @@
 					$('.cat_filters .cancel').click(function(){
 						var name=$(this).data('name');
 						
-						infra.session.set(['filtersadmit',name],null,true);
+						infra.session.set(['filtersadmit',name],null);
+						infra.session.set(['filtersadmit','no',name],null);
+						infra.session.set(['filtersadmit','yes',name],null,true);
 						infrajs.global.set(['cat_search','cat_filters']);
 
 						var layer=infrajs.run(infrajs.getAllLayers(),function(layer){
@@ -299,12 +301,15 @@
 					});
 				});
 			</script>
-			{cat_filter:}<table cellspacing="1" cellpadding="0"><tr><td data-name="{name}" class="cancel">X</td><td>&nbsp;{name}:&nbsp;</td><td>{slide?:cat_fil_slide?:cat_fil_values}{no?:cat_no}</td></tr></table>
-			{cat_fil_slide:}от {~cost(min)} до {~cost(max)}
+			{cat_filter:}<table cellspacing="1" cellpadding="0"><tr><td data-name="{name}" class="cancel">X</td><td>&nbsp;{name}:&nbsp;</td><td>{slide?:cat_fil_slide?:cat_fil_values}{yes?:cat_yes}{no?:cat_no}</td></tr></table>
+			{cat_fil_slide:}от {~cost(min)} до {~cost(max)} 
+
 			{cat_fil_values:}{values::cat_fil_value}
 			{cat_fil_value:}{.}{~last()|:comma}
-			{cat_no:}, обязательно есть
+			{cat_yes:}{~length(values)?:comma}указано
+			{cat_no:}{~length(values)?:comma}не указано
 			{comma:}, 
+			
 		{cat_child:}
 			<a href="?{state.parent}/{title}" title="Показать группу {~lower(title)}">
 				<table cellspacing="0" cellpadding="0">

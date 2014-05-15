@@ -1011,6 +1011,12 @@ $infra_template_scope=array(
 		}
 		return ($even==1);
 	},
+	'~array'=>function(){
+		$args=func_get_args();
+		$ar=array();
+		for($i=0,$l=sizeof($args);$i<$l;$i++) $ar[]=$args[$i];
+		return $ar;
+	},
 	'~multi'=>function(){
 		$args=func_get_args();
 		$n=1;
@@ -1099,14 +1105,22 @@ $infra_template_scope=array(
 $fn=function($path){ 
 	return infra_theme($path,'fu'); 
 };
-
 infra_seq_set($infra_template_scope,array('infra','theme'),$fn);
+
 $conf=infra_config('secure');
 infra_seq_set($infra_template_scope,array('infra','conf'),$conf);
+
 $fn=function(){ return infra_view_getPath(); };
 infra_seq_set($infra_template_scope,array('infra','view','getPath'),$fn);
+
 $fn=function(){ return infra_view_getHost(); };
 infra_seq_set($infra_template_scope,array('infra','view','getHost'),$fn);
+
+$fn=function($s){ return infra_seq_short($s); };
+infra_seq_set($infra_template_scope,array('infra','seq','short'),$fn);
+
+$fn=function($s){ return infra_seq_right($s); };
+infra_seq_set($infra_template_scope,array('infra','seq','right'),$fn);
 
 //$fn=function(){ return infra_admin(); };
 //infra_seq_set($infra_template_scope,array('infra','admin'),$fn);

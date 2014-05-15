@@ -1,6 +1,6 @@
 /*
 	Прокрутка блоков за мышкой. Нужна вёрстка. и должна быть указана высота у autoview
-	<div class="autoview" style="height:100px">
+	<div class="autoview" style="height:100px; overflow:hidden">
 		<div class="autoviewbody">
 		</div>
 	</div>

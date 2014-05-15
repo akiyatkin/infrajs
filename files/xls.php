@@ -120,8 +120,10 @@ function &xls_make($path){
 			},array(&$count));
 			if(!$head){
 				infra_foro($row,function(&$val,$i,&$b){
+					$b[$i]=preg_replace('/\n/','',$b[$i]);
 					$b[$i]=preg_replace('/\s+$/','',$b[$i]);
 					$b[$i]=preg_replace('/^\s+/','',$b[$i]);
+
 				});
 				$head=($count>2);//Больше 2х не пустых ячеек будет заголовком
 

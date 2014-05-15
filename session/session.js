@@ -137,18 +137,6 @@ infra.session={
 			this.data=this.make(nlist,this.data);
 		}
 	},
-	storageSave2:function(nlist,repl){//set
-		//nlist это корректный список {name:'',value:''}
-		if(repl){
-			var list=this.right(nlist);
-		}else{
-			var list=this.storageLoad();
-			list.push(nlist);
-			list=this.right(list);
-		}
-		var dataname=this._getName('data');
-		this.stor.save(dataname,list);
-	},
 	storage_repl:false,
 	storage_process:false,
 	storage_wait:[],
@@ -220,6 +208,20 @@ infra.session={
 			}
 		});
 	},
+	/*clear:function(){
+		var view=infra.view;
+		this.storageSave([],true);
+		this.data={};
+
+		var sentname=this._getName('sent');
+		var waitname=this._getName('wait');
+		this.stor.save(waitname,false);
+		this.stor.save(sentname,false);
+
+		view.setCookie(this._getName('time'));//Время определяется на сервере, выставляется на клиенте
+		this.sync([],true);
+		location.href=location.href;
+	},*/
 	logout:function(){
 		var view=infra.view;
 		this.storageSave([],true);
