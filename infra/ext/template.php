@@ -1082,6 +1082,7 @@ $infra_template_scope=array(
 		else $inp='&nbsp;';
 		$cost=(string)$cost;
 		$ar=explode('.',$cost);
+
 		if(sizeof($ar)==2){
 			$rub=$ar[0];
 			$cop=$ar[1];

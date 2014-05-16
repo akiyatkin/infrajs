@@ -2,6 +2,7 @@
 	@define('ROOT','../../../');
 	require_once(ROOT.'infra/plugins/infra/infra.php');
 	infra_require('*cart/catalog.inc.php');
+
 	$search=$_GET['search'];
 	$conf=infra_config();
 	$data=cat_search($search);
@@ -14,7 +15,7 @@
 		$params=array();//параметры стандартные
 		$params['Цена']=array();
 		$params['Производитель']=array();
-		$groups=array();
+		$listgroups=array();
 		$more=array();//параметры дополнительные
 		$count=sizeof($data['list']);
 		foreach($data['list'] as &$pos){
@@ -28,16 +29,18 @@
 			if(!$pos['more'])$pos['more']=array();
 
 			foreach($pos['path'] as $p){
-				$groups[$p]++;
+				$listgroups[$p]++;
 			}
 			
 			$p=array(
 				'more'=>$pos['more'],
 				'params'=>array(
-					'Цена'=>(int)$pos['Цена'],//Дробей в php нет, всё что после точки удаляется	
 					'Производитель'=>$pos['Производитель']
 				)
 			);
+			if($pos['Цена']){
+				$p['params']['Цена']=(int)$pos['Цена'];//Дробей в php нет, всё что после точки удаляется	
+			}
 			$list[]=$p;
 		}
 		
@@ -55,7 +58,19 @@
 		
 
 		foreach($params as $k=>$p){
-			$params[$k]=cat_option($params[$k],$count);
+			$opt=cat_option($params[$k],$count);
+			if(!$opt){
+				unset($params[$k]);
+				continue;
+			}
+			if(!$opt['values']){
+				if($opt['yes']==$count){//Слишком много занчений но при этом у всех позиций они указаны и нет no yes
+					unset($params[$k]);
+					continue;
+				}
+			}
+			$params[$k]=$opt;
+			$params[$k]['no']=$count-$params[$k]['yes'];
 			if(!$params[$k]){
 				unset($params[$k]);
 				continue;
@@ -63,7 +78,15 @@
 			$params[$k]['name']=$k;
 		}
 		foreach($more as $k=>$p){
-			$params[$k]=cat_option($more[$k],$count);
+			$opt=cat_option($more[$k],$count);
+			if(!$opt)continue;
+			if(!$opt['values']){
+				if($opt['yes']==$count){//Слишком много занчений но при этом у всех позиций они указаны и нет no yes
+					continue;
+				}
+			}
+			$params[$k]=$opt;
+			$params[$k]['no']=$count-$params[$k]['yes'];
 			if(!$params[$k]){
 				unset($params[$k]);
 				continue;
@@ -71,10 +94,15 @@
 			$params[$k]['more']=true;
 			$params[$k]['name']=$k;
 		}
-		$groups=cat_option($groups,$count);
-		$groups['name']='Группы';
-		$groups['group']=true;
-		$params['Группы']=$groups;
+
+		$opt=cat_option($listgroups,$count);//список групп с отметкой сколько позиций в каждой группе
+		if($opt&&$opt['values']){
+			$opt['no']=0;
+			$opt['group']=true;
+			$opt['name']='Группы';
+			
+			$params['Группы']=$opt;
+		}
 		
 
 		usort($params,function($p1,$p2){
@@ -87,7 +115,5 @@
 		return $ans;
 	},array($search,sizeof($data['list'])),isset($_GET['re']));
 
-	//echo '<pre>';
-	//print_r($ans);
 	return infra_echo($ans);
 ?>

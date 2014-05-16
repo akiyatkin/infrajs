@@ -9,8 +9,16 @@
 	</script>
 	{searchgood:}
 		<style>
-			.position {
+			/*.position {
 				margin-bottom:40px;
+			}*/
+			.catgrouplist .count {
+				font-size:10px;
+				
+				color:gray;
+			}
+			.catgrouplist .bigbtnover .count {
+				color:#CCC;
 			}
 		</style>
 		<p style="float:right">{parent:cat_childsp}</p>
@@ -276,7 +284,7 @@
 				}
 			</style>
 			<div class="cat_filters">
-				Параметры:
+				Фильтр:
 				{::cat_filter}
 			</div>
 			<script>
@@ -302,14 +310,14 @@
 				});
 			</script>
 			{cat_filter:}<table cellspacing="1" cellpadding="0"><tr><td data-name="{name}" class="cancel">X</td><td>&nbsp;{name}:&nbsp;</td><td>{slide?:cat_fil_slide?:cat_fil_values}{yes?:cat_yes}{no?:cat_no}</td></tr></table>
-			{cat_fil_slide:}от {~cost(min)} до {~cost(max)} 
-
+			{cat_fil_slide:}от {~cost(min)} до {~cost(max)}{:optunit?: }{:optunit}
 			{cat_fil_values:}{values::cat_fil_value}
 			{cat_fil_value:}{.}{~last()|:comma}
-			{cat_yes:}{~length(values)?:comma}указано
-			{cat_no:}{~length(values)?:comma}не указано
-			{comma:}, 
-			
+			{cat_yes:}{~length(values)|slide?:comma} указано
+			{cat_no:}{~length(values)|slide?:comma} не указано
+			{comma:},
+			{optunit:}{infra.conf.cart[:optunitname]}
+			{optunitname:}unit{name}
 		{cat_child:}
 			<a href="?{state.parent}/{title}" title="Показать группу {~lower(title)}">
 				<table cellspacing="0" cellpadding="0">
@@ -317,7 +325,7 @@
 						{pos?:catchimg}
 					</td>
 					<td class="name">
-						{title}
+						{title} <span class="count">{count}</span>
 					</td>
 				</table>
 			</a>
@@ -346,6 +354,7 @@
 					float:left; 
 					width:350px; 
 					display:block;
+					text-decoration:none;
 				}
 			</style>
 			<script>

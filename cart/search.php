@@ -142,8 +142,6 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 			$fil=array('name'=>$name);
 			$fil['no']=$noval;
 			$fil['yes']=$yesval;
-			echo sizeof($ans['list']);
-			exit;
 			foreach($ans['list'] as &$pos){
 				$obj=$ispos[$name]?$pos:$pos['more'];
 				//if(isset($obj[$name])&&!is_null($obj[$name])){
@@ -223,7 +221,7 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 		foreach($ans['list'] as &$pos){
 			$path=$pos['path'];
 			foreach($ans['list'] as &$pos){
-				foreach($pos['path'] as $v)$groups[$v]=true;
+				foreach($pos['path'] as $v)$groups[$v]++;
 				$rpath=array();
 				foreach($path as $k=>$p){
 					if($pos['path'][$k]==$p){
@@ -249,6 +247,8 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 		}
 
 		$ans['childs']=array();
+		
+		
 		foreach($group['childs'] as $g){
 			if(!$groups[$g['title']])continue;
 			$pos=&xls_runPoss($g,function(&$pos){
@@ -259,8 +259,10 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 			}else{
 				$pos=array();
 			}
-			$ans['childs'][]=array('title'=>$g['title'],'pos'=>$pos);
+			
+			$ans['childs'][]=array('title'=>$g['title'],'pos'=>$pos,'count'=>$groups[$g['title']]);
 		}
+		
 	}
 	return $ans;
 },$args,isset($_GET['re']));

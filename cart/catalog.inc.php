@@ -172,9 +172,9 @@
 		if(is_null($val)||$val==='')return false;
 		return true;
 	}
-	function cat_option($opt,$count){
-		foreach($opt as $value=>$s)break;
-		$opt=array('values'=>$opt);
+	function cat_option($values,$count){
+		foreach($values as $value=>$s)break;
+		$opt=array('values'=>$values);
 		$min=$value;
 		$max=$value;
 		$yes=0;
@@ -183,21 +183,25 @@
 					
 		}
 		$opt['yes']=$yes;
-
+		if($count>$yes*10){//Если отмеченных менее 10% то такие опции не показываются
+			return false;
+		}
 		$type=false;
 		foreach($opt['values'] as $val=>$c){//Слайдер
 			if(is_string($val)){
 				$type='string';
 				break;
 			}
-			if($val&&$val<$min)$min=$val;
+			
+
+			if($val<$min)$min=$val;
 			if($val>$max)$max=$val;
 		}
-		
 		if(!$type){
 			
 			$len=sizeof($opt['values']);
-			if($len>5){
+			if($len>5){//Слайдер
+
 				$opt['min']=$min;
 				$opt['max']=$max;
 				$type='slider';
@@ -212,20 +216,17 @@
 		}
 		$opt['type']=$type;
 		if($opt['type']=='string'){
-			if($count>$yes*10){//Если отмеченных менее 10% то такие опции не показываются
-				return array();
-			}
-			$r=true;
-			foreach($opt['values'] as $v){//Когда всех значений по 1
-				if($v!=1){
-					$r=false;
-					break;
-				}
-			}
-			if($r){//Единичные опции
+			
+			if(sizeof($opt['values'])>30){
 				$opt['values']=array();
 			}
-			
+			/*foreach($opt['values'] as $v){//Когда всех значений по 1
+				if($v!=1){
+					//Единичные опции
+					$opt['values']=array();
+					break;
+				}
+			}*/
 			if(sizeof($opt['values'])>10){
 				$opt['values_more']=array_slice($opt['values'],6,sizeof($opt['values'])-6,true);
 				$opt['values']=array_slice($opt['values'],0,6,true);
