@@ -180,7 +180,6 @@
 		$yes=0;
 		foreach($opt['values'] as $v=>$c){
 			if($v)$yes+=$c;//у позиции несколько групп включая родительские yes мало чего значит
-					
 		}
 		$opt['yes']=$yes;
 		if($count>$yes*10){//Если отмеченных менее 10% то такие опции не показываются
@@ -201,7 +200,6 @@
 			
 			$len=sizeof($opt['values']);
 			if($len>5){//Слайдер
-
 				$opt['min']=$min;
 				$opt['max']=$max;
 				$type='slider';

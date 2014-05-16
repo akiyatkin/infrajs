@@ -49,6 +49,9 @@
 			cursor: pointer;
 			color: #00809e;
 		}
+		.filters .option {
+			margin-bottom:5px;
+		}
 
 	</style>
 	<div class="filters">
@@ -94,7 +97,7 @@
 
 {comma:}, 
 {option:}
-<div id="option{name}">
+<div id="option{name}" class="option">
 	<div class="opttitle">{name}{:optunit?:comma}{:optunit}</div>
 	{no!:0&(~length(values)!:1|type=:slide)?:yescheck}
 	{no!:0?:nocheck}
@@ -194,6 +197,7 @@
 					}
 					var val=infra.template.parse('*cart/filters.tpl',obj,'optlabel');
 					inp.val(val).change();
+					div.after($('.admitmove'));
 					work=false;
 				}
 			});
@@ -209,6 +213,7 @@
 					var obj=parse('');
 					var val=infra.template.parse('*cart/filters.tpl',obj,'optlabel');
 					inp.val(val).change();
+					div.after($('.admitmove'));
 				}
 				work=false;
 			});
@@ -230,7 +235,7 @@
 				}
 				var val=infra.template.parse('*cart/filters.tpl',obj,'optlabel');
 				inp.val(val).change();
-
+				div.after($('.admitmove'));
 				sl.slider( "option","values",[obj.smin,obj.smax]);
 
 
@@ -319,7 +324,7 @@
 
 			div.find('.val input').change(function(){
 				if(ignore)return;
-				$(this).parents('.val').after($('.admitmove').get(0)).show();
+				$(this).parents('.val').after($('.admitmove'));
 				if(inps.filter(':checked').length){
 					if(yes.prop('checked')){
 						yes.prop('checked',false).change();

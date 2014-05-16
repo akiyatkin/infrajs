@@ -44,7 +44,7 @@
 			$list[]=$p;
 		}
 		
-
+		
 		foreach($list as &$pos){
 			foreach($pos['more'] as $k=>$p){
 				if(!cat_isSpecified($p))continue;
@@ -55,44 +55,56 @@
 				$params[$k][$p]++;
 			}
 		}
-		
-
 		foreach($params as $k=>$p){
 			$opt=cat_option($params[$k],$count);
+			//====
 			if(!$opt){
 				unset($params[$k]);
 				continue;
 			}
-			if(!$opt['values']){
+			if(sizeof($opt['values'])==1){
+				if($opt['yes']==$count){//Значение есть у всех позиций и только один вариант
+					unset($params[$k]);
+					continue;
+				}
+			}
+			if(!$opt['values']&&$opt['type']!='slider'){
 				if($opt['yes']==$count){//Слишком много занчений но при этом у всех позиций они указаны и нет no yes
 					unset($params[$k]);
 					continue;
 				}
 			}
+			$opt['no']=$count-$opt['yes'];
+			$opt['name']=$k;
 			$params[$k]=$opt;
-			$params[$k]['no']=$count-$params[$k]['yes'];
-			if(!$params[$k]){
-				unset($params[$k]);
-				continue;
-			}
-			$params[$k]['name']=$k;
+			//===
 		}
 		foreach($more as $k=>$p){
 			$opt=cat_option($more[$k],$count);
-			if(!$opt)continue;
-			if(!$opt['values']){
+
+			//===
+			if(!$opt){
+				unset($params[$k]);
+				continue;
+			}
+			if(sizeof($opt['values'])==1){
+				if($opt['yes']==$count){//Значение есть у всех позиций и только один вариант
+					unset($params[$k]);
+					continue;
+				}
+			}
+			if(!$opt['values']&&$opt['type']!='slider'){
 				if($opt['yes']==$count){//Слишком много занчений но при этом у всех позиций они указаны и нет no yes
 					continue;
 				}
 			}
+			$opt['no']=$count-$opt['yes'];
+			$opt['name']=$k;
 			$params[$k]=$opt;
-			$params[$k]['no']=$count-$params[$k]['yes'];
-			if(!$params[$k]){
-				unset($params[$k]);
-				continue;
-			}
+			//===
+
 			$params[$k]['more']=true;
-			$params[$k]['name']=$k;
+			
 		}
 
 		$opt=cat_option($listgroups,$count);//список групп с отметкой сколько позиций в каждой группе
@@ -106,9 +118,15 @@
 		
 
 		usort($params,function($p1,$p2){
-			if($p1['yes']==$p2['yes'])return 0;
+			if($p1['yes']>$p2['yes'])return -1;
 			if($p1['yes']<$p2['yes'])return 1;
-			else return -1;
+			if($p1['type']=='slider')return -1;
+			if($p2['type']=='slider')return 1;
+
+			if(sizeof($p1['values'])>sizeof($p2['values']))return 1;
+			if(sizeof($p1['values'])<sizeof($p2['values']))return -1;
+			
+			return 0;
 		});
 		$ans['count']=$count;
 		$ans['params']=$params;
