@@ -82,8 +82,9 @@ function &xls_make2($path){
 }
 function &xls_make($path){
 
-	$data=xls_parseAll($path);
-	if(!$data)return;
+	$datamain=xls_parseAll($path);
+
+	if(!$datamain)return;
 	$p=explode('/',$path);
 	$title=array_pop($p);
 	$title=preg_replace('/^\*/','',$title);
@@ -95,58 +96,53 @@ function &xls_make($path){
 
 	
 	$parent=false;
-	$groups=_xls_createGroup($title,$parent,'book');
+	$groups=&_xls_createGroup($title,$parent,'book');
 
-	infra_foro($data,function(&$groups, &$data,$title){//Бежим по листам
-		if($title{0}==='.')return;//Не применяем лист у которого точка в начале имени
-		$group=_xls_createGroup($title,$groups,'list');
-		if(!$group)return;
-		$groups['childs'][]=&$group;
-		
+	foreach($datamain as $title=>$data){//Бежим по листам
+		if($title{0}==='.')continue;//Не применяем лист у которого точка в начале имени
+		$argr=array();//Чтобы была возможность определить следующую группу и при этом работать со ссылкой и не переопределять предыдущую
+		$argr[0]=&_xls_createGroup($title,$groups,'list');
+		if(!$argr[0])continue;
+		$groups['childs'][]=&$argr[0];
+
 		$head=false;//Заголовки ещё не нашли
 		$pgpy=false;//ПГПЯ Признак группы пустая ячейка в строке... а этом свойстве будет индекс ПГПЯ
 		$wasdata=false;//Были ли до этого данные
 		$wasgroup=false;
 		//var empty=0;//Количество пустых строк
 		$first_index=0;
-		$argr=array(&$group);
-		$args=array(&$head,&$pgpy,&$wasdata,&$wasgroup,&$argr,&$first_index);
-		infra_foro($data,function(&$head,&$pgpy,&$wasdata,&$wasgroup,&$argr,&$first_index, &$row,$i){//Бежим по строкам 
+		
+
+		foreach($data as $i=>$row){//Бежим по строкам 
+			//infra_foro($data,function(&$row,$i) use(&$head,&$pgpy,&$wasdata,&$wasgroup,&$argr,&$first_index){
 			$count=0;
-			$group=&$argr[0];
+			$group=&$argr[0];//Группа может появится среди данных в листах
 			//echo $group['title'].'<br>';
-			infra_foro($row,function(&$count, &$cell){
-				if($cell)$count++;
-			},array(&$count));
+			foreach($row as $cell)if($cell)$count++;
+			
 			if(!$head){
-				infra_foro($row,function(&$val,$i,&$b){
-					$b[$i]=preg_replace('/\n/','',$b[$i]);
-					$b[$i]=preg_replace('/\s+$/','',$b[$i]);
-					$b[$i]=preg_replace('/^\s+/','',$b[$i]);
-
-				});
+				foreach($row as $b=>$rowcell){
+					$row[$b]=preg_replace('/\n/','',$row[$b]);
+					$row[$b]=preg_replace('/\s+$/','',$row[$b]);
+					$row[$b]=preg_replace('/^\s+/','',$row[$b]);
+				}
 				$head=($count>2);//Больше 2х не пустых ячеек будет заголовком
-
-
 				foreach($row as $first_index=>$first_value)break;
-
-
 				if($head){//Текущий row и есть заголовок
-					$group['head']=&$row;
+					$group['head']=$row;
 				}else{
-					if($first_value=='ПГПЯ'){
+					if($first_value=='ПГПЯ'){//Признак группы пустая ячейка номер этой ячейки
 						$pgpy=$row[$first_index+1]-1;//Индекс пустой ячейки
 					}else{
-						if($first_value)$group['descr'][]=&$row;
+						if($first_value)$group['descr'][]=$row;
 					}
 				}
 			}else{
 				$isnewgroup=(isset($row[$first_index])&&($count==1)&&strlen($row[$first_index])>1);//Если есть только первая ячейка и та длинее одного символа
 				$roww=array_values($row);
-				if(!$isnewgroup&&$pgpy&&strlen($row[$first_index])!==1){
+				if(!$isnewgroup&&$pgpy&&strlen($row[$first_index])!==1){//один символ в первой ячейке имеет специальное значение выхода на уровень вверх
 					$isnewgroup=!$roww[$pgpy];
 				}
-
 				if($isnewgroup){
 					if($wasdata&&@$group['parent']&&$group['parent']['type']!='book'){
 						$parent=&$group['parent'];
@@ -154,18 +150,13 @@ function &xls_make($path){
 						$parent=&$group;//Если уже были данные то поднимаемся наверх
 					}
 					$g=_xls_createGroup($row[$first_index],$parent,'row',$row);//Создаём новую группу
-					if(!$g)return;
+					if(!$g)continue;
 					$wasgroup=true;
 					$wasdata=false;
-					
 					//g.descr=g.parent.descr.concat(g.descr);
-					
 					$g['descr']=array_merge($g['parent']['descr'],$g['descr']);
-
 					$g['head']=&$g['parent']['head'];
 					$g['parent']['childs'][]=&$g;
-					//unset($group);
-					//unset($argr[0]);
 					$argr[0]=&$g;
 					//$group=&$g;//Теперь ссылка на новую группу и следующие данные будут добавляться в неё
 					//Новая ссылка забивает на старую, простое присвоение это новое место куда указывает ссылка
@@ -178,21 +169,24 @@ function &xls_make($path){
 						}
 					}else{
 						$wasdata=true;
-						$group['data'][]=&$row;
+						$group['data'][]=$row;
 					}
 				}
 			}
-		},$args);
-	},array(&$groups));
+		}
+	}
 	return $groups;
 }
-function &xls_runPoss(&$data,$callback,$args=array(),$back=false){
+function &xls_runPoss(&$data,$callback,$back=false){
 	return xls_runGroups($data,function($back,$callback,$args, &$group){
-
-		return infra_forr($group['data'],function(&$pos,$i) use($args,$callback,&$group){
+		for($i=0,$l=sizeof($group['data']);$i<$l;$i++){
+			$r=call_user_func_array($callback,array(&$group['data'][$i],$i,&$group));
+			if(!is_null($r))return $r;
+		}
+		/*return infra_forr($group['data'],function(&$pos,$i) use($args,$callback,&$group){
 			$r=call_user_func_array($callback,array_merge($args,array(&$pos,$i,&$group)));
 			if(!is_null($r))return $r;
-		});
+		});*/
 
 	},array($back,$callback,&$args),$back);
 }
@@ -362,7 +356,9 @@ function xls_processPossMore(&$data,$props){
 }
 
 function xls_merge(&$gr,&$addgr){//Всё из группы addgr нужно перенести в gr
-	$i=infra_forr($addgr['parent']['childs'],function(&$addgr, &$v,$i){if(infra_isEqual($v,$addgr))return $i;},array(&$addgr));
+	$i=infra_forr($addgr['parent']['childs'],function(&$addgr, &$v,$i){
+		if(infra_isEqual($v,$addgr))return $i;
+	},array(&$addgr));
 	array_splice($addgr['parent']['childs'],$i,1);//Удалили addgr там где группа была до этоо, заменив на новую
 
 	//$gr['miss']=0;
@@ -380,21 +376,23 @@ function xls_merge(&$gr,&$addgr){//Всё из группы addgr нужно п�
 		$val['parent']=&$gr;
 		$gr['childs'][]=&$val;
 	},array(&$gr));
-
+	
 	infra_foro($addgr['descr'],function(&$gr, $des,$key){
 		//if($key=='Описание')return;//Всё кроме Описания
 		if(is_null(@$gr['descr'][$key])){
 			$gr['descr'][$key]=$des;
 		};
 	},array(&$gr));
-
+	
 	if(@$gr['tparam'])$gr['tparam'].=','.$addgr['tparam'];
 	else $gr['tparam']=@$addgr['tparam'];
-
-	infra_forr($addgr['data'],function(&$gr, &$val){
-		$val['group']=&$gr;
-		$gr['data'][]=&$val;
-	},array(&$gr));
+	
+	for($i=0,$l=sizeof($addgr['data']);$i++;$i<$l){
+		$pos=&$addgr['data'][$i];
+		$pos['group']=&$gr;
+		$gr['data'][]=&$pos;
+	}
+	return;
 }
 function xls_processGroupFilter(&$data){
 	$all=array();
@@ -408,14 +406,12 @@ function xls_processGroupFilter(&$data){
 			//var group=all[gr.title].parent.childs
 			//var i=infra.forr(group,function(v,i){if(v===all[gr.title])return i});
 			//group.splice(i,1);
-
+			//echo $title.'<br>';
 			xls_merge($gr,$all[$title]);//Добавляем в последнее совпадение в новое найденное добавляем старое найденное
 
 			$all[$title]=&$gr;
 		}
 	},array(&$all),true);
-
-	
 	/*
 	xls_runGroups($data,function(&$gr,$i,&$group){//Удаляем пустые группы
 		if(!$group) return;//Кроме верхней группы
@@ -707,15 +703,16 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 	$data=_xls_createGroup($config['root'],$parent,'set');//Сделали группу в которую объединяются все остальные
 	$data['miss']=true;//Если в группе будет только одна подгруппа она удалится... подгруппа поднимится на уровень выше
 	
-	infra_forr($ar,function(&$data, $path){
-
+	infra_forr($ar,function($path) use(&$data){
 		$d=&xls_make($path);
 
 		if(!$d)return;
 		$d['parent']=&$data;
 		$data['childs'][]=&$d;
-	},array(&$data));
+	});
 
+	
+	
 	
 	xls_processDescr($data);
 	
@@ -757,8 +754,7 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 
 	
 	xls_processGroupFilter($data);//Объединяются группы с одинаковым именем, Удаляются пустые группы
-
-
+	
 
 	xls_processGroupMiss($data);//Группы miss(производители) расформировываются
 
