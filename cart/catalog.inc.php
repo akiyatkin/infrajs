@@ -91,7 +91,7 @@
 					//И дату изменения файлов в папке
 					//Позиции без папок игнорируются
 					$poss=array();
-					xls_runPoss($data,function(&$poss,&$pos){
+					xls_runPoss($data,function(&$pos) use(&$poss){
 						$conf=infra_config();
 						$dir=infra_theme($conf['cart']['dir'].$pos['Производитель'].'/'.$pos['article'].'/');
 						if(!$dir)return;
@@ -104,7 +104,7 @@
 							if($t>$pos['time'])$pos['time']=$t;
 						}
 						$poss[]=&$pos;
-					},array(&$poss));
+					});
 					usort($poss,function($a, $b){
 					    if($a['time']==$b['time'])return 0;
 						return ($a['time']>$b['time'])?-1:1;
