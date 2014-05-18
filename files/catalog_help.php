@@ -28,9 +28,9 @@ $list=infra_cache(CAT_PATH,'all_arts',function(){//Кэширующая обёр
 	$data=xls_init(CAT_PATH);//Делаем стандартный разбор каталога. В переменной data весь каталог
 
 	$list=array();//Массив в котором сохраним необходимые нам данные
-	xls_runPoss($data,function(&$list, &$pos){
+	xls_runPoss($data,function(&$pos) use(&$list){
 		$list[]=$pos['Артикул'];
-	},array(&$list));
+	});
 
 	return $list;
 },array(),isset($_GET['re']));//array() - аргументы для обработки, в данном случае аргументы не требуются. Последний параметр ключ reparse означающий выполнение в любом случае если true
@@ -39,13 +39,13 @@ echo implode(', ',$list);
 echo '<h1>ПРИМЕР 1, Найти все позиции у которых есть значение в колонке key</h1>';
 $data=xls_init(CAT_PATH);
 $list=array();
-xls_runPoss($data,function(&$list, &$pos){
+xls_runPoss($data,function(&$pos) use(&$list){
 	//Ищим позиции у которых есть колонка 'key'
 	if($pos['more']['key']){//В more попадают все колонки кроме Наименование, Артикул, Описание, Производитель
 		$list[]=&$pos;
 	}
 	//return true;//выход из цикла
-},array(&$list));
+});
 infra_forr($list,function(&$val){
 	unset($val['group']);//У каждой позиции есть рекурсивное свойство ссылка на группу. Для того чтобы закэшировать результат, или вывести в json формате в ответе. Нужно удалять рекурсивные такие свойства чтобы небыло зацикливания.
 });

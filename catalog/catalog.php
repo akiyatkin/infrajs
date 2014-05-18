@@ -118,20 +118,20 @@
 			$ans['childs']=$data;
 		}else if($type=='pos'){
 			$ans['pos']=false;
-			$pos=&xls_runPoss($data,function(&$val,&$art, &$pos,$i,&$group) {
+			$pos=&xls_runPoss($data,function(&$pos,$i,&$group) use(&$val,&$art){
 				if(infra_strtolower($pos['Производитель'])!==$val)return;
 				if(infra_strtolower($pos['article'])!==$art)return;
 				$pos['path']=$group['path'];
 				return $pos;
-			},array(&$val,&$art));
+			});
 
 			if($pos){
 				$name=infra_strtolower($pos['Производитель']);
 				$prods=xls_init2($conf['catalog']['prod']);
 				$pos['Подпись']=@$prods['descr']['Подпись'];
-				$prod=&xls_runPoss($prods,function($name, &$prod){
+				$prod=&xls_runPoss($prods,function(&$prod) use($name){
 					if(infra_strtolower($prod['Производитель'])==$name)return $prod;
-				},array($name));
+				});
 
 				if($prod)$pos['producer']=$prod;
 				else $pos['producer']=array('Производитель'=>$pos['Производитель']);
@@ -162,11 +162,11 @@
 					$list[$prod][$art]=true;
 				}
 			}
-			xls_runPoss($data,function($list, &$pos){
+			xls_runPoss($data,function(&$pos) use(&$list){
 				if($list[$pos['Производитель']]&&$list[$pos['Производитель']][$pos['article']]){
 					$list[$pos['Производитель']][$pos['article']]=&$pos;
 				}
-			},array(&$list));
+			});
 			foreach($available['groups'] as &$group){
 				foreach($group['list'] as $k=>$v){
 					if(!is_array($list[$v['prod']][$v['art']])){
@@ -225,7 +225,7 @@
 				}
 				//==========
 				$prods=xls_init2($conf['catalog']['prod'],array('Ссылка parent'=>true));//@$prods['descr']['Подпись'];
-				$prod=&xls_runPoss($prods,function(&$list, &$prod){//Из Excel всё взяли Производители.xls
+				$prod=&xls_runPoss($prods,function(&$prod) use(&$list){//Из Excel всё взяли Производители.xls
 					if(!isset($prod['Производитель']))return;
 					$p=$prod['Производитель'];
 					$vv=&seo_createItem($list,$p);//Создали из производителей указанных в Производители.xls
@@ -237,13 +237,13 @@
 							$list[$p]['description']=preg_replace("/\..*/",".",$prod['Описание группы']);
 						}
 					}
-				},array(&$list));
+				});
 
 				//==========
-				xls_runPoss($data,function(&$list,&$pos){		
+				xls_runPoss($data,function(&$pos) use(&$list){		
 					if(!isset($pos['Производитель']))return;
 					seo_createItem($list,$pos['Производитель']);//Создали из производителей указанных в Excel
-				},array(&$list));
+				});
 
 				//==========
 				xls_runGroups($data,function(&$list,&$group){
@@ -269,7 +269,7 @@
 			}else if($val=='pos'){
 
 				$items=array();
-				xls_runPoss($data,function(&$items,$pos){
+				xls_runPoss($data,function($pos) use(&$items){
 					$v=&seo_createItem($items,array('producer'=>$pos['Производитель'],'article'=>$pos['article']),$pos['Производитель'].' '.$pos['Артикул'].'. '.$pos['Наименование']);
 					$pos=infra_loadJSON('*catalog/catalog.php?type=pos&val='.$pos['Производитель'].'&art='.$pos['article']);
 
@@ -277,7 +277,7 @@
 						$page=implode('',$pos['pos']['texts']);
 					}
 					seo_pageResearch($page,$v);
-				},array(&$items));
+				});
 
 				$ans['items']=$items;
 			}
@@ -358,19 +358,19 @@
 
 				$dir=infra_theme(CATDIR.$val.'/');
 				$poss=array();
-				xls_runPoss($data,function(&$poss,&$val,&$pos){
+				xls_runPoss($data,function(&$pos) use(&$poss,&$val){
 					if(infra_strtolower(@$pos['Производитель'])==$val){
 						$poss[]=&$pos;
 					}
-				},array(&$poss,&$val));
+				});
 
 				if($dir||sizeof($poss)){
 					$ans['is']='producer';
 					$prods=xls_init2($conf['catalog']['prod']);
 
-					$producer=&xls_runPoss($prods,function($val, &$prod){
+					$producer=&xls_runPoss($prods,function(&$prod) use($val){
 						if(infra_strtolower($prod['Производитель'])==$val)return $prod;
-					},array($val));
+					});
 
 					
 					if($producer){
@@ -400,7 +400,7 @@
 					cat_prepareData($data);
 					$v=explode(' ',$val);
 					foreach($v as &$s)$s=trim($s);
-					xls_runPoss($data,function(&$v,&$poss,&$pos){
+					xls_runPoss($data,function(&$pos) use(&$v,&$poss){
 						$str=$pos['Артикул'];
 						$gr=@$pos['parent'];
 						while($gr){
@@ -419,7 +419,7 @@
 
 						unset($pos['parent']);
 						$poss[]=&$pos;
-					},array(&$v,&$poss));
+					});
 					if(sizeof($poss)){
 						$ans['result']=1;
 						$ans['title']='Поиск: '.$ans['val'];
@@ -494,8 +494,8 @@
 			$groups=array();
 			if($ans['sel']){//Выбран производитель
 				if($ans['is']=='group'&&sizeof($ans['path'])<2){//Группа 1ого уровня
-					infra_forr($data['childs'],function(&$groups,$prod, &$g){//Оставляем тольк те группы в которхы есть этот производитель
-							xls_runPoss($g,function(&$groups,$prod, &$pos) use($g){
+					infra_forr($data['childs'],function(&$g) use(&$groups,$prod){//Оставляем тольк те группы в которхы есть этот производитель
+							xls_runPoss($g,function(&$pos) use(&$groups,$prod,$g){
 								$p=mb_strtolower($pos['Производитель']);
 								if($p==$prod){
 									$title=$g['title'];
@@ -505,8 +505,8 @@
 									$groups[]=array('name'=>$name,'title'=>$title);
 									return false;
 								}
-							},array(&$groups,$prod));
-					},array(&$groups,$prod));
+							});
+					});
 				}
 			}
 
@@ -573,9 +573,9 @@
 		}else if($type=='producers'){
 			$prods=array();
 
-			xls_runPoss($data,function(&$prods, &$pos){
+			xls_runPoss($data,function(&$pos) use(&$prods){
 				@$prods[$pos['Производитель']]++;
-			},array(&$prods));
+			});
 			
 			$ans['producers']=$prods;
 		}
@@ -635,7 +635,7 @@
 				//И дату изменения файлов в папке
 				//Позиции без папок игнорируются
 				$poss=array();
-				xls_runPoss($data,function(&$poss,&$pos){
+				xls_runPoss($data,function(&$pos) use(&$poss){
 					$conf=infra_config();
 					$dir=infra_theme($conf['catalog']['dir'].$pos['Производитель'].'/'.$pos['article'].'/');
 					if(!$dir)return;
@@ -648,7 +648,7 @@
 						if($t>$pos['time'])$pos['time']=$t;
 					}
 					$poss[]=&$pos;
-				},array(&$poss));
+				});
 				usort($poss,function($a, $b){
 				    if($a['time']==$b['time'])return 0;
 					return ($a['time']>$b['time'])?-1:1;

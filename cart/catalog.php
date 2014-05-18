@@ -108,20 +108,20 @@
 		
 		}else if($type=='pos'){
 			$ans['pos']=false;
-			$pos=&xls_runPoss($data,function(&$val,&$art,&$pos){
+			$pos=&xls_runPoss($data,function(&$pos) use(&$val,&$art){
 				if(infra_strtolower($pos['Производитель'])!==$val)return;
 				if(infra_strtolower($pos['article'])!==$art)return;
 				return $pos;
-			},array(&$val,&$art));
+			});
 
 			
 			if($pos){
 				$name=infra_strtolower($pos['Производитель']);
 				$prods=xls_init($conf['cart']['prod']);
 				$pos['Подпись']=@$prods['descr']['Подпись'];
-				$prod=&xls_runPoss($prods,function($name, &$prod){
+				$prod=&xls_runPoss($prods,function(&$prod) use($name){
 					if(infra_strtolower($prod['Производитель'])==$name)return $prod;
-				},array($name));
+				});
 
 				if($prod)$pos['producer']=$prod;
 				else $pos['producer']=array('Производитель'=>$pos['Производитель']);
@@ -173,7 +173,7 @@
 				}
 				//==========
 				$prods=xls_init($conf['cart']['prod'],array('Ссылка parent'=>true));//@$prods['descr']['Подпись'];
-				$prod=&xls_runPoss($prods,function(&$list, &$prod){//Из Excel всё взяли Производители.xls
+				$prod=&xls_runPoss($prods,function(&$prod) use(&$list){//Из Excel всё взяли Производители.xls
 					if(!isset($prod['Производитель']))return;
 					$p=$prod['Производитель'];
 					$vv=&seo_createItem($list,$p);//Создали из производителей указанных в Производители.xls
@@ -185,13 +185,13 @@
 							$list[$p]['description']=preg_replace("/\..*/",".",$prod['Описание группы']);
 						}
 					}
-				},array(&$list));
+				});
 
 				//==========
-				xls_runPoss($data,function(&$list,&$pos){		
+				xls_runPoss($data,function(&$pos) use(&$list){		
 					if(!isset($pos['Производитель']))return;
 					seo_createItem($list,$pos['Производитель']);//Создали из производителей указанных в Excel
-				},array(&$list));
+				});
 
 				//==========
 				xls_runGroups($data,function(&$list,&$group){
@@ -217,7 +217,7 @@
 				$ans['items']=array_values($list);
 			}else if($val=='pos'){
 				$items=array();
-				xls_runPoss($data,function(&$items,$pos){
+				xls_runPoss($data,function($pos) use(&$items){
 					$conf=&infra_config();
 					
 					$files=explode(',',@$pos['Файлы']);
@@ -242,7 +242,7 @@
 					foreach($v2 as $kkk=>$vvv)$v[$kkk]=$vvv;
 
 
-				},array(&$items));
+				});
 
 				$ans['items']=$items;
 			}
@@ -251,9 +251,9 @@
 		if($type=='producers'){
 			$prods=array();
 
-			xls_runPoss($data,function(&$prods, &$pos){
+			xls_runPoss($data,function(&$pos) use(&$prods){
 				@$prods[$pos['Производитель']]++;
-			},array(&$prods));
+			});
 			
 			$ans['producers']=$prods;
 		}

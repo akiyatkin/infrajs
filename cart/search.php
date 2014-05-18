@@ -192,9 +192,9 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 		$dir=infra_theme($conf['cart']['dir'].$val.'/');
 		$poss=$ans['list'];
 		$prods=xls_init($conf['cart']['prod']);
-		$prod=&xls_runPoss($prods,function($val, &$prod){
+		$prod=&xls_runPoss($prods,function(&$prod) use($val){
 			if(infra_strtolower($prod['Производитель'])==$val)return $prod;
-		},array($val));
+		});
 		$name=$ans['name'];
 		$ans['title']='Производитель '.$name;
 		$ans['descr']=@$prod['Описание группы'];

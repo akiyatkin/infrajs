@@ -178,17 +178,12 @@ function &xls_make($path){
 	return $groups;
 }
 function &xls_runPoss(&$data,$callback,$back=false){
-	return xls_runGroups($data,function($back,$callback,$args, &$group){
+	return xls_runGroups($data,function(&$group) use($back,$callback){
 		for($i=0,$l=sizeof($group['data']);$i<$l;$i++){
 			$r=call_user_func_array($callback,array(&$group['data'][$i],$i,&$group));
 			if(!is_null($r))return $r;
 		}
-		/*return infra_forr($group['data'],function(&$pos,$i) use($args,$callback,&$group){
-			$r=call_user_func_array($callback,array_merge($args,array(&$pos,$i,&$group)));
-			if(!is_null($r))return $r;
-		});*/
-
-	},array($back,$callback,&$args),$back);
+	},array(),$back);
 }
 function &xls_runGroups(&$data,$callback,$args=array(),$back=false,$i=0,&$group=false){
 	if(!$back){
@@ -318,25 +313,25 @@ function xls_processPossFilter(&$data,$props){//Если Нет какого-т�
 
 function xls_processPossBe(&$data,$check1,$check2){//Если у позиции нет поля check1.. то оно будет равнятся полю check2
 	//используется data
-	xls_runPoss($data,function($check1,$check2, &$pos){	
+	xls_runPoss($data,function(&$pos) use($check1,$check2){	
 		if(is_null($pos[$check1]))$pos[$check1]=$pos[$check2];
 		if(is_null($pos[$check2]))$pos[$check2]=$pos[$check1];
-	},array($check1,$check2));
+	});
 }
 function xls_forFS($str){
 	return infra_State_forFS($str);
 }
 function xls_processPossFS(&$data,$props){
-	xls_runPoss($data,function(&$props, &$pos){	
-		infra_foro($props,function(&$pos, $name,$key){
+	xls_runPoss($data,function(&$pos) use(&$props){	
+		infra_foro($props,function($name,$key) use(&$pos){
 			if(isset($pos[$key])){
 				$pos[$name]=xls_forFS($pos[$key]);
 			}
-		},array(&$pos));
-	},array(&$props));
+		});
+	});
 };
 function xls_processPossMore(&$data,$props){
-	xls_runPoss($data,function(&$props, &$pos,$i,&$group){	
+	xls_runPoss($data,function(&$pos,$i,&$group) use(&$props){	
 		$p=array();
 		$more=array();				
 		
@@ -352,7 +347,7 @@ function xls_processPossMore(&$data,$props){
 		},array(&$p,&$prop,&$more));
 		if($more)$p['more']=&$more;
 		$group['data'][$i]=&$p;
-	},array(&$props));
+	});
 }
 
 function xls_merge(&$gr,&$addgr){//Всё из группы addgr нужно перенести в gr
@@ -721,7 +716,7 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 	if(@!is_array($config['Удалить колонки']))$config['Удалить колонки']=array();
 	if(!isset($config['more']))$config['more']=false;
 
-	xls_runPoss($data,function(&$config, &$pos){
+	xls_runPoss($data,function(&$pos) use(&$config){
 		foreach($config['Удалить колонки'] as $k){
 			if(isset($pos[$k]))unset($pos[$k]);
 		}
@@ -731,7 +726,7 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 				unset($pos[$k]);
 			}
 		}
-	},array(&$config));
+	});
 
 
 	if(@!is_array($config['Подготовить для адреса']))$config['Подготовить для адреса']=array('Артикул'=>'article');
