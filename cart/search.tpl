@@ -164,6 +164,7 @@
 				<td class="params">
 					{Производитель} <b>{Артикул}</b> <div style="float:right"><a href="?Каталог/{Производитель}">{Производитель}</a> <a href="?Каталог/{group_title}">{group_title}</a></div>
 					<div>
+						{Наличие на складе?:nalichie}
 						{more::cat_more}
 					</div>
 				</td>
@@ -187,6 +188,7 @@
 				</td>
 			</tr>
 			</table>
+		{nalichie:}{Наличие на складе}<br>
 		{cat_more:}{~key}:&nbsp;{.}{~last()|:comma} 
 		{cat_forward:}Вперёд&nbsp;→
 		{cat_forward_href:}<a onclick="infrajs.scroll=false" href="?{state}/p{~sum(page,:1)}">{:cat_forward}</a>

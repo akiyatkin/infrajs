@@ -172,17 +172,17 @@
 		if(is_null($val)||$val==='')return false;
 		return true;
 	}
-	function cat_option($values,$count){
+	function cat_option($values,$count,$showhard=false){
 		foreach($values as $value=>$s)break;
 		$opt=array('values'=>$values);
 		$min=$value;
 		$max=$value;
 		$yes=0;
 		foreach($opt['values'] as $v=>$c){
-			if($v)$yes+=$c;//у позиции несколько групп включая родительские yes мало чего значит
+			if(cat_isSpecified($v))$yes+=$c;//у позиции несколько групп включая родительские yes мало чего значит
 		}
 		$opt['yes']=$yes;
-		if($count>$yes*10){//Если отмеченных менее 10% то такие опции не показываются
+		if(!$showhard&&$count>$yes*10){//Если отмеченных менее 10% то такие опции не показываются
 			return false;
 		}
 		$type=false;

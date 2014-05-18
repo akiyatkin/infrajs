@@ -14,7 +14,9 @@
 
 		$params=array();//параметры стандартные
 		$params['Цена']=array();
-		$params['Производитель']=array();
+		//$params['Производитель']=array();
+		$params['Наличие на складе']=array();
+		$params['Синхронизация']=array();
 		$listgroups=array();
 		$more=array();//параметры дополнительные
 		$count=sizeof($data['list']);
@@ -35,9 +37,13 @@
 			$p=array(
 				'more'=>$pos['more'],
 				'params'=>array(
+					'Наличие на складе'=>$pos['Наличие на складе'],
 					'Производитель'=>$pos['Производитель']
 				)
 			);
+			if($pos['Синхронизация']){
+				$p['params']['Синхронизация']=$pos['Синхронизация'];
+			}
 			if($pos['Цена']){
 				$p['params']['Цена']=(int)$pos['Цена'];//Дробей в php нет, всё что после точки удаляется	
 			}
@@ -56,7 +62,8 @@
 			}
 		}
 		foreach($params as $k=>$p){
-			$opt=cat_option($params[$k],$count);
+			$showhard=in_array($k,array('Наличие на складе','Синхронизация'));
+			$opt=cat_option($params[$k],$count,$showhard);
 			//====
 			if(!$opt){
 				unset($params[$k]);
