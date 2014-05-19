@@ -37,7 +37,7 @@
 			$pos['categoryId']=$group['id'];
 			$poss[]=&$pos;
 		});
-		
+
 
 		$conf=infra_config();
 
@@ -47,7 +47,7 @@
 			"poss"=>$poss,
 			"groups"=>$groups
 		);
-
+		
 		$html=infra_template_parse('*yml/yml.tpl',$d);
 		return $html;
 	}
@@ -65,19 +65,23 @@
 
 		xls_runGroups($data,function(&$group,$i,&$parent){
 			$group['data']=array_filter($group['data'],function(&$pos){//Убираем позиции у которых не указана цена
+				if($pos['Синхронизация']!='Да')return false;
 				if(!$pos['Цена'])return false;
 				return true;
 			});
+			$group['data']=array_values($group['data']);
 		});
 
 		xls_runGroups($data,function(&$group,$i,&$parent){			
-			if(!$group['childs']){
+			if($group['childs']){
 				$group['childs']=array_filter($group['childs'],function(&$g){
-					if(!$g['data'])return false;
+					if(!$g['data']&&!$g['childs'])return false;
 					return true;
 				});
+				$group['childs']=array_values($group['childs']);
 			}
 		},array(),true);
+		
 		xls_runPoss($data,function(&$pos){
 			$conf=infra_config();
 			xls_preparePosFiles($pos,$conf['cart']['dir'], array('Производитель','article') );
@@ -91,6 +95,7 @@
 				$pos['images'][$k]=implode('/',$p);
 			}
 		});
+
 		return yml_parse($data);
 	}
 	if(isset($_GET['show'])){

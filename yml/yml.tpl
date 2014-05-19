@@ -12,9 +12,7 @@
 	<currencies>
 		<currency id="RUR" rate="1"/>
 	</currencies>
-	<categories>
-		{groups::category}	
-		
+	<categories>{groups::category}
 	</categories>
 	<offers>
 		{poss::pos}	
@@ -23,15 +21,14 @@
  </shop>
  </yml_catalog>
  {category:}
- 	<category id="{id}" parentId="{parentId}">{title}</category>
- {pos:}
- 	<offer type="vendor.model" id="{id}" available="true">
+ 		<category id="{id}" parentId="{parentId}">{title}</category>
+{pos:}
+ 	<offer type="vendor.model" id="{id}" available="{Наличие на складе=:В наличии?:true?:false}">
 		<url>http://{...site}?{~encode(:Каталог)}/{~encode(Производитель)}/{~encode(article)}</url>
 		<price>{Цена}</price>
 		<currencyId>RUB</currencyId>
 		<categoryId>{categoryId}</categoryId >
 		{images::image}
-		
 		<store>true</store>
 		<pickup>true</pickup>
 		<delivery>true</delivery>
