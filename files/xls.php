@@ -43,8 +43,7 @@ var crypto=require('crypto');
 var fs=require('fs');
 csv=csv.createParser(',','"','"');*/
 
-require_once(ROOT.'infra/plugins/files/excel_parser/oleread.php');
-require_once(ROOT.'infra/plugins/files/excel_parser/reader.php');
+
 function &xls_parseTable($path,$list){
 	$data=xls_parse($path,$list);
 }
@@ -54,16 +53,126 @@ function &xls_parseAll($path){
 		$file=infra_theme($path);
 		$conf=infra_config();
 		if(!$file&&@$conf['debug']) echo 'Не найден путь '.$path;
+
+		$in=infra_srcinfo($path);
 		$data=array();
-		if(!$file)return $data;
-		$d = new Spreadsheet_Excel_Reader();
-		$d->setOutputEncoding('utf-8');
-		$d->read(ROOT.$file);
+		if($in['ext']=='xls'){
+			require_once(ROOT.'infra/plugins/files/excel_parser/oleread.php');
+			require_once(ROOT.'infra/plugins/files/excel_parser/reader.php');
+			
+			if(!$file)return $data;
+			$d = new Spreadsheet_Excel_Reader();
+			$d->setOutputEncoding('utf-8');
+			$d->read(ROOT.$file);
 
 
-		infra_forr($d->boundsheets,function(&$sheets,&$data,$v,$k){
-			$data[$v['name']]=&$sheets[$k]['cells'];
-		},array(&$d->sheets,&$data));
+			infra_forr($d->boundsheets,function(&$sheets,&$data,$v,$k){
+				$data[$v['name']]=&$sheets[$k]['cells'];
+			},array(&$d->sheets,&$data));
+		}else if($in['ext']=='xlsx'){
+			$cacheFolder='infra/cache/xlsx/';
+			if(!is_dir(ROOT.$cacheFolder))mkdir(ROOT.$cacheFolder);
+
+			
+			$cacheFolder.=infra_hash($path).'/';//кэш
+			infra_cache_fullrmdir($cacheFolder);//удалить старый кэш
+			
+			//разархивировать
+		    $zip = new ZipArchive;
+		    if ($zip->open(ROOT.$path)) {
+
+		    	mkdir(ROOT.$cacheFolder);
+				$zip->extractTo(ROOT.$cacheFolder);
+				
+
+				$contents = simplexml_load_file(ROOT.$cacheFolder.'xl/sharedStrings.xml');
+
+				$contents = $contents->si;
+				
+				$workbook = simplexml_load_file(ROOT.$cacheFolder.'xl/workbook.xml');				
+				$sheets=$workbook->sheets->sheet;
+				
+				$handle = opendir(ROOT.$cacheFolder.'xl/worksheets/');
+				$i=0;
+				$syms=array();
+	            while($file = readdir($handle)){
+					if($file{0}== '.')continue;
+					$src=$cacheFolder.'xl/worksheets/'.$file;
+					if(!is_file(ROOT.$src))continue;
+					$files[]=$file;
+				}
+				closedir($handle);
+				natsort($files);
+				
+				
+				foreach($files as $file){
+					$src=$cacheFolder.'xl/worksheets/'.$file;
+					
+					$list=$sheets[$i];
+					$i++;
+					$list=$list->attributes();
+					$list=(string)$list['name'];
+					
+					
+
+					$data[$list]=array();
+					
+					$sheet=simplexml_load_file(ROOT.$cacheFolder.'xl/worksheets/'.$file);
+					$rows=$sheet->sheetData->row;
+					foreach($rows as $row){
+						$attr=$row->attributes();
+						$r=(string)$attr['r'];
+						$data[$list][$r]=array();
+						$cells=$row->c;
+					
+						foreach($cells as $cell){
+							if(!$cell->v)continue;
+							$attr = $cell->attributes();
+							if($attr['t']=='s'){
+								$value=$contents[(integer)$cell->v]->t;
+								
+							}else{
+								$value=$cell->v;
+							}
+
+
+							$attr = $cell->attributes();
+							$c=(string)$attr['r'];//FA232
+							preg_match("/\D+/",$c,$c);
+							$c=$c[0];
+							$syms[$c]=true;
+							$data[$list][$r][$c]=(string)$value;
+						}
+					}
+				}
+				
+				$syms=array_keys($syms);
+				usort($syms,function($a,$b){
+					$la=strlen($a);
+					$lb=strlen($b);
+					if($la>$lb)return 1;
+					if($la<$lb)return -1;
+					if($a>$b)return 1;
+					if($a<$b)return -1;
+					return 0;
+				});
+				$symbols=array();
+				foreach($syms as $i=>$s){
+					$symbols[$s]=$i+1;
+				}
+				foreach($data as $list=>$listdata){
+					foreach($listdata as $row=>$rowdata){
+						$data[$list][$row]=array();
+						foreach($rowdata as $cell=>$celldata){
+							$data[$list][$row][$symbols[$cell]]=$celldata;
+						}
+					}
+				}
+		    }
+		    // Если что-то пошло не так, возвращаем пустую строку
+		    //return "";
+			//собрать данные
+		}
 		return $data;
 	},array($path));
 }
@@ -83,17 +192,10 @@ function &xls_make2($path){
 function &xls_make($path){
 
 	$datamain=xls_parseAll($path);
-
 	if(!$datamain)return;
-	$p=explode('/',$path);
-	$title=array_pop($p);
-	$title=preg_replace('/^\*/','',$title);
-	$title=preg_replace('/\.\w{0,3}$/','',$title);
-
-	$title=preg_replace('/^\d*\s*/','',$title);
-
+	$p=infra_srcinfo($path);
+	$title=$p['name'];
 	$title=infra_toutf($title);
-
 	
 	$parent=false;
 	$groups=&_xls_createGroup($title,$parent,'book');
@@ -671,7 +773,7 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 	
 	$ar=array();
 	$isonefile=true;
-	infra_fora($path,function(&$isonefile,&$ar, $path){
+	infra_fora($path,function($path) use(&$isonefile,&$ar){
 		$p=infra_theme($path);
 
 		if($p&&!is_dir(ROOT.$p)){
@@ -680,12 +782,12 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 			$ar[]=$path;
 		}else if($p){
 			$isonefile=false;
-			$ar=infra_loadJSON('*pages/list.php?e=xls&onlyname=1&src='.$path);
-			infra_forr($ar,function($path, &$file){
+			$ar=infra_loadJSON('*pages/list.php?e=xls,xlsx&onlyname=1&src='.$path);
+			infra_forr($ar,function(&$file) use($path){
 				$file=infra_theme($path.$file,'f');
-			},array($path));
+			});
 		}
-	},array(&$isonefile,&$ar));
+	});
 
 	if(!@$config['root']){
 		if($isonefile){
@@ -695,12 +797,12 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 			$config['root']='Каталог';
 		}
 	}
+
 	$data=_xls_createGroup($config['root'],$parent,'set');//Сделали группу в которую объединяются все остальные
 	$data['miss']=true;//Если в группе будет только одна подгруппа она удалится... подгруппа поднимится на уровень выше
-	
+		
 	infra_forr($ar,function($path) use(&$data){
 		$d=&xls_make($path);
-
 		if(!$d)return;
 		$d['parent']=&$data;
 		$data['childs'][]=&$d;

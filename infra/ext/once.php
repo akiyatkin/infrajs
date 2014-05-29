@@ -1,13 +1,18 @@
 <?php
 global $infra_once;
 $infra_once=array();
-function infra_hash($args){
-	$a=array();
-	foreach($args as $k=>$v){
-		if(is_callable($v))$a[$k]='func!';
-		else if(is_array($v))$a[$k]=infra_hash($v);
-		else $a[$k]=$v;
+function infra_hash($args,$r=false){
+	//Функция которая передаётся аргументом надо передвать как use
+	/*if(is_array($args)){
+		$a=array();
+		foreach($args as $k=>$v){
+			$a[$k]=infra_hash($v,true);
+		}
+	}else{
+		if(is_callable($args))$a='func!';
+		else $a=$args;
 	}
+	if($r)return serialize($a);*/
 	return md5(serialize($a));
 }
 function &infra_once($name,$call,$args=array(),$re=false){
