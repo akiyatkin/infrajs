@@ -88,7 +88,7 @@ function &xls_parseAll($path){
 				$contents = simplexml_load_file(ROOT.$cacheFolder.'xl/sharedStrings.xml');
 
 				$contents = $contents->si;
-				
+
 				$workbook = simplexml_load_file(ROOT.$cacheFolder.'xl/workbook.xml');				
 				$sheets=$workbook->sheets->sheet;
 				
@@ -130,10 +130,11 @@ function &xls_parseAll($path){
 							$attr = $cell->attributes();
 							if($attr['t']=='s'){
 								$value=$contents[(integer)$cell->v]->t;
-								
 							}else{
 								$value=$cell->v;
+								$value=(double)$value;
 							}
+
 
 
 							$attr = $cell->attributes();
@@ -146,8 +147,10 @@ function &xls_parseAll($path){
 					}
 				}
 				
+				
 				$syms=array_keys($syms);
-				usort($syms,function($a,$b){
+				natsort($syms);
+				/*usort($syms,function($a,$b){
 					$la=strlen($a);
 					$lb=strlen($b);
 					if($la>$lb)return 1;
@@ -155,7 +158,7 @@ function &xls_parseAll($path){
 					if($a>$b)return 1;
 					if($a<$b)return -1;
 					return 0;
-				});
+				});*/
 				$symbols=array();
 				foreach($syms as $i=>$s){
 					$symbols[$s]=$i+1;
