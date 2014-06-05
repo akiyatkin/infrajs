@@ -251,7 +251,7 @@ infra.State.setA=function(div){
 }
 infra.State.init=function(){
 	this.init=function(){};
-	var listen=function(){
+	var listen=function(){		
 		var query=infra.view.getQuery();
 		
 		if(infra.State.get()==query)return;//chrome при загрузки запускает собыите а FF нет. Первый запуск мы делаем сами по этому отдельно для всех а тут игнорируются совпадения.
@@ -282,7 +282,7 @@ infra.State.set=function(href,auto){//href без # ? типа asdf/asdf. auto �
 	var parsed=this.parser.parse(href);
 	var state=this.getState();
 	var obj=state.getRight(parsed);
-
+	infra.State.popstate=auto;//Метка о том новый переход или движение по истории
 	var query=this.parser.getQuery(obj);
 	var store=this.store();
 	if(!auto&&store.query!==query){//typeof чтобы не зацикливались когда нет pushState
