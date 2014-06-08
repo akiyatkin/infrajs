@@ -49,7 +49,7 @@ function &xls_parseTable($path,$list){
 }
 function &xls_parseAll($path){
 
-	return infra_cache(array($path),'xls_parseAll',function &($path){
+	$data=infra_cache(array($path),'xls_parseAll',function &($path){
 		$file=infra_theme($path);
 		$conf=infra_config();
 		if(!$file&&@$conf['debug']) echo 'Не найден путь '.$path;
@@ -83,6 +83,8 @@ function &xls_parseAll($path){
 
 		    	mkdir(ROOT.$cacheFolder);
 				$zip->extractTo(ROOT.$cacheFolder);
+				$zip->close();
+			
 				
 
 				$contents = simplexml_load_file(ROOT.$cacheFolder.'xl/sharedStrings.xml');
@@ -171,6 +173,7 @@ function &xls_parseAll($path){
 						}
 					}
 				}
+				
 		    }
 		    // Если что-то пошло не так, возвращаем пустую строку
 		    //return "";
@@ -178,6 +181,7 @@ function &xls_parseAll($path){
 		}
 		return $data;
 	},array($path));
+	return $data;
 }
 function &xls_parse($path,$list=false){
 	$data=&xls_parseAll($path);
