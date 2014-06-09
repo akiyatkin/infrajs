@@ -8,6 +8,7 @@
 
 	infra.listen(infra.State,'onchange',function(){
 		//scroll
+		if(infra.State.popstate)return;//Если движение по истории ничего не скролим
 		var scrollFromTop=0;
 		var store=infrajs.store();
 		if(store.counter==0)return;

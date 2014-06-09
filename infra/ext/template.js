@@ -1008,6 +1008,9 @@ infra.template={
 				if(cop.length==1){
 					cop+='0';
 				}
+				/*if(cop.length>2){//Дробные числа рушаться в php
+					cop=String(cop.charAt(0))+String((Number(cop.charAt(1))+1));
+				}*/
 				if(rub.length>4){ //1000
 					var l=rub.length;
 					rub=rub.substr(0,l-3)+inp+rub.substr(l-3,l);

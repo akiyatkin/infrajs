@@ -190,8 +190,10 @@ Copyright 2008-2010 http://itlife-studio.ru
 
 				// ms office
 				'doc' => 'application/msword',
+				'docx' => 'application/msword',
 				'rtf' => 'application/rtf',
 				'xls' => 'application/vnd.ms-excel',
+				'xlsx' => 'application/vnd.ms-excel',
 				'ppt' => 'application/vnd.ms-powerpoint',
 
 				// open office
