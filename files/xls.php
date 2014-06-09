@@ -83,7 +83,6 @@ function &xls_make2($path){
 function &xls_make($path){
 
 	$datamain=xls_parseAll($path);
-
 	if(!$datamain)return;
 	$p=explode('/',$path);
 	$title=array_pop($p);
