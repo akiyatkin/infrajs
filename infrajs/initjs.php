@@ -2,7 +2,7 @@
 	@define('ROOT','../../../');
 	require_once(ROOT.'infra/plugins/infra/infra.php');
 	infra_admin_modified();
-	$re=@$_GET['re'];
+	$re=isset($_GET['re']);
 	$html=infra_admin_cache('infra_initjs_php',function($str){
 
 		$loadTEXT=function($path){
