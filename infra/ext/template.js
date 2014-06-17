@@ -776,7 +776,7 @@ infra.template={
 			}
 		}
 		return r;
-	},
+	}, 
 	scope:{//Набор функций доступных везде ну и значений разных $ - стандартная функция шаблонизатора, которых нет в глобальной области, остальные расширения совпадающие с глобальной областью javascript и в его синтаксисе
 		'$typeof':function(v){
 			return typeof(v);
@@ -985,7 +985,14 @@ infra.template={
 			return infra.template.scope['~first'].apply(this,arguments);
 		},
 		'~first':function(){
-			
+			var conf=infra.template.moment;
+			var dataroot=conf['dataroot'].concat();
+			var key=dataroot.pop();
+			var obj=infra.seq.get(conf['data'],dataroot);
+			return infra.foru(obj,function(v,k){
+				if(k=key)return true;
+				return false;
+			});
 		},
 		'$Number':function(){
 			return infra.template.scope['~Number'].apply(this,arguments);

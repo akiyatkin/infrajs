@@ -95,7 +95,7 @@
 					"sub":true,
 					"json":"*cart/client.php",
 					"global":"cat_basket",
-					"autosavename":"basket"
+					"autosavename":"order.basket"
 				}
 			}
 		},
