@@ -3,7 +3,7 @@
 require_once(ROOT.'infra/plugins/infra/infra.php');
 infra_require('*cart/catalog.inc.php');
 infra_require('*session/session.php');
-$basket=infra_session_get('basket',array());
+$basket=infra_session_get('order.basket',array());
 $ans=array(
 	'allcount'=>0,
 	'allsum'=>0,

@@ -4,7 +4,7 @@ window.catalog={
 			var cart=$(this).find('.basket_img');
 
 			var id=cart.data('producer')+' '+cart.data('article');
-			if(infra.session.get('basket.'+id)){
+			if(infra.session.get('order.basket.'+id)){
 				$(this).find('.posbasket').show();
 				cart.addClass('basket_img_sel');
 				cart.attr('title','Удалить из корзины');
@@ -19,7 +19,7 @@ window.catalog={
 		div.find('.cat_item .basket_img').click(function(){
 			var cart=$(this);
 			var id=cart.data('producer')+' '+cart.data('article');
-			var name='basket.'+id;
+			var name='order.basket.'+id;
 			var r=infra.session.get(name);
 			infra.loader.show();
 			if(r){
