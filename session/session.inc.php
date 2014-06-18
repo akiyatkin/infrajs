@@ -14,6 +14,7 @@
 			CREATE TABLE IF NOT EXISTS `ses_sessions` (
 			  `session_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id сессии',
 			  `password` varchar(255) NOT NULL COMMENT 'Пароль сессии',
+			  `email` varchar(255) COMMENT 'Email чтоб была возможность авторизироваться и чтоб сессия для одного email-а была уникальная, сама сессия email никак не обрабатывает, обработка делается отдельно кому это надо.',
 			  PRIMARY KEY (`session_id`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 END;
