@@ -221,7 +221,7 @@
 			<tr><td colspan="2">
 				
 				<table>
-					<tr><td>Синхронизация{Код?:space}{Код}:</td><td>{sync?:есть?:нет}</td></tr>
+					<tr><td>Синхронизация{Код?:space}{Код}:</td><td>{Синхронизация=:Да?:успешно?(Код?:ошибка?:нет)}{Наличие на складе?:nalichie}</td></tr>
 				</table>
 			</td></tr>
 		</table>
@@ -243,6 +243,7 @@
 			catalog.initPrice(div);
 		});
 	</script>
+	{nalichie:}, {~lower(Наличие на складе)}
 	{space:} 
 {pos_more:}<tr><td>{~key}:</td><td style="text-align:left">{.}</td></tr>
 {files:}

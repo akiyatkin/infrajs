@@ -35,6 +35,12 @@
 		.filters .admit {
 			display: none;
 		}
+		.filters .admitmove {
+			margin:2px 0;
+		}
+		.filters .val {
+			display: block;
+		}
 		.filters .btn {
 			margin: 0;
 			padding: 3px 5px;
@@ -42,6 +48,9 @@
 			border: solid 1px #ddd;
 			cursor: pointer;
 			color: #00809e;
+		}
+		.filters .option {
+			margin-bottom:5px;
 		}
 
 	</style>
@@ -88,18 +97,17 @@
 
 {comma:}, 
 {option:}
-<div id="option{name}">
+<div id="option{name}" class="option">
 	<div class="opttitle">{name}{:optunit?:comma}{:optunit}</div>
+	{no!:0&(~length(values)!:1|type=:slide)?:yescheck}
+	{no!:0?:nocheck}
+	{no!:0?:br}
 	{type=:string?:OPTSTR?:OPTSLIDE}
 </div>
 {optlabel:}{~cost(min,~true)} — {~cost(max,~true)} {:optunit}
-{optunit:}{infra.conf.catalog[:optunitname]}
+{optunit:}{infra.conf.cart[:optunitname]}
 {optunitname:}unit{name}
 {OPTSLIDE:}
-	{:yescheck}
-	{:no!:0?:nocheck}<br>
-
-	
 	<input type="text" name="checks.{name}" id="amount{~key}" value="{:optlabel}" style="width:150px; margin:5px 0; border:0; font-weight:bold;">
 	
 	<table style="width:100%" cellpadding="0" cellspacing="0">
@@ -138,7 +146,7 @@
 				if(rmin<min)smin=min;
 				if(rmax>max)smax=max;
 
-				if(!rmin)rmin=0;
+				if(!rmin)rmin={min};
 				if(rmin<0)rmin=0;
 				//if(rmax>max)rmax=max;
 				if(rmin>rmax)rmin=min;
@@ -176,11 +184,10 @@
 					if(work)return;work=true;
 					var obj={ min:ui.values[0],max:ui.values[1], name:'{~key}' };
 					if(obj.min=={min}&&obj.max=={max}){
-						if(!yes.prop('checked')){
+						/*if(!yes.prop('checked')){
 							if(!no.prop('checked'))no.prop('checked',true).change();
 							yes.prop('checked',true).change();
-							
-						}
+						}*/
 						
 					}else{
 						if(yes.prop('checked')){
@@ -190,6 +197,7 @@
 					}
 					var val=infra.template.parse('*cart/filters.tpl',obj,'optlabel');
 					inp.val(val).change();
+					div.after($('.admitmove'));
 					work=false;
 				}
 			});
@@ -205,6 +213,7 @@
 					var obj=parse('');
 					var val=infra.template.parse('*cart/filters.tpl',obj,'optlabel');
 					inp.val(val).change();
+					div.after($('.admitmove'));
 				}
 				work=false;
 			});
@@ -226,7 +235,7 @@
 				}
 				var val=infra.template.parse('*cart/filters.tpl',obj,'optlabel');
 				inp.val(val).change();
-
+				div.after($('.admitmove'));
 				sl.slider( "option","values",[obj.smin,obj.smax]);
 
 
@@ -237,28 +246,7 @@
 	</script>
 
 {admit:}
-	<button class="btn admitmove admit" style="position:absolute; margin-left:-96px;">Применить</button>
-	<script>
-		infra.when(infrajs,'onshow',function(){
-			var layer=infrajs.getUnickLayer('{unick}');
-			var counter={counter};
-			var div=$('#'+layer.div);
-			var btn=div.find('.admitmove');
-			var over=false;
-			div.hover(function(){
-				over=true;
-			},function(){
-				over=false;
-			});
-			$(document).bind('mousemove',function(e){
-				if(layer.counter!=counter||!layer.showed)return;
-				if(!over)return;
-				if(!window.showadmit)return;
-				window.showadmit=false;
-				btn.css('top',(e.pageY)+'px');
-			});
-		});
-	</script>
+	<div class="admitmove admit"><button class="btn">Применить</button></div>
 {cancelbtn:}
 	<span class="a cancel" style="display:none">Сбросить</span>
 	
@@ -270,7 +258,7 @@
 			var div=$('#'+layer.div);
 			var counter={counter};
 			if(infra.session.get(['filters','admit'])){
-				div.find('.admit').fadeIn('slow');
+				div.find('.admit').show();
 			}
 			var process=false;
 			div.find('input').change(function(){
@@ -305,9 +293,6 @@
 {optbtnmore:}<span class="a" onclick="$(this).next().toggle()">Ещё</span>
 {br:}<br>
 {OPTSTR:}
-	{:no!:0?:yescheck}
-	{:no!:0?:nocheck}
-	{:no!:0?:br}
 	{values::val}
 	{~length(values_more)?:optbtnmore}
 	<div style="display:none">
@@ -339,6 +324,7 @@
 
 			div.find('.val input').change(function(){
 				if(ignore)return;
+				$(this).parents('.val').after($('.admitmove'));
 				if(inps.filter(':checked').length){
 					if(yes.prop('checked')){
 						yes.prop('checked',false).change();
@@ -354,7 +340,7 @@
 			
 		});
 	</script>
-{val:}<label class="val"><input name="checks.{...name}.{infra.seq.short(~array(~key))}" type="checkbox"> {~key}&nbsp;<span class="count">{.}</span></label><br>
+{val:}<label class="val"><input name="checks.{...name}.{infra.seq.short(~array(~key))}" type="checkbox"> {~key}&nbsp;<span class="count">{.}</span></label>
 {yescheck:}
 	<label class="yes">
 		<nobr>
@@ -368,8 +354,6 @@
 		<nobr>
 			<input name="checks.no.{infra.seq.short(~array(name))}" type="checkbox">
 			Не указано
-			<span class="count">{:no}</span>
+			<span class="count">{no}</span>
 		</nobr>
 	</label>
-{no:}{group?:0?~sum(data.count,:minusyes)}
-{minusyes:}-{yes}

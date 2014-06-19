@@ -19,11 +19,13 @@
 		$p=array('more'=>true,'Известные колонки'=>array('Наименование','Артикул','Производитель','Описание'));
 		$p['Ссылка parent']=$parent;
 		$data=xls_init($conf['cart']['dir'],$p);
-		xls_runGroups($data,function(&$gr){//Имя листа или файла короткое и настоящие имя группы прячется в descr. но имя листа или файла также остаётся в title
+		
+		xls_runGroups($data,function(&$gr,$i,&$parent){//Имя листа или файла короткое и настоящие имя группы прячится в descr. но имя листа или файла также остаётся в title
+			$gr['name']=$gr['descr']['Наименование'];
 			$gr['data']=array_reverse($gr['data']);
+			if(!$gr['name'])$gr['name']=$gr['title'];
+			if(!$gr['tparam'])$gr['tparam']=$parent['tparam'];
 		});
-
-
 
 		xls_runPoss($data,function(&$pos,$i,&$group){
 			if(isset($pos['Назначение']))return;

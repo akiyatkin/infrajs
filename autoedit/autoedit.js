@@ -172,6 +172,7 @@ AUTOEDIT.checkLayer=function(layer){
 				if(infra.forr(['txt','json','js'],function(e){
 					if(e==ext)return true;
 				}))return AUTOEDIT('corfile',fast);
+				return AUTOEDIT('editfile',fast);
 			}else{
 				return AUTOEDIT('editfile',fast);
 			}

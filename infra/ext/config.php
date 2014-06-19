@@ -90,11 +90,7 @@ function &infra_config($sec=false){
 			unset($data[$i]);
 		}
 	}
-	if(isset($infra_config['unsec']['debug'])&&$infra_config['unsec']['debug']){
-		$data['debug']=true;
-	}else{
-		$data['debug']=false;
-	}
+	$data['debug']=$infra_config['unsec']['debug'];
 	//unset($data['admin']);
 	//unset($data['mysql']);
 	$infra_config['secure']=$data;

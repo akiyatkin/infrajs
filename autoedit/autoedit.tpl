@@ -113,6 +113,8 @@
 		</table>
 		{:submit}Сохранить{:/submit}
 		{:/form}
+		{image?:editfileimage}
+	{editfileimage:}<img style="margin-top:15px" src="infra/plugins/imager/imager.php?w=300&src={folder}{file}">
 	{editishelp:}Файл уже есть, имя загружаемого файла должно быть<br><i>{file}</i><br><input type="checkbox" name="passname">Не проверять имя загружаемого файла.
 	{editishelpis:}Файла ещё нет, имя загружаемого файла не принимается во внимание, <br>будет установлено имя {file}
 	{editfileinfo:}

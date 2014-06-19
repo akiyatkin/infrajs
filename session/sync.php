@@ -57,6 +57,7 @@
 		$stmt=$db->prepare($sql);
 		$stmt->execute(array($session_id,$timelast));
 		$news=$stmt->fetchAll();
+		
 		if($news){
 			$ans['is']['news']=!!$news;
 			$ans['news']=$news;
@@ -69,6 +70,7 @@
 				$v['name']=infra_seq_right($v['name']);
 			});
 		}
+		
 	}
 	
 	$ans['is']['list']=!!$list;

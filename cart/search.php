@@ -53,14 +53,25 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 	$isgroup['Группы']=true;
 	$ispos=array();
 	$ispos['Производитель']=true;
+	$ispos['Синхронизация']=true;
+	$ispos['Наличие на складе']=true;//На заказ, В наличии
 	$ispos['Цена']=true;
-
+	/*if($check['Синхронизация']){
+		foreach($check['Синхронизация'] as $k=>$v){
+			if($k=='Нет'){
+				$check['Синхронизация'][$k]=false;
+			}
+			else $check['Синхронизация'][$k]=true;
+		}
+	}*/
 	foreach($yes as $key=>$val){
+		//if(!$val)continue;//Поставили и сняли галочку
 		if(!isset($check[$key])){
 			$check[$key]=array();
 		}
 	}
 	foreach($no as $key=>$val){
+		//if(!$val)continue;
 		if(!isset($check[$key])){
 			$check[$key]=array();
 		}
@@ -68,7 +79,7 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 	
 
 	foreach($check as $name=>$v){
-		//if(!$v)continue;
+		//if(!$v)continue;//Поставили и сняли галочку
 		$noval=$no[$name];
 		$yesval=$yes[$name];
 		if(!$v&&!$noval&&!$yesval)continue;
@@ -77,8 +88,6 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 		
 
 		if(!$yesval){//Только сейчас фильтруем
-
-		
 			$poss=array();
 			$fil=array('name'=>$name);
 			$fil['no']=$noval;
@@ -99,12 +108,11 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 					}
 				}
 			}else{
+				$values=array();
+				foreach($v as $key=>$is)if($is)$values[]=$key;
+				if(!$values)continue;
+				$fil['values']=$values;
 				if($isgroup[$name]){
-					$values=array();
-
-					foreach($v as $key=>$is)if($is)$values[]=$key;
-					$fil['values']=$values;
-
 					foreach($ans['list'] as &$pos){
 						foreach($values as $val){
 							if(in_array($val,$pos['path'])){
@@ -115,10 +123,6 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 					}
 
 				}else{
-					
-					$values=array();
-					foreach($v as $key=>$is)if($is)$values[]=$key;
-					$fil['values']=$values;
 					foreach($ans['list'] as &$pos){
 						$obj=$ispos[$name]?$pos:$pos['more'];
 						$specified=cat_isSpecified($obj[$name]);
@@ -133,6 +137,7 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 							$poss[]=&$pos;
 						}
 					}
+					
 
 				}
 			}
@@ -142,8 +147,6 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 			$fil=array('name'=>$name);
 			$fil['no']=$noval;
 			$fil['yes']=$yesval;
-			echo sizeof($ans['list']);
-			exit;
 			foreach($ans['list'] as &$pos){
 				$obj=$ispos[$name]?$pos:$pos['more'];
 				//if(isset($obj[$name])&&!is_null($obj[$name])){
@@ -223,7 +226,7 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 		foreach($ans['list'] as &$pos){
 			$path=$pos['path'];
 			foreach($ans['list'] as &$pos){
-				foreach($pos['path'] as $v)$groups[$v]=true;
+				foreach($pos['path'] as $v)$groups[$v]++;
 				$rpath=array();
 				foreach($path as $k=>$p){
 					if($pos['path'][$k]==$p){
@@ -249,6 +252,8 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 		}
 
 		$ans['childs']=array();
+		
+		
 		foreach($group['childs'] as $g){
 			if(!$groups[$g['title']])continue;
 			$pos=&xls_runPoss($g,function(&$pos){
@@ -259,8 +264,10 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 			}else{
 				$pos=array();
 			}
-			$ans['childs'][]=array('title'=>$g['title'],'pos'=>$pos);
+			
+			$ans['childs'][]=array('title'=>$g['title'],'pos'=>$pos,'count'=>$groups[$g['title']]);
 		}
+		
 	}
 	return $ans;
 },$args,isset($_GET['re']));

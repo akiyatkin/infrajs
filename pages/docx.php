@@ -15,7 +15,7 @@
 				}
 			}
 			closedir($dir);
-			@rmdir(ROOT.$directory);
+			rmdir(ROOT.$directory);
 		} 
 		function docx_getTextFromZippedXML($archiveFile, $contentFile,$cacheFolder,$debug) {
 		    // Создаёт "реинкарнацию" zip-архива...

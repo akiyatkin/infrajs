@@ -1082,12 +1082,16 @@ $infra_template_scope=array(
 		else $inp='&nbsp;';
 		$cost=(string)$cost;
 		$ar=explode('.',$cost);
+
 		if(sizeof($ar)==2){
 			$rub=$ar[0];
 			$cop=$ar[1];
 			if(strlen($cop)==1){
 				$cop.='0';
 			}
+			/*if(strlen($cop)>2){//Дробные числа рушаться в php
+				$cop=$cop{0}.($cop{1}+1);
+			}*/
 			if(strlen($rub)>4){//1000
 				$l=strlen($rub);
 				$rub=substr($rub,0,$l-3).$inp.substr($rub,$l-3,$l);

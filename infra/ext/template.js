@@ -776,7 +776,7 @@ infra.template={
 			}
 		}
 		return r;
-	},
+	}, 
 	scope:{//Набор функций доступных везде ну и значений разных $ - стандартная функция шаблонизатора, которых нет в глобальной области, остальные расширения совпадающие с глобальной областью javascript и в его синтаксисе
 		'$typeof':function(v){
 			return typeof(v);
@@ -985,7 +985,14 @@ infra.template={
 			return infra.template.scope['~first'].apply(this,arguments);
 		},
 		'~first':function(){
-			
+			var conf=infra.template.moment;
+			var dataroot=conf['dataroot'].concat();
+			var key=dataroot.pop();
+			var obj=infra.seq.get(conf['data'],dataroot);
+			return infra.foru(obj,function(v,k){
+				if(k=key)return true;
+				return false;
+			});
 		},
 		'$Number':function(){
 			return infra.template.scope['~Number'].apply(this,arguments);
@@ -999,7 +1006,7 @@ infra.template={
 			if(inp)inp=' ';
 
 			else inp='&nbsp;';
-			if(!cost)cost='';
+			if(!cost&&cost!=0)cost='';
 			cost=String(cost);
 			var ar=cost.split(/[,\.]/);
 			if(ar.length==2){
@@ -1008,6 +1015,9 @@ infra.template={
 				if(cop.length==1){
 					cop+='0';
 				}
+				/*if(cop.length>2){//Дробные числа рушаться в php
+					cop=String(cop.charAt(0))+String((Number(cop.charAt(1))+1));
+				}*/
 				if(rub.length>4){ //1000
 					var l=rub.length;
 					rub=rub.substr(0,l-3)+inp+rub.substr(l-3,l);
