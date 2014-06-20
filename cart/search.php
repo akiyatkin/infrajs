@@ -53,17 +53,13 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 	$isgroup['Группы']=true;
 	$ispos=array();
 	$ispos['Производитель']=true;
-	$ispos['Синхронизация']=true;
-	$ispos['Наличие на складе']=true;//На заказ, В наличии
+
+	$conf=infra_config();
+	if($conf['catalog']['1c']){
+		$ispos['Синхронизация']=true;
+		$ispos['Наличие на складе']=true;//На заказ, В наличии
+	}
 	$ispos['Цена']=true;
-	/*if($check['Синхронизация']){
-		foreach($check['Синхронизация'] as $k=>$v){
-			if($k=='Нет'){
-				$check['Синхронизация'][$k]=false;
-			}
-			else $check['Синхронизация'][$k]=true;
-		}
-	}*/
 	foreach($yes as $key=>$val){
 		//if(!$val)continue;//Поставили и сняли галочку
 		if(!isset($check[$key])){

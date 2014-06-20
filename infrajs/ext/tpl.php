@@ -127,7 +127,7 @@ function _infrajs_getHtml(&$layer){//Вызывается как для осно
 
 		$alltpls=array(&$repls,&$tpls);
 
-		$html=infra_template_exec($tpls,$layer,@$layer['tplroot'],@$layer['dataroot']);
+		$html=infra_template_exec($alltpls,$layer,@$layer['tplroot'],@$layer['dataroot']);
 	}else{
 
 		$tpl=infrajs_getTpl($layer);

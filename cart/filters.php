@@ -16,7 +16,10 @@
 		$params['Цена']=array();
 		//$params['Производитель']=array();
 		$params['Наличие на складе']=array();
-		$params['Синхронизация']=array();
+		$conf=infra_config();
+		if($conf['catalog']['1c']){
+			$params['Синхронизация']=array();
+		}
 		$listgroups=array();
 		$more=array();//параметры дополнительные
 		$count=sizeof($data['list']);
@@ -37,12 +40,14 @@
 			$p=array(
 				'more'=>$pos['more'],
 				'params'=>array(
-					'Наличие на складе'=>$pos['Наличие на складе'],
 					'Производитель'=>$pos['Производитель']
 				)
 			);
-			if($pos['Синхронизация']){
-				$p['params']['Синхронизация']=$pos['Синхронизация'];
+			if($conf['catalog']['1c']){
+				$p['params']['Наличие на складе']=$pos['Наличие на складе'];
+				if($pos['Синхронизация']){
+					$p['params']['Синхронизация']=$pos['Синхронизация'];
+				}
 			}
 			if($pos['Цена']){
 				$p['params']['Цена']=(int)$pos['Цена'];//Дробей в php нет, всё что после точки удаляется	
@@ -62,7 +67,11 @@
 			}
 		}
 		foreach($params as $k=>$p){
-			$showhard=in_array($k,array('Наличие на складе','Синхронизация'));
+			if($conf['catalog']['1c']){
+				$showhard=in_array($k,array('Наличие на складе','Синхронизация'));
+			}else{
+				$showhard=array();
+			}
 			$opt=cat_option($params[$k],$count,$showhard);
 			//====
 			if(!$opt){

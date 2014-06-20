@@ -199,6 +199,7 @@ function &xls_make2($path){
 function &xls_make($path){
 
 	$datamain=xls_parseAll($path);
+	
 	if(!$datamain)return;
 	$p=infra_srcinfo($path);
 	$title=$p['name'];
@@ -221,11 +222,10 @@ function &xls_make($path){
 		//var empty=0;//Количество пустых строк
 		$first_index=0;
 		
-
 		foreach($data as $i=>$row){//Бежим по строкам 
 			//infra_foro($data,function(&$row,$i) use(&$head,&$pgpy,&$wasdata,&$wasgroup,&$argr,&$first_index){
 			$count=0;
-			$group=&$argr[0];//Группа может появится среди данных в листах
+			//$group=&$argr[0];//Группа может появится среди данных в листах
 			//echo $group['title'].'<br>';
 			foreach($row as $cell)if($cell)$count++;
 			
@@ -238,47 +238,49 @@ function &xls_make($path){
 				$head=($count>2);//Больше 2х не пустых ячеек будет заголовком
 				foreach($row as $first_index=>$first_value)break;
 				if($head){//Текущий row и есть заголовок
-					$group['head']=$row;
+					$argr[0]['head']=$row;
 				}else{
 					if($first_value=='ПГПЯ'){//Признак группы пустая ячейка номер этой ячейки
 						$pgpy=$row[$first_index+1]-1;//Индекс пустой ячейки
 					}else{
-						if($first_value)$group['descr'][]=$row;
+						if($first_value)$argr[0]['descr'][]=$row;
 					}
 				}
 			}else{
 				$isnewgroup=(isset($row[$first_index])&&($count==1)&&strlen($row[$first_index])>1);//Если есть только первая ячейка и та длинее одного символа
-				$roww=array_values($row);
+				
 				if(!$isnewgroup&&$pgpy&&strlen($row[$first_index])!==1){//один символ в первой ячейке имеет специальное значение выхода на уровень вверх
+					$roww=array_values($row);
 					$isnewgroup=!$roww[$pgpy];
 				}
 				if($isnewgroup){
-					if($wasdata&&@$group['parent']&&$group['parent']['type']!='book'){
-						$parent=&$group['parent'];
-					}else{
-						$parent=&$group;//Если уже были данные то поднимаемся наверх
+					
+					if($wasdata&&@$argr[0]['parent']&&$argr[0]['parent']['type']!='book'){
+						$argr=array(&$argr[0]['parent']);//Если уже были данные то поднимаемся наверх
 					}
-					$g=_xls_createGroup($row[$first_index],$parent,'row',$row);//Создаём новую группу
-					if(!$g)continue;
+					$g=array();
+					$g[0]=&_xls_createGroup($row[$first_index],$argr[0],'row',$row);//Создаём новую группу
+					if(!$g[0])continue;
+					$g[0]['parent']['childs'][]=&$g[0];
 					$wasgroup=true;
 					$wasdata=false;
-					//g.descr=g.parent.descr.concat(g.descr);
-					$g['descr']=array_merge($g['parent']['descr'],$g['descr']);
-					$g['head']=&$g['parent']['head'];
-					$g['parent']['childs'][]=&$g;
-					$argr[0]=&$g;
+					$g[0]['descr']=array_merge($g[0]['parent']['descr'],$g[0]['descr']);
+					$g[0]['head']=&$g[0]['parent']['head'];
+					$argr=array(&$g[0]);
+					
+					
 					//$group=&$g;//Теперь ссылка на новую группу и следующие данные будут добавляться в неё
 					//Новая ссылка забивает на старую, простое присвоение это новое место куда указывает ссылка
 				}else{
 					if($count===1&&strlen($row[$first_index])===1){//подъём на уровень выше
-						if(@$group['parent']&&@$group['parent']['parent']){
-							$group=&$group['parent'];
-							$argr[0]=&$group;
+
+						if(@$argr[0]['parent']&&@$group['parent']['parent']){
+							$argr=array(&$group['parent']);
 							//echo '<b>'.$group['title'].'</b><br>';
 						}
 					}else{
 						$wasdata=true;
-						$group['data'][]=$row;
+						$argr[0]['data'][]=$row;
 					}
 				}
 			}
@@ -288,10 +290,10 @@ function &xls_make($path){
 }
 function &xls_runPoss(&$data,$callback,$back=false){
 	return xls_runGroups($data,function(&$group) use($back,$callback){
-		for($i=0,$l=sizeof($group['data']);$i<$l;$i++){
-			$r=call_user_func_array($callback,array(&$group['data'][$i],$i,&$group));
+		return infra_foru($group['data'],function(&$pos,$i) use($callback,&$group){
+			$r=call_user_func_array($callback,array(&$pos,$i,&$group));
 			if(!is_null($r))return $r;
-		}
+		},array(),$back);
 	},array(),$back);
 }
 function &xls_runGroups(&$data,$callback,$args=array(),$back=false,$i=0,&$group=false){
@@ -299,9 +301,10 @@ function &xls_runGroups(&$data,$callback,$args=array(),$back=false,$i=0,&$group=
 		$r=call_user_func_array($callback,array_merge($args,array(&$data,$i,&$group)));
 		if(!is_null($r))return $r;
 	}
-	$r=&infra_forr($data['childs'],function($callback,$back,$args, &$val,$i) use(&$data){
-		return xls_runGroups($val,$callback,$args, $back,$i,$data);
-	},array($callback,$back,$args),$back);
+	
+	$r=&infra_forr($data['childs'],function(&$val,$i) use($callback,$back,$args,&$data){
+		return xls_runGroups($val,$callback,$args,$back,$i,$data);
+	},array(),$back);
 	if(!is_null($r))return $r;
 	
 	if($back){
@@ -359,7 +362,10 @@ function _xls_createGroup($title='',&$parent,$type,&$row=false){
 		'type'=>$type,
 		'parent'=>&$parent,
 		'title'=>(string)$title,
-		'head'=>array(),'descr'=>&$descr,'data'=>array(),'childs'=>array()
+		'head'=>array(),
+		'descr'=>&$descr,
+		'data'=>array(),
+		'childs'=>array()
 	);
 	if($tparam)$res['tparam']=$tparam;//Параметр у группы Сварка:asdfasd что угодно
 	return $res;
@@ -370,7 +376,7 @@ function xls_processPoss(&$data){ //
 
 
 	xls_runGroups($data,function(&$data){	
-
+	
 		if(@$data['head']){
 			$head=&$data['head'];
 		}else{
@@ -399,6 +405,8 @@ function xls_processPoss(&$data){ //
 
 		unset($data['head']);
 	});
+
+
 }
 function xls_print($data){
 	echo '<pre>';
@@ -528,6 +536,7 @@ function xls_processGroupFilter(&$data){
 }
 function xls_processDescr(&$data){//
 	xls_runGroups($data,function(&$gr){
+
 		$descr=array();
 		infra_forr($gr['descr'],function(&$descr, $row){
 			$row=array_values($row);
@@ -822,11 +831,13 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 	xls_processDescr($data);
 	
 	xls_processPoss($data);
+
 	if(@!is_array($config['Переименовать колонки']))$config['Переименовать колонки']=array();
 	if(@!is_array($config['Удалить колонки']))$config['Удалить колонки']=array();
 	if(!isset($config['more']))$config['more']=false;
-
+	
 	xls_runPoss($data,function(&$pos) use(&$config){
+	
 		foreach($config['Удалить колонки'] as $k){
 			if(isset($pos[$k]))unset($pos[$k]);
 		}
@@ -837,7 +848,6 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 			}
 		}
 	});
-
 
 	if(@!is_array($config['Подготовить для адреса']))$config['Подготовить для адреса']=array('Артикул'=>'article');
 	xls_processPossFS($data,$config['Подготовить для адреса']);//Заменяем левые символы в свойстве

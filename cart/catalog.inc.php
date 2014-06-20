@@ -18,7 +18,9 @@
 		$conf=infra_config();
 		$p=array('more'=>true,'Известные колонки'=>array('Наименование','Артикул','Производитель','Описание'));
 		$p['Ссылка parent']=$parent;
+
 		$data=xls_init($conf['cart']['dir'],$p);
+		
 		xls_runGroups($data,function(&$gr){//Имя листа или файла короткое и настоящие имя группы прячется в descr. но имя листа или файла также остаётся в title
 			$gr['data']=array_reverse($gr['data']);
 		});
@@ -120,12 +122,12 @@
 
 					$dir=infra_theme(CATDIR.$val.'/');
 					$poss=array();
-					xls_runPoss($data,function(&$poss,&$val,&$pos) use(&$poss,&$val){
+					xls_runPoss($data,function(&$pos) use(&$poss,&$val){
 						if(infra_strtolower(@$pos['Производитель'])==$val){
 							$poss[]=&$pos;
 						}
 					});
-
+					
 					if($dir||sizeof($poss)){
 						$srh['is']='producer';
 						if(sizeof($poss)){
@@ -147,6 +149,7 @@
 							$str.=' '.$pos['article'];
 							$str.=' '.$pos['Наименование'];
 							$str.=' '.$pos['Описание'];
+							if($pos['Назначение'])$str.=' '.implode(' ',$pos['Назначение']);
 							$str=infra_strtolower($str);
 							foreach($v as $s)if(strstr($str,$s)===false)return;
 							$poss[]=&$pos;
