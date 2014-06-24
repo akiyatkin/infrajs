@@ -1,6 +1,7 @@
 <?php
 function &infra_db($debug=false){
 	return infra_once('infra_db',function&($debug){
+		infra_cache_no();
 		$config=infra_config();
 		if(!$debug)$debug=$config['debug'];
 		$config=@$config['mysql'];
