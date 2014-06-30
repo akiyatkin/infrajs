@@ -122,21 +122,33 @@ function &xls_parseAll($path){
 					$sheet=simplexml_load_file(ROOT.$cacheFolder.'xl/worksheets/'.$file);
 					$rows=$sheet->sheetData->row;
 					foreach($rows as $row){
+						
 						$attr=$row->attributes();
 						$r=(string)$attr['r'];
 						$data[$list][$r]=array();
 						$cells=$row->c;
-					
+						
 						foreach($cells as $cell){
+							
 							if(!$cell->v)continue;
+
 							$attr = $cell->attributes();
 							if($attr['t']=='s'){
-								$value=$contents[(integer)$cell->v]->t;
+								$place=(integer)$cell->v;
+								
+								if(isset($contents[$place]->r)){
+									$value='';
+									foreach($contents[$place]->r as $con){
+										$value.=$con->t;
+									}
+								}else{
+									$value=$contents[$place]->t;
+								}
 							}else{
 								$value=$cell->v;
 								$value=(double)$value;
 							}
-
+							
 
 
 							$attr = $cell->attributes();
@@ -145,6 +157,36 @@ function &xls_parseAll($path){
 							$c=$c[0];
 							$syms[$c]=true;
 							$data[$list][$r][$c]=(string)$value;
+							if($list=='Рубашки'){
+								
+								/*$strr='Классическая модель. Можно использовать погоны. Носится навыпуск. Пояс регулируется по размеру с помощью боковых резинок. Карманы: 2 на груди. Рукав короткий.';
+								if(trim($value)==$strr){
+									echo $file;
+									print_r($cell);
+									exit;
+								}*/
+
+								/*if($r==5){
+									if($c=='K'){
+										echo '<pre>';
+										print_r($data[$list][$r]);
+										echo '<hr>';
+										
+										print_r($cell);
+										echo "<br>";
+										print_r($value);
+										echo "<br>";
+										print_r($contents[1899]);
+										echo '<hr>';
+										$realnum=1898;
+										echo $realnum;
+										echo "<br>";
+										print_r($contents[$realnum]->t);
+										//}
+										exit;
+									}
+								}*/
+							}
 						}
 					}
 				}
@@ -165,6 +207,8 @@ function &xls_parseAll($path){
 				foreach($syms as $i=>$s){
 					$symbols[$s]=$i+1;
 				}
+
+				
 				foreach($data as $list=>$listdata){
 					foreach($listdata as $row=>$rowdata){
 						$data[$list][$row]=array();
