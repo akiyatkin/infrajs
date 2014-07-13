@@ -205,6 +205,7 @@ Popup=function(frame){
 		this.alert_popup=this.open(this.alert_popup);
 	}
 	this.confirm_layer={
+		data:true,
 		tpl:['{config.msg}<div style="margin-top:10px"><input class="popup_callback" value="OK" onclick="popup.close()" type="button"><input onclick="popup.close()" value="Отмена" type="button"></div><script>var layer=infrajs.getUnickLayer("{unick}");	$("#"+layer.div).find(".popup_callback").click(layer.confirm_callback);</script>'],
 		config:{
 			'msg':'Подтверждаете?'
