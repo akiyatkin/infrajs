@@ -212,7 +212,7 @@
 						</tr>
 					</table>
 					<div class="posbasket" style="margin-bottom:3px; display:none">
-						<small>Позиция в <a href="?client">корзине</a></small>
+						<small>Позиция в <a href="?office/cart">корзине</a></small>
 					</div>
 					
 			</td><td style="width:100%"><div style="line-height:30px; font-size:16px; text-align: left;">

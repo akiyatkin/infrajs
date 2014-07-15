@@ -137,8 +137,8 @@
 				});
 			</script>
 		</div>
-		{cat_cart_add:}Позиция добавлена в заявку<br><a href="?client" onclick="popup.close()">Перейти к заявке</a> <span onclick="popup.close()" class="a">продолжить поиск</span>
-		{cat_cart_remove:}Позиция убрана из заявки<br><a href="?client" onclick="popup.close()">Перейти к заявке</a> <span onclick="popup.close()" class="a">продолжить поиск</span>
+		{cat_cart_add:}Позиция добавлена в заявку<br><a href="?office/cart" onclick="popup.close()">Перейти к заявке</a> <span onclick="popup.close()" class="a">продолжить поиск</span>
+		{cat_cart_remove:}Позиция убрана из заявки<br><a href="?office/cart" onclick="popup.close()">Перейти к заявке</a> <span onclick="popup.close()" class="a">продолжить поиск</span>
 		{cat_item:}
 			<table class="cat_item" cellpadding="0" cellspacing="1">
 			<tr>
@@ -170,7 +170,7 @@
 				</td>
 				<td rowspan="2" colspan="2" class="producer">
 					<div class="posbasket" style="margin-bottom:10px; display:{infra.session.get(:basket.{Производитель} {article})?:block?:none}">
-						<small>Позиция в <a href="?client">корзине</a></small>
+						<small>Позиция в <a href="?office/cart">корзине</a></small>
 					</div>
 					<a title="Посмотреть продукцию {Производитель}" href="?{state.parent}/{Производитель}">
 						<img src="infra/plugins/imager/imager.php?w=100&h=100&src={infra.conf.catalog.dir}{Производитель}/&or=*imager/empty" />
