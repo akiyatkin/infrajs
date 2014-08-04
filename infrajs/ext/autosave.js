@@ -31,7 +31,7 @@ infra.wait(infrajs,'oninit',function(){
 
 	var autosave={
 		getInps:function(div){
-			return $('#'+div).find('select, [type=search], [type=email], [type=password], [type=text], [type=checkbox], textarea').filter('[autosave!=0]').filter('[name!=]');
+			return $('#'+div).find('select, [type=search], [type=tel], [type=email], [type=password], [type=text], [type=radio], [type=checkbox], textarea').filter('[autosave!=0]').filter('[name!=]');
 		},
 		/**
 		* слой у которого нужно очистить весь autosave, например после отправки формы на сервер, нужно сбросить сохранённые в инпутах данные
@@ -97,6 +97,8 @@ infra.wait(infrajs,'oninit',function(){
 			inp=$(inp);
 			if(inp.attr('type')=='checkbox'){
 				var val=inp.is(':checked');
+			}else if(inp.is('radio')){
+				var val=inp.is(':checked');
 			}else if(inp.is('select')){
 				var val=inp.find('option:selected').val();
 			}else{
@@ -108,6 +110,11 @@ infra.wait(infrajs,'oninit',function(){
 			inp=$(inp);
 			if(inp.attr('type')=='checkbox'){
 				inp.attr('checked',valsave);
+			}else if(inp.attr('type')=='radio'){
+				var sel=inp.filter('[value="'+valsave+'"]');
+				if(sel.length){
+					inp.attr('checked',true);
+				}
 			}else if(inp.is('select')){
 				var sel=inp.find('option[value="'+valsave+'"]');
 				if(!sel.length){
