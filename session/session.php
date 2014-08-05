@@ -113,7 +113,26 @@ function infra_session_get($name='',$def=null){
 }
 function infra_session_set($name,$value){
 	//if(infra_session_get($name)===$value)return; //если сохранена ссылка то изменение её не попадает в базу данных и не синхронизируется
-	$li=array('name'=>infra_seq_right($name),'value'=>$value);
+	$right=infra_seq_right($name);
+	if(is_null($value)){//Удаление свойства	
+		$last=array_pop($right);
+		$val=infra_session_get($right);
+		if(infra_isAssoc($val)===true){//Имеем дело с ассоциативным массивом
+			$iselse=false;
+			foreach($val as $i=>$valval){
+				if($i!=$last){
+					$iselse=true;
+					break;
+				}
+			}
+			if(!$iselse){//В объекте ничего больше нет кроме удаляемого свойства... или и его может даже нет
+				//Зачит надо удалить и сам объект
+			}else{
+				array_push($right,$last);//Если есть ещё что-то то работает в обычном режиме
+			}
+		}
+	}
+	$li=array('name'=>$right,'value'=>$value);
 	global $infra_session_data;
 	infra_session_make($li,$infra_session_data);
 	infra_session_sync($li);

@@ -445,7 +445,7 @@ infra.session={
 		var right=infra.seq.right(name);
 		if(value===null||typeof(value)=='undefined'){//Удаление свойства	
 			var last=right.pop();
-			var val=this.get(right);
+			var val=infra.session.get(right);
 			if(val&&typeof(val)=='object'&&val.constructor!=Array){
 				var iselse=false;
 				for(var i in val){
