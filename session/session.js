@@ -436,8 +436,10 @@ infra.session={
 		if(infra.conf.debug){
 			if(value&&typeof(value)=='object'&&value.constructor!=Array){
 				for(var i in value)break;
-				if(!i)alert('Запись в сессию пустого объекта невозможна,\nИначе объект {} превратится на сервере в массив []\nукажите в объекте какое-то свойство. Запись в '+name);
-				return false;
+				if(!i){
+					alert('Запись в сессию пустого объекта невозможна,\nИначе объект {} превратится на сервере в массив []\nукажите в объекте какое-то свойство. Запись в '+name);
+					return false;
+				}
 			}
 			
 		}
