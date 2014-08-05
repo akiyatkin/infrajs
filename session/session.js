@@ -433,16 +433,15 @@ infra.session={
 	},
 	set:function(name,value,sync){
 		//if(this.get(name)===value)return; //если сохранена ссылка то изменение её не попадает в базу данных и не синхронизируется
-		if(infra.conf.debug){
+		//if(infra.conf.debug){
 			if(value&&typeof(value)=='object'&&value.constructor!=Array){
 				for(var i in value)break;
 				if(!i){
-					alert('Запись в сессию пустого объекта невозможна,\nИначе объект {} превратится на сервере в массив []\nукажите в объекте какое-то свойство. Запись в '+name);
-					return false;
+					//alert('Запись в сессию пустого объекта невозможна,\nИначе объект {} превратится на сервере в массив []\nукажите в объекте какое-то свойство. Запись в '+name);
+					value=null;
 				}
 			}
-			
-		}
+		//}
 
 		var right=infra.seq.right(name);
 		if(value===null||typeof(value)=='undefined'){//Удаление свойства	

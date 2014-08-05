@@ -40,7 +40,7 @@ infra.wait(infrajs,'oninit',function(){
 		clear:function(layer){//Если autosave у двух слоёв одинаковый нельзя нарушать связь
 			if(!layer.autosavename)return;
 			layer.autosave={};
-			infra.session.set(layer.autosavename,layer.autosave);
+			infra.session.set(layer.autosavename);
 		},
 		get:function(layer,name,def){//blinds
 			if(!layer.autosavename)return def;

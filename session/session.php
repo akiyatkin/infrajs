@@ -111,7 +111,7 @@ function infra_session_get($name='',$def=null){
 	if(is_null($val))return $def;
 	else return $val;
 }
-function infra_session_set($name,$value){
+function infra_session_set($name,$value=null){
 	//if(infra_session_get($name)===$value)return; //если сохранена ссылка то изменение её не попадает в базу данных и не синхронизируется
 	$right=infra_seq_right($name);
 	if(is_null($value)){//Удаление свойства	
