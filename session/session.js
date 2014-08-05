@@ -433,7 +433,38 @@ infra.session={
 	},
 	set:function(name,value,sync){
 		//if(this.get(name)===value)return; //если сохранена ссылка то изменение её не попадает в базу данных и не синхронизируется
-		var li={name:infra.seq.right(name),value:value};
+		if(infra.conf.debug){
+			if(value&&typeof(value)=='object'&&value.constructor!=Array){
+				for(var i in value)break;
+				if(!i)alert('Запись в сессию пустого объекта невозможна,\nИначе объект {} превратится на сервере в массив []\nукажите в объекте какое-то свойство. Запись в '+name);
+				return false;
+			}
+			
+		}
+
+		var right=infra.seq.right(name);
+		if(value===null||typeof(value)=='undefined'){//Удаление свойства	
+			var last=right.pop();
+			var val=this.get(right);
+			if(val&&typeof(val)=='object'&&val.constructor!=Array){
+				var iselse=false;
+				for(var i in val){
+					if(i!=last){
+						iselse=true;
+						break;
+					}
+				}
+				if(!iselse){//В объекте ничего больше нет кроме удаляемого свойства... или и его может даже нет
+					//Зачит надо удалить и сам объект
+				}else{
+					right.push(last);//Если есть ещё что-то то работает в обычном режиме
+				}
+			}
+		}
+		
+
+
+		var li={name:right,value:value};
 		if(li.name[0]=='safe')return false;
 		//При set делается 2 действия
 		

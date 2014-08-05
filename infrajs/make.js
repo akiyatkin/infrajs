@@ -11,7 +11,8 @@
 		if(infra.State.popstate)return;//Если движение по истории ничего не скролим
 		var scrollFromTop=0;
 		var store=infrajs.store();
-		if(store.counter==0)return;
+		if(store.counter==0)return;//Вход на сайт.. не скролим
+		
 		if(infra.conf&&infra.conf.scroll&&infra.conf.scroll.scrollFromTop)scrollFromTop=infra.conf.scroll.scrollFromTop;
 		setTimeout(function(){
 			if(infrajs.scroll!==false)window.roller.goTop(scrollFromTop);      
