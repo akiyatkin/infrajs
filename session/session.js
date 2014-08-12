@@ -172,7 +172,7 @@ infra.session={
 	syncreq:function(list,sync,callback){//новое значение, //Отправляется пост на файл, который записывает и возвращает данные
 		var cb=function(ans){
 			if(!ans||!ans.result)return callback('error');
-			if(ans.msg)alert(ans.msg);
+			//if(ans.msg)alert(ans.msg);
 			if(!ans.is.session_id){
 				this.logout();
 				return callback();
@@ -185,6 +185,7 @@ infra.session={
 			this.dataSave(ans.news);
 			
 			callback();
+			infra.fire(infra.session,'onsync');
 		}.bind(this);
 		var data={//id и time берутся из кукисов на сервере
 			list:this.source(list)
