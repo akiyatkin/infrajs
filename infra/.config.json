@@ -22,7 +22,7 @@
 	},
 	"/mysql":{
 		"user":"some",
-		"host":"mysql.itlf.ru",
+		"host":"host",
 		"database":"some",
 		"password":"pass",
 		"port":"3306"

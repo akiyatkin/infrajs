@@ -4,10 +4,18 @@ function &infra_db($debug=false){
 		infra_cache_no();
 		$config=infra_config();
 		if(!$debug)$debug=$config['debug'];
-		$config=@$config['mysql'];
 		$ans=array();
-		if(!$config)return $ans;
-		if(!$config['user'])return $ans;
+		if(!$config['mysql']){
+			if($debug)die('Нет конфига для соединения с базой данных. Нужно добавить запись mysql: '.infra_json_encode($config['/mysql']));
+			return $ans;
+		}
+		$config=@$config['mysql'];
+		
+		
+		if(!$config['user']){
+			if($debug)die('Не указан пользователь для соединения с базой данных');
+			return $ans;
+		}
 		try {
 			$db=new PDO('mysql:host='.$config['host'].';dbname='.$config['database'].';port='.$config['port'], $config['user'], $config['password']);	
 			$db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);

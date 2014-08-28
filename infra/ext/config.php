@@ -13,7 +13,9 @@ function &infra_config($sec=false){
 	global $infra_config;
 	if(isset($infra_config[$sec]))return $infra_config[$sec];
 	if(!is_file(ROOT.'infra/data/.config.json')){
-		die('<h1>Вам нужно создать файл infra/data/.config.json</h1>{"admin":{"login":"логин","password":"секрет","email":"admin@email.ru"}}');
+		$data=array("debug"=>true,"admin"=>array("login"=>"admin","password"=>time(),"email"=>"admin@".$_SERVER['HTTP_HOST']));
+		file_put_contents(ROOT.'infra/data/.config.json',infra_json_encode($data));
+		//die('<h1>Вам нужно создать файл infra/data/.config.json</h1>{"admin":{"login":"логин","password":"секрет","email":"admin@email.ru"}}');
 	}
 
 	//$atime=infra_admin_time();
