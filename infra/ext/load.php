@@ -231,6 +231,7 @@ function infra_nameinfo($file){//Имя файла без папок// Звёз�
 		$ext='';
 		$name=$file;
 	}
+	$fname=$name;
 	preg_match("/^(\d{6})[\s\.]/",$name,$match);
 	$date=@$match[1];
 	$name=preg_replace("/^\d+[\s\.]/",'',$name);
@@ -250,6 +251,7 @@ function infra_nameinfo($file){//Имя файла без папок// Звёз�
 	$ans=array(
 		'id'=>$id,
 		'name'=>trim($name),
+		'fname'=>$fname,
 		'file'=>$file,
 		'date'=>$date,
 		'ext'=>$ext

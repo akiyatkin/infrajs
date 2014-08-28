@@ -62,7 +62,10 @@ function infra_cache_no(){
 	header("Cache-Control: no-store, no-cache, must-revalidate");
 	header("Expires: ".date("r"));
 }
-
+function infra_cache_yes(){
+	header_remove("Cache-Control");
+	header_remove("Expires");
+}
 function &infra_cache($conds,$name,$fn,$args=array(),$re=false){
 	return infra_once('infra_cache_once_'.$name,function($conds,$name,$fn,$args, $re){
 		return infra_admin_cache('cache_admin_'.$name,function($conds,$name,$fn,$args, $re){

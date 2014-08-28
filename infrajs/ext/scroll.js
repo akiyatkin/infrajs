@@ -191,6 +191,8 @@ window.roller.def={
 	horizontal: false,
 	vertical: true
 }
-$(function(){
-	window.roller.init(infra.conf.infrajs.scroll);
-});
+if(infra.conf.infrajs.scroll){
+	$(function(){
+		window.roller.init(infra.conf.infrajs.scroll);
+	});
+}

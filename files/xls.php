@@ -415,17 +415,18 @@ function _xls_createGroup($title='',&$parent,$type,&$row=false){
 	return $res;
 }
 
-function xls_processPoss(&$data){ //
+function xls_processPoss(&$data,$ishead=false){ //
 	//используется data head
 
-
-	xls_runGroups($data,function(&$data){	
+	
+	xls_runGroups($data,function(&$data) use($ishead){	
 	
 		if(@$data['head']){
 			$head=&$data['head'];
 		}else{
 			return; //Значит и данных нет
 		}
+		
 		infra_forr($data['data'],function(&$head,&$data, &$pos,$i,&$group){
 
 			$p=array();
@@ -446,8 +447,9 @@ function xls_processPoss(&$data){ //
 			$group[$i]=&$p;
 
 		},array(&$head,&$data));
-
-		unset($data['head']);
+		if(!$ishead){
+			unset($data['head']);
+		}
 	});
 
 
@@ -820,6 +822,7 @@ $config=array(
 		'group_title'=>true,
 		'parent_title'=>true,
 		'root'=>'Каталог',
+		'Сохранить head'=>false,
 		'Имя файла'=>'Производитель',//'Группа'
 		'Известные колонки'=>array('Наименование','Артикул','Производитель')//Остальные в свойстве more
 	);
@@ -874,7 +877,8 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 	
 	xls_processDescr($data);
 	
-	xls_processPoss($data);
+	if(!isset($config['Сохранить head']))$config['Сохранить head']=false;
+	xls_processPoss($data,$config['Сохранить head']);
 
 	if(@!is_array($config['Переименовать колонки']))$config['Переименовать колонки']=array();
 	if(@!is_array($config['Удалить колонки']))$config['Удалить колонки']=array();
