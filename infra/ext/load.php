@@ -101,7 +101,7 @@ function infra_json_encode($mix){
 	$v=phpversion();
 	$ver=explode('.',$v);
 	if($ver[0]<5||($ver[0]==5&&$ver[1]<4)) return json_encode($mix);//для 5.2.2 и всего что старее 5.2.4
-	else return json_encode($mix,JSON_UNESCAPED_UNICODE);
+	else return json_encode($mix,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 }
 
 

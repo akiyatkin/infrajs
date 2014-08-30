@@ -50,6 +50,7 @@ if(!is_dir(ROOT.'infra/cache/')){
 define('INFRA_CACHE_DIR','infra/cache/infra_cache_once/');//Используется в xml/xml.php
 @mkdir(ROOT.INFRA_CACHE_DIR,0755);
 function infra_cache_path($name,$args=null){
+	$name=infra_tofs($name);
 	$dirfn=INFRA_CACHE_DIR.$name.'/';
 	@mkdir(ROOT.$dirfn,0755);
 	if(is_null($args))return $dirfn;

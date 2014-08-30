@@ -61,7 +61,7 @@ window.roller = {
 		if(!scrollFromBot)scrollFromBot=0;
 		this.setOpt();
 		var targ={scrollTop:this.opt.dh-this.opt.wh-scrollFromBot};
-		var d = ($.browser.safari||$.browser.chrome)?'body':'html';
+		var d = (!$.browser||($.browser.safari||$.browser.chrome))?'body':'html';
 		var maxSpeed=400;
 		$(d).stop().animate(targ, maxSpeed);
 	},
