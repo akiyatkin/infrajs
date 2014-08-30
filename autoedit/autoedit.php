@@ -417,9 +417,10 @@
 				$folder=infra_theme($id);
 				$folder=infra_toutf($folder);
 				$folder=preg_replace("/^infra\/data\//","*",$folder);
-
+				
 
 				$ans['list']=infra_loadJSON('*pages/list.php?s=1&notsort=1&reverse=0&h=1&time=1&src='.$folder);
+				
 				$folders=infra_loadJSON('*pages/list.php?s=1&d=1&f=0&onlyname=1&notsort=1&reverse=0&h=1&time=1&src='.$folder);
 				$ans['folders']=array();
 				if($folders){
@@ -429,6 +430,7 @@
 						}
 					}
 				}
+				
 				if($ans['list']){
 					foreach($ans['list'] as &$v){
 						$e=$v['ext']?'.'.$v['ext']:'';
@@ -438,15 +440,16 @@
 						$v['corable']=in_array(strtolower($v['ext']),$CORABLE);
 						$v['rteable']=in_array(strtolower($v['ext']),$RTEABLE);
 
-						$v['pathload']=infra_theme('infra/plugins/autoedit/download.php?'.$file,'fu');
-
-						if($v['rteable']) $ans['rteable']=(bool)infra_theme('infra/lib/wymeditor/','d');
+						$v['pathload']=infra_theme('infra/plugins/autoedit/download.php?'.$file);
+						$v['pathload']=infra_toutf($v['pathload']);
+						if($v['rteable']) $ans['rteable']=(bool)infra_theme('infra/lib/wymeditor/');
 						$v['mytake']=autoedit_ismytake($file);
 						if($d){
 							$v['take']=$d['date'];
 						}
 					}
 				}
+				
 				$ans['result']=1;
 			}
 		}else if($type==='jsoneditor'){
