@@ -3,6 +3,7 @@
 //При изменении msg слой перепарсивается
 infrajs.onsubmitinit=function(){
 	infrajs.parsedAdd(function(layer){//parsed должен забираться после установки msg config-a
+		//После onsubmit слой должен перепарсится
 		if(!layer.onsubmit)return '';
 		if(!layer.config||!layer.config.ans)return '';
 		var str=layer.config.ans.msg;
@@ -15,6 +16,7 @@ infrajs.onsubmitinit=function(){
 }
 infrajs.setonsubmit=function(layer){
 	if(!layer['onsubmit'])return;
+	
 	if(!layer.config)layer.config={};
 
 	var div=$('#'+layer.div);
@@ -61,6 +63,9 @@ infrajs.setonsubmit=function(layer){
 					if(typeof(layer.onsubmit)=='function'){
 						layer.onsubmit(layer);
 					}else{
+					}
+					if(layer.global){
+						infrajs.global.set(layer.global);
 					}
 					infrajs.check();
 				}
