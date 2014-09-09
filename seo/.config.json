@@ -1,5 +1,6 @@
 {
 	"seo":{
-		"robots":true
+		"robots":false,
+		"seo":false
 	}
 }

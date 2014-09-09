@@ -10,6 +10,9 @@ function infrajs_seo_init(){//Делается при каждой пробеж�
 	$store=&infrajs_store();
 	$store['seo']=array();
 	$store['seolayer']=array();
+	$conf=infra_config();
+	if(!$conf['seo']['seo'])return;
+	if(!$conf['seo']['robots'])return;
 	infra_admin_cache('infrajs_seo_init',function(){
 		$data=array();
 		$data['host']=$_SERVER['HTTP_HOST'];
@@ -17,40 +20,41 @@ function infrajs_seo_init(){//Делается при каждой пробеж�
 		$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots');
 		$html.="\n";
 		
-		$conf=infra_config();
-		if($conf['seo']['robots']){
-			if(!is_file(ROOT.'robots.txt')){
-				file_put_contents(ROOT.'robots.txt',$html);
-			}else{//Проверка что sitemap корректный
+		
+		
+		if(!is_file(ROOT.'robots.txt')){
+			file_put_contents(ROOT.'robots.txt',$html);
+		}else{//Проверка что sitemap корректный
 
-				$robots=file(ROOT.'robots.txt');
-				$res=false;
-				foreach($robots as $num=>$line){
-					$r=explode(':',$line,2);
-					$r[0]=trim($r[0]);
-					if($r[0]=='sitemap'){
+			$robots=file(ROOT.'robots.txt');
+			$res=false;
+			foreach($robots as $num=>$line){
+				$r=explode(':',$line,2);
+				$r[0]=trim($r[0]);
+				if($r[0]=='sitemap'){
 
-						$res=true;
-						$path=trim($r[1]);
-						$r=explode('/',$path,4);
-						$host=$r[2];
-						if($host!==$data['host']){
-							$robots[$num]=$html;
-							$html=implode("",$robots);
-							file_put_contents(ROOT.'robots.txt',$html);
-						}
+					$res=true;
+					$path=trim($r[1]);
+					$r=explode('/',$path,4);
+					$host=$r[2];
+					if($host!==$data['host']){
+						$robots[$num]=$html;
+						$html=implode("",$robots);
+						file_put_contents(ROOT.'robots.txt',$html);
 					}
 				}
-				if(!$res){//ненайдена запись sitemap
-					$robots[]=$html;//"\r\n"
-					$html=implode("",$robots);
-					file_put_contents(ROOT.'robots.txt',$html);
-				}
+			}
+			if(!$res){//ненайдена запись sitemap
+				$robots[]=$html;//"\r\n"
+				$html=implode("",$robots);
+				file_put_contents(ROOT.'robots.txt',$html);
 			}
 		}
 	});
 }
 function infrajs_seo_checkseolinktpl(&$layer){
+	$conf=infra_config();
+	if(!$conf['seo']['seo'])return;
 	if(!isset($layer['seotpl']))return;
 	if(!isset($layer['seo']))$layer['seo']=array();
 	$props=array('tpl','link','json','name','title');
@@ -59,6 +63,8 @@ function infrajs_seo_checkseolinktpl(&$layer){
 	}
 }
 function infrajs_seo_checkopt(&$layer){
+	$conf=infra_config();
+	if(!$conf['seo']['seo'])return;
 	if(!isset($layer['seo']))return;
 	$seo=&$layer['seo'];
 	if(!$seo['name']){
@@ -91,6 +97,8 @@ function infrajs_seo_checkopt(&$layer){
 }
 
 function infrajs_seo_collectLayer(&$layer){
+	$conf=infra_config();
+	if(!$conf['seo']['seo'])return;
 	if(!isset($layer['seo']))return;
 	$store=&infrajs_store();
 	$store['seo'][$layer['seo']['name']]=$layer['seo'];
@@ -101,12 +109,16 @@ function infrajs_seo_collectLayer(&$layer){
 
 
 function infrajs_seo_now(&$layer){
+	$conf=infra_config();
+	if(!$conf['seo']['seo'])return;
 	if(!isset($layer['seo']))return;
 	$store=&infrajs_store();
 	$store['seolayer']=&$layer;
 
 }
 function infrajs_seo_save(){
+	$conf=infra_config();
+	if(!$conf['seo']['seo'])return;
 	infra_admin_cache('infrajs_seo_save',function(){
 		$store=&infrajs_store();
 		$dir='infra/cache/seo/';
@@ -134,6 +146,8 @@ function infrajs_seo_value($value){//load для <input value="...
 	return $value;
 }
 function infrajs_seo_apply(){
+	$conf=infra_config();
+	if(!$conf['seo']['seo'])return;
 	$store=&infrajs_store();
 	$layer=&$store['seolayer'];
 	if(!$layer)return;
