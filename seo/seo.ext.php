@@ -17,9 +17,13 @@ function infrajs_seo_init(){//Делается при каждой пробеж�
 		$data=array();
 		$data['host']=$_SERVER['HTTP_HOST'];
 		$data['root']=infra_view_getRoot(ROOT);
-		$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots');
-		$html.="\n";
-		
+
+		$html='User-agent: *'."\n";
+		$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots').="\n";
+		$html='Disallow: /infra'."\n";
+		$html='Allow: /infra/data'."\n";
+		$html='Allow: /infra/plugins/imager'."\n";
+		$html='Allow: /infra/plugins/infra'."\n";
 		
 		
 		if(!is_file(ROOT.'robots.txt')){
@@ -44,7 +48,7 @@ function infrajs_seo_init(){//Делается при каждой пробеж�
 					}
 				}
 			}
-			if(!$res){//ненайдена запись sitemap
+			if(!$res){//не найдена запись sitemap
 				$robots[]=$html;//"\r\n"
 				$html=implode("",$robots);
 				file_put_contents(ROOT.'robots.txt',$html);
