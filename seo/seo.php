@@ -2,12 +2,11 @@
 	@define('ROOT','../../../');
 	require_once(ROOT.'infra/plugins/infra/infra.php');
 	infra_require('*seo/seo.inc.php');
-
 	$type=infra_toutf(@$_REQUEST['type']);
 	$id=infra_toutf(@$_REQUEST['id']);
 	$submit=(bool)@$_REQUEST['submit'];
 	$layers=infra_toutf(urldecode(@$_REQUEST['layers']));
-	
+
 	@set_time_limit(300);//может быть отключена на хостинге
 	$ans=array('result'=>0,'id'=>$id,'type'=>$type);
 	

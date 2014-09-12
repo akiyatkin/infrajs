@@ -5,7 +5,6 @@
 */
 @define('ROOT','../../../');
 
-
 function infrajs_seo_init(){//Делается при каждой пробежки
 	$store=&infrajs_store();
 	$store['seo']=array();
@@ -19,7 +18,7 @@ function infrajs_seo_init(){//Делается при каждой пробеж�
 		$data['root']=infra_view_getRoot(ROOT);
 
 		$html='User-agent: *'."\n";
-		$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots').="\n";
+		$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots')."\n";
 		$html='Disallow: /infra'."\n";
 		$html='Allow: /infra/data'."\n";
 		$html='Allow: /infra/plugins/imager'."\n";
