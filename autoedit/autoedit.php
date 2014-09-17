@@ -361,9 +361,9 @@
 					$ans['rteable']=in_array(strtolower($ans['ext']),$RTEABLE);
 				}
 				$imgext=array('jpg','png','gif','jpeg');
-				infra_forr($imgext,function(&$ans, $e){
+				infra_forr($imgext,function($e) use(&$ans){
 					if($e==$ans['ext'])$ans['image']=true;//Значит это картинка
-				},array(&$ans));
+				});
 
 
 				if($file){//Если файл есть

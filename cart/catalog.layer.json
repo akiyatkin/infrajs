@@ -33,7 +33,7 @@
 			"sel":"{config.sel|(state.name|)}"
 		},
 		"seo":{
-			"name":"Группа каталога",
+			"name":"Поиск каталога",
 			"json":"*cart/search.php?val={.}",
 			"tpl":["<h1>{title}</h1><p>{descr}</p>{text}"],
 			"schema":{

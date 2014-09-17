@@ -7,9 +7,9 @@ function infra_seq_short($val,$offen=INFRA_SEQ_OFFEN,$seldom=INFRA_SEQ_SELDOM){/
 	if(is_string($val)=='string')return $val;
 	if(!is_array($val))$val=array();
 	$nval=array();
-	infra_forr($val,function(&$nval,$offen,$seldom,$s){ 
+	infra_forr($val,function($s) use(&$nval,$offen,$seldom){ 
 		$nval[]=str_replace($offen,$seldom,$s);
-	},array(&$nval,$offen,$seldom));
+	});
 	return implode($offen,$nval);
 }
 

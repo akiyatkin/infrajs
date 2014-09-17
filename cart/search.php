@@ -39,8 +39,9 @@ else $reverse=1;
 
 $args=array($val,$check,$sort,$reverse);
 $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$reverse) use(&$cond){
-	$ans=cat_search($val);//свой кэш, без страниц
 
+	$ans=cat_search($val);//свой кэш, без страниц
+	
 	$yes=$check['yes'];
 	if(!$yes)$yes=array();
 	unset($check['yes']);
@@ -168,7 +169,6 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 		$group=&xls_runGroups($data,function(&$group) use(&$ans){
 			if($group['title']==$ans['name'])return $group;
 		});
-
 		$ans['title']=$group['title'];
 		$ans['descr']=@$group['descr']['Описание группы'];
 		if($group['parent_title']){
@@ -194,7 +194,7 @@ $ans=infra_cache($cond,'cart_search_php_page',function($val,$check,$sort,$revers
 		$poss=$ans['list'];
 		$prods=xls_init($conf['cart']['prod']);
 		$prod=&xls_runPoss($prods,function(&$prod) use($val){
-			if(infra_strtolower($prod['Производитель'])==$val)return $prod;
+			if(infra_strtolower($prod['Производитель'])==infra_strtolower($val))return $prod;
 		});
 		$name=$ans['name'];
 		$ans['title']='Производитель '.$name;

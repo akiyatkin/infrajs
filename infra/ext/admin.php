@@ -131,20 +131,20 @@ function infra_admin_cache($name,$call,$args=array(),$re=false){//Запуска
 		//@header('Cache-control:no-cache');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
 					$header_name='cache-control';//Проверка установленного заголовока о запрете кэширования, до запуска кэшируемой фукцнии
 					$list=headers_list();
-					$cache_control=infra_forr($list,function($header_name, $row){
+					$cache_control=infra_forr($list,function($row) use($header_name){
 						$r=explode(':',$row);
 						if(stristr($r[0],$header_name)!==false) return trim($r[1]);
-					},array($header_name));
+					});
 					if($cache_control)header_remove('cache-control');
 
 
 		$data['result']=call_user_func_array($call,array_merge($args,array($re)));
 
 					$list=headers_list();//Проверяем появился ли заголовок после запуска функции кэшируемой
-					$cache_control2=infra_forr($list,function($header_name, $row){
+					$cache_control2=infra_forr($list,function($row) use($header_name){
 						$r=explode(':',$row);
 						if(stristr($r[0],$header_name)!==false) return trim($r[1]);
-					},array($header_name));
+					});
 					if(!$cache_control2&&$cache_control)@header('cache-control: '.$cache_control);
 
 					if(!$re&&(!$cache_control2||stristr($cache_control2,'no-cache')===false)){

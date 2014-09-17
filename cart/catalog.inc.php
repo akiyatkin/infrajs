@@ -81,9 +81,9 @@
 
 				$srh=array('list'=>array(),'is'=>false);
 				$srh['time']=time();
-				$group=&xls_runGroups($data,function(&$val,&$group){
+				$group=&xls_runGroups($data,function(&$group) use(&$val){
 					if(infra_strtolower($group['title'])==$val)return $group;
-				},array(&$val));
+				});
 
 				if($val=='изменения'){
 					$srh['is']='change';

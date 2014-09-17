@@ -248,14 +248,14 @@ function infra_template_execTpl($conf){
 	//var - asdf[asdf] но получить такую переменную нельзя нужно расчитать этот путь getPath asdf.qwer и где же хранить этот путь
 	//lastroot нужен чтобы прощитать с каким dataroot нужно подключить шаблон это всегда путь от корня
 
-	infra_forr($conf['tpl'],function(&$conf,&$html, &$d){
+	infra_forr($conf['tpl'],function(&$d) use(&$conf,&$html){
 		$var=infra_template_getValue($conf,$d);//В getValue будет вызываться execTpl но dataroot всегда будет возвращаться в прежнее значение
 
 		if(is_string($var))$html.=$var;
 		if(is_float($var))$html.=$var;
 		if(is_int($var))$html.=$var;
 		else $html.='';
-	},array(&$conf,&$html));
+	});
 
 	//$conf['dataroot']=$dataroot;
 	return $html;
@@ -267,7 +267,7 @@ function &infra_template_getPath(&$conf,$var){//dataroot это прощитан
 	 * asdf[asdf()]
 	 * */
 	$ar=array();
-	infra_forr($var,function(&$conf,&$ar,&$v){//'[asdf,asdf,[asdf],asdf]'
+	infra_forr($var,function(&$v) use(&$conf,&$ar){ //'[asdf,asdf,[asdf],asdf]'
 		if(is_string($v)||is_int($v)){//name
 			$ar[]=$v;
 		}else if(@is_array($v)&&@is_array($v[0])&&@is_string($v[0]['orig'])){//name[name]  [name,[{}],name]
@@ -307,7 +307,7 @@ function &infra_template_getPath(&$conf,$var){//dataroot это прощитан
 			$r=$r['value'];
 			$ar[]=$r;
 		}
-	},array(&$conf,&$ar));
+	});
 	return $ar;
 }
 function infra_template_getVar(&$conf,$var=array()){//dataroot это прощитанный путь до переменной в котором нет замен
@@ -441,11 +441,16 @@ function infra_template_getOnlyVar(&$conf,&$d,$term,$i=0){
 			$droot=$lastroot;
 			$h=infra_template_exec($conf['tpls'],$conf['data'],$tpl,$droot);
 		}else{
-			infra_foru($v,function(&$d,&$h,&$conf,&$lastroot,&$tpl, &$v,$k){
-
+			if($v){
+				foreach($v as $kkk=>$vvv){
+					$droot=array_merge($lastroot,array($kkk));
+					$h.=infra_template_exec($conf['tpls'],$conf['data'],$tpl,$droot);				
+				}
+			}
+			/*infra_foru($v,function(&$v,$k) use(&$d,&$h,&$conf,&$lastroot,&$tpl){
 				$droot=array_merge($lastroot,array($k));
 				$h.=infra_template_exec($conf['tpls'],$conf['data'],$tpl,$droot);
-			},array(&$d,&$h,&$conf,&$lastroot,&$tpl));
+			});*/
 		}
 		$v=$h;
 	}else{
@@ -609,9 +614,9 @@ function infra_template_parseexp($exp,$term=false,$fnnow=null){// Приорит
 	$cond=explode(',',$exp);
 	if(sizeof($cond)>1){
 		$res['var']=array();
-		infra_forr($cond,function(&$res, $c){
+		infra_forr($cond,function($c) use(&$res){
 			$res['var'][]=infra_template_parseexp($c,true);
-		},array(&$res));
+		});
 		return $res;
 	}
 

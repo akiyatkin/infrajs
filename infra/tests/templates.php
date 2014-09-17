@@ -12,7 +12,7 @@
 	} 
 	echo '<table style="font-size:14px; font-family:monospace;">';
 	$time=getmicrotime();
-	infra_forr($tpls,function(&$time, $t,$key){
+	infra_forr($tpls,function($t,$key) use(&$time){
 		if(isset($_GET['key'])&&$_GET['key']!=$key)return;
 		echo '<tr><td>';
 		echo $key;
@@ -36,6 +36,6 @@
 		echo '</td><td>';
 		echo @$t['com'];
 		echo '</td><tr>';
-	},array(&$time));
+	});
 	echo '</table>';
 ?>

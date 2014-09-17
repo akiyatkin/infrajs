@@ -246,13 +246,13 @@
 				});
 
 				//==========
-				xls_runGroups($data,function(&$list,&$group){
+				xls_runGroups($data,function(&$group) use(&$list){
 					$title=$group['title'];
 					$v=&seo_createItem($list,$title);//Создали из группы указанных у Excel
 					//$page=infra_loadTEXT('*pages/get.php?'.CATDIR.$title);
 					//cat_seo_pageResearch($page,$v);
 
-				},array(&$list));
+				});
 
 				//==========
 				$l=infra_loadJSON('*pages/list.php?src='.CATDIR.'&f=1&d=0&onlyname=1&e=mht,docx,tpl');//Каждый файл это страница
@@ -292,9 +292,9 @@
 				$ans['descr']='Последнии позиций, у которых изменился текст полного описания.';
 				return $ans;
 			}
-			$group=&xls_runGroups($data,function(&$val,&$group){
+			$group=&xls_runGroups($data,function(&$group) use(&$val){
 				if(infra_strtolower($group['title'])==$val)return $group;
-			},array(&$val));
+			});
 			$posscount=0;
 			if($group){
 				$ans['is']='group';
@@ -308,9 +308,6 @@
 
 
 				if($group['parent_title']){
-					/*$parent=&xls_runGroups($data,function($val,&$group){
-						if($group['title']==$val)return $group;
-					},array($group['parent_title']));*/
 					$ans['parent']=array('title'=>$group['parent_title']);
 				}
 				if($prod){

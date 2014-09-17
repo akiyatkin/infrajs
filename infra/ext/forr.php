@@ -28,11 +28,7 @@ function infra_isAssoc(&$array){//(c) Kohana http://habrahabr.ru/qa/7689/
 	$keys = array_keys($array);
 	return array_keys($keys) !== $keys;
 }
-function &infra_forr(&$el,$callback,$nar=array(),$back=false){//Бежим по массиву
-	if(is_array($back)){//depricated
-		$nar=$back;
-		$back=false;
-	}
+function &infra_forr(&$el,$callback,$back=false){//Бежим по массиву
 	$r=null;
 	if(!$el)return $r;
 
@@ -40,14 +36,15 @@ function &infra_forr(&$el,$callback,$nar=array(),$back=false){//Бежим по 
 	if($back){
 		for($i=$l-1;$i>=0;$i--){
 			if(is_null($el[$i]))continue;
-			$r=&infra_forcall($callback,$nar,$el[$i],$i,$el);
+			$r=$callback($el[$i],$i,$el);
+			//$r=&infra_forcall($callback,array(),$el[$i],$i,$el);
 			if(!is_null($r))return $r;
 		}
 	}else{
 		for($i=0;$i<$l;$i++){//В callback нельзя удалять... так как i сместится
 			if(is_null($el[$i]))continue;
-
-			$r=&infra_forcall($callback,$nar,$el[$i],$i, $el);
+			$r=$callback($el[$i],$i,$el);
+			//$r=&infra_forcall($callback,array(),$el[$i],$i, $el);
 			if(!is_null($r))return $r;
 		}
 	}
@@ -90,11 +87,9 @@ function &infra_fora(&$el,$callback,$back=false,$nar=array(),&$_group=null,$_key
 		$back=false;
 	}
 	if(infra_isAssoc($el)===false){
-		$param=array(&$el,$callback,$back,$nar);
-		return infra_forr($el,function&(&$el,$callback,$back,$nar, &$v,$i){
-
+		return infra_forr($el,function&(&$v,$i) use(&$el,$callback,$back,$nar){
 			return infra_fora($v,$callback,$back,$nar,$el,$i);
-		},$back,$param);
+		},$back);
 	}else if(!is_null($el)){//Если undefined callback не вызывается, Таким образом можно безжать по переменной не проверя определена она или нет.
 		//return $callback($el,$_key,$_group);
 		return infra_forcall($callback,$nar,$el,$_key,$_group);
@@ -116,7 +111,11 @@ function &infra_fori(&$el,$callback,$nar=false,$back=false,$_key=null,&$_group=n
 		//if(r!==undefined)return r;
 	}
 };
-function &infra_foro(&$obj,$callback,$nar=array(),$back=false){//Бежим по объекту
+function &infra_foro(&$obj,$callback,$back=false,$nar=array()){//Бежим по объекту
+	if(is_array($back)){
+		$nar=$back;
+		$back=false;
+	}
 	$r=null;
 	if(infra_isAssoc($obj)!==true)return $r;//Только ассоциативные массивы
 
@@ -124,44 +123,28 @@ function &infra_foro(&$obj,$callback,$nar=array(),$back=false){//Бежим по
 	foreach($obj as $key=>&$val){
 		$ar[]=array('key'=>$key,'val'=>&$val);
 	}
-	return infra_forr($ar,function&($callback,$nar,&$obj, &$el){
+	return infra_forr($ar,function&(&$el) use($callback,$nar,&$obj){
 		if(is_null($el['val']))return;
 		return infra_forcall($callback,$nar,$el['val'],$el['key'],$obj);
-	},array($callback,$nar,&$obj),$back);
+	},array(),$back);
 };
-function &infra_foru(&$el,$callback,$nar=array(),$back=false){//Бежим по массиву
+/*function &infra_foru(&$el,$callback,$back=false){//Бежим по массиву
 	$r=null;
 	if(!is_array($el))return $r;
 	$ar=array();
 	foreach($el as $key=>&$val){
 		$ar[]=array('key'=>$key,'val'=>&$val);
 	}
-	return infra_forr($ar,function&($callback,$nar,&$el, &$v){
+	return infra_forr($ar,function&(&$v) use($callback,&$el){
 		if(is_null($v['val']))return;
-		return infra_forcall($callback,$nar,$v['val'],$v['key'],$el);
-	},array($callback,$nar,&$el),$back);
-}
+		return $callback($v['val'],$v['key'],$el);
+	},$back);
+}*/
 function &infra_forx(&$obj,$callback,$nar=array(),$back=false){//Бежим сначало по объекту а потом по его свойствам как по массивам
-	return infra_foro($obj,function&(&$obj,$callback,$back,$nar, &$v,$key){
-		return infra_fora($v,function&($callback,$nar,$key, &$el,$i,&$group){
+	return infra_foro($obj,function&(&$v,$key) use(&$obj,$callback,$back,$nar){
+		return infra_fora($v,function&(&$el,$i,&$group) use($callback,$nar,$key){
 			return infra_forcall($callback,$nar,$el,$key,$group,$i);
-			//return infra_exec($callback,array_merge($nar,array(&$el,$key,&$group,$i)));//callback,name,context,args,more
-		},array($callback,$nar,$key),$back);
-	},array(&$obj,$callback,$back,$nar),$back);
+		},$back);
+	},$back);
 };
-/*
-$ar=array(2,1,0,2,3);
-
-$var='some';
-$obj=array(1,2);
-
-echo '<pre>';
-$ar=array(1);
-infra_forr($ar,function(&$obj){
-	$obj[]=1;
-},null,array(&$obj));
-
-print_r($obj);
-echo "<hr>";
-/* */
 ?>

@@ -14,7 +14,7 @@ infra_listen($infra,'layer.oncheck',function(&$layer){
 		}
 	}
 	$list=array('autosavename','title','keywords','env','div','dataroot','tplroot');
-	infra_forr($list,function(&$layer,$prop){
+	infra_forr($list,function($prop) use(&$layer){
 		$proptpl=$prop.'tpl';
 		if(@$layer[$proptpl]){
 			$p=$layer[$proptpl];
@@ -27,7 +27,7 @@ infra_listen($infra,'layer.oncheck',function(&$layer){
 				$layer[$prop]=$p;
 			}
 		}
-	},array(&$layer));
+	});
 
 	$name='myenv';
 	$nametpl=$name.'tpl';

@@ -194,13 +194,13 @@
 				});
 
 				//==========
-				xls_runGroups($data,function(&$list,&$group){
+				xls_runGroups($data,function(&$group) use(&$list){
 					$title=$group['title'];
 					$v=&seo_createItem($list,$title);//Создали из группы указанных у Excel
 					//$page=infra_loadTEXT('*pages/get.php?'.CATDIR.$title);
 					//cat_seo_pageResearch($page,$v);
 
-				},array(&$list));
+				});
 
 				//==========
 				$l=infra_loadJSON('*pages/list.php?src='.CATDIR.'&f=1&d=0&onlyname=1&e=mht,docx,tpl');//Каждый файл это страница

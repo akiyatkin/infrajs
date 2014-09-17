@@ -66,9 +66,9 @@ function &xls_parseAll($path){
 			$d->read(ROOT.$file);
 
 
-			infra_forr($d->boundsheets,function(&$sheets,&$data,$v,$k){
-				$data[$v['name']]=&$sheets[$k]['cells'];
-			},array(&$d->sheets,&$data));
+			infra_forr($d->boundsheets,function($v,$k) use(&$d,&$data){
+				$data[$v['name']]=&$d->sheets[$k]['cells'];
+			});
 		}else if($in['ext']=='xlsx'){
 			$cacheFolder='infra/cache/xlsx/';
 			if(!is_dir(ROOT.$cacheFolder))mkdir(ROOT.$cacheFolder);
@@ -333,26 +333,26 @@ function &xls_make($path){
 	return $groups;
 }
 function &xls_runPoss(&$data,$callback,$back=false){
-	return xls_runGroups($data,function(&$group) use($back,$callback){
-		return infra_foru($group['data'],function(&$pos,$i) use($callback,&$group){
-			$r=call_user_func_array($callback,array(&$pos,$i,&$group));
+	return xls_runGroups($data,function(&$group) use($back,&$callback){
+		return infra_forr($group['data'],function(&$pos,$i) use(&$callback,&$group){
+			$r=&$callback($pos,$i,$group);
 			if(!is_null($r))return $r;
-		},array(),$back);
-	},array(),$back);
+		},$back);
+	},$back);
 }
-function &xls_runGroups(&$data,$callback,$args=array(),$back=false,$i=0,&$group=false){
+function &xls_runGroups(&$data,$callback,$back=false,$i=0,&$group=false){
 	if(!$back){
-		$r=call_user_func_array($callback,array_merge($args,array(&$data,$i,&$group)));
+		$r=&$callback($data,$i,$group);
 		if(!is_null($r))return $r;
 	}
 	
-	$r=&infra_forr($data['childs'],function(&$val,$i) use($callback,$back,$args,&$data){
-		return xls_runGroups($val,$callback,$args,$back,$i,$data);
-	},array(),$back);
+	$r=&infra_forr($data['childs'],function(&$val,$i) use($callback,$back,&$data){
+		return xls_runGroups($val,$callback,$back,$i,$data);
+	},$back);
 	if(!is_null($r))return $r;
 	
 	if($back){
-		$r=call_user_func_array($callback,array_merge($args,array(&$data,$i,&$group)));
+		$r=&$callback($data,$i,$group);
 		if(!is_null($r))return $r;
 	}
 	return $r;
@@ -366,12 +366,12 @@ function _xls_createGroup($title='',&$parent,$type,&$row=false){
 		array_shift($t);
 		$title=implode(':',$t);
 		foreach($parent['descr'] as $first_index=>$first_value)break;
-		$index=infra_forr($parent['descr'],function($first_index, $title, &$row,$i){
+		$index=infra_forr($parent['descr'],function(&$row,$i) use($first_index, $title){
 			if($row[$first_index]=='Описание'){
 				$row[$first_index+1].='<br>'.$title;
 				return $i;
 			}
-		},array($first_index,$title));
+		});
 		if(!is_null($index)){
 			$parent['descr'][$index]=array('Описание',$title);
 		}else{
@@ -427,11 +427,11 @@ function xls_processPoss(&$data,$ishead=false){ //
 			return; //Значит и данных нет
 		}
 		
-		infra_forr($data['data'],function(&$head,&$data, &$pos,$i,&$group){
+		infra_forr($data['data'],function(&$pos,$i,&$group) use(&$head,&$data){
 
 			$p=array();
 
-			infra_foro($pos,function(&$p,&$head, $propvalue,$i){
+			infra_foro($pos,function($propvalue,$i) use(&$p,&$head){
 				$propname=@$head[$i];
 				if(!$propname)return;
 				if($propname{0}=='.')return;//Колонки с точкой скрыты
@@ -442,11 +442,11 @@ function xls_processPoss(&$data,$ishead=false){ //
 				$propvalue=preg_replace('/^\s+/','',$propvalue);
 				if(!$propname)return;
 				$p[$propname]=$propvalue;
-			},array(&$p,&$head));
+			});
 			$p['group']=&$data;//Рекурсия
 			$group[$i]=&$p;
 
-		},array(&$head,&$data));
+		});
 		if(!$ishead){
 			unset($data['head']);
 		}
@@ -461,17 +461,17 @@ function xls_print($data){
 	print_r($data);
 }
 function xls_processPossFilter(&$data,$props){//Если Нет какого-то свойства не учитываем позицию
-	xls_runGroups($data,function(&$props, &$data){	
+	xls_runGroups($data,function(&$data) use(&$props){	
 		$d=array();
-		infra_forr($data['data'],function(&$props,&$d, &$pos){
-			if(!infra_forr($props,function(&$pos, $name){
+		infra_forr($data['data'],function(&$pos) use(&$props,&$d){
+			if(!infra_forr($props,function($name) use($pos){
 				if(!$pos[$name])return true;
-			},array(&$pos))){
+			})){
 				$d[]=&$pos;
 			}
-		},array(&$props,&$d));
+		});
 		$data['data']=$d;
-	},array(&$props));
+	});
 }
 
 function xls_processPossBe(&$data,$check1,$check2){//Если у позиции нет поля check1.. то оно будет равнятся полю check2
@@ -500,23 +500,23 @@ function xls_processPossMore(&$data,$props){
 		
 		
 		$prop=array();
-		infra_forr($props,function(&$prop, $name){
+		infra_forr($props,function($name) use(&$prop){
 			$prop[$name]=true;
-		},array(&$prop));
+		});
 		
-		infra_foro($pos,function(&$p,&$prop,&$more, &$val,$name){
+		infra_foro($pos,function(&$val,$name) use(&$p,&$prop,&$more){
 			if($prop[$name])$p[$name]=&$val;
 			else $more[$name]=&$val;
-		},array(&$p,&$prop,&$more));
+		});
 		if($more)$p['more']=&$more;
 		$group['data'][$i]=&$p;
 	});
 }
 
 function xls_merge(&$gr,&$addgr){//Всё из группы addgr нужно перенести в gr
-	$i=infra_forr($addgr['parent']['childs'],function(&$addgr, &$v,$i){
+	$i=infra_forr($addgr['parent']['childs'],function(&$v,$i) use(&$addgr){
 		if(infra_isEqual($v,$addgr))return $i;
-	},array(&$addgr));
+	});
 	array_splice($addgr['parent']['childs'],$i,1);//Удалили addgr там где группа была до этоо, заменив на новую
 
 	//$gr['miss']=0;
@@ -530,17 +530,17 @@ function xls_merge(&$gr,&$addgr){//Всё из группы addgr нужно п�
 		потому что мы почему-то объединяем в book а должны в лист Каталог.xls
 
 	*/
-	infra_forr($addgr['childs'],function(&$gr, &$val){
+	infra_forr($addgr['childs'],function(&$val) use(&$gr){
 		$val['parent']=&$gr;
 		$gr['childs'][]=&$val;
-	},array(&$gr));
+	});
 	
-	infra_foro($addgr['descr'],function(&$gr, $des,$key){
+	infra_foro($addgr['descr'],function($des,$key) use(&$gr){
 		//if($key=='Описание')return;//Всё кроме Описания
 		if(is_null(@$gr['descr'][$key])){
 			$gr['descr'][$key]=$des;
 		};
-	},array(&$gr));
+	});
 	
 	if(@$gr['tparam'])$gr['tparam'].=','.$addgr['tparam'];
 	else $gr['tparam']=@$addgr['tparam'];
@@ -555,7 +555,7 @@ function xls_merge(&$gr,&$addgr){//Всё из группы addgr нужно п�
 function xls_processGroupFilter(&$data){
 	$all=array();
 
-	xls_runGroups($data,function(&$all, &$gr,$i,&$group){
+	xls_runGroups($data,function(&$gr,$i,&$group) use(&$all){
 		$title=infra_strtolower($gr['title']);
 		//echo $gr['type'].':'.$title.'<br>';
 		if(!@$all[$title]){
@@ -569,7 +569,7 @@ function xls_processGroupFilter(&$data){
 
 			$all[$title]=&$gr;
 		}
-	},array(&$all),true);
+	},true);
 	/*
 	xls_runGroups($data,function(&$gr,$i,&$group){//Удаляем пустые группы
 		if(!$group) return;//Кроме верхней группы
@@ -582,12 +582,11 @@ function xls_processGroupFilter(&$data){
 }
 function xls_processDescr(&$data){//
 	xls_runGroups($data,function(&$gr){
-
 		$descr=array();
-		infra_forr($gr['descr'],function(&$descr, $row){
+		infra_forr($gr['descr'],function($row) use(&$descr){
 			$row=array_values($row);
 			@$descr[$row[0]]=$row[1];
-		},array(&$descr));
+		});
 		$gr['descr']=&$descr;
 	});
 }
@@ -595,22 +594,22 @@ function xls_processGroupCalculate(&$data){
 	xls_runGroups($data,function(&$data){
 		$data['count']=sizeof($data['data']);
 		$data['groups']=1;
-		infra_forr($data['childs'],function(&$data, &$d){
+		infra_forr($data['childs'],function(&$d) use(&$data){
 			$data['count']+=$d['count'];
 			$data['groups']+=$d['groups'];
-		},array(&$data));
-	},array(),true);
+		});
+	},true);
 };
 
 function xls_processClassEmpty(&$data,$clsname){
-	xls_runGroups($data,function($clsname,&$gr){
+	xls_runGroups($data,function(&$gr) use($clsname){
 		$poss=array();
 		for($i=0,$l=sizeof($gr['data']);$i<$l;$i++){
 			if(!isset($gr['data'][$i][$clsname])||!$gr['data'][$i][$clsname])continue;
 			$poss[]=$gr['data'][$i];
 		}
 		$gr['data']=$poss;
-	},array($clsname));
+	});
 }
 function xls_processClass(&$data,$clsname,$musthave=false){
 	$run=function(&$data,$run,$clsname,$musthave, $clsvalue=''){
@@ -623,17 +622,17 @@ function xls_processClass(&$data,$clsname,$musthave=false){
 		}else if($data['type']=='row'&&@$data['descr'][$clsname]){
 			$clsvalue=xls_forFS($data['descr'][$clsname]);
 		}
-		infra_forr($data['data'],function($clsname,$clsvalue, &$pos){
+		infra_forr($data['data'],function(&$pos) use($clsname,$clsvalue){
 			if(!isset($pos[$clsname])){
 				$pos[$clsname]=$clsvalue;//У позиции будет установлен ближайший класс
 			}else{
 				$pos[$clsname]=xls_forFS($pos[$clsname]);
 			}
-		},array($clsname,$clsvalue));
+		});
 		
-		infra_forr($data['childs'],function($run,$clsvalue,$clsname,$musthave, &$data){
+		infra_forr($data['childs'],function(&$data) use($run,$clsvalue,$clsname,$musthave){
 			$run($data,$run,$clsname,$musthave, $clsvalue);
-		},array($run,$clsvalue,$clsname,$musthave));
+		});
 	};
 	$run($data,$run,$clsname,$musthave);
 	return $data;
@@ -649,15 +648,15 @@ function xls_processGroupMiss(&$data){
 	xls_runGroups($data,function(&$gr,$i,&$group){
 		if(@$gr['miss']&&@$gr['parent']){
 			//Берём детей missгруппы и переносим их в родительскую
-			infra_forr($gr['childs'],function(&$parent, &$g){
-				$g['parent']=&$parent;
-			},array(&$gr['parent']));
+			infra_forr($gr['childs'],function(&$g) use(&$gr){
+				$g['parent']=&$gr['parent'];
+			});
 			array_splice($group['childs'],$i,1,$gr['childs']);
 
-			infra_forr($gr['data'],function(&$parent, &$p){
-				$p['group']=&$parent;
-				$parent['data'][]=$p;
-			},array(&$gr['parent']));
+			infra_forr($gr['data'],function(&$p) use(&$gr){
+				$p['group']=&$gr['parent'];
+				$gr['parent']['data'][]=$p;
+			});
 
 			//infra_forr($gr['childs'],function(&$gr,&$childs, &$d){
 		//		array_splice($childs,($i++)-1,0,array(&$d));
@@ -665,7 +664,7 @@ function xls_processGroupMiss(&$data){
 		//	},array(&$gr,&$childs));
 		//	$arr[]=&$gr;
 		}
-	},array(),true);//Если бежим вперёд повторы несколько раз находим, так как добавляем в конец// Если бежим сзади рушится порядок
+	},true);//Если бежим вперёд повторы несколько раз находим, так как добавляем в конец// Если бежим сзади рушится порядок
 }
 function _xls_sort($a,$b){
 	return ($a < $b) ? -1 : ($a > $b) ? 1 : 0;
@@ -748,12 +747,12 @@ function xls_preparePosFiles(&$pos,$pth,$props=array()){
 	if(!@$pos['texts'])$pos['texts']=array();
 	if(!@$pos['files'])$pos['files']=array();
 	$dir=array();
-	if(infra_forr($props,function(&$dir,&$pos, $name){
+	if(infra_forr($props,function($name) use(&$dir,&$pos){
 		$rname=infra_seq_right($name);
 		$val=infra_seq_get($pos,$rname);
 		if(!$val)return true;
 		$dir[]=$val;
-	},array(&$dir,&$pos))){
+	})){
 		return;
 	}
 
@@ -774,7 +773,7 @@ function xls_preparePosFiles(&$pos,$pth,$props=array()){
 		$p=infra_srcinfo($dir);
 		$dir=$p['folder'];
 	}
-	infra_forr($paths,function(&$pos,$dir, $p){
+	infra_forr($paths,function($p) use(&$pos,$dir){
 		
 		$d=explode('/',$p);
 		$name=array_pop($d);
@@ -795,16 +794,16 @@ function xls_preparePosFiles(&$pos,$pth,$props=array()){
 		if($name{0}=='.')return;
 		$im=array('png','gif','jpg');
 		$te=array('html','tpl','mht','docx');
-		if(infra_forr($im,function($ext, $e){if($ext==$e)return true;},array($ext))){
+		if(infra_forr($im,function($e) use($ext){if($ext==$e)return true;})){
 			$pos['images'][]=$name;
-		}else if(infra_forr($te,function($ext, $e){if($ext==$e)return true;},array($ext))){
+		}else if(infra_forr($te,function($e) use($ext){if($ext==$e)return true;})){
 			$pos['texts'][]=$name;
 		}else{
 			if($ext!='db'){
 				$pos['files'][]=$name;
 			}
 		}
-	},array(&$pos,$dir));
+	});
 	$pos['images']=array_unique($pos['images']);
 	$pos['texts']=array_unique($pos['texts']);
 	$pos['files']=array_unique($pos['files']);
