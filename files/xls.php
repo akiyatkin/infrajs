@@ -79,13 +79,11 @@ function &xls_parseAll($path){
 			
 			//разархивировать
 		    $zip = new ZipArchive;
-		    if ($zip->open(ROOT.$path)) {
+		    if ($zip->open(ROOT.infra_theme($path))) {
 
 		    	mkdir(ROOT.$cacheFolder);
 				$zip->extractTo(ROOT.$cacheFolder);
 				$zip->close();
-			
-				
 
 				$contents = simplexml_load_file(ROOT.$cacheFolder.'xl/sharedStrings.xml');
 
