@@ -51,10 +51,12 @@ function &xls_parseAll($path){
 
 	$data=infra_cache(array($path),'xls_parseAll',function &($path){
 		$file=infra_theme($path);
+		
 		$conf=infra_config();
 		if(!$file&&@$conf['debug']) echo 'Не найден путь '.$path;
 
 		$in=infra_srcinfo($path);
+		
 		$data=array();
 		if($in['ext']=='xls'){
 			require_once(ROOT.'infra/plugins/files/excel_parser/oleread.php');
@@ -79,7 +81,7 @@ function &xls_parseAll($path){
 			
 			//разархивировать
 		    $zip = new ZipArchive;
-		    if ($zip->open(ROOT.$path)) {
+		    if ($zip->open(ROOT.infra_theme($path))) {
 
 		    	mkdir(ROOT.$cacheFolder);
 				$zip->extractTo(ROOT.$cacheFolder);
@@ -987,7 +989,7 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 			unset($group['parent']);
 		});
 
-		xls_runPoss($data,function(&$pos){
+		xls_runPoss($data,function(&$pos,$i){
 			unset($pos['group']);
 		});
 	}

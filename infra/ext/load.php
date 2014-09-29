@@ -474,7 +474,11 @@ function infra__load($path){
 
 			ob_start();
 			//headers надо ловить
-			$rrr=include(ROOT.$plug);
+			$call=function($plug){
+				return include(ROOT.$plug);
+			};
+			$rrr=$call($plug);
+
 			$result=ob_get_contents();
 			$resecho=$result;
 			ob_end_clean();

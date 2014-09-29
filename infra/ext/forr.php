@@ -31,23 +31,16 @@ function infra_isAssoc(&$array){//(c) Kohana http://habrahabr.ru/qa/7689/
 function &infra_forr(&$el,$callback,$back=false){//Бежим по массиву
 	$r=null;
 	if(!$el)return $r;
-
 	$l=sizeof($el);
-	if($back){
-		for($i=$l-1;$i>=0;$i--){
-			if(is_null($el[$i]))continue;
-			$r=$callback($el[$i],$i,$el);
-			//$r=&infra_forcall($callback,array(),$el[$i],$i,$el);
-			if(!is_null($r))return $r;
-		}
-	}else{
-		for($i=0;$i<$l;$i++){//В callback нельзя удалять... так как i сместится
-			if(is_null($el[$i]))continue;
-			$r=$callback($el[$i],$i,$el);
-			//$r=&infra_forcall($callback,array(),$el[$i],$i, $el);
-			if(!is_null($r))return $r;
-		}
+
+	if($back)$el=array_reverse($el);	
+	foreach($el as $i=>$v){
+		if(is_null($el[$i]))continue;
+		$r=$callback($el[$i],$i,$el);
+		if(!is_null($r))return $r;
 	}
+	if($back)$el=array_reverse($el);
+	
 	return $r;
 }
 function &infra_forcall($callback,$nar,&$val,$key=null, &$group=null,$i=null){

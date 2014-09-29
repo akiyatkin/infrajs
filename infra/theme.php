@@ -22,8 +22,7 @@ History
 	//$file='*'.urldecode($_SERVER['QUERY_STRING']);//depricated... надо передавать со звёздочкой	
 	//$file='*'.$_SERVER['QUERY_STRING'];//depricated... надо передавать со звёздочкой
 	//$file=preg_replace("/^\*+/","*",$file);//Если вдруги получилось две из-за того что одна уже была.. будет одна
-	$set='f';
-	$src=infra_theme($file,$set);
+	$src=infra_theme($file);
 	
 	if($src){
 		if(preg_match("/\.js$/",$src)){
