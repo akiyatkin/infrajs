@@ -86,8 +86,6 @@ function &xls_parseAll($path){
 		    	mkdir(ROOT.$cacheFolder);
 				$zip->extractTo(ROOT.$cacheFolder);
 				$zip->close();
-			
-				
 
 				$contents = simplexml_load_file(ROOT.$cacheFolder.'xl/sharedStrings.xml');
 
