@@ -97,7 +97,7 @@ function infra_json_decode($json){
 	*/
     return $data;
 }
-function infra_json_encode($mix){
+function infra_json_encode($mix,$pretty=true){
 	$v=phpversion();
 	$ver=explode('.',$v);
 	if($ver[0]<5||($ver[0]==5&&$ver[1]<4)) return json_encode($mix);//для 5.2.2 и всего что старее 5.2.4
@@ -534,10 +534,10 @@ function infra__load($path){
 
 */
 function infra_echo($ans=array(),$msg=false,$res=null){//Окончание скриптов
-	if(!is_string($html)&&$msg!==false){
+	if($msg!==false){
 		$ans['msg']=$msg;
 	}
-	if(!is_null($res)){
+	if(is_array($res)){
 		$ans['result']=$res;
 	}
 	global $FROM_PHP;

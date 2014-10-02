@@ -13,6 +13,7 @@ infrajs.show_init=function(){
 infrajs.show_animate=function(layer){
 	if(!layer.showanimate)return;
 	infrajs.run(layer,function(l){
+		if(l.showanimate!=undefined)return;
 		l.showanimate=true;
 	});
 }
