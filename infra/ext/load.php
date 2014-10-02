@@ -474,11 +474,7 @@ function infra__load($path){
 
 			ob_start();
 			//headers надо ловить
-			$call=function($plug){
-				return include(ROOT.$plug);
-			};
-			$rrr=$call($plug);
-
+			$rrr=include(ROOT.$plug);
 			$result=ob_get_contents();
 			$resecho=$result;
 			ob_end_clean();
@@ -541,7 +537,7 @@ function infra_echo($ans=array(),$msg=false,$res=null){//Окончание ск
 	if($msg!==false){
 		$ans['msg']=$msg;
 	}
-	if(is_array($res)){
+	if(!is_null($res)){
 		$ans['result']=$res;
 	}
 	global $FROM_PHP;
