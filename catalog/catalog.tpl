@@ -368,7 +368,7 @@
 		color: #404040;
 	}
 		#position a {
-			color: #cb5b1e;
+			/*color: #cb5b1e;*/
 		}
 		#position a img {
 			border: none;
