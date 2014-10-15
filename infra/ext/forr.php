@@ -87,8 +87,6 @@ function &infra_fora(&$el,$callback,$back=false,$nar=array(),&$_group=null,$_key
 		//return $callback($el,$_key,$_group);
 		return infra_forcall($callback,$nar,$el,$_key,$_group);
 	}
-	$r=null;
-	return $r;
 }
 function &infra_fori(&$el,$callback,$nar=false,$back=false,$_key=null,&$_group=null){//Бежим по объекту рекурсивно
 	if(infra_isAssoc($el)===true){
@@ -119,7 +117,7 @@ function &infra_foro(&$obj,$callback,$back=false,$nar=array()){//Бежим по
 	return infra_forr($ar,function&(&$el) use($callback,$nar,&$obj){
 		if(is_null($el['val']))return;
 		return infra_forcall($callback,$nar,$el['val'],$el['key'],$obj);
-	},array(),$back);
+	},$back);
 };
 /*function &infra_foru(&$el,$callback,$back=false){//Бежим по массиву
 	$r=null;
@@ -133,10 +131,10 @@ function &infra_foro(&$obj,$callback,$back=false,$nar=array()){//Бежим по
 		return $callback($v['val'],$v['key'],$el);
 	},$back);
 }*/
-function &infra_forx(&$obj,$callback,$nar=array(),$back=false){//Бежим сначало по объекту а потом по его свойствам как по массивам
-	return infra_foro($obj,function&(&$v,$key) use(&$obj,$callback,$back,$nar){
-		return infra_fora($v,function&(&$el,$i,&$group) use($callback,$nar,$key){
-			return infra_forcall($callback,$nar,$el,$key,$group,$i);
+function &infra_forx(&$obj,$callback,$back=false){//Бежим сначало по объекту а потом по его свойствам как по массивам
+	return infra_foro($obj,function&(&$v,$key) use(&$obj,$callback,$back){
+		return infra_fora($v,function&(&$el,$i,&$group) use($callback,$key){
+			return $callback($el,$key,$group,$i);
 		},$back);
 	},$back);
 };

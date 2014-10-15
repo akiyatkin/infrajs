@@ -360,7 +360,7 @@ function infra_theme($src){
 }
 
 function &infra_loadJSON($path){
-	$store=infra_storeLoad('loadJSON');
+	$store=&infra_storeLoad('loadJSON');
 	global $infra;
 	if(isset($store[$path])){	
 		if($store[$path]['com'])$infra['com']=$store[$path]['com'];

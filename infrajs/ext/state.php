@@ -6,13 +6,13 @@ infra_wait($infrajs,'oninit',function(){
 	infrajs_externalAdd('child','layers');
 	infrajs_externalAdd('childs',function(&$now,&$ext){//Если уже есть значения этого свойства то дополняем
 		if(!$now)$now=array();
-		infra_forx($ext,function(&$now, &$n,$key){
+		infra_forx($ext,function(&$n,$key) use(&$now){
 			if(@$now[$key])return;
 			//if(!now[key])now[key]=[];
 			//else if(now[key].constructor!==Array)now[key]=[now[key]];
 			//now[key].push({external:n});
 			$now[$key]=array("external"=>&$n);
-		},array(&$now));
+		});
 		return $now;
 	});
 	infrajs_externalAdd('state',function(&$now,&$ext,&$layer,&$external,$i){//проверка external в onchange

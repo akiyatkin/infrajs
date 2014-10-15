@@ -157,40 +157,9 @@ function &xls_parseAll($path){
 							$c=$c[0];
 							$syms[$c]=true;
 							$data[$list][$r][$c]=(string)$value;
-							if($list=='Рубашки'){
-								
-								/*$strr='Классическая модель. Можно использовать погоны. Носится навыпуск. Пояс регулируется по размеру с помощью боковых резинок. Карманы: 2 на груди. Рукав короткий.';
-								if(trim($value)==$strr){
-									echo $file;
-									print_r($cell);
-									exit;
-								}*/
-
-								/*if($r==5){
-									if($c=='K'){
-										echo '<pre>';
-										print_r($data[$list][$r]);
-										echo '<hr>';
-										
-										print_r($cell);
-										echo "<br>";
-										print_r($value);
-										echo "<br>";
-										print_r($contents[1899]);
-										echo '<hr>';
-										$realnum=1898;
-										echo $realnum;
-										echo "<br>";
-										print_r($contents[$realnum]->t);
-										//}
-										exit;
-									}
-								}*/
-							}
 						}
 					}
 				}
-				
 				
 				$syms=array_keys($syms);
 				natsort($syms);
@@ -217,7 +186,6 @@ function &xls_parseAll($path){
 						}
 					}
 				}
-				
 		    }
 		    // Если что-то пошло не так, возвращаем пустую строку
 		    //return "";
@@ -243,7 +211,6 @@ function &xls_make2($path){
 function &xls_make($path){
 
 	$datamain=xls_parseAll($path);
-	
 	if(!$datamain)return;
 	$p=infra_srcinfo($path);
 	$title=$p['name'];
