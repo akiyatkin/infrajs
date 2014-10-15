@@ -117,48 +117,50 @@ function infra_admin_time(){
 	});
 }
 function infra_admin_cache($name,$call,$args=array(),$re=false){//Запускается один раз для админа, остальные разы возвращает кэш из памяти
-	$conf=infra_config();
+	return infra_once('infra_admin_cache'.$name,function($args,$name) use($name,$call,$re){
+		$conf=infra_config();
 
-	$strargs=infra_hash($args);
-	$name=$name.$strargs;
+		$strargs=infra_hash($args);
+		$name=$name.$strargs;
 
-	$data=infra_mem_get('infra_admin_once_'.$name);
-	$atime=infra_admin_time();
-	if($conf['debug']||$re||!$data||$data['time']<$atime){
-		$data=array('time'=>time());
+		$data=infra_mem_get('infra_admin_once_'.$name);
+		$atime=infra_admin_time();
+		if($conf['debug']||$re||!$data||$data['time']<$atime){
+			$data=array('time'=>time());
 
-		//здесь для примера показана
-		//@header('Cache-control:no-cache');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
-					$header_name='cache-control';//Проверка установленного заголовока о запрете кэширования, до запуска кэшируемой фукцнии
-					$list=headers_list();
-					$cache_control=infra_forr($list,function($row) use($header_name){
-						$r=explode(':',$row);
-						if(stristr($r[0],$header_name)!==false) return trim($r[1]);
-					});
-					if($cache_control)header_remove('cache-control');
-
-
-		$data['result']=call_user_func_array($call,array_merge($args,array($re)));
-
-					$list=headers_list();//Проверяем появился ли заголовок после запуска функции кэшируемой
-					$cache_control2=infra_forr($list,function($row) use($header_name){
-						$r=explode(':',$row);
-						if(stristr($r[0],$header_name)!==false) return trim($r[1]);
-					});
-					if(!$cache_control2&&$cache_control)@header('cache-control: '.$cache_control);
-
-					if(!$re&&(!$cache_control2||stristr($cache_control2,'no-cache')===false)){
-						//Кэшируем только если нет заголовка, или он не содержит no cache.
-						//При повторном вызове session_start нужно руками вызывать header('cache-control:no-cache') чтобы информация была получена что обработка динамическая
-
-		infra_mem_set('infra_admin_once_'.$name,$data);
-					}else if($data){//Если текущие данные не кэшируются, то удаляются
-						//infra_mem_flush();
-						infra_mem_delete('infra_admin_once_'.$name);
-					}
+			//здесь для примера показана
+			//@header('Cache-control:no-cache');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
+						$header_name='cache-control';//Проверка установленного заголовока о запрете кэширования, до запуска кэшируемой фукцнии
+						$list=headers_list();
+						$cache_control=infra_forr($list,function($row) use($header_name){
+							$r=explode(':',$row);
+							if(stristr($r[0],$header_name)!==false) return trim($r[1]);
+						});
+						if($cache_control)header_remove('cache-control');
 
 
-	}
-	return $data['result'];
+			$data['result']=call_user_func_array($call,array_merge($args,array($re)));
+
+						$list=headers_list();//Проверяем появился ли заголовок после запуска функции кэшируемой
+						$cache_control2=infra_forr($list,function($row) use($header_name){
+							$r=explode(':',$row);
+							if(stristr($r[0],$header_name)!==false) return trim($r[1]);
+						});
+						if(!$cache_control2&&$cache_control)@header('cache-control: '.$cache_control);
+
+						if(!$re&&(!$cache_control2||stristr($cache_control2,'no-cache')===false)){
+							//Кэшируем только если нет заголовка, или он не содержит no cache.
+							//При повторном вызове session_start нужно руками вызывать header('cache-control:no-cache') чтобы информация была получена что обработка динамическая
+
+			infra_mem_set('infra_admin_once_'.$name,$data);
+						}else if($data){//Если текущие данные не кэшируются, то удаляются
+							//infra_mem_flush();
+							infra_mem_delete('infra_admin_once_'.$name);
+						}
+
+
+		}
+		return $data['result'];
+	},array($args,$name),$re);
 }
 ?>
