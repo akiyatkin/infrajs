@@ -484,8 +484,10 @@ function xls_merge(&$gr,&$addgr){//Всё из группы addgr нужно п�
 	$i=infra_forr($addgr['parent']['childs'],function(&$v,$i) use(&$addgr){
 		if(infra_isEqual($v,$addgr))return $i;
 	});
-	array_splice($addgr['parent']['childs'],$i,1);//Удалили addgr там где группа была до этоо, заменив на новую
 
+	array_splice($addgr['parent']['childs'],$i,1);//Удалили addgr там где группа была до этоо, заменив на новую
+	$addgr['parent']['childs']=array_values($addgr['parent']['childs']);
+	//return;	
 	//$gr['miss']=0;
 	/*	Группа Мебель в Каталог.xls не содержит позиций
 		Excel Мебель.xls содержит позиции только в подгруппах листах
