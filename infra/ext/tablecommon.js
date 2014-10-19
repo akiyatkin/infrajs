@@ -1,5 +1,4 @@
 infra.tableCommon=function(){
-	infra.require('infra/lib/jquery/jquery.js');
 	$('table.common').not('.commoned').addClass('commoned').each(function(){
 		var body=$(this).find('>tbody');
 		if(!body.length)body=$(this);		

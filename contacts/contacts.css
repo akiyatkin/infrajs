@@ -5,7 +5,7 @@
 			padding-top:15px;
 			padding-left:20px;
 			padding-right:20px;
-			width: 292px;
+			width: 330px;
 		}
 		.plugin_contacts .sub_center label {
 		}
@@ -28,7 +28,7 @@
 		.plugin_contacts .answer {
 			width: 290px;
 		}
-		.plugin_contacts input {
+		/*.plugin_contacts input {
 			width: 290px;
 			height: 18px;
 			padding-top: 2px;
@@ -36,7 +36,7 @@
 			margin: 0 auto;
 			margin-bottom:10px;
 			margin-top:2px;
-		}
+		}*/
 		.plugin_contacts textarea {
 			width: 290px;
 			height:102px;

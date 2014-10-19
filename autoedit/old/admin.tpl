@@ -71,7 +71,6 @@
 		{data.image?:showidimage}
 	</div>
 	<script type="text/javascript">
-		infra.load('infra/lib/jquery/jquery.js');
 
 		var div=$('#{div}');
 		var type="{config.type}";

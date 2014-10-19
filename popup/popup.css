@@ -14,13 +14,14 @@
 	padding: 8px 0 7px 0;
 	text-align:right;
 }
-	.wpopup .close {
-		cursor:pointer;
-		font-weight:normal;
-		text-decoration:underline;
-		font-size: 11px;
-		line-height: 16px;
-	}
+.wpopup .close {
+	cursor:pointer;
+	font-weight:normal;
+	text-decoration:underline;
+	font-size: 12px;
+	line-height: 3px;
+	color: red;
+}
 .wpopup .esc {
 	font-size: 11px;
 	/*color: #909090;*/

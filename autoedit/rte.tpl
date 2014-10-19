@@ -61,8 +61,6 @@
 	<script type="text/javascript">
 		console.log('rte');
 		infra.when(infrajs,'onshow',function(){ //Надо при первом следующем
-
-			infra.require('infra/lib/jquery/jquery.js');
 			var layer=infrajs.getUnickLayer("{unick}");
 			var div=$('#'+layer.div);
 			var area=div.find('textarea.rte');

@@ -1082,30 +1082,33 @@ $infra_template_scope=array(
 		if(!$n&&$n!=0)$n=$def;
 		return $n;
 	},
-	'~cost'=>function($cost,$inp=''){
-		if($inp)$inp=' ';
-		else $inp='&nbsp;';
+	'~cost'=>function($cost,$text=false){
+		
 		$cost=(string)$cost;
 		$ar=explode('.',$cost);
-
+		$cop='';
 		if(sizeof($ar)==2){
-			$rub=$ar[0];
+			$cost=$ar[0];
 			$cop=$ar[1];
 			if(strlen($cop)==1){
 				$cop.='0';
 			}
-			/*if(strlen($cop)>2){//Дробные числа рушаться в php
-				$cop=$cop{0}.($cop{1}+1);
-			}*/
-			if(strlen($rub)>4){//1000
-				$l=strlen($rub);
-				$rub=substr($rub,0,$l-3).$inp.substr($rub,$l-3,$l);
-			}
-			$cost=$rub.','.$cop;
-		}else{
-			if(strlen($cost)>4){//1000
-				$l=strlen($cost);
-				$cost=substr($cost,0,$l-3).$inp.substr($cost,$l-3,$l);
+			if($cop=='00')$cop='';
+		}
+		if($text)$inp=' ';
+		else $inp='&nbsp;';
+		if(strlen($cost)>4){//1000
+			$l=strlen($cost);
+			$cost=substr($cost,0,$l-3).$inp.substr($cost,$l-3,$l);
+		}else if(strlen($cost)>4){//1000
+			$l=strlen($cost);
+			$cost=substr($cost,0,$l-3).$inp.substr($cost,$l-3,$l);
+		}
+		if($cop){
+			if($text){
+				$cost=$cost.','.$cop;
+			}else{
+				$cost=$cost.'<small>,'.$cop.'</small>';
 			}
 		}
 		return $cost;

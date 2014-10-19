@@ -1002,33 +1002,30 @@ infra.template={
 			if(!n&&n!=0)n=def;
 			return n;
 		},
-		'~cost':function(cost,inp){
-			if(inp)inp=' ';
-
+		'~cost':function(cost,text){
+			if(text)inp=' ';
 			else inp='&nbsp;';
+
 			if(!cost&&cost!=0)cost='';
 			cost=String(cost);
 			var ar=cost.split(/[,\.]/);
 			if(ar.length==2){
-				var rub=ar[0];
+				var cost=ar[0];
 				var cop=ar[1];
 				if(cop.length==1){
 					cop+='0';
 				}
-				/*if(cop.length>2){//Дробные числа рушаться в php
-					cop=String(cop.charAt(0))+String((Number(cop.charAt(1))+1));
-				}*/
-				if(rub.length>4){ //1000
-					var l=rub.length;
-					rub=rub.substr(0,l-3)+inp+rub.substr(l-3,l);
-				}
-				cost=rub+','+cop;
-			}else{
-				if(cost.length>4){ //1000
-					var l=cost.length;
-					cost=cost.substr(0,l-3)+inp+cost.substr(l-3,l);
-				}
+				if(cop=='00')cop='';
 			}
+			if(cost.length>4){ //1000
+				var l=cost.length;
+				cost=cost.substr(0,l-3)+inp+cost.substr(l-3,l);
+			}
+			if(cop){
+				if(text)cost=cost+','+cop;
+				else cost=cost+'<small>,'+cop+'</small>';
+			}
+
 			return cost;
 		},
 		"infra":{

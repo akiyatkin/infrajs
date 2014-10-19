@@ -118,8 +118,7 @@
 	
 {logo:}
 	<img src="infra/plugins/imager/imager.php?w=300&src={infra.conf.catalog.dir}{Производитель}/{article}/" style="margin:0 0 5px 5px;">
-{itemcost:}{~cost(Цена)} руб.
-{itemnocost:}<a style="color:white" href="?Контакты менеджеров">Уточнить</a>
+
 {country:}<div style="text-align:right; font-size: 11px; margin-top:5px;">
 		{producer.Страна|}
 	</div>
@@ -203,17 +202,7 @@
 			
 			<tr>
 			<td>
-					<table style="float:left" cellpadding="0" cellspacing="0">
-						<tr>
-							<td class="price" style="padding:0 10px">{Цена?:itemcost?:itemnocost}</td>
-							<td>
-								<div data-article="{article}" data-producer="{Производитель}" class="basket_img"></div>
-							</td>
-						</tr>
-					</table>
-					<div class="posbasket" style="margin-bottom:3px; display:none">
-						<small>Позиция в <a href="?office/cart">корзине</a></small>
-					</div>
+				<div id="priceblock" style="float:left"></div>
 					
 			</td><td style="width:100%"><div style="line-height:30px; font-size:16px; text-align: left;">
 					Телефон менеджера <span style="font-size:24px">+7 ({data.phone.code}) {data.phone.number}</span>
@@ -221,7 +210,7 @@
 			<tr><td colspan="2">
 				
 				<table>
-					<tr><td>Синхронизация{Код?:space}{Код}:</td><td>{Синхронизация=:Да?:успешно?(Код?:ошибка?:нет)}{Наличие на складе?:nalichie}</td></tr>
+					<tr><td>Синхронизация{Код?:space}{Код}:&nbsp;</td><td>{Синхронизация=:Да?:успешно?(Код?:ошибка?:нет)}{Наличие на складе?:nalichie}</td></tr>
 				</table>
 			</td></tr>
 		</table>

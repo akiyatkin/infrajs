@@ -26,6 +26,7 @@
 		"myenv":{
 			"filters":true
 		},
+		"tplsm":"*cart/priceblock.tpl",
 		"seotpl":{"link":"{istate.parent}/{{.}}"},
 		"conf_prod":true,
 		"parsedtpl":"{config.sel}",
@@ -57,6 +58,14 @@
 			"autoedittpl":{ "fast":"*Каталог/{state.parent.name}/{state.name}/" },
 			"jsontpl":"*cart/catalog.php?type=pos&val={state.parent.name}&art={state.name}",
 			"seotpl":{"link":"{istate.parent.parent}/{{producer}}/{{article}}"},
+			"divs":{
+				"priceblock":{
+					"tpl":"*cart/priceblock.tpl",
+					"jsontpl":"{parent.json}",
+					"tplroot":"priceblock",
+					"dataroot":"data.pos"
+				}
+			},
 			"seo":{
 				"name":"Позиция каталога",
 				"json":"*cart/catalog.php?type=pos&val={producer}&art={article}",

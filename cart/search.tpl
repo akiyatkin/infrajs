@@ -40,7 +40,7 @@
 					width:440px;
 					height:20px;
 				}
-				.cat_items .cost {
+				/*.cat_items .cost {
 					padding:4px 8px;
 					background-color:#89B806;
 					vertical-align:middle;
@@ -51,11 +51,11 @@
 				}
 				.cat_items .cost .unit {
 					font-size:12px;
-				}
+				}*/
 				.cat_items .title a {
 					display:block;
 					background-color:#EFEFEF;
-					height:100%;
+					/*height:100%;*/
 					padding:4px 8px;
 					text-decoration: none;
 					color:#222222;
@@ -64,12 +64,9 @@
 					background-color:#009EC3;
 					color:white;
 				}
-				.cat_items td {
-					color:black;
-				}
+				
 				.cat_items .producer {
 					padding:10px 4px;
-					text-align:center;
 					vertical-align:top;
 
 				}
@@ -84,6 +81,10 @@
 				.cat_items .img img {
 					padding:2px;
 					margin:auto;
+				}
+				.cat_items .img {
+					width:120px;
+					height:120px;
 				}
 				.cat_items .img div {
 					box-shadow: 0px 0px 4px #009EC3;
@@ -104,7 +105,7 @@
 				}
 				.cat_items .catdescr {
 					display:none;
-					margin-top:10px;
+					/*margin-top:10px;*/
 				}
 				.cat_items .catdescr p {
 					font-size:12px;
@@ -149,15 +150,8 @@
 					</div>
 					</a>
 				</td>
-				<td class="title">
+				<td class="title" colspan="3">
 					<a href="?Каталог/{Производитель}/{article}/">{Наименование}</a>
-				</td>
-				<td class="cost">
-					{Цена?:itemcost?:itemnocost}
-				</td>
-				<td class="cart">
-					<div data-article="{article}" data-producer="{Производитель}" 
-					class="basket_img {infra.session.get(:basket.{Производитель} {article})?:basket_img_sel}"></div>
 				</td>
 			</tr>
 			<tr>
@@ -169,16 +163,14 @@
 					</div>
 				</td>
 				<td rowspan="2" colspan="2" class="producer">
-					<div class="posbasket" style="margin-bottom:10px; display:{infra.session.get(:basket.{Производитель} {article})?:block?:none}">
-						<small>Позиция в <a href="?office/cart">корзине</a></small>
-					</div>
 					<a title="Посмотреть продукцию {Производитель}" href="?{state.parent}/{Производитель}">
 						<img src="infra/plugins/imager/imager.php?w=100&h=100&src={infra.conf.catalog.dir}{Производитель}/&or=*imager/empty" />
 					</a>
+					{:priceblock}
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2"><span class="a descr">Краткое описание</span>
+				<td colspan="1" style="padding:0 8px;"><span class="a descr">Краткое описание</span>
 					<div class="catdescr">
 						<p>
 						{Описание}
@@ -188,7 +180,7 @@
 				</td>
 			</tr>
 			</table>
-		{nalichie:}{Наличие на складе}<br>
+		{nalichie:}<span class="label {Наличие на складе=:В наличии?:label-primary?:label-info}">{Наличие на складе}</span><br>
 		{cat_more:}{~key}:&nbsp;{.}{~last()|:comma} 
 		{cat_forward:}Вперёд&nbsp;→
 		{cat_forward_href:}<a onclick="infrajs.scroll=false" href="?{state}/p{~sum(page,:1)}">{:cat_forward}</a>

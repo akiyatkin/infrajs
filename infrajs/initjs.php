@@ -75,21 +75,14 @@
 		$html.=$require('*session/session.js');
 		$html.=$require('*infrajs/ext/session.js');
 		$html.=$require('*infrajs/ext/autofocus.js');
-
 		$html.=$require('*infrajs/make.js');
+
 
 		if(isset($_GET['loadJSON'])){
 			$ts=explode(',',$_GET['loadJSON']);
 			for($i=0,$l=sizeof($ts);$i<$l;$i++){
 				if(!$ts[$i])continue;
 				$html.=$loadJSON($ts[$i]);
-			}
-		}
-		if(isset($_GET['require'])){
-			$ts=explode(',',$_GET['require']);
-			for($i=0,$l=sizeof($ts);$i<$l;$i++){
-				if(!$ts[$i])continue;
-				$html.=$require($ts[$i]);
 			}
 		}
 		if(isset($_GET['loadTEXT'])){

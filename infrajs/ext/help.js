@@ -18,7 +18,6 @@ infrajs.help={popup:{},width:false,img:false,
 infrajs.listen(infrajs,'layer.onshow',function(){
 	var layer=this;
 	if(!layer.help)return;
-	infra.load('infra/lib/jquery/jquery.js');
 	var div=$('#'+layer.div); //Помощь
 	var paths=[];
 	div.find('.help[title]').click(function(){

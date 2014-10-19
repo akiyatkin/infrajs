@@ -42,8 +42,6 @@
 		
 		//Внутри расширений зависимости подключаются, если используется API
 		//Здесь подключение дублируется, тем более только здесь это попадёт в кэш
-
-		$html.=$require('infra/lib/jquery/jquery.js');
 		$html.=$require('*infra/ext/html.js');
 		$html.=$require('*infra/ext/template.js');
 		$html.=$require('*infra/ext/state.js');

@@ -30,7 +30,6 @@
 
 			this.img.style.top=dsoctop+'px';
 			*/
-			infra.require('infra/lib/jquery/jquery.js');
 			var pw=$(this.img).width();
 			var dw=$(document).width();
 			var m=dw/2-pw/2;
