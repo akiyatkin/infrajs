@@ -511,10 +511,10 @@
 				$seo=$_POST['seo'];
 				$def=$_POST['def'];
 				$keys=array();
-				infra_foro($seo,function(&$seo,&$def,&$keys, $val,$key){
+				infra_foro($seo,function($val,$key) use(&$seo,&$def,&$keys){
 					if($seo[$key]==$def[$key])return;
 					$keys[$key]=$val;
-				},array(&$seo,&$def,&$keys));
+				});
 
 				if(sizeof($keys)==0){
 					$r=unlink(ROOT.$src);

@@ -38,7 +38,7 @@ function infrajs_divtpl(&$layer){
 }
 function infrajs_divcheck(&$layer){
 	$start=false;
-	if(infrajs_run(infrajs_getWorkLayers(),function(&$layer,&$start,&$l){//Пробежка не по слоям на ветке, а по всем слоям обрабатываемых после.. .то есть и на других ветках тоже
+	if(infrajs_run(infrajs_getWorkLayers(),function(&$l) use(&$layer,&$start){//Пробежка не по слоям на ветке, а по всем слоям обрабатываемых после.. .то есть и на других ветках тоже
 		if(!$start){
 			if(infra_isEqual($layer,$l))$start=true;
 			return;
@@ -48,7 +48,7 @@ function infrajs_divcheck(&$layer){
 			infrajs_isSaveBranch($layer,infrajs_isParent($l,$layer));
 			return true;//Слой который дальше показывается в томже диве найден
 		}
-	},array(&$layer,&$start)))return false;
+	}))return false;
 }
 
 

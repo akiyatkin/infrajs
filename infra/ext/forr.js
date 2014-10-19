@@ -22,10 +22,18 @@ infra.foro=function(obj,callback,back){//Бежим по объекту
 		if(((!obj.hasOwnProperty||obj===location)&&obj[key])||obj.hasOwnProperty(key))ar.push({key:key,val:obj[key]});
 	}
 	while(el=ar[fn]()){
-		if(el.val===undefined)continue;
+		if(infra.isNull(el.val))continue;
 		//r=infra.exec(callback,'infra.foro',[el.val,el.key,obj],[back]);//callback,name,context,args,more
 		r=callback.apply(infra,[el.val,el.key,obj]);
-		if(r!==undefined)return r;
+		if(infra.isNull(r))continue;
+		if(r instanceof infra.Fix){
+			if(r.opt.del){
+				delete obj[el.key];
+			}
+			if(!infra.isNull(r.ret))return r.ret;
+		}else{
+			return r;
+		}
 	}
 };
 infra.fori=function(obj,callback,back,key,group){//Бежим по объекту рекурсивно
@@ -44,17 +52,15 @@ infra.fori=function(obj,callback,back,key,group){//Бежим по объект�
 };
 infra.fora=function(el,callback,back,group,key){//Бежим по массиву рекурсивно
 	var r,i;
-
-	if(el&&el.constructor===Array){
+	if(el instanceof Array){
 		r=infra.forr(el,function(v,i){
 			r=infra.fora(v,callback,back,el,i);
-			if(r!==undefined)return r;
+			if(!infra.isNull(r))return r;
 		},back);
-		if(r!==undefined)return r;
-	}else if(el!==undefined){//Если undefined callback не вызывается, Таким образом можно безжать по переменной не проверя определена она или нет.
-		//r=infra.exec(callback,'infra.fora',[el,key,group],[back]);//callback,name,context,args,more
-		r=callback.apply(infra,[el,key,group]);//callback,name,context,args,more
-		if(r!==undefined)return r;
+		if(!infra.isNull(r))return r;
+	}else if(!infra.isNull(el)){
+		r=callback.apply(infra,[el,key,group]);
+		return r;
 	}
 };
 infra.forc=function(obj,path,callback,i){// 'layer'  ['childs']
@@ -73,23 +79,55 @@ infra.forc=function(obj,path,callback,i){// 'layer'  ['childs']
 	if(typeof(path[i])==='undefined')return;
 	infra.forc(obj[path[i]],path,callback,i);
 }
+infra.Fix=function(opt,ret){
+	if(typeof(opt)=='string'){
+		if(opt=='del'){
+			opt={
+				del:true,
+				ret:ret
+			}
+		}
+	}
+	this.opt=opt;//Класс сиганала об изменении массива
+}
+infra.isNull=function(r){
+	if(r===undefined)return true;
+	if(r===null)return true;
+	return false;
+}
 infra.forr=function(el,callback,back){//Бежим по массиву
-	if(!el)return;
-	var r,i;
-	var l=el.length;
+	if(!(el instanceof Array))return;
+	var r,i,l;
+
 	if(back){
-		for(i=l-1;i>=0;i--){
-			if(el[i]===undefined)continue;
-			//r=infra.exec(callback,'infra.forr',[el[i],i,el],[back]);//callback,name,context,args,more
+		for(i=el.length-1;i>=0;i--){
+			if(infra.isNull(el[i]))continue;
 			r=callback.apply(infra,[el[i],i,el]);//callback,name,context,args,more
-			if(r!==undefined)return r;
+			if(infra.isNull(r))continue;
+			if(r instanceof infra.Fix){
+				if(r.opt.del){
+					el.splice(i,1);
+				}
+				if(!infra.isNull(r.ret))return r.ret;
+			}else{
+				return r;
+			}
 		}
 	}else{
-		for(i=0;i<l;i++){//В callback нельзя удалять... так как i сместится
-			if(el[i]==undefined)continue;
-			//r=infra.exec(callback,'infra.forr',[el[i],i,el],[back]);//callback,name,context,args,more
+		for(i=0,l=el.length;i<l;i++){//В callback нельзя удалять... так как i сместится
+			if(infra.isNull(el[i]))continue;
 			r=callback.apply(infra,[el[i],i,el]);//callback,name,context,args,more
-			if(r!==undefined)return r;
+			if(infra.isNull(r))continue;
+			if(r instanceof infra.Fix){
+				if(r.opt.del){
+					el.splice(i,1);
+					l--;
+					i--;
+				}
+				if(!infra.isNull(r.ret))return r.ret;
+			}else{
+				return r;
+			}
 		}
 	}
 };

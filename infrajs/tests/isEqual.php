@@ -56,10 +56,10 @@
 	
 	infra_require('*infrajs/init.php');
 	infra_require('*infrajs/initphp.php');
-	$layer=&infrajs_run($layers,function&($msg,&$layer){
+	$layer=&infrajs_run($layers,function&(&$layer) use($msg){
 		$layer['test']=$msg;
 		return $layer;
-	},array($msg));
+	});
 	//=========*/
 
 

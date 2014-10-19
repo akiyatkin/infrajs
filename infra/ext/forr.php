@@ -28,20 +28,54 @@ function infra_isAssoc(&$array){//(c) Kohana http://habrahabr.ru/qa/7689/
 	$keys = array_keys($array);
 	return array_keys($keys) !== $keys;
 }
-function &infra_forr(&$el,$callback,$back=false){//Бежим по массиву
-	$r=null;
-	if(!$el)return $r;
-	$l=sizeof($el);
-
-	if($back)$el=array_reverse($el);	
-	foreach($el as $i=>$v){
-		if(is_null($el[$i]))continue;
-		$r=$callback($el[$i],$i,$el);
-		if(!is_null($r))return $r;
+class infra_Fix {
+	function __construct($opt,$ret=null){
+		if(is_string($opt)){
+			if($opt=='del'){
+				$opt=array(
+					'del'=>true,
+					'ret'=>$ret
+				);
+			}
+		}
+		$this->opt=$opt;
 	}
-	if($back)$el=array_reverse($el);
-	
-	return $r;
+}
+function &infra_forr(&$el,$callback,$back=false){//Бежим по массиву
+	if(!is_array($el))return;
+
+	if($back){
+		for($i=sizeof($el)-1;$i>=0;$i--){
+			if(is_null($el[$i]))continue;
+			$r=$callback($el[$i],$i,$el);
+			if(is_null($r))continue;
+			if($r instanceof infra_Fix){
+				if($r->opt['del']){
+					array_splice($el,$i,1);
+				}
+
+				if(!is_null($r->opt['ret']))return $r->opt['ret'];
+			}else{
+				return $r;
+			}
+		}
+	}else{
+		for($i=0,$l=sizeof($el);$i<$l;$i++){
+			if(is_null($el[$i]))continue;
+			$r=$callback($el[$i],$i,$el);
+			if(is_null($r))continue;
+			if($r instanceof infra_Fix){
+				if($r->opt['del']){
+					array_splice($el,$i,1);
+					$l--;
+					$i--;
+				}
+				if(!is_null($r->opt['ret']))return $r->opt['ret'];
+			}else{
+				return $r;
+			}
+		}
+	}
 }
 function &infra_forcall($callback,$nar,&$val,$key=null, &$group=null,$i=null){
 	$param=array_merge($nar,array(&$val,$key,&$group,$i));
@@ -102,7 +136,7 @@ function &infra_fori(&$el,$callback,$nar=false,$back=false,$_key=null,&$_group=n
 		//if(r!==undefined)return r;
 	}
 };
-function &infra_foro(&$obj,$callback,$back=false,$nar=array()){//Бежим по объекту
+function &infra_foro(&$obj,$callback,$back=false){//Бежим по объекту
 	if(is_array($back)){
 		$nar=$back;
 		$back=false;
@@ -114,9 +148,18 @@ function &infra_foro(&$obj,$callback,$back=false,$nar=array()){//Бежим по
 	foreach($obj as $key=>&$val){
 		$ar[]=array('key'=>$key,'val'=>&$val);
 	}
-	return infra_forr($ar,function&(&$el) use($callback,$nar,&$obj){
+	return infra_forr($ar,function&(&$el) use($callback,&$obj){
 		if(is_null($el['val']))return;
-		return infra_forcall($callback,$nar,$el['val'],$el['key'],$obj);
+		$r=$callback($el['val'],$el['key'],$obj);
+		if(is_null($r))return;
+		if($r instanceof infra_Fix){
+			if($r->opt['del']){
+				unset($obj[$el['key']]);
+			}
+			if(!is_null($r->opt['ret']))return $r->opt['ret'];
+		}else{
+			return $r;
+		}
 	},$back);
 };
 /*function &infra_foru(&$el,$callback,$back=false){//Бежим по массиву

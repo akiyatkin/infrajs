@@ -19,7 +19,7 @@
 		//Слои myenv надо показывать тогдаже когда и показывается сам слой
 		$myenv=null;
 		$ll=null;
-		infrajs_run(infrajs_getWorkLayers(),function(&$layer,&$myenv,&$ll,&$l){//Есть окружение и мы не нашли ни одного true для него
+		infrajs_run(infrajs_getWorkLayers(),function(&$l) use(&$layer,&$myenv,&$ll){//Есть окружение и мы не нашли ни одного true для него
 			if(!isset($l['myenv']))return;
 
 			
@@ -37,7 +37,7 @@
 				$ll=&$l;
 				
 			}
-		},array(&$layer,&$myenv,&$ll));
+		});
 
 		
 

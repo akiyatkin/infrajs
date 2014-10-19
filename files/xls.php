@@ -307,23 +307,7 @@ function &xls_runPoss(&$data,$callback,$back=false){
 		},$back);
 	},$back);
 }
-function &xls_runGroups(&$data,$callback,$back=false,$i=0,&$group=false){
-	if(!$back){
-		$r=&$callback($data,$i,$group);
-		if(!is_null($r))return $r;
-	}
-	
-	$r=&infra_forr($data['childs'],function(&$val,$i) use($callback,$back,&$data){
-		return xls_runGroups($val,$callback,$back,$i,$data);
-	},$back);
-	if(!is_null($r))return $r;
-	
-	if($back){
-		$r=&$callback($data,$i,$group);
-		if(!is_null($r))return $r;
-	}
-	return $r;
-}
+
 function _xls_createGroup($title='',&$parent,$type,&$row=false){
 	$tparam='';
 	$descr=array();
@@ -481,13 +465,8 @@ function xls_processPossMore(&$data,$props){
 }
 
 function xls_merge(&$gr,&$addgr){//Всё из группы addgr нужно перенести в gr
-	$i=infra_forr($addgr['parent']['childs'],function(&$v,$i) use(&$addgr){
-		if(infra_isEqual($v,$addgr))return $i;
-	});
+	
 
-	array_splice($addgr['parent']['childs'],$i,1);//Удалили addgr там где группа была до этоо, заменив на новую
-	$addgr['parent']['childs']=array_values($addgr['parent']['childs']);
-	//return;	
 	//$gr['miss']=0;
 	/*	Группа Мебель в Каталог.xls не содержит позиций
 		Excel Мебель.xls содержит позиции только в подгруппах листах
@@ -521,24 +500,60 @@ function xls_merge(&$gr,&$addgr){//Всё из группы addgr нужно п�
 	}
 	return;
 }
+function &xls_runGroups(&$data,$callback,$back=false,$i=0,&$group=false){
+	if(!$back){
+		$r=&$callback($data,$i,$group);
+		if(!is_null($r))return $r;
+	}
+	
+	$r=&infra_forr($data['childs'],function(&$val,$i) use($callback,$back,&$data){
+		return xls_runGroups($val,$callback,$back,$i,$data);
+	},$back);
+	if(!is_null($r))return $r;
+	
+	if($back){
+		$r=&$callback($data,$i,$group);
+		if(!is_null($r))return $r;
+	}
+	return $r;
+}
 function xls_processGroupFilter(&$data){
 	$all=array();
-
-	xls_runGroups($data,function(&$gr,$i,&$group) use(&$all){
+	xls_runGroups($data,function(&$gr) use(&$all){
 		$title=infra_strtolower($gr['title']);
-		//echo $gr['type'].':'.$title.'<br>';
-		if(!@$all[$title]){
-			$all[$title]=&$gr;
+		//echo $title.'<br>';
+		if(!isset($all[$title])){
+			$all[$title]=array('orig'=>&$gr,'list'=>array());
 		}else{//Ну вот и нашли повторение
-			//var group=all[gr.title].parent.childs
-			//var i=infra.forr(group,function(v,i){if(v===all[gr.title])return i});
-			//group.splice(i,1);
-			//echo $title.'<br>';
-			xls_merge($gr,$all[$title]);//Добавляем в последнее совпадение в новое найденное добавляем старое найденное
-
-			$all[$title]=&$gr;
+			$all[$title]['list'][]=&$gr;
+			//xls_merge($all[$title],$gr);
+			//у некой прошлой группы появляются новые childs.. но мы всё ещё бежим по какому-то его childs и новые добавленные будут проигнорированны
+			//return new infra_Fix('del');
 		}
-	},true);
+	});
+	infra_foro($all,function(&$des){
+		infra_forr($des['list'],function(&$gr) use($des){
+			xls_merge($des['orig'],$gr);
+			infra_forr($gr['parent']['childs'],function(&$g) use(&$gr){
+				if(infra_isEqual($g,$gr))return new infra_Fix('del',true);
+			});
+			
+		});
+
+	});
+	/*//$cat=$data['childs'][0];
+	$cat=$data;
+	unset($cat['parent']);
+	infra_forr($cat['childs'],function(&$g){
+		//if(!is_string($g['parent']))
+		$g['parent']=&$g['parent']['title'];
+		//unset($g['parent']);
+		$g['childs']=sizeof($g['childs']);
+		$g['data']=sizeof($g['data']);
+	});
+	echo '<pre>';
+	print_r($cat);
+	exit;
 	/*
 	xls_runGroups($data,function(&$gr,$i,&$group){//Удаляем пустые группы
 		if(!$group) return;//Кроме верхней группы
@@ -547,7 +562,6 @@ function xls_processGroupFilter(&$data){
 		}
 	},array(),true);
 	*/
-
 }
 function xls_processDescr(&$data){//
 	xls_runGroups($data,function(&$gr){

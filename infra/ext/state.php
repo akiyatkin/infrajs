@@ -49,36 +49,34 @@ class infra_State{
 		}
 		return infra_seq_short($s,'/');
 	}
-	function run($cl,$args=array()){
+	function run($cl){
 		$obj=&$this->obj;
 		$old=&$this->old;
 
-		infra_foro($old,function($cl,&$obj,&$old,&$args, &$val,$s){//Сначало по тем которых нету
+		infra_foro($old,function(&$val,$s) use($cl,&$obj,&$old){//Сначало по тем которых нету
+			call_user_func_array($cl,array($s,$obj[$s],$old[$s]));
+		});
 
-			call_user_func_array($cl,array_merge($args,array($s,$obj[$s],$old[$s])));
-
-		},array($cl,&$obj,&$old,&$args));
-
-		infra_foro($obj,function($cl,&$obj,&$old,&$args, &$val,$s){//Теперь по тем которые есть
+		infra_foro($obj,function(&$val,$s) use($cl,&$obj,&$old){//Теперь по тем которые есть
 			if(!is_null(@$old[$s]))return;//уже забегали значит
-			call_user_func_array($cl,array_merge($args,array($s,@$obj[$s],@$old[$s])));
-		},array($cl,&$obj,&$old,&$args));
+			call_user_func_array($cl,array($s,@$obj[$s],@$old[$s]));
+		});
 	}
 	function prepare(&$obj,&$old){//obj и old текущего объекта
 		$this->old=&$old;
 		$this->obj=&$obj;
 		
-
-		$this->child=&infra_foro($obj,function&(&$that,$val,$s){//Первый случайный child
+		$that=&$this;
+		$this->child=&infra_foro($obj,function&($val,$s) use(&$that){//Первый случайный child
 			return $that->getState(array($s));
-		},array(&$this));
+		});
 
 
 
-		$this->run(function(&$that,$s,$obj,$old){
+		$this->run(function($s,$obj,$old) use(&$that){
 			$state=&$that->getState(array($s));
 			$state->prepare($obj,$old);
-		},array(&$this));
+		});
 
 	}
 	function notify(){//Восходящая система событий от родителя к детям / потом /asdf потом /asdf/asdf
@@ -90,10 +88,11 @@ class infra_State{
 		}else{
 			//infra_fire($this,'onchange');
 		}
-		$this->run(function($that,$s,$obj,$old){
+		$that=&$this;
+		$this->run(function($s,$obj,$old) use(&$that){
 			$state=$that->getState(array($s));
 			$state->notify();
-		},array(&$this));
+		});
 	}
 	function &getRight($parsed=false){
 		if(!$parsed)return false;

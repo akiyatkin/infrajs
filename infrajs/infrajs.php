@@ -80,14 +80,14 @@ function infrajs_check(&$layers=null){//Пробежка по слоям
 
 	
 
-	infrajs_run(infrajs_getWorkLayers(),function(&$store, &$layer,&$parent){//Запускается у всех слоёв в работе которые wlayers
+	infrajs_run(infrajs_getWorkLayers(),function(&$layer,&$parent) use(&$store){//Запускается у всех слоёв в работе которые wlayers
 		if($parent)$layer['parent']=&$parent;
 		infra_fire($layer,'layer.oninit');
 		if(infrajs_is('check',$layer)){
 			infra_fire($layer,'layer.oncheck');
 		}	
 		
-	},array(&$store));//разрыв нужен для того чтобы можно было наперёд определить показывается слой или нет. oncheck у всех. а потом по порядку.
+	});//разрыв нужен для того чтобы можно было наперёд определить показывается слой или нет. oncheck у всех. а потом по порядку.
 
 	infra_fire($infrajs,'oncheck');//момент когда доступны слои по getUnickLayer
 	
@@ -162,20 +162,17 @@ function &infrajs_is($name,&$layer=null){
 
 
 //run
-function &infrajs_run(&$layers,$callback,$args=array(),&$parent=null){
+function &infrajs_run(&$layers,$callback,&$parent=null){
 	//$store=&infrajs_store('run_array');//$r, $props=$infrajs_run_props;
 	//if($layers===true)$layers=&infrajs_getWorkLayers();
 	//if($layers===false)$layers=&infrajs_getAllLayers();
-	$r=&infra_fora($layers,function&(&$parent,&$callback,&$args,&$layer){
-
-		//$r=call_user_func_array($callback,array_merge($args,array(&$layer,&$parent)));
-
-		$aargs=array_values(array_merge($args,array(&$layer,&$parent)));		
-		$r=&$callback($aargs[0],$aargs[1],@$aargs[2],@$aargs[3],@$aargs[4],@$aargs[5],@$aargs[6],@$aargs[7],@$aargs[8],@$aargs[9]);
+	$r=&infra_fora($layers,function&(&$layer) use(&$parent,&$callback){
+		
+		$r=&$callback($layer,$parent);
 
 
 		if(!is_null($r))return $r;
-		$r=&infra_foro($layer,function&(&$layer,&$callback,&$args,&$val,$name){
+		$r=&infra_foro($layer,function&(&$val,$name) use(&$layer,&$callback){
 			
 			$store=&infrajs_store();
 			if(!$store['run'])$store['run']=array();
@@ -183,22 +180,22 @@ function &infrajs_run(&$layers,$callback,$args=array(),&$parent=null){
 			
 			if(isset($props['list'][$name])){
 
-				$r=&infrajs_run($val,$callback,$args,$layer);
+				$r=&infrajs_run($val,$callback,$layer);
 				if(!is_null($r))return $r;
 			}else if(isset($props['keys'][$name])){
-				$r=&infra_foro($val,function&(&$layer,&$callback,&$args,&$v,$i){
+				$r=&infra_foro($val,function&(&$v,$i) use(&$layer,&$callback){
 
-					$r=&infrajs_run($v,$callback,$args,$layer);
+					$r=&infrajs_run($v,$callback,$layer);
 					if(!is_null($r))return $r;
-				},array(&$layer,&$callback,&$args));
+				});
 				if(!is_null($r))return $r;
 			}
-		},array(&$layer,&$callback,&$args));
+		});
 
 
 		if(!is_null($r))return $r;
 
-	},array(&$parent,&$callback,&$args));
+	});
 	return $r;
 }
 function infrajs_runAddKeys($name){

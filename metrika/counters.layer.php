@@ -7,7 +7,7 @@
 	$data=infra_load('*counters.json','fj');
 	if($data){
 		$i=0;
-		infra_foro($data,function(&$layer,&$i, $val,$key){
+		infra_foro($data,function($val,$key) use(&$layer,&$i){
 			if(!$val||!$val['id'])return;
 			$i++;
 			$layer['divs']['counter'.$i]=array(
@@ -15,7 +15,7 @@
 				'data'=>true,
 				'config'=>$val
 			);
-		},array(&$layer,&$i));
+		});
 	}
 	return infra_echo($layer);
 ?>
