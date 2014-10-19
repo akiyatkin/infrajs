@@ -1086,6 +1086,8 @@ $infra_template_scope=array(
 		
 		$cost=(string)$cost;
 		$ar=explode('.',$cost);
+		if(sizeof($ar)==1)$ar=explode(',',$cost);
+
 		$cop='';
 		if(sizeof($ar)==2){
 			$cost=$ar[0];
@@ -1095,21 +1097,18 @@ $infra_template_scope=array(
 			}
 			if($cop=='00')$cop='';
 		}
+
 		if($text)$inp=' ';
 		else $inp='&nbsp;';
+
 		if(strlen($cost)>4){//1000
 			$l=strlen($cost);
 			$cost=substr($cost,0,$l-3).$inp.substr($cost,$l-3,$l);
-		}else if(strlen($cost)>4){//1000
-			$l=strlen($cost);
-			$cost=substr($cost,0,$l-3).$inp.substr($cost,$l-3,$l);
 		}
+
 		if($cop){
-			if($text){
-				$cost=$cost.','.$cop;
-			}else{
-				$cost=$cost.'<small>,'.$cop.'</small>';
-			}
+			if($text)$cost=$cost.','.$cop;
+			else $cost=$cost.'<small>,'.$cop.'</small>';
 		}
 		return $cost;
 	}

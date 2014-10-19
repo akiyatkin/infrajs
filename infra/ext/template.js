@@ -1003,11 +1003,11 @@ infra.template={
 			return n;
 		},
 		'~cost':function(cost,text){
-			if(text)inp=' ';
-			else inp='&nbsp;';
+			
 
 			if(!cost&&cost!=0)cost='';
 			cost=String(cost);
+
 			var ar=cost.split(/[,\.]/);
 			if(ar.length==2){
 				var cost=ar[0];
@@ -1017,10 +1017,15 @@ infra.template={
 				}
 				if(cop=='00')cop='';
 			}
+
+			if(text)inp=' ';
+			else inp='&nbsp;';
+			
 			if(cost.length>4){ //1000
 				var l=cost.length;
 				cost=cost.substr(0,l-3)+inp+cost.substr(l-3,l);
 			}
+
 			if(cop){
 				if(text)cost=cost+','+cop;
 				else cost=cost+'<small>,'+cop+'</small>';
