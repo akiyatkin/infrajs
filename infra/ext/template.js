@@ -1009,13 +1009,17 @@ infra.template={
 			cost=String(cost);
 
 			var ar=cost.split(/[,\.]/);
-			if(ar.length==2){
+			if(ar.length>=2){
 				var cost=ar[0];
 				var cop=ar[1];
 				if(cop.length==1){
 					cop+='0';
 				}
+				if(cop.length>2){
+					cop=cop.substring(0,2);
+				}
 				if(cop=='00')cop='';
+
 			}
 
 			if(text)inp=' ';

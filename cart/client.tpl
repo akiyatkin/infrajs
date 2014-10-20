@@ -225,5 +225,6 @@
 {basket:}
 	<div id="basket_text">
 		В <a href="?Каталог/Корзина">корзине</a>
-		<span class="bold_basket">{data.allcount}</span> {~words(data.allcount,:позиция,:позиции,:позиций)}<br> Сумма <span class="bold_basket">{~cost(data.allsum)} руб.</span>
+		<span class="bold_basket">{data.allcount}</span> {~words(data.allcount,:позиция,:позиции,:позиций)}
+		<!--<br> Сумма <span class="bold_basket">{~cost(data.allsum)} руб.</span>-->
 	</div>

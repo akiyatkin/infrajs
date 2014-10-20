@@ -1089,11 +1089,14 @@ $infra_template_scope=array(
 		if(sizeof($ar)==1)$ar=explode(',',$cost);
 
 		$cop='';
-		if(sizeof($ar)==2){
+		if(sizeof($ar)>=2){
 			$cost=$ar[0];
 			$cop=$ar[1];
 			if(strlen($cop)==1){
 				$cop.='0';
+			}
+			if(strlen($cop)>2){
+				$cop=substr($cop,0,2);
 			}
 			if($cop=='00')$cop='';
 		}

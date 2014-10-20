@@ -31,7 +31,7 @@ infra.wait(infrajs,'oninit',function(){
 
 	var autosave={
 		getInps:function(div){
-			return $('#'+div).find('select, [type=search], [type=tel], [type=email], [type=password], [type=text], [type=radio], [type=checkbox], textarea').filter('[autosave!=0]').filter('[name!=]');
+			return $('#'+div).find('select, [type=search], [type=number], [type=tel], [type=email], [type=password], [type=text], [type=radio], [type=checkbox], textarea').filter('[autosave!=0]').filter('[name!=]');
 		},
 		/**
 		* слой у которого нужно очистить весь autosave, например после отправки формы на сервер, нужно сбросить сохранённые в инпутах данные

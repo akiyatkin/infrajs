@@ -260,6 +260,9 @@ infra.session={
 	callbacks:[],
 	process:false,
 	process_timer:false,
+	syncNow:function(){
+		this.sync([],true);
+	},
 	sync:function(list,sync,callback){
 		if(!callback)callback=function(){};
 		if(!this.getId()&&(!list||(list.constructor==Array&&list.length==0))){//Если ничего не устанавливается и нет id то sync не делается

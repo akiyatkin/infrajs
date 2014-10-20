@@ -202,10 +202,10 @@
 			
 			<tr>
 			<td>
-				<div id="priceblock" style="float:left"></div>
+				<div id="priceblock"></div>
 					
-			</td><td style="width:100%"><div style="line-height:30px; font-size:16px; text-align: left;">
-					Телефон менеджера <span style="font-size:24px">+7 ({data.phone.code}) {data.phone.number}</span>
+			</td><td><div style="line-height:30px; font-size:16px; text-align: left;">
+					Телефон менеджера <span style="font-size:24px; white-space:nowrap;">+7 ({data.phone.code}) {data.phone.number}</span>
 				</div></td></tr>
 			<tr><td colspan="2">
 				
@@ -232,7 +232,7 @@
 			catalog.initPrice(div);
 		});
 	</script>
-	{nalichie:}, {~lower(Наличие на складе)}
+	{nalichie:}, <span style="font-size:100%" class="label {Наличие на складе=:В наличии?:label-primary?:label-info}">{Наличие на складе}</span>
 	{space:} 
 {pos_more:}<tr><td>{~key}:</td><td style="text-align:left">{.}</td></tr>
 {files:}

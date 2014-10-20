@@ -62,7 +62,7 @@
 				"priceblock":{
 					"tpl":"*cart/priceblock.tpl",
 					"jsontpl":"{parent.json}",
-					"tplroot":"priceblock",
+					"tplroot":"priceblockall",
 					"dataroot":"data.pos"
 				}
 			},
