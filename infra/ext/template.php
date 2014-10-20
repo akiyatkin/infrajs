@@ -1096,7 +1096,8 @@ $infra_template_scope=array(
 				$cop.='0';
 			}
 			if(strlen($cop)>2){
-				$cop=substr($cop,0,2);
+				$cop=substr($cop,0,3);
+				$cop=round($cop/10);
 			}
 			if($cop=='00')$cop='';
 		}

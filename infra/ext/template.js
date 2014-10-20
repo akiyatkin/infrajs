@@ -1016,7 +1016,8 @@ infra.template={
 					cop+='0';
 				}
 				if(cop.length>2){
-					cop=cop.substring(0,2);
+					cop=cop.substring(0,3);
+					cop=Math.round(cop/10);
 				}
 				if(cop=='00')cop='';
 
