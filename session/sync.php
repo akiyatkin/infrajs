@@ -61,13 +61,18 @@
 		if($news){
 			$ans['is']['news']=!!$news;
 			$ans['news']=$news;
-			infra_forr($ans['news'],function(&$v){
+			infra_forr($ans['news'],function(&$v) use($list){
 				if($v['value']=='null'){
 					$v['value']=null;
 				}else{
 					$v['value']=infra_json_decode($v['value']);
 				}
 				$v['name']=infra_seq_right($v['name']);
+				$r=infra_forr($list,function($item) use($v){
+					if(infra_seq_short($item['name'])!=infra_seq_short($v['name']))return;
+					return true;//найдено совпадение новости с устанавливаемым значением.. новость удаляем
+				});
+				if($r)return new infra_Fix('del');
 			});
 		}
 		
