@@ -43,7 +43,7 @@ infra.session={
 		this.init=function(){};
 		var list=this.storageLoad();
 		this.data=this.make(list,{});
-		this.sync();
+		this.syncNow();
 	},
 	getLink:function(){
 		var id=infra.view.getCookie(this._getName('id'));
@@ -261,7 +261,7 @@ infra.session={
 	process:false,
 	process_timer:false,
 	syncNow:function(){
-		this.sync([],true);
+		this.sync(null,true);
 	},
 	sync:function(list,sync,callback){
 		if(!callback)callback=function(){};
