@@ -137,6 +137,11 @@ function infra_session_set($name,$value=null){
 	infra_session_make($li,$infra_session_data);
 	infra_session_sync($li);
 }
+
+
+
+
+
 function infra_session_getLink(){
 	$host=infra_view_getHost();
 	$path=infra_view_getRoot(ROOT);

@@ -44,5 +44,47 @@ END;
 		},array());
 		return infra_db();
 	}
+	function infra_session_getEmail(){
+		return infra_once('infra_session_getEmail',function(){
+			//В рамках одного запуска php скрипта можно cat_getSessionEmail можно вызывать сколько угодно раз. Обращение к базе будет одно.
+			$db=&infra_session_db();
+			if(!$db)return;
+			infra_require('*session/session.php');
+			$session_id=infra_session_getId();
+			if(!$session_id)return false;
+			$sql='select email from ses_sessions where session_id=?';
+			$stmt=$db->prepare($sql);
+			$stmt->execute(array($session_id));
+			$email=$stmt->fetchColumn();
+			return $email;
+		});
+	}
+	function infra_session_setEmail($email){
+		$db=&infra_session_db();
+		if(!$db)return;
+		
+		$session_id=infra_session_getId();
+		if(!$session_id){
+		   infra_session_set('init', 1);
+		   $session_id=infra_session_getId();
+		}
+		$sql='UPDATE ses_sessions
+					SET email = ?
+					WHERE session_id=?';
+		$stmt=$db->prepare($sql);
+		$stmt->execute(array($email, $session_id));
+		return true;
+	}
+	function infra_session_getUser($email){
+		return infra_once('infra_session_getUser',function($email){
+			$db=&infra_session_db();
+			if(!$db)return;
+			$sql='select password, session_id, email from ses_sessions where email=?';
+			$stmt=$db->prepare($sql);
+			$stmt->execute(array($email));
+			$userData=$stmt->fetch(PDO::FETCH_ASSOC);
+			return $userData;
+		},array($email));
+	}
 /**/
 ?>

@@ -533,6 +533,24 @@ function infra__load($path){
 
 
 */
+function infra_ret($ans,$str=false){
+	$ans['result']=1;
+	if($str)$ans['msg']=infra_template_parse(array($str),$ans);
+	return infra_ans($ans);
+}
+function infra_err($ans,$str=false){
+	$ans['result']=0;
+	if($str)$ans['msg']=infra_template_parse(array($str),$ans);
+	return infra_ans($ans);
+}
+function infra_ans($ans){
+	global $FROM_PHP;
+	if(!$FROM_PHP){
+		@header('Content-type:text/plain');//Ответ формы не должен изменяться браузером чтобы корректно конвертирвоаться в объект js, если html то ответ меняется
+		echo infra_json_encode($ans);
+	}
+	return $ans;
+}
 function infra_echo($ans=array(),$msg=false,$res=null){//Окончание скриптов
 	if($msg!==false){
 		$ans['msg']=$msg;
@@ -540,11 +558,6 @@ function infra_echo($ans=array(),$msg=false,$res=null){//Окончание ск
 	if(!is_null($res)){
 		$ans['result']=$res;
 	}
-	global $FROM_PHP;
-	if(!$FROM_PHP){
-		@header('Content-type:text/plain');//Ответ формы не должен изменяться браузером чтобы корректно конвертирвоаться в объект js, если html то ответ меняется
-		echo infra_json_encode($ans);
-	}
-	return $ans;
+	return infra_ans($ans);
 }
 ?>
