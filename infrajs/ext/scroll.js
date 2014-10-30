@@ -57,20 +57,20 @@ window.roller = {
 			$(d).stop().animate(targ, options.maxSpeed);
 		});
 	},
-	goBot:function(scrollFromBot){
+	goBot:function(scrollFromBot,callback){
 		if(!scrollFromBot)scrollFromBot=0;
 		this.setOpt();
 		var targ={scrollTop:this.opt.dh-this.opt.wh-scrollFromBot};
 		var d = (!$.browser||($.browser.safari||$.browser.chrome))?'body':'html';
 		var maxSpeed=400;
-		$(d).stop().animate(targ, maxSpeed);
+		$(d).stop().animate(targ, maxSpeed,'swing',callback);
 	},
-	goTop:function(scrollFromTop){
+	goTop:function(scrollFromTop,callback){
 		if(!scrollFromTop)scrollFromTop=0;
 		var targ={scrollTop:scrollFromTop};
 		var d = ($.browser.safari||$.browser.chrome)?'body':'html';
 		var maxSpeed=200;
-		$(d).stop().animate(targ, maxSpeed);
+		$(d).stop().animate(targ, maxSpeed,'swing',callback);
 	},
 	setSize: function(options){
 		this.setOpt();
