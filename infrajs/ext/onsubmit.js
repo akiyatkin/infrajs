@@ -54,19 +54,14 @@ infrajs.setonsubmit=function(layer){
 						msg='Ошибка связи';
 					}
 					if(!ans)ans={result:0,msg:msg};
-					if(!ans.result&&!ans.msg){
-						//ans.msg='Ошибка на сервере';
-					}
 					layer.config.ans=ans;
+
+					if(layer.global)infrajs.global.set(layer.global);
+					infra.session.syncNow();
+
 					if(infra.loader)infra.loader.hide();
 					infra.fire(layer,'onsubmit');//в layers.json указывается onsubmit:true, а в tpl осуществляется подписка на событие onsubmit и обработка
-					if(typeof(layer.onsubmit)=='function'){
-						layer.onsubmit(layer);
-					}else{
-					}
-					if(layer.global){
-						infrajs.global.set(layer.global);
-					}
+					if(typeof(layer.onsubmit)=='function')layer.onsubmit(layer);
 					infrajs.check();
 				}
 			});

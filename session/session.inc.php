@@ -44,6 +44,22 @@ END;
 		},array());
 		return infra_db();
 	}
+	function infra_session_setPass($password){
+		$db=&infra_session_db();
+		if(!$db)return;
+		
+		$session_id=infra_session_getId();
+		if(!$session_id){
+		   infra_session_set('init', 1);
+		   $session_id=infra_session_getId();
+		}
+		$sql='UPDATE ses_sessions
+					SET password = ?
+					WHERE session_id=?';
+		$stmt=$db->prepare($sql);
+		$stmt->execute(array($password, $session_id));
+		return true;
+	}
 	function infra_session_getEmail(){
 		return infra_once('infra_session_getEmail',function(){
 			//В рамках одного запуска php скрипта можно cat_getSessionEmail можно вызывать сколько угодно раз. Обращение к базе будет одно.

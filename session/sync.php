@@ -33,7 +33,7 @@
 	$ans['is']['news']=false;
 
 	if($session_id){
-		$session_id=infra_admin_cache('sync_php_checksession',function($session_id,$session_pass){
+		$session_id=infra_once('sync_php_checksession',function($session_id,$session_pass){
 			$db=&infra_session_db();
 			$sql='select password from ses_sessions where session_id=?';
 			$stmt=$db->prepare($sql);

@@ -45,15 +45,11 @@ function infra_session_init(){
 function infra_session_getName($name){
 	return 'infra_session_'.$name;
 }
-global $infra_session_lasttime;
-function infra_session_syncreq($list){ //новое значение, //Отправляется пост на файл, который записывает и возвращает данные
-	global $infra_session_lasttime;
-	if(!$infra_session_lasttime)$infra_session_lasttime=1;
-	else $infra_session_lasttime=time()+10000;
 
+function infra_session_syncreq($list=array()){ //новое значение, //Отправляется пост на файл, который записывает и возвращает данные
 	
 	$data=array( //id и time берутся из кукисов на сервере 
-		'time'=>$infra_session_lasttime,
+		'time'=>1,
 		'list'=>infra_json_encode($list)
 	);
 	
@@ -86,6 +82,9 @@ function infra_session_getId(){
 }
 function infra_session_getTime(){
 	return infra_view_getCookie(infra_session_getName('time'));
+}
+function infra_session_syncNow(){
+	return infra_session_syncreq();// Заного считаются все данные сессии
 }
 function infra_session_sync($list=false){
 	$session_id=infra_session_getId();
