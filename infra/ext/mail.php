@@ -52,11 +52,13 @@ function infra_mail_sent($subject,$email_from,$email_to,$body){
 function infra_mail_toSupport($subject,$from,$body){//письмо в Техническую поддержку 
 	$conf=infra_config();
 	$emailto=$conf['admin']['support'];
+	if(!$emailto)$emailto=$conf['admin']['email'];
 	return infra_mail_sent($subject,$from,$emailto,$body);
 }
 function infra_mail_fromSupport($subject,$to,$body){//письмо от админa
 	$conf=infra_config();
 	$from=$conf['admin']['support'];
+	if(!$from)$from=$conf['admin']['email'];
 	return infra_mail_sent($subject,$from,$to,$body);
 }
 function infra_mail_fromAdmin($subject,$to,$body){//письмо от админa
