@@ -168,6 +168,9 @@ infra.template={
 		this.analysis(ar);//[{},'asdfa',{},'asdfa']
 
 		var tpls=this.getTpls(ar,tplempty);//{root:[{},'asdf',{}],'some':['asdf',{}]}
+		var some=false;
+		for(some in tpls)break;
+		if(!some)tpls[tplempty]=[];//Пустой шаблон добавляется когда вообще ничего нет
 		//var res=this.parseEmptyTpls(tpls);//[{root:[]}, [{some:[]}], [{asdf:[]}]]  
 		var res=tpls;
 
