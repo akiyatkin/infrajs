@@ -124,6 +124,9 @@
 			.href {
 				text-decoration:none;
 			}
+			.position {
+				margin-bottom:40px;
+			}
 		</style>
 		<script>
 			if(!window.catalog)window.catalog={ 
@@ -311,11 +314,6 @@
 {logo:}
 	<img src="infra/plugins/imager/imager.php?w=300&src={infra.conf.catalog.dir}{Производитель}/{article}/" style="margin:0 0 5px 5px;">
 {cat_item:}
-	<style>
-		.position {
-			margin-bottom:40px;
-		}
-	</style>
 	<div class="position">
 			<div style="text-align:right">{time?~date(:j F Y,time)}</div>
 			

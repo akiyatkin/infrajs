@@ -28,7 +28,7 @@
 			unset($pos['group']);//Удалили рекурсивное свойсто group
 		}
 	});
-	xls_init2(path,conf)
+	$data=xls_init(path,conf)
 */	
 
 @define('ROOT','../../../');
@@ -184,6 +184,7 @@ function &xls_parseAll($path){
 						foreach($rowdata as $cell=>$celldata){
 							$data[$list][$row][$symbols[$cell]]=$celldata;
 						}
+						if(!$data[$list][$row])unset($data[$list][$row]);//Пустые строки нам не нужны
 					}
 				}
 		    }
