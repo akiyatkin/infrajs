@@ -284,6 +284,7 @@
 		}else if($type=='search'){
 			//Результат бывает group producer search change
 			//
+			$ans['name']=$ans['val'];
 			$ans['list']=array();
 			if($val=='изменения'){
 				$ans['is']='change';
@@ -293,10 +294,15 @@
 				return $ans;
 			}
 			$group=&xls_runGroups($data,function(&$group) use(&$val){
+				if(infra_strtolower($group['name'])==$val)return $group;
 				if(infra_strtolower($group['title'])==$val)return $group;
 			});
+			echo '<pre>';
+			print_r($group);
+			exit;
 			$posscount=0;
 			if($group){
+
 				$ans['is']='group';
 				$ans['result']=1;
 				$ans['path']=$group['path'];

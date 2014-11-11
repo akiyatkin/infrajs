@@ -130,9 +130,8 @@ function infra_template_analysis(&$group){
 
 	});
 }
-function infra_template_parse($url,&$data=array(),$tplroot='root',&$dataroot='',$tplempty='root'){
+function infra_template_parse($url,$data=array(),$tplroot='root',$dataroot='',$tplempty='root'){
 	$tpls=infra_template_make($url,$tplempty);
-	
 	$text=infra_template_exec($tpls,$data,$tplroot,$dataroot);
 	return $text;
 }
@@ -200,6 +199,7 @@ function &infra_template_make($url,$tplempty='root'){
 
 
 	$tpls=infra_template_getTpls($ar,$tplempty);
+	if(!$tpls)$tpls[$tplempty]=array();//Пустой шаблон добавляется когда вообще ничего нет
 	//$res=infra_template_parseEmptyTpls($tpls);
 	$res=$tpls;
 

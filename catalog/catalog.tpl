@@ -120,6 +120,14 @@
 		<input type="submit" style="display:none;">
 	</form>
 {SEARCH:}
+		<style>
+			.href {
+				text-decoration:none;
+			}
+			.position {
+				margin-bottom:40px;
+			}
+		</style>
 		<script>
 			if(!window.catalog)window.catalog={ 
 				search:'Значение поиска',
@@ -160,7 +168,7 @@
 		
 				{parent:cat_childsp}
 				{data.is=:isproducer?:Производитель}{data.is=:isgroup?:Группа}{data.is=:issearch?:Поиск}
-				<h1 style="margin-bottom:5px; margin-top:5px;">{data.val}</h1>
+				<h1 style="margin-bottom:5px; margin-top:5px;">{data.name}</h1>
 				{~length(data.bread.prods)?:search_prods}
 				{~length(data.bread.groups)?:search_groups}
 				<div style="margin-bottom:5px">{data.count} {~words(data.count,:позиция,:позиции,:позиций)}</div>
@@ -306,16 +314,13 @@
 {logo:}
 	<img src="infra/plugins/imager/imager.php?w=300&src={infra.conf.catalog.dir}{Производитель}/{article}/" style="margin:0 0 5px 5px;">
 {cat_item:}
-	<style>
-		.position {
-			margin-bottom:40px;
-		}
-	</style>
 	<div class="position">
 			<div style="text-align:right">{time?~date(:j F Y,time)}</div>
-			<a class="href" href="?{state.parent}/{Производитель}/{article}">
-				<h2 style="margin-top:0; margin-bottom:0">{Наименование|}</h2>
-			</a>
+			
+				<h2>
+					<a class="href" href="?{state.parent}/{Производитель}/{article}">{Наименование}</a>
+				</h2>
+			
 		<table style="width:100%">
 		<tr>
 		<td style="width:160px; padding-right:10px;">
