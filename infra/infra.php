@@ -52,12 +52,18 @@ statist - интегрировать как-нибудь
 	}
 	
 	$v=phpversion();
-	$ver=explode('.',$v);//Нужна 5.3 так как используются анонимные функции
+	$ver=explode('.',$v);//Нужна 5.3 так как используются анонимные функции, и не всегда мы ставим закрывающие тег php
 	if($ver[0]<5||($ver[0]==5&&$ver[1]<3))die('Требуется более новая версия php от 5.3 сейчас '.$v);
+	
+
+
 	//error_reporting(E_ALL & ~E_NOTICE);
 	if(function_exists('mb_internal_encoding')){
 		mb_internal_encoding('UTF-8');//ХЗ зачем очень давно появилось...
 	}
+
+
+
 	//Убираем магически появляющийся ниоткуда кавычки
 	if (get_magic_quotes_gpc()) {
 		die('get_magic_quotes_gpc() должны быть отключены');

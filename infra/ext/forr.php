@@ -41,13 +41,13 @@ class infra_Fix {
 		$this->opt=$opt;
 	}
 }
-function &infra_forr(&$el,$callback,$back=false){//Бежим по массиву
+function &infra_forr(&$el,$callback,$back=false){//Бежим по индекснему массиву
 	if(!is_array($el))return;
 
 	if($back){
 		for($i=sizeof($el)-1;$i>=0;$i--){
 			if(is_null($el[$i]))continue;
-			$r=$callback($el[$i],$i,$el);
+			$r=$callback($el[$i],$i,$el); //3тий аргумент $el depricated
 			if(is_null($r))continue;
 			if($r instanceof infra_Fix){
 				if($r->opt['del']){
