@@ -297,9 +297,6 @@
 				if(infra_strtolower($group['name'])==$val)return $group;
 				if(infra_strtolower($group['title'])==$val)return $group;
 			});
-			echo '<pre>';
-			print_r($group);
-			exit;
 			$posscount=0;
 			if($group){
 
