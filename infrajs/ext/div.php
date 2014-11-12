@@ -25,9 +25,9 @@ function infrajs_div_init(){
 		foreach($ext as $i=>$v){
 			if(isset($now[$i]))continue;
 			$now[$i]=array();
-			infra_fora($ext[$i],function(&$now,$i, &$l){
+			infra_fora($ext[$i],function(&$l) use(&$now,$i){
 				array_push($now[$i],array('external'=>$l));
-			},array(&$now,$i));
+			});
 		}
 		return $now;
 	});

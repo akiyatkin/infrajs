@@ -16,9 +16,9 @@
 			
 			$layers=&infra_loadJSON($src);
 			
-			if($div)infra_fora($layers,function($div,&$layer){
+			if($div)infra_fora($layers,function(&$layer) use($div){
 				$layer['div']=$div;
-			},array($div));
+			});
 			
 			infrajs_checkAdd($layers);
 			infrajs_check();//В infra_html были добавленыs все указаные в layers слои

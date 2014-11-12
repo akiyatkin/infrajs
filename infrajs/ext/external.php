@@ -10,10 +10,10 @@ $infrajs_external_props=array( //Расширяется в env.js
 		if(!$now)$now=array();
 		else if(infra_isAssoc($now)!==false)$now=array($now);
 		
-		infra_fora($ext,function(&$now,$j){
+		infra_fora($ext,function($j) use(&$now){
 			//array_unshift($now,array('external'=>&$ext));
 			array_push($now,array('external'=>&$j));
-		},array(&$now));
+		});
 		return $now;
 	},
 	'external'=>function(&$now,&$ext){//Используется в global.js, css
@@ -101,7 +101,7 @@ function infrajs_externalCheckExt(&$layer,&$external){
 	//------
 	*/
 
-	infra_fora($external,function(&$layer,&$exter){
+	infra_fora($external,function(&$exter) use(&$layer){
 		if(is_string($exter)) $external=&infra_loadJSON($exter);
 		else $external=$exter;
 
@@ -110,6 +110,6 @@ function infrajs_externalCheckExt(&$layer,&$external){
 			infrajs_externalMerge($layer,$external,$i);
 		}
 
-	},array(&$layer));
+	});
 }
 ?>

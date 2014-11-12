@@ -96,12 +96,12 @@
 		$stmt=$db->prepare($sql);
 		$sql='delete from `ses_records` where `session_id`=? and `name`=?';
 		$delstmt=$db->prepare($sql);
-		infra_fora($list,function($isphp,&$delstmt,&$stmt,$session_id,$time, $rec){
+		infra_fora($list,function($rec) use($isphp,&$delstmt,&$stmt,$session_id,$time){
 			if(!$isphp&&$rec['name'][0]=='safe')return;
 			$name=infra_seq_short($rec['name']);
 			$delstmt->execute(array($session_id,$name));
 			$stmt->execute(array($session_id,$name,infra_json_encode($rec['value']),$time));
-		},array($isphp,&$delstmt,&$stmt,$session_id,$time));
+		});
 	}
 	$ans['is']['session_id']=!!$session_id;
 	return infra_echo($ans);

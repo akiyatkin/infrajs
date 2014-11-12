@@ -53,7 +53,8 @@ function infra_session_syncreq($list=array()){ //новое значение, //
 		'list'=>infra_json_encode($list)
 	);
 	
-
+	global $infra_session_lasttime;
+	$infra_session_lasttime=true;//Метка что вызов из php
 	$oldPOST=$_POST;
 	$oldREQ=$_REQUEST;
 	$_POST=$data;
@@ -97,9 +98,9 @@ function infra_session_sync($list=false){
 
 function infra_session_make($list,&$data=array()){
 	if(is_null($data))$data=array();
-	infra_fora($list,function(&$data, $li){
+	infra_fora($list,function($li) use(&$data){
 		$data=&infra_seq_set($data,$li['name'],$li['value']);
-	},array(&$data));
+	});
 	return $data;
 }
 function infra_session_get($name='',$def=null){

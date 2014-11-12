@@ -75,10 +75,10 @@
 		if($st)$state=$st->name;
 		else $state='###child###';
 
-		infra_fora($layer['child'],function(&$state,&$l){
+		infra_fora($layer['child'],function(&$l) use(&$state){
 			infrajs_setState($l,'state',$state);
 			infrajs_setState($l,'istate',$state);
-		},array($state));
+		});
 	});
 	infra_listen($infra,'layer.oninit',function(&$layer){//Должно быть после external, чтобы все свойства у слоя появились
 		//state childs

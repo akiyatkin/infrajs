@@ -115,12 +115,12 @@ function _infrajs_getHtml(&$layer){//Вызывается как для осно
 		global $infra,$infrajs;
 		$infrajs['com']=$infra['com'];
 		$repls=array();//- подшаблоны для замены, Важно, что оригинальный распаршеный шаблон не изменяется
-		infra_fora($layer['tplsm'],function(&$repls,$tm){//mix tpl
+		infra_fora($layer['tplsm'],function($tm) use(&$repls){//mix tpl
 			$t=infra_template_make($tm);//С кэшем перепарсивания
 			array_push($repls,$t);
 			//for(var i in t)repls[i]=t[i];//Нельзя подменять в оригинальном шаблоне, который в других местах может использоваться без подмен
 			//^ из-за этого обработчики указанные в tplsm срабатывают постоянно, так как нельзя поставить отметку о том что обработчик сохранён
-		},array(&$repls));
+		});
 		
 		$layer['data']=&infrajs_getData($layer);//подменили строку data на объект data
 
