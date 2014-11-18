@@ -6,14 +6,14 @@ function &infra_db($debug=false){
 		if(!$debug)$debug=$config['debug'];
 		$ans=array();
 		if(!$config['mysql']){
-			if($debug)die('Нет конфига для соединения с базой данных. Нужно добавить запись mysql: '.infra_json_encode($config['/mysql']));
+			//if($debug)die('Нет конфига для соединения с базой данных. Нужно добавить запись mysql: '.infra_json_encode($config['/mysql']));
 			return $ans;
 		}
 		$config=@$config['mysql'];
 		
 		
 		if(!$config['user']){
-			if($debug)die('Не указан пользователь для соединения с базой данных');
+			//if($debug)die('Не указан пользователь для соединения с базой данных');
 			return $ans;
 		}
 		try {

@@ -11,6 +11,6 @@
 	if($b!==1)echo 'ERROR';
 	else echo 'GOOD';
 
-	phpinfo();
+	//phpinfo();
 	
 ?>
