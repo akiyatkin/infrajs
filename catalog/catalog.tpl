@@ -231,8 +231,6 @@
 			<td style="padding:2px 10px 2px 0;{title=state.name?:bread_sel}"><a href="?{state.parent}/{title}">{name}</a></td>
 			{$odd()?:e_tr}
 {groupsonly:}
-	
-	
 	<style>
 		.catgrouplist .img {
 			vertical-align:middle;
@@ -315,12 +313,10 @@
 	<img src="infra/plugins/imager/imager.php?w=300&src={infra.conf.catalog.dir}{Производитель}/{article}/" style="margin:0 0 5px 5px;">
 {cat_item:}
 	<div class="position">
-			<div style="text-align:right">{time?~date(:j F Y,time)}</div>
-			
-				<h2>
-					<a class="href" href="?{state.parent}/{Производитель}/{article}">{Наименование}</a>
-				</h2>
-			
+		<div style="text-align:right">{time?~date(:j F Y,time)}</div>
+		<h2>
+			<a class="href" href="?{state.parent}/{Производитель}/{article}">{Наименование}</a>
+		</h2>
 		<table style="width:100%">
 		<tr>
 		<td style="width:160px; padding-right:10px;">
@@ -334,11 +330,11 @@
 			{:producerSmall}
 			<a class="href" href="?{state.parent}/{Производитель}/{article}">
 				<h3 style="margin-top:0; margin-bottom:10px;">
-					{Производитель|} {Артикул|}
+					{Производитель} {Артикул}
 				</h3>
 			</a>
 			<div>
-				{Описание|}
+				{Описание}
 			{:group}
 			</div>
 		</td>
@@ -454,6 +450,7 @@
 			{Наименование}<br>{Производитель} {Артикул}
 		</h1>
 		{~length(images)?:images}
+		{Цена?:poscost}
 		<div style="color:gray; margin-bottom:30px">{Описание}</div>
 		{texts::text}
 		{~length(files)?:files}
@@ -462,6 +459,11 @@
 		<p>
 			Перейти к группе <a href="?{state.parent.parent}/{group_title}">{group_title}</a>
 		</p>
+	</div>
+{poscost:}
+	<div class="alert alert-success">
+		Цена: <span style="font-size:20px">{~cost(Цена)} руб.</span><br>
+		{Наличие?: Есть в наличие.} По вопросам приобретения обращайтесь по телефонам в <a href="?Контакты">контактах</a>.
 	</div>
 {files:}
 	<h2>Файлы для {Продажа} {Производитель} {Артикул} </h2>
