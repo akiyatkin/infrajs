@@ -47,7 +47,7 @@ function &infra_forr(&$el,$callback,$back=false){//Бежим по индекс�
 	if($back){
 		for($i=sizeof($el)-1;$i>=0;$i--){
 			if(is_null($el[$i]))continue;
-			$r=$callback($el[$i],$i,$el); //3тий аргумент $el depricated
+			$r=&$callback($el[$i],$i,$el); //3тий аргумент $el depricated
 			if(is_null($r))continue;
 			if($r instanceof infra_Fix){
 				if($r->opt['del']){
@@ -62,7 +62,7 @@ function &infra_forr(&$el,$callback,$back=false){//Бежим по индекс�
 	}else{
 		for($i=0,$l=sizeof($el);$i<$l;$i++){
 			if(is_null($el[$i]))continue;
-			$r=$callback($el[$i],$i,$el);
+			$r=&$callback($el[$i],$i,$el);
 			if(is_null($r))continue;
 			if($r instanceof infra_Fix){
 				if($r->opt['del']){
@@ -150,7 +150,7 @@ function &infra_foro(&$obj,$callback,$back=false){//Бежим по объект
 	}
 	return infra_forr($ar,function&(&$el) use($callback,&$obj){
 		if(is_null($el['val']))return;
-		$r=$callback($el['val'],$el['key'],$obj);
+		$r=&$callback($el['val'],$el['key'],$obj);
 		if(is_null($r))return;
 		if($r instanceof infra_Fix){
 			if($r->opt['del']){
