@@ -32,7 +32,3 @@ if($f==Null&&$r&&!is_null($state->obj)&&is_null($state2->obj)){
 }else{
 	echo '<h1 style="color:red">ERROR</h1>';
 }
-
-
-
-?>

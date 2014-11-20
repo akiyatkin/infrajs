@@ -4,11 +4,11 @@
 	*/
 	@define('ROOT','../../../../');
 	require_once(ROOT.'infra/plugins/infra/infra.php');
-	$ans=array();
+	$ans=array('title'=>'Проверка что пустой шаблон не возвращает слово root');
 
 	$ans['res']=infra_template_parse(array(''),true);
 	if($ans['res']!=='')return infra_err($ans,'Непройден тест 1 {res}');
-	
+
 	$ans['res']=infra_template_parse(array(''));
 	if($ans['res']!=='')return infra_err($ans,'Непройден тест 2 {res}');
 
