@@ -9,10 +9,9 @@
 	$pass=$_REQUEST['pass'];
 	$src=$_REQUEST['src'];
 	if($pass&&$id){
-		infra_view_setCookie(infra_session_getName('pass'),$pass);
-		infra_view_setCookie(infra_session_getName('id'),$id);
-		infra_view_setCookie(infra_session_getName('time'),1);
+		infra_session_change($id,$pass);
 	}
+	
 	if(!$src)$src='';
 	else $src='?'.$src;
 	$conf=infra_config();

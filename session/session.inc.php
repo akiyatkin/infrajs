@@ -102,5 +102,22 @@ END;
 			return $userData;
 		},array($email));
 	}
+	function infra_session_change($id,$pass){
+		infra_view_setCookie(infra_session_getName('pass'),$pass);
+		infra_view_setCookie(infra_session_getName('id'),$id);
+		infra_view_setCookie(infra_session_getName('time'),1);
+		$olddata=infra_session_get();
+		$email=infra_session_getEmail();
+		infra_session_syncNow();
+		if(!$email){//Нельзя объединять два авторизированных аккаунта
+			$newdata=infra_session_get();
+			$email=infra_session_getEmail();
+			if($email){//Объединяем только с авторизированным аккаунтом
+				$data=array_merge($userold,$usernew);
+				infra_session_set('',$data);
+			}
+		}
+
+	}
 /**/
 ?>
