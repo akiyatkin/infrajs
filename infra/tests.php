@@ -2,30 +2,34 @@
 define('ROOT','../../../');
 require_once(ROOT.'infra/plugins/infra/infra.php');
 infra_admin(true);
-$plugs='infra/plugins/';
-
-$list=infra_loadJSON('*pages/list.php?src='.$plugs.'&f=0&d=1&onlyname=1');
-$ans=array();
-foreach($list as $plugin){
-	$src=$plugs.$plugin.'/tests/';
-	if(is_dir(ROOT.$src)){
-		$list=infra_loadJSON('*pages/list.php?src='.$src.'&f=1&d=0&onlyname=1');
+ini_set('error_reporting',E_ALL & ~E_NOTICE & ~E_STRICT);
+ini_set('display_errors', 1);
+$data=array();
+$ar=array('infra/layers/','infra/plugins/');
+infra_forr($ar,function($dir) use(&$data){
+	$list=infra_loadJSON('*pages/list.php?src='.$dir.'/&f=0&d=1&onlyname=1');
+	infra_forr($list,function($plugin) use($dir,&$data){		
+		$src=$dir.$plugin.'/tests/';
+		if(!is_dir(ROOT.$src))return;
 		
-		foreach($list as $v=>$name){
-			$p=infra_nameinfo($name);
-			$list[$v]=array('folder'=>$plugin,'name'=>$name);
-			if(in_array($p['ext'],array('php','html')))continue;
-			unset($list[$v]);
-		}
-		if(!sizeof($list))continue;
-		
-		$ans[]=array("folder"=>$plugin,"list"=>$list);
-	}
-}
-infra_require('*infra/ext/template.php');
+		$data[$dir.$plugin]=array();
 
-//echo "<pre>";
-//print_r($ans);
-$html=infra_template_parse('*infra/tests.tpl',$ans);
+		$list=infra_loadJSON('*pages/list.php?src='.$src.'/&f=1&d=0');
+		infra_forr($list,function($finfo) use($dir,$src,$plugin,&$data){
+			if($finfo['ext']!='php')return;
+
+			$text=infra_loadTEXT($src.$finfo['file']);
+			if(strlen($text)>1000){
+				$res=array('title'=>$plugin.' '.$finfo['name'],'result'=>0,'msg'=>'Слишком длинный текст');
+			}else{
+				$res=json_decode($text,true);
+				if(!$res)$res=array('title'=>$plugin.' '.$finfo['name'],'result'=>0,'msg'=>'Некорректный json');
+			}
+			$res['src']=$src.$finfo['file'];
+			$res['name']=$finfo['file']; //имя тестируемого файла
+			$data[$dir.$plugin][]=$res;
+		});
+	});
+});
+$html=infra_template_parse('*infra/tests.tpl',$data);
 echo $html;
-?>
