@@ -82,7 +82,6 @@
 
 	if($list){
 		if(!$session_id){
-
 			$pass=md5(print_r($list,true).time().rand());
 			$pass=substr($pass,0,8);
 			$sql='insert into `ses_sessions`(`password`) VALUES(?)';

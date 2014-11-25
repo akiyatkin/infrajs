@@ -119,5 +119,37 @@ END;
 		}
 
 	}
+	function &infra_session_user_init($email){
+		$user=infra_session_getUser($email);
+		$session_id=$user['session_id'];
+		$nowsession_id=infra_session_getId();
+		if($session_id==$nowsession_id)return infra_session_get();
+		return infra_once('infra_session_user_init',function($session_id){
+			$sql='select name, value, unix_timestamp(time) as time from ses_records where session_id=? order by time';
+			$db=infra_session_db();
+			$stmt=$db->prepare($sql);
+			$stmt->execute(array($session_id));
+			$news=$stmt->fetchAll();
+			if(!$news)$news=array();
+			$obj=array();
+			infra_forr($news,function(&$v) use(&$obj){
+				if($v['value']=='null'){
+					$value=null;
+				}else{
+					$value=infra_json_decode($v['value']);
+				}
+				$right=infra_seq_right($v['name']);
+				$obj=infra_seq_set($obj,$right,$value);
+			});
+			return $obj;
+		},array($session_id));
+	}
+	function infra_session_user_get($email,$short=array(),$def=null){
+		$obj=&infra_session_user_init($email);
+		$right=infra_seq_right($short);
+		$value=infra_seq_get($obj,$right);
+		if(is_null($value))$value=$def;
+		return $value;
+	}
 /**/
 ?>
