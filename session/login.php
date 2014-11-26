@@ -6,7 +6,7 @@
 
 	$ans=array();
 	$id=$_REQUEST['id'];
-	$pass=$_REQUEST['pass'];
+	$pass=$_REQUEST['pass'];//md5 пароля, чтобы авторизоваться не нужно знать пароль, хэша достаточно.
 	$src=$_REQUEST['src'];
 	if($pass&&$id){
 		infra_session_change($id,$pass);

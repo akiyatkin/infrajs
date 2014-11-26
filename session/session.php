@@ -143,11 +143,18 @@ function infra_session_set($name,$value=null){
 
 
 
-function infra_session_getLink(){
+function infra_session_getLink($email=false){
 	$host=infra_view_getHost();
 	$path=infra_view_getRoot(ROOT);
-	$pass=infra_view_getCookie(infra_session_getName('pass'));
-	$id=infra_view_getCookie(infra_session_getName('id'));
+	if($email){
+		$user=infra_session_getUser($email);
+		if(!$user)return 'http://'.$host.'/'.$path;
+		$pass=md5($user['password']);
+		$id=$user['session_id'];
+	}else{
+		$pass=infra_view_getCookie(infra_session_getName('pass'));
+		$id=infra_view_getCookie(infra_session_getName('id'));
+	}
 	$link='http://'.$host.'/'.$path.'infra/plugins/session/login.php?id='.$id.'&pass='.$pass;
 	return $link;
 }
