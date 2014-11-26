@@ -41,6 +41,11 @@ function infra_seq_right($val,$offen=INFRA_SEQ_OFFEN,$seldom=INFRA_SEQ_SELDOM){/
 function &infra_seq_set(&$obj,$right,&$val){
 	$make=is_null($val)?false:true;
 	$i=sizeof($right)-1;
+	if($i==-1){
+		$obj=$val;
+		return $obj;
+	}
+	if($make&&!is_array($obj))$obj=array();
 	$need=&infra_seq_get($obj,$right,0,$i,$make);
 	if(!$make&&is_array($need))unset($need[$right[$i]]);
 	if($make) $need[$right[$i]]=$val;

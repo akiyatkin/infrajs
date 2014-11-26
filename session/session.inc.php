@@ -60,20 +60,20 @@ END;
 		$stmt->execute(array($password, $session_id));
 		return true;
 	}
-	function infra_session_getEmail(){
-		return infra_once('infra_session_getEmail',function(){
+	function infra_session_getEmail($session_id=false){
+		if(!$session_id)$session_id=infra_session_getId();
+		return infra_once('infra_session_getEmail',function($session_id){
 			//В рамках одного запуска php скрипта можно cat_getSessionEmail можно вызывать сколько угодно раз. Обращение к базе будет одно.
 			$db=&infra_session_db();
 			if(!$db)return;
 			infra_require('*session/session.php');
-			$session_id=infra_session_getId();
 			if(!$session_id)return false;
 			$sql='select email from ses_sessions where session_id=?';
 			$stmt=$db->prepare($sql);
 			$stmt->execute(array($session_id));
 			$email=$stmt->fetchColumn();
 			return $email;
-		});
+		},array($session_id));
 	}
 	function infra_session_setEmail($email){
 		$db=&infra_session_db();
@@ -102,22 +102,43 @@ END;
 			return $userData;
 		},array($email));
 	}
-	function infra_session_change($id,$pass){
-		infra_view_setCookie(infra_session_getName('pass'),$pass);
-		infra_view_setCookie(infra_session_getName('id'),$id);
-		infra_view_setCookie(infra_session_getName('time'),1);
-		$olddata=infra_session_get();
+	function infra_session_writeNews($list,$session_id){
+		if(!$list)return;
+		$db=infra_session_db();
+		global $infra_session_lasttime;
+		$isphp=!!$infra_session_lasttime;
+		$sql='insert into `ses_records`(`session_id`, `name`, `value`, `time`) VALUES(?,?,?,FROM_UNIXTIME(?))';
+		$stmt=$db->prepare($sql);
+		$sql='delete from `ses_records` where `session_id`=? and `name`=? and `time`>=FROM_UNIXTIME(?)';
+		$delstmt=$db->prepare($sql);
+		infra_fora($list,function($rec) use($isphp,&$delstmt,&$stmt,$session_id){
+			if(!$isphp&&$rec['name'][0]=='safe')return;
+			$name=infra_seq_short($rec['name']);
+			$delstmt->execute(array($session_id,$name,$rec['time']));
+			$stmt->execute(array($session_id,$name,infra_json_encode($rec['value']),$rec['time']));
+		});
+	}
+	function infra_session_change($session_id,$pass){
+
+		
 		$email=infra_session_getEmail();
-		infra_session_syncNow();
-		if(!$email){//Нельзя объединять два авторизированных аккаунта
-			$newdata=infra_session_get();
-			$email=infra_session_getEmail();
-			if($email){//Объединяем только с авторизированным аккаунтом
-				$data=array_merge($userold,$usernew);
-				infra_session_set('',$data);
+		if(!$email){
+			$email=infra_session_getEmail($session_id);
+			if($email){//У новой сессии есть регистрация
+				$newans=infra_session_recivenews();
+				//Нужно это всё записать в базу данных для сессии 1
+				infra_session_writeNews($newans['news'],$session_id);
+				
 			}
 		}
+		
 
+		global $infra_session_data;
+		$infra_session_data=array();
+		infra_view_setCookie(infra_session_getName('pass'),$pass);
+		infra_view_setCookie(infra_session_getName('id'),$session_id);
+		infra_view_setCookie(infra_session_getName('time'),1);
+		infra_session_syncNow();
 	}
 	function &infra_session_user_init($email){
 		$user=infra_session_getUser($email);

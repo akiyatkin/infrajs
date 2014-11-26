@@ -46,9 +46,7 @@ function infra_session_init(){
 function infra_session_getName($name){
 	return 'infra_session_'.$name;
 }
-
-function infra_session_syncreq($list=array()){ //новое значение, //Отправляется пост на файл, который записывает и возвращает данные
-	
+function infra_session_recivenews($list=array()){
 	$data=array( //id и time берутся из кукисов на сервере 
 		'time'=>1,
 		'list'=>infra_json_encode($list)
@@ -68,13 +66,15 @@ function infra_session_syncreq($list=array()){ //новое значение, //
 
 	$_POST=$oldPOST;
 	$_REQUEST=$oldREQ;
-
-	if(!$ans)return;
-	
-	
+	return $ans;
+}
+function infra_session_syncreq($list=array()){ //новое значение, //Отправляется пост на файл, который записывает и возвращает данные
+	$ans=infra_session_recivenews($list);
+	if(!$ans)return;	
 	//По сути тут set(news) но на этот раз просто sync вызываться не должен, а так всё тоже самое
 	global $infra_session_data;
 	$infra_session_data=infra_session_make($ans['news'],$infra_session_data);
+
 }
 function infra_session_getPass(){
 	return infra_view_getCookie(infra_session_getName('pass'));
@@ -88,7 +88,7 @@ function infra_session_getTime(){
 function infra_session_syncNow(){
 	return infra_session_syncreq();// Заного считаются все данные сессии
 }
-function infra_session_sync($list=false){
+function infra_session_sync($list=null){
 	$session_id=infra_session_getId();
 	
 	if(!$session_id&&!$list)return;//Если ничего не устанавливается и нет id то sync не делается
@@ -97,7 +97,7 @@ function infra_session_sync($list=false){
 }
 
 
-function infra_session_make($list,&$data=array()){
+function &infra_session_make($list,&$data=array()){
 	if(is_null($data))$data=array();
 	infra_fora($list,function($li) use(&$data){
 		$data=&infra_seq_set($data,$li['name'],$li['value']);
@@ -115,6 +115,7 @@ function infra_session_get($name='',$def=null){
 function infra_session_set($name,$value=null){
 	//if(infra_session_get($name)===$value)return; //если сохранена ссылка то изменение её не попадает в базу данных и не синхронизируется
 	$right=infra_seq_right($name);
+
 	if(is_null($value)){//Удаление свойства	
 		$last=array_pop($right);
 		$val=infra_session_get($right);
@@ -134,8 +135,9 @@ function infra_session_set($name,$value=null){
 		}
 	}
 	$li=array('name'=>$right,'value'=>$value);
-	global $infra_session_data;
-	infra_session_make($li,$infra_session_data);
+	
+	$infra_session_data=infra_session_make($li,$infra_session_data);
+
 	infra_session_sync($li);
 }
 

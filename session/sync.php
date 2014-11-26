@@ -4,8 +4,7 @@
 	infra_require('*infra/ext/seq.php');
 	infra_require('*session/session.inc.php');
 
-	global $infra_session_lasttime;
-	$isphp=!!$infra_session_lasttime;
+	
 
 	$ans=array('result'=>1);
 
@@ -28,7 +27,12 @@
 	$time=time();//время синхронизации и время записываемых данных, устанавливается в cookie
 	$ans['time']=$time;
 	$list=infra_json_decode($_POST['list']);
+	if($list===false)$list=null;
 
+	infra_fora($list,function(&$li) use($time){
+		$li['time']=$time;
+	});
+	
 	$ans['is']=array();
 	$ans['is']['news']=false;
 
@@ -62,11 +66,7 @@
 			$ans['is']['news']=!!$news;
 			$ans['news']=$news;
 			infra_forr($ans['news'],function(&$v) use($list){
-				if($v['value']=='null'){
-					$v['value']=null;
-				}else{
-					$v['value']=infra_json_decode($v['value']);
-				}
+				$v['value']=infra_json_decode($v['value']);
 				$v['name']=infra_seq_right($v['name']);
 				$r=infra_forr($list,function($item) use($v){
 					if(infra_seq_short($item['name'])!=infra_seq_short($v['name']))return;
@@ -81,6 +81,7 @@
 	$ans['is']['list']=!!$list;
 
 	if($list){
+		
 		if(!$session_id){
 			$pass=md5(print_r($list,true).time().rand());
 			$pass=substr($pass,0,8);
@@ -91,18 +92,10 @@
 			infra_view_setCookie('infra_session_id',$session_id);
 			infra_view_setCookie('infra_session_pass',md5($pass));
 		}
-		$sql='insert into `ses_records`(`session_id`, `name`, `value`, `time`) VALUES(?,?,?,FROM_UNIXTIME(?))';
-		$stmt=$db->prepare($sql);
-		$sql='delete from `ses_records` where `session_id`=? and `name`=?';
-		$delstmt=$db->prepare($sql);
-		infra_fora($list,function($rec) use($isphp,&$delstmt,&$stmt,$session_id,$time){
-			if(!$isphp&&$rec['name'][0]=='safe')return;
-			$name=infra_seq_short($rec['name']);
-			$delstmt->execute(array($session_id,$name));
-			$stmt->execute(array($session_id,$name,infra_json_encode($rec['value']),$time));
-		});
+		infra_session_writeNews($list,$session_id);
 	}
 	$ans['is']['session_id']=!!$session_id;
+	
 	return infra_echo($ans);
 /**/
 ?>
