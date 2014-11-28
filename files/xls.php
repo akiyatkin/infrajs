@@ -192,6 +192,8 @@ function &xls_parseAll($path){
 		    //return "";
 			//собрать данные
 		}
+		
+		
 		return $data;
 	},array($path));
 	return $data;
@@ -212,6 +214,7 @@ function &xls_make2($path){
 function &xls_make($path){
 
 	$datamain=xls_parseAll($path);
+	
 	if(!$datamain)return;
 	$p=infra_srcinfo($path);
 	$title=$p['name'];
@@ -298,6 +301,7 @@ function &xls_make($path){
 			}
 		}
 	}
+	
 	return $groups;
 }
 function &xls_runPoss(&$data,$callback,$back=false){
@@ -390,8 +394,9 @@ function xls_processPoss(&$data,$ishead=false){ //
 				if($propvalue=='')return;
 				if($propvalue{0}=='.')return;//Позиции у которых параметры начинаются с точки скрыты
 
-				$propvalue=preg_replace('/\s+$/','',$propvalue);
-				$propvalue=preg_replace('/^\s+/','',$propvalue);
+				$propvalue=trim($propvalue);
+				//$propvalue=preg_replace('/\s+$/','',$propvalue);
+				//$propvalue=preg_replace('/^\s+/','',$propvalue);
 				if(!$propname)return;
 				$p[$propname]=$propvalue;
 			});
@@ -403,7 +408,6 @@ function xls_processPoss(&$data,$ishead=false){ //
 			unset($data['head']);
 		}
 	});
-
 
 }
 function xls_print($data){
