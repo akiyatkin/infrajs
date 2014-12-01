@@ -1,14 +1,23 @@
 infra.test=function(plugin,step){
+
 	setTimeout(function(){//надо чтобы в консоли сначало вывелась строка return а потом уже тест запустился. наоборот тупо.
+		
 		infra.test.index=0;
 		if(typeof(step)!=='undefined')infra.test.index=step;
 		infra.test.tasks=[];
 		infra.test.step=step;
+
 		infra.unload('*infra/ext/test.php?'+plugin);
 		infra.require('*infra/ext/test.php?'+plugin);
+
 	},1);
 	return 'Тест '+plugin;
 }
+
+
+
+
+
 infra.test.ok=function(msg){
 	if(!msg)msg='ok';
 	console.info(this.index+': '+msg);
