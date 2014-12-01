@@ -262,6 +262,7 @@ infra.session={
 	process_timer:false,
 	syncNow:function(){
 		this.sync(null,true);
+		//Не срабатывает если id нет
 	},
 	sync:function(list,sync,callback){
 		if(!callback)callback=function(){};

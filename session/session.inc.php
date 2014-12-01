@@ -63,7 +63,6 @@ END;
 	function infra_session_getEmail($session_id=false){
 		if(!$session_id)$session_id=infra_session_getId();
 		return infra_once('infra_session_getEmail',function($session_id){
-			//В рамках одного запуска php скрипта можно cat_getSessionEmail можно вызывать сколько угодно раз. Обращение к базе будет одно.
 			$db=&infra_session_db();
 			if(!$db)return;
 			infra_require('*session/session.php');
@@ -109,7 +108,7 @@ END;
 		$isphp=!!$infra_session_lasttime;
 		$sql='insert into `ses_records`(`session_id`, `name`, `value`, `time`) VALUES(?,?,?,FROM_UNIXTIME(?))';
 		$stmt=$db->prepare($sql);
-		$sql='delete from `ses_records` where `session_id`=? and `name`=? and `time`>=FROM_UNIXTIME(?)';
+		$sql='delete from `ses_records` where `session_id`=? and `name`=? and `time`<=FROM_UNIXTIME(?)';
 		$delstmt=$db->prepare($sql);
 		infra_fora($list,function($rec) use($isphp,&$delstmt,&$stmt,$session_id){
 			if(!$isphp&&$rec['name'][0]=='safe')return;

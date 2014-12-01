@@ -63,7 +63,9 @@ function infra_session_recivenews($list=array()){
 
 	infra_unload($src);
 	$ans=infra_loadJSON($src);
-
+	//echo '<pre>';
+	//print_r($ans);
+	//exit;
 	$_POST=$oldPOST;
 	$_REQUEST=$oldREQ;
 	return $ans;

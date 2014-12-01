@@ -45,7 +45,11 @@
 		$html.=$require('*infra/ext/html.js');
 		$html.=$require('*infra/ext/template.js');
 		$html.=$require('*infra/ext/state.js');
-		$html.=$require('*infra/ext/loader.js');//
+		$html.=$require('*infra/ext/loader.js');
+
+		$html.=$require('*infra/ext/test.js');
+
+		
 		return $html;
 	},array($_SERVER['QUERY_STRING']),$re);
 	@header('content-type: text/javascript; charset=utf-8');

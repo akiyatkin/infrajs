@@ -164,10 +164,10 @@
 		//div
 		if(!layer.div&&layer.parent)layer.div=layer.parent.div;
 	});
-	infra.listen(infra,'layer.oncheck',function(layer){
-		//autosave
-		infrajs.autosaveRestore(layer);
-	});
+	//infra.listen(infra,'layer.oncheck',function(layer){
+	//	//свойства autosave у слоя нет свойства autosave со значениями из сессии, проблема первоисточника, при переавторизации autosave не обновлялся у слоёв это приводило к ошибкам, так как значения в autosave также считались значениями по умолчанию
+	//	infrajs.autosaveRestore(layer);
+	//});
 	
 
 	/*infra.listen(infra,'layer.oncheck',function(layer){//php {} возвращает как []

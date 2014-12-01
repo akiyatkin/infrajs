@@ -76,6 +76,8 @@ function &infra_forr(&$el,$callback,$back=false){//Бежим по индекс�
 			}
 		}
 	}
+	$r=null;//Notice без этого генерируется Only variable references should be returned by reference
+	return $r;
 }
 function &infra_forcall($callback,$nar,&$val,$key=null, &$group=null,$i=null){
 	$param=array_merge($nar,array(&$val,$key,&$group,$i));

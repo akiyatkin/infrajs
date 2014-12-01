@@ -149,7 +149,8 @@ infra.wait(infrajs,'oninit',function(){
 		}
 	};
 
-	infrajs.autosaveRestore=function(layer){
+	/*infrajs.autosaveRestore=function(layer){
+		return;
 		if(layer.autosavenametpl)layer.autosavename=infra.template.parse([layer.autosavenametpl],layer);
 		var defautosave={};
 		if(layer.autosavename){
@@ -169,7 +170,7 @@ infra.wait(infrajs,'oninit',function(){
 				layer.autosave[i]=defautosave[i];
 			}
 		}
-	}
+	}*/
 	infrajs.autosaveHand=function(layer){
 		if(!layer.autosavename)return;
 		var inps=autosave.getInps(layer.div).not('[autosave]').attr('autosave',1);//Берём input тольо не обработанные

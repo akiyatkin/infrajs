@@ -23,7 +23,7 @@ function infra_seq_right($val,$offen=INFRA_SEQ_OFFEN,$seldom=INFRA_SEQ_SELDOM){/
 			$s=str_replace($seldom,$offen,$s);
 		});
 		if($val[sizeof($val)-1]==='')array_pop($val);
-		if($val[0]==='')array_shift($val);
+		if(isset($val[0])&&$val[0]==='')array_shift($val);
 
 		$val=array_values($val);
 	}
