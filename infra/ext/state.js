@@ -301,9 +301,16 @@ infra.State.set=function(href,auto){//href без # ? типа asdf/asdf. auto �
 	store.query=query;
 	state.prepare(obj,state.obj);
 	state.notify();
-	setTimeout(function(){//Текущий процесс выполнения скрипта закончится с показом всех слоёв
+	//setTimeout(function(){//Текущий процесс выполнения скрипта закончится с показом всех слоёв
+		//это нужно чтобы цепочка Infrajs.check встала друг за другом, и не врывалась по середине
+	//if(!infra.session.isSync()){
 		infra.fire(infra.State,'onchange');//слушаем и запускаем infrajs.check
-	},1);
+	//}else{
+	//	infra.when(infra.session,'onsync',function(){
+	//		infra.fire(infra.State,'onchange');
+	//	});
+	//}
+	//},1);
 }
 
 infra.State.store=function(name){

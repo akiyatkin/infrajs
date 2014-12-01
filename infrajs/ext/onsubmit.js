@@ -38,6 +38,7 @@ infrajs.setonsubmit=function(layer){
 			infra.require('infra/lib/jquery/jquery.form.js');
 			form.ajaxSubmit({
 				dataType:'json',
+				async:false,
 				type:'post',
 				complete:function(xhr){
 					layer.config['onsubmit']=false;

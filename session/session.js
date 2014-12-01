@@ -271,7 +271,7 @@ infra.session={
 		}
 
 		this.wait.push(list);
-		if(typeof(callback)=='function')this.callbacks.push(callback);
+		this.callbacks.push(callback);
 		var that=this;
 		if(sync){
 			list=that.wait;
@@ -303,7 +303,15 @@ infra.session={
 			},1);
 		}
 	},
-	_sync:function(list,sync,callback){
+	isSync:function(){
+		var sentname=this._getName('sent');
+		var waitname=this._getName('wait');
+		var sent=this.stor.load(sentname);//в sent хранится что уже в процессе отправления
+		var wait=this.stor.load(waitname);//в wait скадывается всё новое что нужно отправить
+		if(!sent&&!wait)return false;
+		return true;
+	},
+	_sync:function(list,sync,callback){// Сюда попадает пулл запросво в одном setTimeout 1
 		var sentname=this._getName('sent');
 		var waitname=this._getName('wait');
 		
@@ -322,12 +330,12 @@ infra.session={
 				if(err){
 					this.stor.save(waitname,wait);
 					this.stor.save(sentname,false);
-					//this.syncreq(list,sync,arguments.callee);
 					callback(err);
 				}else{
 					this.stor.save(sentname,false);//Всё записалось в sent и после успешной отправки очистится
 					callback(err);
 				}
+				infra.fire(infra.session,'onsync');
 			}.bind(this));//синхронно вызываем сразу, вразрез с асинхронными
 		}
 
@@ -371,13 +379,14 @@ infra.session={
 					infra.forr(calls,function(ca){ ca(true) });
 					this.syncing=false;
 					conf.session.sync=false;//Ошибка отправка на сервер больше не будет работать пока не обновится страница
+					infra.fire(infra.session,'onsync');
 				}else{
 					var r=next();
 					if(!r){//А если был запрос, попадём сюда снова после его окончания
 						var calls=this.syncing;//Чтоб небыло замыканий прежде чем запускать обработчики очищается syncing
 						this.syncing=false;
 						infra.forr(calls,function(ca){ ca(false) });
-						infra.fire(this,'onchange');
+						infra.fire(infra.session,'onsync');
 					}
 				}
 			}.bind(this));
@@ -436,7 +445,17 @@ infra.session={
 		if(val===undefined)return def;
 		return val;
 	},
-	set:function(name,value,sync){
+	set:function(name,value,sync,fn){
+		if(typeof(fn)!='undefined'){
+			var t=fn;
+			fn=sync;
+			sync=t;
+		}else{
+			if(typeof(sync)=='function'){
+				fn=sync;
+				sync=true;
+			}
+		}
 		//if(this.get(name)===value)return; //если сохранена ссылка то изменение её не попадает в базу данных и не синхронизируется
 		//if(infra.conf.debug){
 			if(value&&typeof(value)=='object'&&value.constructor!=Array){
@@ -477,8 +496,7 @@ infra.session={
 
 		this.storageSave(li);//Задержка!!!!
 		this.dataSave(li);
-		var fn=sync;
-		if(typeof(fn)!=='function')fn=function(){};
+
 		this.sync(li,!!sync,fn);//2 true синхронно
 	},
 	getValue:function(name,def){//load для <input value="...

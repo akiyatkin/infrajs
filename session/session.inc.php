@@ -106,6 +106,7 @@ END;
 		$db=infra_session_db();
 		global $infra_session_lasttime;
 		$isphp=!!$infra_session_lasttime;
+		//if(!$isphp)sleep(1);
 		$sql='insert into `ses_records`(`session_id`, `name`, `value`, `time`) VALUES(?,?,?,FROM_UNIXTIME(?))';
 		$stmt=$db->prepare($sql);
 		$sql='delete from `ses_records` where `session_id`=? and `name`=? and `time`<=FROM_UNIXTIME(?)';
@@ -145,7 +146,7 @@ END;
 		$nowsession_id=infra_session_getId();
 		if($session_id==$nowsession_id)return infra_session_get();
 		return infra_once('infra_session_user_init',function($session_id){
-			$sql='select name, value, unix_timestamp(time) as time from ses_records where session_id=? order by time';
+			$sql='select name, value, unix_timestamp(time) as time from ses_records where session_id=? order by time,rec_id';
 			$db=infra_session_db();
 			$stmt=$db->prepare($sql);
 			$stmt->execute(array($session_id));

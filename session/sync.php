@@ -4,7 +4,6 @@
 	infra_require('*infra/ext/seq.php');
 	infra_require('*session/session.inc.php');
 
-	
 
 	$ans=array('result'=>1);
 
@@ -57,7 +56,7 @@
 	//Здесь session_id проверенный
 
 	if($session_id&&$timelast<$time){
-		$sql='select name, value, unix_timestamp(time) as time from ses_records where session_id=? and time>from_unixtime(?) order by time';
+		$sql='select name, value, unix_timestamp(time) as time from ses_records where session_id=? and time>from_unixtime(?) order by time, rec_id';
 		$stmt=$db->prepare($sql);
 		$stmt->execute(array($session_id,$timelast));
 		$news=$stmt->fetchAll();
