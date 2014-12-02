@@ -120,15 +120,26 @@ END;
 	}
 	function infra_session_change($session_id,$pass){
 
-		
 		$email=infra_session_getEmail();
-		if(!$email){
+		$session_id_old=infra_session_getId();
+		if(!$email){//Текущая сессия не авторизированная
 			$email=infra_session_getEmail($session_id);
-			if($email){//У новой сессии есть регистрация
+			if($email){//А вот новая сессия аторизированна, значит нужно объединить сессии и грохнуть старую
 				$newans=infra_session_recivenews();
 				//Нужно это всё записать в базу данных для сессии 1
 				infra_session_writeNews($newans['news'],$session_id);
-				
+
+				//Теперь старую сессию нужно удалить полностью
+				//Надо подчистить 2 таблицы
+				if($session_id_old){//хз бывает ли такое что его нет
+					$db=infra_session_db();
+					$sql='delete from ses_records where session_id=?';
+					$stmt=$db->prepare($sql);
+					$stmt->execute(array($session_id_old));
+					$sql='delete from ses_sessions where session_id=?';
+					$stmt=$db->prepare($sql);
+					$stmt->execute(array($session_id_old));
+				 }
 			}
 		}
 		

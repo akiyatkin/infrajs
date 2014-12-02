@@ -12,7 +12,11 @@ function infra_seq_short($val,$offen=INFRA_SEQ_OFFEN,$seldom=INFRA_SEQ_SELDOM){/
 	});
 	return implode($offen,$nval);
 }
-
+function infra_seq_contain($search,$subject){
+	return !infra_forr($search,function($name,$index) use($subject){
+		if($name!=$subject[$index])return true;
+	});
+}
 function infra_seq_right($val,$offen=INFRA_SEQ_OFFEN,$seldom=INFRA_SEQ_SELDOM){//Возвращает массив - правильную запись последовательности
 
 	if(!is_array($val)){

@@ -185,6 +185,7 @@ infra.session={
 			this.dataSave(ans.news);
 			
 			callback();
+
 			infra.fire(infra.session,'onsync');
 		}.bind(this);
 		var data={//id и time берутся из кукисов на сервере
@@ -205,6 +206,7 @@ infra.session={
 				}catch(e){
 					var ans=false;
 				}
+
 				cb(ans);
 			}
 		});
@@ -323,15 +325,19 @@ infra.session={
 		else if(!wait&&!list)	wait=[];
 		wait=this.right(wait);
 		var conf=infra.config();
+
 		if(conf.session.sync&&sync){//Если просто вызыван sync с одним параметром или без
 			this.stor.save(sentname,wait);//Всё записалось в sent и после успешной отправки очистится
 			this.stor.save(waitname,false);//wait становится пустым, но пока будет отправка он может наполняться
+
 			return this.syncreq(wait,sync,function(err){
+
 				if(err){
 					this.stor.save(waitname,wait);
 					this.stor.save(sentname,false);
 					callback(err);
 				}else{
+
 					this.stor.save(sentname,false);//Всё записалось в sent и после успешной отправки очистится
 					callback(err);
 				}
@@ -434,6 +440,7 @@ infra.session={
 	},
 	make:function(list,data){
 		infra.fora(list,function(li){
+			if(!li)return;
 			data=infra.seq.set(data,li.name,li.value);
 		}.bind(this));
 		return data;
@@ -446,32 +453,20 @@ infra.session={
 		return val;
 	},
 	set:function(name,value,sync,fn){
-		if(typeof(fn)!='undefined'){
-			var t=fn;
-			fn=sync;
-			sync=t;
-		}else{
-			if(typeof(sync)=='function'){
-				fn=sync;
-				sync=true;
+		if(value&&typeof(value)=='object'&&value.constructor!=Array){
+			for(var i in value)break;
+			if(!i){
+				//alert('Запись в сессию пустого объекта невозможна,\nИначе объект {} превратится на сервере в массив []\nукажите в объекте какое-то свойство. Запись в '+name);
+				value=null;
 			}
 		}
-		//if(this.get(name)===value)return; //если сохранена ссылка то изменение её не попадает в базу данных и не синхронизируется
-		//if(infra.conf.debug){
-			if(value&&typeof(value)=='object'&&value.constructor!=Array){
-				for(var i in value)break;
-				if(!i){
-					//alert('Запись в сессию пустого объекта невозможна,\nИначе объект {} превратится на сервере в массив []\nукажите в объекте какое-то свойство. Запись в '+name);
-					value=null;
-				}
-			}
-		//}
-
+		
 		var right=infra.seq.right(name);
 		if(value===null||typeof(value)=='undefined'){//Удаление свойства	
 			var last=right.pop();
 			var val=infra.session.get(right);
-			if(val&&typeof(val)=='object'&&val.constructor!=Array){
+			
+			if(last&&val&&typeof(val)=='object'&&val.constructor!=Array){
 				var iselse=false;
 				for(var i in val){
 					if(i!=last){
@@ -481,23 +476,24 @@ infra.session={
 				}
 				if(!iselse){//В объекте ничего больше нет кроме удаляемого свойства... или и его может даже нет
 					//Зачит надо удалить и сам объект
+					return infra.session.set(right,null,sync,fn);
 				}else{
 					right.push(last);//Если есть ещё что-то то работает в обычном режиме
 				}
 			}
 		}
-		
+
 
 
 		var li={name:right,value:value};
 		if(li.name[0]=='safe')return false;
 		//При set делается 2 действия
-		
+
 
 		this.storageSave(li);//Задержка!!!!
 		this.dataSave(li);
 
-		this.sync(li,!!sync,fn);//2 true синхронно
+		this.sync(li,sync,fn);//2 true синхронно
 	},
 	getValue:function(name,def){//load для <input value="...
 		var value=this.get(name);

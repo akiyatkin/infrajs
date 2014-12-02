@@ -20,6 +20,11 @@ infra.seq={
 
 		return nval.join(offen);
 	},
+	contain:function(search,subject){
+		return !infra.forr(search,function(name,index){
+			if(name!=subject[index])return true;
+		});
+	},
 	right:function(val,offen,seldom){//Возвращает массив - правильную запись последовательности
 		offen=offen||infra.seq.offen;
 		seldom=seldom||infra.seq.seldom;

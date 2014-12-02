@@ -55,24 +55,26 @@
 	}
 	//Здесь session_id проверенный
 
-	if($session_id&&$timelast<$time){
-		$sql='select name, value, unix_timestamp(time) as time from ses_records where session_id=? and time>from_unixtime(?) order by time, rec_id';
+	if($session_id&&$timelast<=$time){
+		$sql='select name, value, unix_timestamp(time) as time from ses_records where session_id=? and time>=from_unixtime(?) order by time, rec_id';
 		$stmt=$db->prepare($sql);
 		$stmt->execute(array($session_id,$timelast));
 		$news=$stmt->fetchAll();
 		
 		if($news){
-			$ans['is']['news']=!!$news;
+			
 			$ans['news']=$news;
 			infra_forr($ans['news'],function(&$v) use($list){
 				$v['value']=infra_json_decode($v['value']);
 				$v['name']=infra_seq_right($v['name']);
 				$r=infra_forr($list,function($item) use($v){
-					if(infra_seq_short($item['name'])!=infra_seq_short($v['name']))return;
+					if(!infra_seq_contain($n['name'],$item['name']))return;
 					return true;//найдено совпадение новости с устанавливаемым значением.. новость удаляем
 				});
 				if($r)return new infra_Fix('del');
 			});
+			$ans['is']['news']=!!$ans['news'];
+			if(!$ans['news'])unset($ans['news']);
 		}
 		
 	}
@@ -80,7 +82,6 @@
 	$ans['is']['list']=!!$list;
 
 	if($list){
-		
 		if(!$session_id){
 			$pass=md5(print_r($list,true).time().rand());
 			$pass=substr($pass,0,8);
@@ -92,6 +93,7 @@
 			infra_view_setCookie('infra_session_pass',md5($pass));
 		}
 		infra_session_writeNews($list,$session_id);
+		//$ans['news']=array_merge($news,$list);
 	}
 	$ans['is']['session_id']=!!$session_id;
 	
