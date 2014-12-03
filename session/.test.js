@@ -133,6 +133,18 @@ infra.wait(infrajs,'onshow',function(){
 			test.ok();
 		}
 	]);
-
+	test.tasks.push([
+		'Проверка safe',
+		function(){
+			infra.session.set('safe.test1',true,true); 
+			infra.session.set('safe.test2',1,false,function(){
+				test.check();		
+			});
+		},
+		function(){
+			if(infra.session.get('safe.test1')||infra.session.get('safe.test2'))test.err('Мы как-то установили значение в safe');
+			test.ok();
+		}
+	]);
 	test.exec();
 });

@@ -39,14 +39,13 @@ infra.wait(infrajs,'oninit',function(){
 		*/
 		clear:function(layer){//Если autosave у двух слоёв одинаковый нельзя нарушать связь
 			if(!layer.autosavename)return;
-			layer.autosave={};
+			//layer.autosave={};
 			infra.session.set(layer.autosavename);
 		},
 		get:function(layer,name,def){//blinds
 			if(!layer.autosavename)return def;
 			if(!name)name='';
-			var val=infra.session.get(layer.autosavename+'.'+name);
-			if(val===undefined)return def;
+			var val=infra.session.get(layer.autosavename+'.'+name,def);
 			return val;
 		},
 		logout:function(){//нет возможности востановить значения по умолчанию указанные в слоях.
@@ -57,8 +56,8 @@ infra.wait(infrajs,'oninit',function(){
 			if(!layer.autosavename)return;
 			infra.session.set(layer.autosavename+'.'+name,val);
 
-			var right=infra.seq.right(name);
-			layer.autosave=infra.seq.set(layer.autosave,right,val);
+			//var right=infra.seq.right(name);
+			//layer.autosave=infra.seq.set(layer.autosave,right,val);
 		},
 		//-----------
 		loadAll:function(layer){
@@ -172,6 +171,7 @@ infra.wait(infrajs,'oninit',function(){
 		}
 	}*/
 	infrajs.autosaveHand=function(layer){
+		if(layer.autosavenametpl)layer.autosavename=infra.template.parse([layer.autosavenametpl],layer);
 		if(!layer.autosavename)return;
 		var inps=autosave.getInps(layer.div).not('[autosave]').attr('autosave',1);//Берём input тольо не обработанные
 		inps.each(function(){

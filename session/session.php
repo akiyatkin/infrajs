@@ -47,11 +47,13 @@ function infra_session_getName($name){
 	return 'infra_session_'.$name;
 }
 function infra_session_recivenews($list=array()){
+	
+	global $infra_session_time;
+	if(!$infra_session_time)$infra_session_time=1;
 	$data=array( //id и time берутся из кукисов на сервере 
-		'time'=>1,
+		'time'=>$infra_session_time,
 		'list'=>infra_json_encode($list)
 	);
-	
 	global $infra_session_lasttime;
 	$infra_session_lasttime=true;//Метка что вызов из php
 	$oldPOST=$_POST;
@@ -63,6 +65,7 @@ function infra_session_recivenews($list=array()){
 
 	infra_unload($src);
 	$ans=infra_loadJSON($src);
+	$infra_session_time=$ans['time'];
 	//echo '<pre>';
 	//print_r($ans);
 	//exit;
@@ -88,7 +91,11 @@ function infra_session_getTime(){
 	return infra_view_getCookie(infra_session_getName('time'));
 }
 function infra_session_syncNow(){
-	return infra_session_syncreq();// Заного считаются все данные сессии
+	$ans=infra_session_recivenews();
+	if(!$ans)return;
+	//По сути тут set(news) но на этот раз просто sync вызываться не должен, а так всё тоже самое
+	global $infra_session_data;
+	$infra_session_data=infra_session_make($ans['news'],$infra_session_data);
 }
 function infra_session_sync($list=null){
 	$session_id=infra_session_getId();
@@ -100,7 +107,6 @@ function infra_session_sync($list=null){
 
 
 function &infra_session_make($list,&$data=array()){
-	if(is_null($data))$data=array();
 	infra_fora($list,function($li) use(&$data){
 		$data=&infra_seq_set($data,$li['name'],$li['value']);
 	});
@@ -121,7 +127,7 @@ function infra_session_set($name,$value=null){
 	if(is_null($value)){//Удаление свойства	
 		$last=array_pop($right);
 		$val=infra_session_get($right);
-		if(infra_isAssoc($val)===true){//Имеем дело с ассоциативным массивом
+		if($last&&infra_isAssoc($val)===true){//Имеем дело с ассоциативным массивом
 			$iselse=false;
 			foreach($val as $i=>$valval){
 				if($i!=$last){
@@ -131,16 +137,18 @@ function infra_session_set($name,$value=null){
 			}
 			if(!$iselse){//В объекте ничего больше нет кроме удаляемого свойства... или и его может даже нет
 				//Зачит надо удалить и сам объект
+				return infra_session_set($right,null);
 			}else{
 				array_push($right,$last);//Если есть ещё что-то то работает в обычном режиме
 			}
 		}
 	}
 	$li=array('name'=>$right,'value'=>$value);
+	global $infra_session_data;
 	
+	infra_session_sync($li);
 	$infra_session_data=infra_session_make($li,$infra_session_data);
 
-	infra_session_sync($li);
 }
 
 

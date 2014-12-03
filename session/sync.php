@@ -60,19 +60,31 @@
 		$stmt=$db->prepare($sql);
 		$stmt->execute(array($session_id,$timelast));
 		$news=$stmt->fetchAll();
-		
+		$ans['list']=$list;
+		$ans['orignews']=$news;
 		if($news){
 			
 			$ans['news']=$news;
-			infra_forr($ans['news'],function(&$v) use($list){
+			infra_forr($ans['news'],function(&$v) use($list,&$ans){
 				$v['value']=infra_json_decode($v['value']);
 				$v['name']=infra_seq_right($v['name']);
-				$r=infra_forr($list,function($item) use($v){
-					if(!infra_seq_contain($n['name'],$item['name']))return;
-					return true;//найдено совпадение новости с устанавливаемым значением.. новость удаляем
+				$r=infra_forr($list,function($item) use(&$v,&$ans){
+					//Устанавливаемое значение ищим в новости
+					if(infra_seq_contain($item['name'],$v['name'])!==false)return true;//найдено совпадение новости с устанавливаемым значением.. новость удаляем
+
+					//Новость ищим в устанавливаемом значение
+					$right=infra_seq_contain($v['name'],$item['name']);
+					if($right)$v['value']=infra_seq_set($v['value'],$right,$item['value']);//Новость осталась но она включает устанавливаемые данные
 				});
-				if($r)return new infra_Fix('del');
+
+				if($r){
+					$ans['counter']++;
+					$ans['del']=$v;
+					return new infra_Fix('del');
+				}
 			});
+
+
 			$ans['is']['news']=!!$ans['news'];
 			if(!$ans['news'])unset($ans['news']);
 		}

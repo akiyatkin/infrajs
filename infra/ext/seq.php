@@ -13,9 +13,14 @@ function infra_seq_short($val,$offen=INFRA_SEQ_OFFEN,$seldom=INFRA_SEQ_SELDOM){/
 	return implode($offen,$nval);
 }
 function infra_seq_contain($search,$subject){
-	return !infra_forr($search,function($name,$index) use($subject){
+	//Нужно вернуть всё что после совпадения
+	//При полном соответствии, возвращается массив, что в php будет означать false... нужна строгая проверка false чтобы убедиться что search не содержится в subject
+	$r=infra_forr($search,function($name,$index) use($subject){
 		if($name!=$subject[$index])return true;
 	});
+	if($r)return false;//Весь search не был найден в subject. Если всё равно будет null и сюда не попадаем
+	$len=sizeof($search);//Нужно взять всё начинается с len d subject и вернуть.
+	return array_slice($subject,$len);
 }
 function infra_seq_right($val,$offen=INFRA_SEQ_OFFEN,$seldom=INFRA_SEQ_SELDOM){//Возвращает массив - правильную запись последовательности
 

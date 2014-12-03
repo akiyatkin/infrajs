@@ -211,20 +211,23 @@ infra.session={
 			}
 		});
 	},
-	/*clear:function(){
-		var view=infra.view;
-		this.storageSave([],true);
-		this.data={};
-
-		var sentname=this._getName('sent');
-		var waitname=this._getName('wait');
-		this.stor.save(waitname,false);
-		this.stor.save(sentname,false);
-
-		view.setCookie(this._getName('time'));//Время определяется на сервере, выставляется на клиенте
-		this.sync([],true);
-		location.href=location.href;
-	},*/
+	clear:function(cb){
+		if(!cb)cb=function(){};
+		var data=infra.session.get();
+		var counter=0;
+		var check=function(){
+			if(counter)return;
+			cb();
+		}
+		infra.foro(data,function(val,name){
+			counter++;
+			infra.session.set(name,null,false,function(){
+				counter--;
+				check();
+			});
+		});
+		check();
+	},
 	logout:function(){
 		var view=infra.view;
 		this.storageSave([],true);
@@ -486,7 +489,10 @@ infra.session={
 
 
 		var li={name:right,value:value};
-		if(li.name[0]=='safe')return false;
+		if(li.name[0]=='safe'){
+			if(fn)fn();
+			return false;
+		}
 		//При set делается 2 действия
 
 
