@@ -183,4 +183,3 @@ function &infra_forx(&$obj,$callback,$back=false){//Бежим сначало п
 		},$back);
 	},$back);
 };
-?>

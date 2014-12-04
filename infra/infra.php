@@ -92,7 +92,8 @@ $_SERVER['QUERY_STRING']=infra_toutf($_SERVER['QUERY_STRING']);
 
 infra_require('*infra/ext/config.php');
 //Продакшин должен быть таким же как и тестовый сервер, в том числе и с выводом ошибок. Это упрощает поддержку. Меньше различий в ошибках.
-ini_set('error_reporting',E_ALL ^ E_STRICT ^ E_NOTICE);
+//ini_set('error_reporting',E_ALL ^ E_STRICT ^ E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 //Strict Standards: Only variables should be assigned by reference
 //Notice: Only variable references should be returned by reference
 //Notice: Undefined index: 
