@@ -286,10 +286,11 @@ infra.session={
 				that.process=false;
 			}
 			that._sync(list,sync,function(){
-				for(var i=0,l=that.callbacks.length;i<l;i++){
-					that.callbacks[i]();
-				}
+				var callbacks=that.callbacks;
 				that.callbacks=[];
+				for(var i=0,l=callbacks.length;i<l;i++){
+					callbacks[i]();
+				}
 			});
 		}else{
 			if(that.process)return;
@@ -300,10 +301,11 @@ infra.session={
 				var list=that.wait;
 				that.wait=[];
 				that._sync(list,sync,function(){
-					for(var i=0,l=that.callbacks.length;i<l;i++){
-						that.callbacks[i]();
-					}
+					var callbacks=that.callbacks;
 					that.callbacks=[];
+					for(var i=0,l=callbacks.length;i<l;i++){
+						callbacks[i]();
+					}
 				});
 			},1);
 		}
