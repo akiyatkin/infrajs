@@ -1,5 +1,6 @@
 infra.test=function(plugin,step){
 	setTimeout(function(){//надо чтобы в консоли сначало вывелась строка return а потом уже тест запустился. наоборот тупо.
+		infra.test.plugin=plugin;
 		infra.test.index=0;
 		infra.test.step=step;
 		infra.test.iserr=false;
@@ -34,7 +35,8 @@ infra.test.exec=function(){
 	setTimeout(function(){//Все процессы javascript должны закончится test.ok может запускаться в центри серии подписок
 		var task=infra.test.tasks[infra.test.index];
 		if(!task){
-			console.info('Тест выполнен!');
+			console.info('Тест '+infra.test.plugin+' выполнен!');
+			alert('Тест '+infra.test.plugin+' выполнен');
 		}else{
 			console.info(infra.test.index+': '+task[0]);
 			task[1]();
