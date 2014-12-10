@@ -468,9 +468,13 @@ function infra__load($path){
 
 			$SERVER_QUERY_STRING=$_SERVER['QUERY_STRING'];
 			$_SERVER['QUERY_STRING']=$getstr;
-			global $FROM_PHP;
+			global $FROM_PHP,$FROM_PHP_PLUGIN;
+			$FROM_PHP_PLUGIN_OLD=$FROM_PHP_PLUGIN;
 			$FROM_PHP_OLD=$FROM_PHP;
 			$FROM_PHP=true;
+			if(is_null($FROM_PHP_PLUGIN))$FROM_PHP_PLUGIN=true;
+			else if($FROM_PHP_PLUGIN)$FROM_PHP_PLUGIN=true;
+			else $FROM_PHP_PLUGIN=null;//При следующем вложенном подключении установится уже в true
 
 			ob_start();
 			//headers надо ловить
@@ -479,7 +483,7 @@ function infra__load($path){
 			$resecho=$result;
 			ob_end_clean();
 			$FROM_PHP=$FROM_PHP_OLD;
-
+			$FROM_PHP_PLUGIN=$FROM_PHP_PLUGIN_OLD;
 			//if($rrr&&$rrr!==1&&!is_string($rrr)){//в include небыло return.. он просто выполнился и всё
 			if($rrr!==1&&!is_null($rrr)){//в include небыло return.. он просто выполнился и всё
 				$result=$rrr;
@@ -533,11 +537,16 @@ function infra__load($path){
 
 
 */
-function infra_isphp(){
+
+function infra_isphp($val=null){
 	//Функция возвращет находимся ли мы в исполнении скрипта запущенного из браузера или скрипта 
 	//подключённого c помощью infra_loadJSON infra_loadTEXT другим php скриптом
-	global $FROM_PHP;
-	return $FROM_PHP;
+	global $FROM_PHP_PLUGIN;
+	if(!is_null($val)&&is_null($FROM_PHP_PLUGIN)){//можно установить false если ещё небыло никаких установок.. если кто-то подключает в php через theme.php или тп... сброс в theme.php уже не сработает
+		$FROM_PHP_PLUGIN=$val;
+	}else{
+		return $FROM_PHP_PLUGIN;
+	}
 }
 function infra_ret($ans,$str=false){
 	$ans['result']=1;
@@ -550,7 +559,8 @@ function infra_err($ans,$str=false){
 	return infra_ans($ans);
 }
 function infra_ans($ans){
-	if(!infra_isphp()){
+	global $FROM_PHP;
+	if(!$FROM_PHP){
 		@header('Content-type:text/plain');//Ответ формы не должен изменяться браузером чтобы корректно конвертирвоаться в объект js, если html то ответ меняется
 		echo infra_json_encode($ans);
 	}
