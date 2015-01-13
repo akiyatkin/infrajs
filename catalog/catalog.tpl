@@ -457,7 +457,11 @@
 		<p></p>
 		{~parse(Подпись)}
 		<p>
-			Перейти к группе <a href="?{state.parent.parent}/{group_title}">{group_title}</a>
+			Задать вопрос о {Производитель} {Артикул} можно с помощью <span class="a showContacts">формы для сообщений</span> или c помощью других <a href="?Контакты">контактов</a>.
+		</p>
+		<p>
+			Перейти к группе <a href="?{state.parent.parent}/{group_title}">{group_title}</a><br>
+			
 		</p>
 	</div>
 {poscost:}
