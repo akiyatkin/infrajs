@@ -10,21 +10,26 @@ function infra_admin_modified(){
 	if($conf['debug'])return;
 	else $atime=infra_admin_time();
 	$last_modified=$atime;
+
+
+	
+
 	if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
 	  // разобрать заголовок
 	//@header('Cache-control:no-cache');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
 	  $if_modified_since=preg_replace('/;.*$/', '', $_SERVER['HTTP_IF_MODIFIED_SINCE']);
 	  $if_modified_since=strtotime($if_modified_since); 
-	  if ($if_modified_since<=$last_modified) {
+	  if ($if_modified_since>$last_modified) {
 		// кэш браузера до сих пор актуален
 		header('HTTP/1.0 304 Not Modified');
 		//header('Cache-control: max-age=8640000, must-revalidate');
 		exit;
 	  }
 	}
-	//header('Cache-control: max-age=86400, must-revalidate');
-	$last_modified=gmdate('D, d M Y H:i:s', $atime).' GMT';
-	header('Last-Modified: ' . $last_modified);
+
+	//$now=gmdate('D, d M Y H:i:s', $atime).' GMT';
+	$now=gmdate('D, d M Y H:i:s', time()).' GMT';
+	header('Last-Modified: ' . $now);
 }
 function infra_admin($break=null,$ans=array('msg'=>'Требуется авторизация','result'=>0)){
 	//infra_admin(true) - пропускает только если ты администратор, иначе выкидывает окно авторизации
