@@ -7,18 +7,17 @@ Copyright 2008-2010 ITLife, Ltd. http://itlife-studio.ru
 @define('ROOT','../../../../');
 function infra_admin_modified(){
 	$conf=infra_config();
+	
 	if($conf['debug'])return;
-	else $atime=infra_admin_time();
-	$last_modified=$atime;
-
-
+	
+	$last_modified=infra_admin_time();
 	
 
 	if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
 	  // разобрать заголовок
-	//@header('Cache-control:no-cache');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
-	  $if_modified_since=preg_replace('/;.*$/', '', $_SERVER['HTTP_IF_MODIFIED_SINCE']);
-	  $if_modified_since=strtotime($if_modified_since); 
+	  //@header('Cache-control:no-cache');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
+	  //$if_modified_since=preg_replace('/;.*$/', '', $_SERVER['HTTP_IF_MODIFIED_SINCE']);
+	  $if_modified_since=strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']); 
 	  if ($if_modified_since>$last_modified) {
 		// кэш браузера до сих пор актуален
 		header('HTTP/1.0 304 Not Modified');
@@ -27,7 +26,7 @@ function infra_admin_modified(){
 	  }
 	}
 
-	//$now=gmdate('D, d M Y H:i:s', $atime).' GMT';
+	//$now=gmdate('D, d M Y H:i:s', $last_modified).' GMT';
 	$now=gmdate('D, d M Y H:i:s', time()).' GMT';
 	header('Last-Modified: ' . $now);
 }
