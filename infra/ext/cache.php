@@ -35,7 +35,7 @@ if(is_file(ROOT.'infra/update')){//Файл появляется после за
 	$r=@infra_cache_fullrmdir('infra/cache/');
 	if(!$r)header('infra-update:Fail');
 	else header('infra-update:OK');
-	infra_admin_time_set();
+	infra_admin_time_set(time()-1);
 }
 
 
