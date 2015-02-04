@@ -36,7 +36,12 @@ infra_admin_cache('htaccess',function($ht){
 		$text.="\n";
 
 
-
+		$text.='# Заголовок Cache-Control'."\n";
+		$text.='<IfModule mod_headers.c>'."\n";
+		$text.=' Header append Cache-Control "no-cache"'."\n";
+		$text.='</IfModule>'."\n";
+		$text.="\n";
+		
 		$text.='<ifModule mod_php.c>'."\n";
 		$text.="\n";
 
@@ -56,6 +61,8 @@ infra_admin_cache('htaccess',function($ht){
 		//$text.='#max_input_nesting_level'."\n";
 		//$text.='php_flag max_input_nesting_level 256'."\n";
 		//$text.="\n";
+		
+
 		
 		$text.='#magic_quotes_gpc'."\n";
 		$text.='php_flag magic_quotes_gpc 0'."\n";
@@ -80,6 +87,7 @@ infra_admin_cache('htaccess',function($ht){
 		}
 		$text.='</IfModule>'."\n";
 		$text.="\n";
+
 
 
 		//$text.='#errors'."\n";
