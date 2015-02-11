@@ -77,23 +77,32 @@ function &infra_cache($conds,$name,$fn,$args=array(),$re=false){
 			
 			//цифры нельзя, будут плодиться кэши
 			//если условие цифра значит это время, и если время кэша меньше.. нужно выполнить
-			$path=infra_cache_path($name,$args);
-			/*echo '<pre>';
-			print_r($args);
-			echo '<hr>';
-			/*
-			echo '<hr>';
-			echo '<pre>';
-			print_r($args);
-			echo $path.'<br>';*/
-			$path=infra_tofs($path);
-			$execute=$re;
+			
 
-			if(!$execute&&!is_file(ROOT.$path)){//кэша нет
 
-				$execute=true;
+			
+				
+			$max_time=1;
+			for($i=0,$l=sizeof($conds);$i<$l;$i++){
+				$mark=$conds[$i];
+				$mark=infra_theme($mark);
+				if($mark){
+					$m=filemtime(ROOT.$mark);
+					if($m>$max_time)$max_time=$m;
+					if(is_dir(ROOT.$mark)){
+						foreach (glob(ROOT.$mark.'*.*') as $filename) {
+							$m=filemtime($filename);
+							if($m>$max_time)$max_time=$m;
+						}
+					}
+				}else{
+					array_splice($conds,$i,1);
+					//Если переданной метки не существует меняется путь до кэша
+				}
 			}
-			if($re&&is_file(ROOT.$path)){//удаляем кэш
+			$path=infra_cache_path($name,array($conds,$args));
+			$path=infra_tofs($path);
+			/*if($re&&is_file(ROOT.$path)){//удаляем кэш
 				$dir=infra_cache_path($name);//папка
 				$files = glob(ROOT.$dir."/*");
 				if (sizeof($files)>0){
@@ -101,66 +110,38 @@ function &infra_cache($conds,$name,$fn,$args=array(),$re=false){
 						if(file_exists($file))unlink($file);
 					}
 				}
-			}
-			if(!$execute){
-
-				$cache_time=filemtime(ROOT.$path);//стартовая временная метка равна дате изменения самого кэша
-				/*$t=infra_admin_lastupdate_time();
-				if($t>$cache_time){
-					$execute=true;
-				}else{*/
-					for($i=0,$l=sizeof($conds);$i<$l;$i++){
-						$mark=$conds[$i];
-						$mark=infra_theme($mark);
-						if($mark){
-							$m=filemtime(ROOT.$mark);
-							if($m>$cache_time){
-								$execute=true;
-								break;
-							}
-							if(is_dir(ROOT.$mark)){
-								foreach (glob(ROOT.$mark.'*.*') as $filename) {
-									$m=filemtime($filename);
-									if($m>$cache_time){
-										$execute=true;
-										break;
-									}
-								}
-							}
-						}//Если переданной метки не существует, кэш не обновляем если он есть. 
-					}
-				//}
-			}
+			}*/
+			if(is_file(ROOT.$path))$cache_time=filemtime(ROOT.$path);//стартовая временная метка равна дате изменения самого кэша
+			else $cache_time=0;
 			
-			if(!$execute){
+			$execute=($max_time>$cache_time)||$re;//re удаляет кэш только для текущих параметров
+			
 
+			if(!$execute){
 				$data=infra_loadTEXT($path);
 				$data=unserialize($data);
 			}else{
 
-				
-					$header_name='cache-control';//Проверка установленного заголовока о запрете кэширования, до запуска кэшируемой фукцнии
-					$list=headers_list();
-					$cache_control=infra_forr($list,function($row) use($header_name){
-						$r=explode(':',$row);
-						if(stristr($r[0],$header_name)!==false) return trim($r[1]);
-					});
-					if($cache_control)header_remove('cache-control');
+				$header_name='cache-control';//Проверка установленного заголовока о запрете кэширования, до запуска кэшируемой фукцнии
+				$list=headers_list();
+				$cache_control=infra_forr($list,function($row) use($header_name){
+					$r=explode(':',$row);
+					if(stristr($r[0],$header_name)!==false) return trim($r[1]);
+				});
+				if($cache_control)header_remove('cache-control');
 
 				$data=call_user_func_array($fn,array_merge($args,array($re)));
 
-					$list=headers_list();//Проверяем появился ли заголовок после запуска функции кэшируемой
-					$cache_control2=infra_forr($list,function($row) use($header_name){
-						$r=explode(':',$row);
-						if(stristr($r[0],$header_name)!==false){
-							return trim($r[1]);
-						}
-					});
-					if(!$cache_control2&&$cache_control)@header('cache-control: '.$cache_control);
+				$list=headers_list();//Проверяем появился ли заголовок после запуска функции кэшируемой
+				$cache_control2=infra_forr($list,function($row) use($header_name){
+					$r=explode(':',$row);
+					if(stristr($r[0],$header_name)!==false){
+						return trim($r[1]);
+					}
+				});
+				if(!$cache_control2&&$cache_control)@header('cache-control: '.$cache_control);
 
-				
-
-				if(!$cache_control2||stristr($cache_control2,'no-cache')===false){
+				if(!$cache_control2||(stristr($cache_control2,'no-cache')===false&&stristr($cache_control2,'no-store')===false)){
 					$cache=serialize($data);
 					file_put_contents(ROOT.$path,$cache);
 				}
