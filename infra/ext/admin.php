@@ -129,7 +129,7 @@ function infra_admin_cache($name,$call,$args=array(),$re=false){//Запуска
 
 		$data=infra_mem_get('infra_admin_once_'.$name);
 		$atime=infra_admin_time();
-		if($conf['debug']||$re||!$data||$data['time']<$atime){
+		if($conf['debug']||$re||!$data||$data['time']<$atime||infra_admin()){
 			$data=array('time'=>time());
 
 			//здесь для примера показана

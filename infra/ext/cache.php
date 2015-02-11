@@ -70,9 +70,12 @@ function infra_cache_yes(){
 	header_remove("Expires");
 }
 function &infra_cache($conds,$name,$fn,$args=array(),$re=false){
+
 	return infra_once('infra_cache_once_'.$name,function($conds,$name,$fn,$args, $re){
+		
 		return infra_admin_cache('cache_admin_'.$name,function($conds,$name,$fn,$args, $re){
-			//цифры нельзя, будут плодится кэши
+			
+			//цифры нельзя, будут плодиться кэши
 			//если условие цифра значит это время, и если время кэша меньше.. нужно выполнить
 			$path=infra_cache_path($name,$args);
 			/*echo '<pre>';
@@ -128,7 +131,7 @@ function &infra_cache($conds,$name,$fn,$args=array(),$re=false){
 					}
 				//}
 			}
-
+			
 			if(!$execute){
 
 				$data=infra_loadTEXT($path);
