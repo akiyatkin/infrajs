@@ -26,7 +26,7 @@ infrajs.autofocus=function(layer){//onshow
 		var inp=div.find('[name="'+layer.autofocuswas+'"]');
 		inp.focus();
 	}else{
-		var inp=div.find('input:first[value=][type=text]');
+		var inp=div.find('input:first[value=""][type=text]');
 		if(inp.length){
 			inp.focus();
 		}else{
