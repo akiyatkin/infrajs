@@ -13,21 +13,16 @@ function infrajs_seo_init(){//Делается при каждой пробеж�
 	if(!$conf['seo']['seo'])return;
 	if(!$conf['seo']['robots'])return;
 	infra_admin_cache('infrajs_seo_init',function(){
-		$data=array();
-		$data['host']=$_SERVER['HTTP_HOST'];
-		$data['root']=infra_view_getRoot(ROOT);
-
-		$html='User-agent: *'."\n";
-		$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots')."\n";
-		$html='Disallow: /infra'."\n";
-		$html='Allow: /infra/data'."\n";
-		$html='Allow: /infra/plugins/imager'."\n";
-		$html='Allow: /infra/plugins/infra'."\n";
-		
-		
 		if(!is_file(ROOT.'robots.txt')){
+			$data=array();
+			$data['host']=$_SERVER['HTTP_HOST'];
+			$data['root']=infra_view_getRoot(ROOT);
+			
+			$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots')."\n";
+			
 			file_put_contents(ROOT.'robots.txt',$html);
-		}else{//Проверка что sitemap корректный
+		}
+		/*else{//Проверка что sitemap корректный
 
 			$robots=file(ROOT.'robots.txt');
 			$res=false;
@@ -52,7 +47,7 @@ function infrajs_seo_init(){//Делается при каждой пробеж�
 				$html=implode("",$robots);
 				file_put_contents(ROOT.'robots.txt',$html);
 			}
-		}
+		}*/
 	});
 }
 function infrajs_seo_checkseolinktpl(&$layer){
