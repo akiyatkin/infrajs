@@ -149,7 +149,7 @@
 	{takeno:} 
 		<span class="a" onclick="AUTOEDIT('editfile','{data.path}')">{data.path}</span><br>
 		Файл свободен для редактирования<br>
-		<span class="a" onclick="popup.close();AUTOEDIT.takefile('{data.path}',true)">Занять</span>
+		<span class="a" onclick="popup.hide();AUTOEDIT.takefile('{data.path}',true)">Занять</span>
 	{takeyes:}
 		<table style="font-size:12px">
 			<tr><th>Файл</th><td><img alt=" " src="{infra.theme(:*autoedit/icons/)}{ext}.png" title="{ext}"> <span class="a" onclick="AUTOEDIT('editfile','{data.path}')">{data.path}</span></td></tr>
@@ -157,7 +157,7 @@
 			<tr><th>IP:</th><td>{data.take.ip|}</td></tr>
 			<tr><th>Браузер:</th><td>{data.take.browser|}</td></tr>
 		</table>
-		<span class="a" onclick="popup.close();AUTOEDIT.takefile('{data.take.path}',false)">Освободить</span>, <span onclick="popup.alert('<div style=\'width:300px\'><b>Файл редактируется или файл занят</b> &mdash; значит, что файл был кем-то скачен и не загружен обратно. Cейчас, возможно, в файл вносятся изменения. Если этот человек не Вы настоятельно рекомендуется прежде, чем скачивать файл выяснить кто не убрал отметку о редактировании файл. Иначе Ваши изменения могут быть затёрты.</div>');" style="cursor:pointer; text-decoration:underline">помощь</span> 
+		<span class="a" onclick="popup.hide();AUTOEDIT.takefile('{data.take.path}',false)">Освободить</span>, <span onclick="popup.alert('<div style=\'width:300px\'><b>Файл редактируется или файл занят</b> &mdash; значит, что файл был кем-то скачен и не загружен обратно. Cейчас, возможно, в файл вносятся изменения. Если этот человек не Вы настоятельно рекомендуется прежде, чем скачивать файл выяснить кто не убрал отметку о редактировании файл. Иначе Ваши изменения могут быть затёрты.</div>');" style="cursor:pointer; text-decoration:underline">помощь</span> 
 {copyfile:}
 	<h1>Создать копию файла?</h1>
 	{:form}
@@ -388,7 +388,7 @@
 
 {rte:}
 	{:style}
-	<div style="width:800px;">
+	<div>
 		{:form}
 		<table style="margin-bottom:10px">
 		<tr>
@@ -437,7 +437,7 @@
 	{config.ans.msg|}
 {submit:}<input style="margin-right:10px;margin-top:5px;padding:0px 10px" type="submit" value="{/submit:}">
 {close:}
-	<input type="button" style="margin-right:10px;margin-top:5px;padding:0px 10px" value="{/close:}" onclick="popup.close()">
+	<input type="button" style="margin-right:10px;margin-top:5px;padding:0px 10px" value="{/close:}" onclick="popup.hide()">
 {style:}
 	<style>
 		#{div} {

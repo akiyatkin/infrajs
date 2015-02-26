@@ -427,11 +427,11 @@
 		store.divs[layer.div]=layer;
 	});
 	
-	infra.listen(infra,'layer.onshow',function(layer){
+	/*infra.listen(infra,'layer.onshow',function(layer){
 		//popup
-		layer.showmsg='popup';
-		popup.layeronshow(layer);
-	});
+		//layer.showmsg='popup';
+		//popup.layeronshow(layer);
+	});*/
 	infra.listen(infra,'layer.onshow',function(layer){//Анимация только для первого показываемого слоя, вначале это корневой.. потом это текстовый в центре ожидается
 		//show
 		infrajs.show_div(layer);
@@ -439,7 +439,7 @@
 	});
 	infra.listen(infra,'layer.onshow',function(layer){
 		//autofocus
-		layer.showmsg='autofocus';
+		//layer.showmsg='autofocus';
 		infrajs.autofocus(layer);
 	});
 	infra.listen(infra,'layer.onshow',function(layer){
@@ -489,11 +489,10 @@
 		//show
 		infrajs.htmlsomelayeranimate=false;
 	});
-	infra.listen(infra,'onshow',function(){
+	infra.listen(infrajs,'onshow',function(){
 		//popup
-		if(popup.showed_popups.length){
-			popup.center();
-		}
+		if(!window.popup||!popup.st)return;
+		popup.render();
 	});
 	infra.listen(infrajs,'onshow',function(){
 		//autoedit

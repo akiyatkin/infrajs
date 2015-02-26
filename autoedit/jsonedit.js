@@ -1258,6 +1258,7 @@ jsonwidget.editor.setStatusLight = function (statustext) {
 
 jsonwidget.editor.clearStatusLight = function () {
     this.statusLight.style.visibility = "hidden";
+    popup.render();
 }
 
 jsonwidget.editor.toggleToFormActual = function () {
