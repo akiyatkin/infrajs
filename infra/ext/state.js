@@ -200,12 +200,15 @@ infra.State.setA=function(div){
 		var obj=state.getRight(parsed);
 		href=this.parser.getQuery(obj);
 		//if(href&&!history.pushState)href=encodeURI(href); Проблемы в node ie передаёт не закодированный адрес и сервер не видит этого
-		if(href)href=decodeURI(href);//Нужно для печати чтобы ссылки были без процентов
+		if(href){
+			try{
+				href=decodeURI(href);//Нужно для печати чтобы ссылки были без процентов
+			}catch(e){ }
+		}
 
 		var siteroot=infra.view.getRoot();
 		
-		var sethref=href?('http://'+location.host+'/'+siteroot+'?'+href):('http://'+location.host+'/'+siteroot);
-
+		var sethref=href?('http://'+location.host+'/'+siteroot+'?'+encodeURI(href)):('http://'+location.host+'/'+siteroot);
 		a.setAttribute('href',sethref);//Если параметров нет то указывам путь на главную страницу
 
 		if(isfirst){
@@ -221,11 +224,14 @@ infra.State.setA=function(div){
 					}
 					var nohref=a.getAttribute('nohref');
 					if(nohref)return false;
-
 					if(/\?/.test(a.href)){
 						//var param=a.href.substring(a.href.indexOf('?')+1);
 						var h=a.href;
-						var h=decodeURI(h);
+						//try {
+							h=decodeURI(h);
+						//}catch(e){
+
+						//}
 						var ar=h.split('?');
 						ar.shift();
 						var param=ar.join('?');
@@ -253,7 +259,6 @@ infra.State.init=function(){
 	this.init=function(){};
 	var listen=function(){		
 		var query=infra.view.getQuery();
-		
 		if(infra.State.get()==query)return;//chrome при загрузки запускает собыите а FF нет. Первый запуск мы делаем сами по этому отдельно для всех а тут игнорируются совпадения.
 		infra.State.set(query,'back or forward or first');
 	}
@@ -312,7 +317,6 @@ infra.State.set=function(href,auto){//href без # ? типа asdf/asdf. auto �
 	//}
 	//},1);
 }
-
 infra.State.store=function(name){
 	if(!this.store.data)this.store.data={};
 	if(!name)return this.store.data;

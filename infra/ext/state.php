@@ -506,7 +506,8 @@ function infra_State_forFS($str){
 	//& этого символа нет, значит не может быть htmlentities
 	//символов <> удаляются из-за безопасности
 	//Виндовс запрещает символы в именах файлов  \/:*?"<>|
-	$str=preg_replace('/[\*<>\'"\|\:\/\\\\#\?\$&]/',' ',$str);	
+	//% приводит к ошибке malfomed URI при попадании в адрес так как там используется decodeURI
+	$str=preg_replace('/[%\*<>\'"\|\:\/\\\\#\?\$&]/',' ',$str);
 	$str=preg_replace('/^\s+/','',$str);
 	$str=preg_replace('/\s+$/','',$str);
 	$str=preg_replace('/\s+/',' ',$str);

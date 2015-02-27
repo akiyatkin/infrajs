@@ -81,13 +81,18 @@ infra.view={
 		return this.getCookie(name);
 	},
 	getQuery:function(){
-		var url=location.href;
+		var url=location.search;
 		//url=decodeURIComponent(url);
-		url=decodeURI(url);
-		url=url.replace(/\+/g,' ');
+		//try {
+			url=decodeURI(url);
+		//}catch(e){
+
+		//}
+		/*url=url.replace(/\+/g,' ');
 		var m=url.split('?');
 		m.shift();
-		return m.join('?');
+		return m.join('?');*/
+		return url;
 	},
 	getHost:function(){
 		return location.host;
