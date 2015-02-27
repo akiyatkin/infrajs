@@ -36,16 +36,18 @@ window.roller = {
 	},
 	
 	setOpt: function(){
-		this.opt.dw = ($.browser.msie)?document.body.scrollWidth:document.documentElement.scrollWidth;
-		this.opt.dh = ($.browser.msie)?document.body.scrollHeight:document.documentElement.scrollHeight;
+		var browser=roller.browser;
+		this.opt.dw = (browser.msie)?document.body.scrollWidth:document.documentElement.scrollWidth;
+		this.opt.dh = (browser.msie)?document.body.scrollHeight:document.documentElement.scrollHeight;
 		this.opt.ww = $(window).width();
 		this.opt.wh = $(window).height();					
-		this.opt.sy = ($.browser.msie && $.browser.version < 7)?$(window).scrollTop():0;
-		this.opt.sx = ($.browser.msie && $.browser.version < 7)?$(window).scrollLeft():0;
+		this.opt.sy = (browser.msie && browser.version < 7)?$(window).scrollTop():0;
+		this.opt.sx = (browser.msie && browser.version < 7)?$(window).scrollLeft():0;
 	},
 
 	setEvent: function(el, targ, options){
-		var d = ($.browser.safari||$.browser.chrome)?'body':'html';
+		var browser=roller.browser;
+		var d = (browser.safari||browser.chrome)?'body':'html';
 		$(el).hover(function(){
 			$(this).css({opacity: options.OpacityEnter});
 			$(d).animate(targ, options.minSpeed);
@@ -58,17 +60,19 @@ window.roller = {
 		});
 	},
 	goBot:function(scrollFromBot,callback){
+		var browser=roller.browser;
 		if(!scrollFromBot)scrollFromBot=0;
 		this.setOpt();
 		var targ={scrollTop:this.opt.dh-this.opt.wh-scrollFromBot};
-		var d = (!$.browser||($.browser.safari||$.browser.chrome))?'body':'html';
+		var d = (!browser||(browser.safari||browser.chrome))?'body':'html';
 		var maxSpeed=400;
 		$(d).stop().animate(targ, maxSpeed,'swing',callback);
 	},
 	goTop:function(scrollFromTop,callback){
+		var browser=roller.browser;
 		if(!scrollFromTop)scrollFromTop=0;
 		var targ={scrollTop:scrollFromTop};
-		var d = ($.browser.safari||$.browser.chrome)?'body':'html';
+		var d = (browser.safari||browser.chrome)?'body':'html';
 		var maxSpeed=200;
 		$(d).stop().animate(targ, maxSpeed,'swing',callback);
 	},
@@ -143,14 +147,14 @@ window.roller = {
 		$(window).resize(function(){
 			window.roller.setSize(options);
 		});
-		if($.browser.msie && $.browser.version < 7){
+		if(roller.browser.msie && roller.browser.version < 7){
 			$(window).scroll(function(){
 				window.roller.setSize(options);
 			});
 		}
 		
 		var ocss = {
-			position: ($.browser.msie && $.browser.version < 7)?'absolute':'fixed',
+			position: (roller.browser.msie && roller.browser.version < 7)?'absolute':'fixed',
 			background: options.boxColor,
 			opacity: options.OpacityLeave,
 			zIndex: 1000
@@ -177,6 +181,42 @@ window.roller = {
 		},1000);
 	}
 };
+
+roller.uaMatch = function( ua ) {
+	ua = ua.toLowerCase();
+
+	var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
+		/(webkit)[ \/]([\w.]+)/.exec( ua ) ||
+		/(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
+		/(msie) ([\w.]+)/.exec( ua ) ||
+		ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
+		[];
+
+	return {
+		browser: match[ 1 ] || "",
+		version: match[ 2 ] || "0"
+	};
+};
+// Don't clobber any existing jQuery.browser in case it's different
+if ( !roller.browser ) {
+	matched = roller.uaMatch( navigator.userAgent );
+	browser = {};
+
+	if ( matched.browser ) {
+		browser[ matched.browser ] = true;
+		browser.version = matched.version;
+	}
+
+	// Chrome is Webkit, but Webkit is also Safari.
+	if ( browser.chrome ) {
+		browser.webkit = true;
+	} else if ( browser.webkit ) {
+		browser.safari = true;
+	}
+
+	roller.browser = browser;
+}
+
 
 
 window.roller.def={

@@ -14,7 +14,7 @@
 		if(ans.result)infrajs.autosave.clear(layer);//Обнулили сохранённые введённые значения пользователя
 		infra.require('*autoedit/autoedit.js');
 		AUTOEDIT.refreshAll();
-		if(ans.result&&!ans.noclose)popup.close();
+		if(ans.result&&!ans.noclose)popup.hide();
 		if(ans.js){
 			eval(ans.js);
 		}

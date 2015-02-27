@@ -209,12 +209,9 @@
 						wym.unwrap();
 						return(false);
 					});
-
+					popup.render();
 					//var html='<span>Показать</span>';
 					//jQuery(wym._box).find(wym._options.toolsSelector + wym._options.toolsListSelector).append(html);
-
-
-					if(window.popup)popup.center();
 
 				},
 				updateSelector: ".submit, input[type=submit]",
@@ -274,7 +271,7 @@
 		{data::rteimg}
 		</div>
 		<span class="addimg aebutton">Загрузить на север новую иллюстрацию</span>, 
-		<span onclick="$('#{div} .help').slideToggle('fast')" class="aebutton" style="color:gray">помощь</span>
+		<span onclick="$('#{div} .help').slideToggle('fast',function(){ popup.render(); }); " class="aebutton" style="color:gray">помощь</span>
 		<div class="help">
 			Чтобы добавить иллюстрацию в текст нужно
 			<ol>
@@ -319,7 +316,7 @@
 					onsubmit:function(){
 						var ans=this.config.ans;
 						if(ans.result){
-							popup.close();
+							popup.hide();
 							//infra.unload(layer.data);//Рас уж мы добавили картинку списко нужно обновить
 							//infrajs.check(layer);
 							AUTOEDIT.refreshAll();
@@ -338,6 +335,7 @@
 				imgblock.slideToggle('fast',function(){
 					var r=imgblock.is(':visible');
 					infrajs.autosave.set(layer,'imgblock',r);
+					popup.render();
 				});
 			});
 
@@ -367,7 +365,9 @@
 				change=newchange;//Ждём пока изменения не будут производится
 
 
-				div.find('.imgsize .show').slideDown('fast');
+				div.find('.imgsize .show').slideDown('fast',function(){
+					popup.render();
+				});
 				var src=infra.theme('*imager/imager.php?src='+conf.folder+name+'&w='+width+'&h='+height+'&crop='+crop);
 				div.find('.imgsize .show img').attr('src',src);
 			};
@@ -386,7 +386,7 @@
 						onsubmit:function(){
 							var ans=this.config.ans;
 							if(ans.result){
-								popup.close();
+								popup.hide();
 								infra.unload(layer.data);
 								infrajs.global.set(layer.global);
 							}else{
@@ -421,7 +421,7 @@
 		});
 	</script>
 {rteimg:}
-	<img title="{.}" alt="{.}" onclick="$('#{div}').find('.imgsize').slideDown('fast'); $(this).parent().find('.select').removeClass('select'); $(this).addClass('select')" orig="{.}" 
+	<img title="{.}" alt="{.}" onclick="$('#{div}').find('.imgsize').slideDown('fast',function(){ popup.render(); }); $(this).parent().find('.select').removeClass('select'); $(this).addClass('select');" orig="{.}" 
 	src="{infra.theme(:*imager/imager.php)}?src={config.folder}{.}&w=100&h=100&crop=1">
 {addimg:}
 	<h1 title="{counter}">Добавить иллюстрацию</h1>
@@ -444,4 +444,4 @@
 	</form>
 	{config.ans.msg}
 {submit:}<input style="padding:0px 10px;margin-right:10px;margin-top:5px" type="submit" value="{/submit:}">
-{close:}<input type="button" style="padding:0px 10px;margin-right:10px;margin-top:5px" value="{/close:}" onclick="popup.close()">
+{close:}<input type="button" style="padding:0px 10px;margin-right:10px;margin-top:5px" value="{/close:}" onclick="popup.hide()">

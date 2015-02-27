@@ -8,7 +8,7 @@ infrajs.autoeditInit=function(){
 	});
 	$(document).bind('keydown',function(event){
 		if (event.keyCode == 113){
-			infra.loader.show();
+			//infra.loader.show();
 			infra.require('*autoedit/autoedit.js');
 			AUTOEDIT('admin');
 		}

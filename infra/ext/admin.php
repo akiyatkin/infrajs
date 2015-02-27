@@ -30,7 +30,7 @@ function infra_admin_modified(){
 	$now=gmdate('D, d M Y H:i:s', time()).' GMT';
 	header('Last-Modified: ' . $now);
 }
-function infra_admin($break=null,$ans=array('msg'=>'Требуется авторизация','result'=>0)){
+/*function infra_admin($break=null,$ans=array('msg'=>'Требуется авторизация','result'=>0)){
 	//infra_admin(true) - пропускает только если ты администратор, иначе выкидывает окно авторизации
 	//infra_admin(false) - пропускает только если ты НЕ администратор, иначе выкидывает окно авторизации
 	//$ans выводится в json если нажать отмена
@@ -44,7 +44,7 @@ function infra_admin($break=null,$ans=array('msg'=>'Требуется авто�
 	if(is_array($break)){
 		$admin=($break[0]===$_ADM_NAME&&$break[1]===$_ADM_PASS);
 	}
-	infra_cache_no(); //@header('Cache-control:no-cache');Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
+	infra_cache_no(); //@header('Cache-control:no-cache');Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start так как сессия может быть уже запущенной
 	//Кэш делается гостем.. так как скрыт за функцией infra_admin_cache исключение infra_cache когда кэшу интересны только даты изменения файлов.
 	$r=session_start();
 
@@ -72,6 +72,51 @@ function infra_admin($break=null,$ans=array('msg'=>'Требуется авто�
 		exit;
 	}
 	$_SESSION['ADMIN']=$admin;
+	return $admin;
+}*/
+function infra_admin($break=null,$ans=array('msg'=>'Требуется авторизация','result'=>0)){
+	//infra_admin(true) - пропускает только если ты администратор, иначе выкидывает окно авторизации
+	//infra_admin(false) - пропускает только если ты НЕ администратор, иначе выкидывает окно авторизации
+	//$ans выводится в json если нажать отмена
+	//infra_admin(array('login','pass'));
+	$data=infra_config();
+	$data=$data['admin'];
+	$_ADM_NAME = $data['login'];
+	$_ADM_PASS = $data['password'];
+	$admin=null;//Неизвестно
+
+	$realkey=md5($_ADM_NAME.$_ADM_PASS.$_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR']);
+
+	if(is_array($break)){
+		$admin=($break[0]===$_ADM_NAME&&$break[1]===$_ADM_PASS);
+		if($admin){
+			setcookie('infra_admin',$realkey);
+		}else{
+			setcookie('infra_admin');
+		}
+	}else{
+		$key=$_COOKIE['infra_admin'];
+		$admin=($key===$realkey);
+		if($break===false){
+			setcookie('infra_admin');
+			$admin=false;
+		}else if($break===true&&!$admin){
+			$admin=(@$_SERVER['PHP_AUTH_USER']==$_ADM_NAME&&@$_SERVER['PHP_AUTH_PW']==$_ADM_PASS);
+			if($admin){
+				setcookie('infra_admin',$realkey);
+			}else{
+				header("WWW-Authenticate: Basic realm=\"Protected Area\"");
+				header("HTTP/1.0 401 Unauthorized");
+				echo infra_json_encode($ans);
+				exit;
+			}
+		}
+	}
+	
+	if($admin){
+		infra_admin_time_set();
+		infra_cache_no();//Администратор может видеть кэш страниц?
+	}
 	return $admin;
 }
 function infra_admin_time_set($t=null){
@@ -129,8 +174,10 @@ function infra_admin_cache($name,$call,$args=array(),$re=false){//Запуска
 
 		$data=infra_mem_get('infra_admin_once_'.$name);
 		$atime=infra_admin_time();
+
 		if($conf['debug']||$re||!$data||$data['time']<$atime||infra_admin()){
 			$data=array('time'=>time());
+
 
 			//здесь для примера показана
 			//@header('Cache-control:no-cache');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
@@ -141,7 +188,6 @@ function infra_admin_cache($name,$call,$args=array(),$re=false){//Запуска
 							if(stristr($r[0],$header_name)!==false) return trim($r[1]);
 						});
 						if($cache_control)header_remove('cache-control');
-
 
 			$data['result']=call_user_func_array($call,array_merge($args,array($re)));
 
@@ -164,6 +210,7 @@ function infra_admin_cache($name,$call,$args=array(),$re=false){//Запуска
 
 
 		}
+
 		return $data['result'];
 	},array($args,$name),$re);
 }

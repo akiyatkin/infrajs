@@ -210,7 +210,7 @@
 	{:seosavepopup}
 {submit:}<input style="margin-right:10px;margin-top:5px;padding:0px 10px" type="submit" value="{/submit:}">
 {close:}
-	<input type="button" style="margin-right:10px;margin-top:5px;padding:0px 10px" value="{/close:}" onclick="popup.close()">
+	<input type="button" style="margin-right:10px;margin-top:5px;padding:0px 10px" value="{/close:}" onclick="popup.hide()">
 
 
 {seotpl:}
