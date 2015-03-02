@@ -1,18 +1,18 @@
 {admin:}
-	<style>
-		.adminblock {
-			border:dotted 1px green;
-			cursor:default;
-		}
-	</style>
+	
 	<h1>Администрирование</h1>
 	{:form}
 		<input type="hidden" name="admin" value="{data.admin?:1?:0}">
+		
+		<div style="margin-bottom:10px">
+			<span class="label label-{data.admin?:danger?:success}">
+				Вы <i>{data.admin?:администратор?:обычный пользователь}</i>
+			</span>&nbsp;
+			<span class="label label-{infra.conf.debug?:danger?:default}">
+				Кэширование для обычного пользователя <i>{infra.conf.debug?:отключено?:включено}</i>
+			</span>
+		</div>
 		<table>
-			<tr><td style="height:22px; vertical-align:middle" colspan=2>
-				Сайт работает в <b>{infra.conf.debug?:отладочном?:рабочем}</b> режиме.<br>
-				Административный режим <b>{data.admin?:включён?:выключeн}.</b> 
-			</td></tr>
 			{data.admin|:admin_form}
 		</table>
 		<div style="margin-bottom:10px">
@@ -27,17 +27,54 @@
 		<tr style="display:{data.admin?:none?}">
 			<td style="vertical-align:middle;">Логин</td><td><input type="text" name="login" value=""></td></tr>
 		<tr style="display:{data.admin?:none?}">
-			<td style="vertical-align:middle;">Пароль</td><td><input type="password" name="pass" value=""></td></tr>
+			<td style="vertical-align:middle;">Пароль&nbsp;</td><td><input type="password" name="pass" value=""></td></tr>
 	{adminmenu:}
 		{AUTOEDIT.menu::adminmenuitem}
 	{adminmenuitem:}
 		<span class="a" onclick="AUTOEDIT.menu[{$key}].click()">{name}</span><br>
 	{adminhelp:}
-		<div style="padding:5px; border:dashed 1px gray;">
-		Для редактирования данных наведите мышку на блок 
-		<br>информацию в котором нужно поправить.
-		<br>Если это возможно блок подсветится и после клика 
-		<br>откроется окно co списком файлов для редактирования.
+		<table>
+			<tr>
+				<td style="vertical-align:middle">
+						<span style="font-size:18px">Редактор блоков</span>
+				</td>
+				<td style="padding-left:20px; vertical-align:middle"> 
+						<input checked="checked" name="autoblockeditor" type="checkbox">
+				</td>
+			</tr>
+		</table>
+		<script>
+			infra.loadCSS('*autoedit/autoedit.css');
+			infra.when(infrajs,'onshow',function(){
+				var layer=infrajs.getUnickLayer("{unick}");
+				var div=$('#'+layer.div);
+				var box=div.find('[name="autoblockeditor"]');
+				box.checkboxpicker({
+					offClass:"btn-default",
+					offLabel:'выключен',
+					onLabel:'включён'
+				}).change(function(){
+					var is=box.prop('checked');
+					if(is){
+						div.find('.autoblockeditorhelp').slideDown();
+					}else{
+						div.find('.autoblockeditorhelp').slideUp();
+					}
+					AUTOEDIT.active=is;
+					if(is)AUTOEDIT.setHandlers();
+				});
+				var is=box.prop('checked');
+				if(is){
+					div.find('.autoblockeditorhelp').slideDown();
+				}else{
+					div.find('.autoblockeditorhelp').slideUp();
+				}
+				AUTOEDIT.active=is;
+				if(is)AUTOEDIT.setHandlers();
+			});
+		</script>
+		<div style="display:none; margin-top:10px;" class="autoblockeditorhelp">
+			Для редактирования данных, закоройте окно и наведите мышку на блок, в котором нужно поправить инфорацию. Если это возможно, блок подсветится и после клика по пустому месту в блоке откроется окно для редактирования.
 		</div>
 {version:}
 	<h1>Информация о версии системы</h1>

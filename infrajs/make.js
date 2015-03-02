@@ -505,14 +505,8 @@
 	infra.listen(infrajs,'onshow',function(){
 		//autoedit
 		if(!window.AUTOEDIT)return;
-		AUTOEDIT.active=false;
-		if(!popup.layer)return;
-		if(!popup.layer.showed)return;
-		if(!popup.layer.config)return;
-		if(!popup.layer.data)return;
-		if(!popup.layer.data.admin)return;
-		if(popup.layer.config.type!='admin')return;
-		AUTOEDIT.active=true;
+		if(!AUTOEDIT.active)return;
+		if(!infra.admin())return;
 		AUTOEDIT.setHandlers();
 	});
 	

@@ -9,11 +9,14 @@
 	vertical-align: super;
 	font-size: x-small; 
 	font-family: Arial, sans-serif;
+    float: right;
 }
 .jsonedit_tbl td {
 	padding:0 2px;
 }
 .jsoneditor legend {
+    margin-bottom:0;
+    font-size:12px;
     color: #444;
 }
 .jsoneditor fieldset {

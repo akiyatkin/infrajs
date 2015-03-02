@@ -22,10 +22,6 @@ infrajs.autoeditLink=function(){//infrajs onshow
 		return false;
 	});
 }
-
-
-
-
 infrajs.autoedit_SaveOpenedWin=function(){
 	if(!window.sessionStorage)return;
 	if(!window.AUTOEDIT)return;	
