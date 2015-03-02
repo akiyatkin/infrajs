@@ -8,7 +8,7 @@
 			<span class="label label-{data.admin?:danger?:success}">
 				Вы <i>{data.admin?:администратор?:обычный пользователь}</i>
 			</span>&nbsp;
-			<span class="label label-{infra.conf.debug?:danger?:default}">
+			<span class="label label-{infra.conf.debug?:danger?:success}">
 				Кэширование для обычного пользователя <i>{infra.conf.debug?:отключено?:включено}</i>
 			</span>
 		</div>
@@ -44,11 +44,13 @@
 			</tr>
 		</table>
 		<script>
+			infra.require('infra/lib/bootstrap/bootstrap-checkbox.min.js');
 			infra.loadCSS('*autoedit/autoedit.css');
 			infra.when(infrajs,'onshow',function(){
 				var layer=infrajs.getUnickLayer("{unick}");
 				var div=$('#'+layer.div);
 				var box=div.find('[name="autoblockeditor"]');
+
 				box.checkboxpicker({
 					offClass:"btn-default",
 					offLabel:'выключен',
