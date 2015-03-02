@@ -53,8 +53,8 @@
 
 				box.checkboxpicker({
 					offClass:"btn-default",
-					offLabel:'выключен',
-					onLabel:'включён'
+					offLabel:'Выкл',
+					onLabel:'Вкл'
 				}).change(function(){
 					var is=box.prop('checked');
 					if(is){
