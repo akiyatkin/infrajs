@@ -1,6 +1,6 @@
 <div class="modal-header">
 	<button class="close" type="button" onclick="popup.close()">x</button>
-	<h4 class="modal-title" id="myModalLabel">Внимание</h4>
+	<h4 class="modal-title">Внимание</h4>
 </div>
 <div class="modal-body" id="{conf_divid}">
 	

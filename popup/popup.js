@@ -85,7 +85,7 @@ popup.open=function(obj){//depricated
 	if(!st.layer){
 		var divid='simplepopup'+st.counter;
 		st.layer={
-			tpl:'*popup/simple.tpl',
+			tpl:'*popup/open.tpl',
 			tplroot:'root',
 			conf_divid:divid,
 			divs:{}
