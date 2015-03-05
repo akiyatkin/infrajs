@@ -1,8 +1,8 @@
 <div class="modal-header">
 	<button class="close" type="button" onclick="popup.close()">x</button>
-	<h4 class="modal-title">Внимание</h4>
+	<h4 class="modal-title">Ошибка</h4>
 </div>
-<div class="modal-body bg-warning" id="{conf_divid}">
+<div class="modal-body bg-danger" id="{conf_divid}">
 	
 </div>
 <div class="modal-footer">

@@ -55,8 +55,12 @@ popup.stackDel=function(obj){
 	}
 	return st;
 }
-popup.close=function(){//depricated
-	return this.hide.apply(this,arguments);
+
+
+popup.activate=function(st){
+	if(popup.st)popup.justhide(popup.st);
+	popup.justshow(st);
+	popup.st=st;
 }
 popup.show=function(obj){
 	if(!obj)return;
@@ -67,64 +71,45 @@ popup.show=function(obj){
 popup.text=function(obj){
 	if(!obj)return;
 	var st=this.stackAdd(obj);
-	if(!st.layer){
-		st.layer={
-			tpl:[obj]
-		}
-	}
+	if(!st.layer)st.layer={tpl:[obj]}
 	popup.activate(st);
-}
-popup.activate=function(st){
-	if(popup.st)popup.justhide(popup.st);
-	popup.justshow(st);
-	popup.st=st;
 }
 popup.open=function(obj){//depricated
 	if(!obj)return;
+	var st=this.getStLayer(obj,'*popup/open.tpl');
+	popup.activate(st);
+}
+popup.alert=function(obj){
+	if(!obj)return;
+	var st=this.getStLayer({tpl:[obj]},'*popup/alert.tpl');
+	popup.activate(st);
+}
+
+popup.error=function(obj){
+	if(!obj)return;
+	var st=this.getStLayer({tpl:[obj]},'*popup/error.tpl');
+	popup.activate(st);
+}
+popup.confirm=function(obj,callback){
+	if(!obj)return;
+	var st=this.getStLayer({tpl:[obj]},'*popup/confirm.tpl');
+	st.layer.conf_ok=callback;
+	popup.activate(st);
+}
+popup.getStLayer=function(obj,tpl){
 	var st=this.stackAdd(obj);
 	if(!st.layer){
-		var divid='simplepopup'+st.counter;
+		var divid='stdivpopup'+st.counter;
 		st.layer={
-			tpl:'*popup/open.tpl',
+			tpl:tpl,
 			tplroot:'root',
 			conf_divid:divid,
 			divs:{}
 		}
 		st.layer.divs[divid]=obj;
 	}
-	popup.activate(st);
-}
-popup.alert=function(obj){
-	if(!obj)return;
-	var st=this.stackAdd(obj);
-	if(!st.layer){
-		var divid='alertpopup'+st.counter;
-		st.layer={
-			tpl:'*popup/alert.tpl',
-			tplroot:'root',
-			conf_divid:divid,
-			divs:{}
-		}
-		st.layer.divs[divid]={tpl:[obj]};
-	}
-	popup.activate(st);
-}
-popup.confirm=function(obj,callback){
-	if(!obj)return;
-	var st=this.stackAdd(obj);
-	if(!st.layer){
-		var divid='confirmpopup'+st.counter;
-		st.layer={
-			tpl:'*popup/confirm.tpl',
-			tplroot:'root',
-			conf_divid:divid,
-			conf_ok:callback,
-			divs:{}
-		}
-		st.layer.divs[divid]={tpl:[obj]};
-	}
-	popup.activate(st);
-}
+	return st;
+};
 
 popup.hide=function(obj){
 	if(!obj&&popup.st)obj=popup.st.obj;
@@ -228,4 +213,7 @@ infrajs.popup_memorize=function(code){
 	//infra.when(popup.st.obj,'onhide',function(){
 		//infrajs.code_remove('popup',code);
 	//});
+}
+popup.close=function(){//depricated
+	return this.hide.apply(this,arguments);
 }
