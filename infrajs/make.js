@@ -315,6 +315,7 @@
 	infrajs.isAdd('show',function(layer){
 		//env, counter
 		if(!layer.env){
+			if(infrajs.ignoreDOM(layer))return;
 			layer.counter++;
 			infrajs.getHtml(layer);//чтобы установилось свойство infrajs['com'] после загрузки шаблонов
 			layer.counter--;//На самом деле ещё неизвестно... но если html и будет вставляться то counter дальше приибваться
