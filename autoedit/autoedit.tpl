@@ -6,11 +6,28 @@
 		
 		<div style="margin-bottom:10px">
 			<span class="label label-{data.admin?:danger?:success}">
-				Вы <i>{data.admin?:администратор?:обычный пользователь}</i>
+				Вы {data.admin?:администратор?:обычный пользователь}
 			</span>&nbsp;
-			<span class="label label-{infra.conf.debug?:danger?:success}">
-				Кэширование для обычного пользователя <i>{infra.conf.debug?:отключено?:включено}</i>
+			<span class="label label-warning" id="cachechecklabel">
+				проверка кэша...
 			</span>
+
+			<script>
+				(function(){
+					var request = new XMLHttpRequest();
+					request.onreadystatechange=function(){
+					    if (request.readyState !== 4) return;
+						var header=request.getResponseHeader('infrajs-cache');
+						if(header=='Fail'){
+							$('#cachechecklabel').removeClass('label-warning').addClass('label-danger').html('кэш не используется');
+						}else{
+							$('#cachechecklabel').removeClass('label-warning').addClass('label-success').html('кэш используется');
+						}
+					};
+					request.open('HEAD', document.location, true);
+					request.send(null);
+				})();
+			</script>
 		</div>
 		<table>
 			{data.admin|:admin_form}
