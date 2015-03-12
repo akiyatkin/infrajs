@@ -131,7 +131,7 @@ function infra_require($path){
 	$store[$path]=array('value'=>true);//Метку надо ставить заранее чтобы небыло зацикливаний
 	$rpath=infra_theme($path);
 	if(!$rpath)die('infra_require - не найден путь '.$path);
-	require(ROOT.$rpath);
+	require_once(ROOT.$rpath);//Просто require позволяет загрузить самого себя. А мы текущий скрипт не добавляем в список подключённых
 
 }
 function _infra_src($orig){//Возвращает список адресов которые нужно проверить
