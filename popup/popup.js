@@ -153,6 +153,7 @@ popup.justshow=function(st){
 popup.render=function(){
 	//Подтягиваем фон согласно размера окна
 	popup.div.data('bs.modal').adjustBackdrop();
+	popup.div.data('bs.modal').adjustDialog();
 }
 
 

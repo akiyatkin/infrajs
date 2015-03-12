@@ -18,12 +18,12 @@ infra_forr($ar,function($dir) use(&$data){
 		infra_forr($list,function($finfo) use($dir,$src,$plugin,&$data){
 			if($finfo['ext']!='php')return;
 
-			$text=infra_loadTEXT($src.$finfo['file']);
+			$text=infra_loadTEXT($src.$finfo['file'].'?type=auto');
 			if(strlen($text)>1000){
 				$res=array('title'=>$plugin.' '.$finfo['name'],'result'=>0,'msg'=>'Слишком длинный текст');
 			}else{
 				$res=json_decode($text,true);
-				if(!$res)$res=array('title'=>$plugin.' '.$finfo['name'],'result'=>0,'msg'=>'Некорректный json');
+				if(!$res)$res=array('title'=>$plugin.' '.$finfo['name'],'result'=>0,'msg'=>'Некорректный json','class'=>'bg-danger');
 			}
 			$res['src']=$src.$finfo['file'];
 			$res['name']=$finfo['file']; //имя тестируемого файла

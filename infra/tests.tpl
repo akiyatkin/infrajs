@@ -34,7 +34,7 @@
 		<tr class="bg-info"><th colspan="4">{~key}</th></tr>
 		{::sometest}
 		{sometest:}
-			<tr class="{result?:bg-success?:bg-warning}">
+			<tr class="{class?class?(result?:bg-success?:bg-warning)}">
 				<td>
 				<a href="../../../{src}">{name}</a>
 				</td>
