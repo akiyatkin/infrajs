@@ -16,7 +16,7 @@
 		num--;
 		var list=infra.load('*pages/list.php?onlyname=2&reverse=1&lim='+(num*conf.count)+','+conf.count+'&e=mht&src='+conf.folder,'j');
 		var count=0;
-		infra.load('infra/lib/phpdate/phpdate.js');
+		infra.require('vendor/akiyatkin/phpdate/phpdate.js');
 		for(var i=0,l=list.length;i<l;i++){
 			count++;
 			var src='*pages/mht/mht.php?preview&src='+conf.folder+list[i];

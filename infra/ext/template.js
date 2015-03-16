@@ -799,13 +799,13 @@ infra.template={
 		'~date':function(format,time){
 			if(!time)return '';
 			if(time===true)time=new Date();
-			infra.require('infra/lib/phpdate/phpdate.js');
+			infra.require('vendor/akiyatkin/phpdate/phpdate.js');
 			return phpdate(format,time);
 		},
 		'$date':function(format,time){
 			if(!time)return '';
 			if(time===true)time=new Date();
-			infra.require('infra/lib/phpdate/phpdate.js');
+			infra.require('vendor/akiyatkin/phpdate/phpdate.js');
 			return phpdate(format,time);
 		},
 		'$obj':function(){

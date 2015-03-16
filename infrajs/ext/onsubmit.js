@@ -35,7 +35,7 @@ infrajs.setonsubmit=function(layer){
 		if(infra.loader)infra.loader.show();
 		setTimeout(function(){// Надо чтобы все обработчики повесились на onsubmit и сделали всё что нужно с отправляемыми данными и только потом отправлять
 			//autosave должен примениться
-			infra.require('infra/lib/jquery/jquery.form.js');
+			infra.require('vendor/malsup/form/jquery.form.js');
 			form.ajaxSubmit({
 				dataType:'json',
 				async:false,

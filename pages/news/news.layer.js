@@ -19,7 +19,7 @@
 			data.dir=list[i].dir;
 			list[i]=data;
 		}
-		infra.load('infra/lib/phpdate/phpdate.js');
+		infra.require('vendor/akiyatkin/phpdate/phpdate.js');
 		for(var i=0,l=list.length;i<l;i++){
 			if(!list[i].title)list[i].title=list[i].name;
 			if(list[i].date)list[i].sdate=phpdate('d F Y',list[i].date);
