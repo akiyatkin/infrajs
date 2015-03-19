@@ -3,6 +3,7 @@ popup.stack=[];//все окна которые находятся в обраб
 popup.heap=[];//все когда либо показанные окна
 popup.st=false;//активное окно
 popup.counter=0;
+
 popup.stackAdd=function(obj){
 	var st=false;
 	for(var i=0,l=popup.stack.length;i<l;i++){
@@ -58,6 +59,7 @@ popup.stackDel=function(obj){
 
 
 popup.activate=function(st){
+	if(popup.st==st)return;
 	if(popup.st)popup.justhide(popup.st);
 	popup.justshow(st);
 	popup.st=st;
@@ -76,27 +78,43 @@ popup.text=function(obj){
 }
 popup.open=function(obj){//depricated
 	if(!obj)return;
-	var st=this.getStLayer(obj,'*popup/open.tpl');
+	var st=this.getStLayer(obj,obj,'*popup/open.tpl');
 	popup.activate(st);
 }
 popup.alert=function(obj){
 	if(!obj)return;
-	var st=this.getStLayer({tpl:[obj]},'*popup/alert.tpl');
+	var st=this.getStLayer(obj,{tpl:[obj]},'*popup/alert.tpl');
 	popup.activate(st);
 }
-
+popup.progress=function(val){
+	if(!popup.progressobj)popup.progressobj={};
+	var st=this.stackAdd(popup.progressobj);
+	if(!st.layer){
+		st.strict=true;
+		st.layer={
+			tpl:'*popup/progress.tpl',
+			tplroot:'root'
+		}
+	}
+	popup.activate(st);
+	if(!val)val=1;
+	$('#'+st.layer.div).find('.progress-bar').css('width', val+'%').attr('aria-valuenow', val);
+	if(val>=100&popup.st==st){
+		popup.hide();
+	}
+}
 popup.error=function(obj){
 	if(!obj)return;
-	var st=this.getStLayer({tpl:[obj]},'*popup/error.tpl');
+	var st=this.getStLayer(obj,{tpl:[obj]},'*popup/error.tpl');
 	popup.activate(st);
 }
 popup.confirm=function(obj,callback){
 	if(!obj)return;
-	var st=this.getStLayer({tpl:[obj]},'*popup/confirm.tpl');
+	var st=this.getStLayer(obj,{tpl:[obj]},'*popup/confirm.tpl');
 	st.layer.conf_ok=callback;
 	popup.activate(st);
 }
-popup.getStLayer=function(obj,tpl){
+popup.getStLayer=function(obj,objtpl,tpl){
 	var st=this.stackAdd(obj);
 	if(!st.layer){
 		var divid='stdivpopup'+st.counter;
@@ -106,7 +124,7 @@ popup.getStLayer=function(obj,tpl){
 			conf_divid:divid,
 			divs:{}
 		}
-		st.layer.divs[divid]=obj;
+		st.layer.divs[divid]=objtpl;
 	}
 	return st;
 };
@@ -146,8 +164,28 @@ popup.justshow=function(st){
 		st.layer.div=divid;
 	}
 	infrajs.check(st.layer);
-	if(!popup.st)popup.div.modal({show:true,keyboard:false});
+	var opt={show:true,keyboard:false};
+	if(st.strict){
+		opt.backdrop='static';
+	}else{
+		opt.backdrop=true;
+	}
 	
+	var mod=popup.div.data('bs.modal');
+	if(mod){
+		mod.options.backdrop=opt.backdrop;
+		if(popup.st){
+			var r=mod.$element.hasClass('fade');
+			if(r)mod.$element.removeClass('fade');
+			mod.removeBackdrop();
+			mod.backdrop(function(){
+				mod.adjustBackdrop();
+			});
+			if(r)mod.$element.addClass('fade');
+		}
+	}
+	
+	if(!popup.st)popup.div.modal(opt);
 	//Нужно запускать постоянно чтобы пересчитывалась высота
 }
 popup.render=function(){
@@ -182,6 +220,8 @@ popup.init=function(){
 	});
 	$('body').on('keydown', function(e){
 		if(e.which == 27){
+			if(!popup.st)return;
+			if(popup.st.strict)return;
 			popup.hide();
 		}
 	});

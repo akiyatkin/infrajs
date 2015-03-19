@@ -358,7 +358,7 @@ function infra_State_parser_getObj($strurl,$state=array()){
 	$surl=str_replace('=&','=""&',$surl);
 	$surl=str_replace('=$','=""$',$surl);
 
-	$surl=str_replace('"undefined"','undefined',$surl);
+	$surl=str_replace(':"undefined"','undefined',$surl);
 	$surl=str_replace('"null"','null',$surl);
 	$surl=str_replace('"true"','true',$surl);
 	$surl=str_replace('"false"','false',$surl);
