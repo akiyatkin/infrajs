@@ -33,7 +33,7 @@
 					<div class="answer"><b class="alert">{config.ans.msg}</b></div>
 				
 					
-					<button type="submit" class="btn btn-default">Отправить</button>
+					<button type="submit" class="btn btn-default" onclick="if(window._gaq)_gaq.push(['_trackEvent','Кнопка','Оставить сообщение']);">Отправить</button>
 					
 
 					<!--
