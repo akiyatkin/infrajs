@@ -229,7 +229,10 @@ popup.refreshBackdrop=function(opt){
 	}
 }
 
-
+popup.getLayer=function(){
+	if(!this.st)return;
+	return this.st.layer;
+},
 popup.div=false;//Здесь хранится jquery объект окна
 popup.init=function(){
 	this.init=function(){};
