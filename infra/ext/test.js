@@ -20,6 +20,7 @@ infra.test.ok=function(msg){
 infra.test.err=function(msg){
 	infra.test.iserr=true;
 	console.warn(this.index+':ОШИБКА: '+msg);
+	return false;
 }
 infra.test.exec=function(){
 	if(typeof(infra.test.step)!=='undefined'){

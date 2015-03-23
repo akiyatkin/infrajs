@@ -243,11 +243,13 @@ infra.State.setA=function(div){
 					}else{
 						param=''+param;
 					}
-					try{
-						infra.State.set(param);
-					}catch(e){
-						console.log(e);
-					}
+					//setTimeout(function(){//Текущий процесс выполнения скрипта закончится с показом всех слоёв
+						try{
+							infra.State.set(param);
+						}catch(e){
+							console.error(e);
+						}
+					//},1);
 					if(typeof(event)!=='undefined')event.returnValue=false;
 					return false;
 				}
@@ -315,7 +317,7 @@ infra.State.set=function(href,auto){//href без # ? типа asdf/asdf. auto �
 	//		infra.fire(infra.State,'onchange');
 	//	});
 	//}
-	//},1);
+	//},1);//Клик по ссылке должен быть обратан после всех click обработчиков
 }
 infra.State.store=function(name){
 	if(!this.store.data)this.store.data={};

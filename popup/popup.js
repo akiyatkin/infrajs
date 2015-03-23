@@ -60,9 +60,15 @@ popup.stackDel=function(obj){
 
 popup.activate=function(st){
 	if(popup.st==st)return;
-	if(popup.st)popup.justhide(popup.st);
+	var check=[];
+	if(popup.st){
+		popup.justhide(popup.st);
+		check.push(popup.st.layer);
+	}
 	popup.justshow(st);
+	check.push(st.layer)
 	popup.st=st;
+	infrajs.check(check);
 }
 popup.show=function(obj){
 	if(!obj)return;
@@ -95,13 +101,28 @@ popup.progress=function(val){
 			tpl:'*popup/progress.tpl',
 			tplroot:'root'
 		}
+		infra.listen(st.layer,'onshow',function(layer){
+			var bar=$('#'+layer.div).find('.progress-bar');
+			var set=function(){
+				if(!layer.showed)return;
+				var val=popup.progressobj.val;
+				if(val<99)popup.progressobj.val++;
+				if(val>=100){
+					clearInterval(popup.progressobj.timer);
+					popup.hide();
+				}
+				bar.css('width', val+'%').attr('aria-valuenow', val);
+			}
+			clearInterval(popup.progressobj.timer);
+			popup.progressobj.timer=setInterval(function(){
+				set();
+			},300);
+			set();
+		});
 	}
 	popup.activate(st);
 	if(!val)val=1;
-	$('#'+st.layer.div).find('.progress-bar').css('width', val+'%').attr('aria-valuenow', val);
-	if(val>=100&popup.st==st){
-		popup.hide();
-	}
+	popup.progressobj.val=val;
 }
 popup.error=function(obj){
 	if(!obj)return;
@@ -136,9 +157,15 @@ popup.hide=function(obj){
 	var next=popup.stackLast();
 
 	//anti activate
+	var check=[];
 	popup.st=next;
 	popup.justhide(st);
-	if(next)popup.justshow(next);
+	check.push(st.layer);
+	if(next){
+		popup.justshow(next);
+		check.push(next.layer);
+	}
+	infrajs.check(check);
 }
 popup.toggle=function(obj){//Если окно
 	var st=popup.stackGet(obj);
@@ -149,7 +176,6 @@ popup.toggle=function(obj){//Если окно
 
 popup.justhide=function(st){
 	st.layer.popupis=false;
-	infrajs.check(st.layer);
 	if(!popup.st)popup.div.modal('hide');
 }
 popup.justshow=function(st){
@@ -160,10 +186,10 @@ popup.justshow=function(st){
 	st.layer.popupis=true;
 	if(!place.length){
 		cont.append('<div id="'+divid+'"></div>');
-		infrajs.checkAdd(st.layer);
+		//infrajs.checkAdd(st.layer);
 		st.layer.div=divid;
 	}
-	infrajs.check(st.layer);
+	
 	var opt={show:true,keyboard:false};
 	if(st.strict){
 		opt.backdrop='static';
@@ -171,29 +197,37 @@ popup.justshow=function(st){
 		opt.backdrop=true;
 	}
 	
-	var mod=popup.div.data('bs.modal');
-	if(mod){
-		mod.options.backdrop=opt.backdrop;
-		if(popup.st){
-			var r=mod.$element.hasClass('fade');
-			if(r)mod.$element.removeClass('fade');
-			mod.removeBackdrop();
-			mod.backdrop(function(){
-				mod.adjustBackdrop();
-			});
-			if(r)mod.$element.addClass('fade');
-		}
-	}
+	//popup.refreshBackdrop(opt);
 	
-	if(!popup.st)popup.div.modal(opt);
-	//Нужно запускать постоянно чтобы пересчитывалась высота
+	
+	popup.div.modal(opt);//Нужно запускать постоянно так как она может быть скрыто средствами bootstrap modal
 }
 popup.render=function(){
 	//Подтягиваем фон согласно размера окна
-	popup.div.data('bs.modal').adjustBackdrop();
+	//popup.div.data('bs.modal').adjustBackdrop();
 	popup.div.data('bs.modal').adjustDialog();
 }
-
+popup.refreshBackdrop=function(opt){
+	var mod=popup.div.data('bs.modal');
+	if(mod){
+		if(mod.options.backdrop!=opt.backdrop){
+			mod.options.backdrop=opt.backdrop;
+			if(popup.st){
+				mod.$element.off('click.dismiss.bs.modal');
+				mod.$element.on('click.dismiss.bs.modal', $.proxy(function (e) {
+					if (this.ignoreBackdropClick) {
+						this.ignoreBackdropClick = false;
+						return;
+					}
+					if (e.target !== e.currentTarget) return
+					this.options.backdrop == 'static'
+					? this.$element[0].focus()
+					: this.hide()
+				}, mod));
+			}
+		}
+	}
+}
 
 
 popup.div=false;//Здесь хранится jquery объект окна
@@ -213,9 +247,15 @@ popup.init=function(){
 	popup.div.on('showed.bs.modal',function(){
 		$('body').css('padding-right',0);
 	});
+	popup.div.on('hide.bs.modal',function(){
+		popup.div.removeClass('fade');//скрытие обычное иначе глюки с затемнением
+	});
 	popup.div.on('hidden.bs.modal',function(){
+		popup.div.addClass('fade');
 		if(popup.st){//Есть активное окно значит close не был вызван
-			popup.hideAll();
+			popup.hide();
+		}else{
+
 		}
 	});
 	$('body').on('keydown', function(e){
@@ -236,13 +276,16 @@ popup.hideAll = function(){ //Закрываем все окна в стеке
 	popup.st=false;
 	popup.stackClear();
 	popup.justhide(st);
+	infrajs.check(st.layer);
 }
-
+popup.isShow=function(){
+	return !!this.st;
+}
 popup.closeAll=function(){//depricated
 	return this.hideAll();
 }
 popup.center=function(){//depricated
-
+	popup.render();
 }
 
 infrajs.popup_memorize=function(code){
