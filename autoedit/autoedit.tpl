@@ -61,7 +61,7 @@
 			</tr>
 		</table>
 		<script>
-			infra.require('infra/lib/bootstrap/bootstrap-checkbox.min.js');
+			infra.require('vendor/vsn4ik/bootstrap-checkbox/dist/js/bootstrap-checkbox.min.js');
 			infra.loadCSS('*autoedit/autoedit.css');
 			infra.when(infrajs,'onshow',function(){
 				var layer=infrajs.getUnickLayer("{unick}");

@@ -68,6 +68,7 @@ popup.activate=function(st){
 	popup.justshow(st);
 	check.push(st.layer)
 	popup.st=st;
+	infrajs.checkAdd(st.layer);
 	infrajs.check(check);
 }
 popup.show=function(obj){

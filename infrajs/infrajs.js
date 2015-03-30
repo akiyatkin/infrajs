@@ -159,7 +159,7 @@ infrajs.check=function(layers){//Пробежка по слоям
 		var wlayers=layers;
 	}else{//Если конкретные слои не указаны беруться все упоминавшиеся слои	
 		console.log('infrajs.check()');
-		var wlayers=store.alayers.concat();//далее alayers может наполняться, чтобы небыло копии
+		var wlayers=store.alayers.concat();//далее alayers может наполняться, чтобы не было копии
 	}
 	
 	store.wlayers=wlayers;
@@ -208,7 +208,12 @@ infrajs.check=function(layers){//Пробежка по слоям
 
 infrajs.checkAdd=function(layers){//Два раза вызов добавит слой повторно
 	var store=infrajs.store();
-	store.alayers.push(layers);//Только если рассматриваемый слой ещё не добавлен
+	infra.fora(layers,function(layer){
+		if(infra.fora(store.alayers,function(rl){
+			if(rl===layer)return true;
+		}))return;
+		store.alayers.push(layer);//Только если рассматриваемый слой ещё не добавлен
+	});
 };
 infrajs.isAdd=function(name,callback){//def undefined быть не может
 	var store=infrajs.store();
