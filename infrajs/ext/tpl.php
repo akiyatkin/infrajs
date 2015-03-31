@@ -13,7 +13,7 @@ function infrajs_tplonlyclient(&$layer){
 }
 function infrajs_tplrootTpl(&$layer){
 	$prop='tplroot';
-	$proptpl=$prop+'tpl';
+	$proptpl=$prop.'tpl';
 	if(!isset($layer[$proptpl]))return;
 	$p=$layer[$proptpl];
 	if(is_array($layer[$proptpl])){
