@@ -85,7 +85,7 @@ function infra_session_getPass(){
 	return infra_view_getCookie(infra_session_getName('pass'));
 }
 function infra_session_getId(){
-	return infra_view_getCookie(infra_session_getName('id'));
+	return (int)infra_view_getCookie(infra_session_getName('id'));
 }
 function infra_session_getTime(){
 	return infra_view_getCookie(infra_session_getName('time'));

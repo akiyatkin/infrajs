@@ -10,6 +10,10 @@
 			return infrajs_getUnickLayer($unick);
 		};
 		infra_seq_set($infra_template_scope,infra_seq_right('infrajs.getUnickLayer'),$fn);
+		$fn=function($name,$value){
+			return infrajs_find($name,$value);
+		};
+		infra_seq_set($infra_template_scope,infra_seq_right('infrajs.find'),$fn);
 	});
 	$unick_counter=1;
 
@@ -17,11 +21,14 @@
 		global $unick_counter;
 		if(@!$layer['unick'])$layer['unick']=$unick_counter++;
 	}
-
-	function &infrajs_getUnickLayer($unick){
+	function &infrajs_find($name,$value){
 		$layers=infrajs_getAllLayers();
-		return infrajs_run($layers,function&(&$layer) use($unick){
-			if(isset($layer['unick'])&&$layer['unick']==$unick)return $layer;
+		$right=infra_seq_right($name);
+		return infrajs_run($layers,function&(&$layer) use($right,$value){
+			if(infra_seq_get($layer,$right)==$value)return $layer;
 		});
+	}
+	function &infrajs_getUnickLayer($unick){//depricated
+		return infrajs_find('unick',$unick);
 	}
 ?>

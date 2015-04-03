@@ -16,10 +16,15 @@ function infra_view_getCookie($name=null){
 	if(is_null($name))return $_COOKIE;
 	return @$_COOKIE[$name];
 }
-function infra_view_setCookie($name,$val){
+function infra_view_setCookie($name,$val=null){
 	$_COOKIE[$name]=$val;
 	$root=infra_view_getRoot(ROOT);
-	return setcookie($name,$val,time()+60*60*24*30*24,'/'.$root);
+	if(is_null($val)){
+		$time=time()-60*60*24*30*24;
+	}else{
+		$time=time()+60*60*24*30*24;
+	}
+	return setcookie($name,$val,$time,'/'.$root);
 }
 
 function infra_view_getRoot($root=false){

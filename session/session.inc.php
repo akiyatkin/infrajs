@@ -15,6 +15,7 @@
 			  `session_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id сессии',
 			  `password` varchar(255) NOT NULL COMMENT 'Пароль сессии',
 			  `email` varchar(255) COMMENT 'Email чтоб была возможность авторизироваться и чтоб сессия для одного email-а была уникальная, сама сессия email никак не обрабатывает, обработка делается отдельно кому это надо.',
+			  `verify` BIT NULL DEFAULT NULL,
 			  PRIMARY KEY (`session_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 END;
@@ -44,35 +45,28 @@ END;
 		},array());
 		return infra_db();
 	}
-	function infra_session_setPass($password){
+
+	function infra_session_setPass($password,$session_id=null){
 		$db=&infra_session_db();
 		if(!$db)return;
 		
-		$session_id=infra_session_getId();
-		if(!$session_id){
-		   infra_session_set('init', 1);
-		   $session_id=infra_session_getId();
+		if(is_null($session_id)){
+			$session_id=infra_session_getId();
+			if(!$session_id){
+			   infra_session_set('init', 1);
+			   $session_id=infra_session_getId();
+			}
 		}
 		$sql='UPDATE ses_sessions
 					SET password = ?
 					WHERE session_id=?';
 		$stmt=$db->prepare($sql);
-		$stmt->execute(array($password, $session_id));
-		return true;
+		return $stmt->execute(array($password, $session_id));
 	}
 	function infra_session_getEmail($session_id=false){
 		if(!$session_id)$session_id=infra_session_getId();
-		return infra_once('infra_session_getEmail',function($session_id){
-			$db=&infra_session_db();
-			if(!$db)return;
-			infra_require('*session/session.php');
-			if(!$session_id)return false;
-			$sql='select email from ses_sessions where session_id=?';
-			$stmt=$db->prepare($sql);
-			$stmt->execute(array($session_id));
-			$email=$stmt->fetchColumn();
-			return $email;
-		},array($session_id));
+		$user=infra_session_getUser($session_id);
+		return $user['email'];
 	}
 	function infra_session_setEmail($email){
 		$db=&infra_session_db();
@@ -90,11 +84,30 @@ END;
 		$stmt->execute(array($email, $session_id));
 		return true;
 	}
-	function infra_session_getUser($email){
+	function infra_session_getVerify(){
+		$user=infra_session_getUser();
+		return $user['verify'];
+	}
+	function infra_session_setVerify(){
+		$session_id=infra_session_getId();
+		$db=&infra_session_db();
+		if(!$db)return;
+		$sql='UPDATE ses_sessions
+					SET verify = 1
+					WHERE session_id=?';
+		$stmt=$db->prepare($sql);
+		$stmt->execute(array($session_id));
+	}
+	function infra_session_getUser($email=null){
+		if(!$email)$email=infra_session_getId();
 		return infra_once('infra_session_getUser',function($email){
 			$db=&infra_session_db();
 			if(!$db)return;
-			$sql='select password, session_id, email from ses_sessions where email=?';
+			if(infra_isInt($email)){
+				$sql='select * from ses_sessions where session_id=?';
+			}else{
+				$sql='select * from ses_sessions where email=?';
+			}
 			$stmt=$db->prepare($sql);
 			$stmt->execute(array($email));
 			$userData=$stmt->fetch(PDO::FETCH_ASSOC);
@@ -118,7 +131,18 @@ END;
 			$stmt->execute(array($session_id,$name,infra_json_encode($rec['value']),$rec['time']));
 		});
 	}
-	function infra_session_change($session_id,$pass){
+	function infra_session_clear(){
+
+	}
+	function infra_session_logout(){
+		$email=infra_session_getEmail();
+		if(!$email)return;
+		infra_view_setCookie(infra_session_getName('pass'));
+		infra_view_setCookie(infra_session_getName('id'));
+		infra_view_setCookie(infra_session_getName('time'));
+		infra_session_syncNow();
+	}
+	function infra_session_change($session_id,$pass=null){
 
 		$email=infra_session_getEmail();
 		$session_id_old=infra_session_getId();
@@ -146,6 +170,12 @@ END;
 
 		global $infra_session_data;
 		$infra_session_data=array();
+		
+		if(is_null($pass)){
+			$user=infra_session_getUser($session_id);
+			$pass=md5($user['password']);
+		}
+		
 		infra_view_setCookie(infra_session_getName('pass'),$pass);
 		infra_view_setCookie(infra_session_getName('id'),$session_id);
 		infra_view_setCookie(infra_session_getName('time'),1);

@@ -6,7 +6,15 @@ infra_fori
 infra_foro
 infra_forx
 infra_isAssoc
+infra_isInt
 */
+function infra_isInt($id){
+	if($id==='')return false;
+	if(!$id)$id=0;
+	$idi=(int)$id;
+	$idi=(string)$idi; //12 = '12 asdf' а если и то и то строка '12'!='12 asdf'
+	return $id==$idi;
+}
 function infra_isEqual(&$a, &$b){//являются ли две переменные ссылкой друг на друга иначе array()===array() а слои то разные
 	if(is_object($a)){
 		if(!is_object($b))return false;
