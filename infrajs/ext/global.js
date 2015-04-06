@@ -8,7 +8,6 @@ infra.wait(infrajs,'oninit',function(){
 		infra.fora(layer.global,function(g){
 			g=infrajs.global.get(g);
 			s+=g.value+':';
-
 		});
 		return s;
 	});
@@ -20,8 +19,8 @@ infrajs.global={
 		if(!this.globals[name]){
 			this.globals[name]={
 				value:0,
-				unloads:{}
-				//,onsubmit:{}
+				unloads:{},
+				layers:[]
 			};
 		}
 		return this.globals[name];
@@ -40,12 +39,13 @@ infrajs.global={
 			for(var path in g.unloads){
 				infra.unload(path);
 			}
-			/*
-			for(var i=0,l=g.onsubmit.length;i<l;i++){
-				var layer=g.onsubmit[i];
+			
+			for(var i=0,l=g.layers.length;i<l;i++){
+				var layer=g.layers[i];
+				if(!layer.onsubmit)continue;
 				if(!layer.config)continue;
 				delete layer.config.ans;
-			}*/
+			}
 			
 		}.bind(this));
 		
@@ -72,8 +72,8 @@ infrajs.checkGlobal=function(layer){
 		if(json){
 			g.unloads[json]=true;
 		}
-		/*if(layer.onsubmit){
-			g.onsubmit.push(layer);
-		}*/
+		//if(layer.onsubmit){
+			g.layers.push(layer);
+		//}
 	});
 }
