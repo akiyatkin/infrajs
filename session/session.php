@@ -37,11 +37,12 @@ infra_require('*infra/ext/seq.php');
 infra_require('*session/session.inc.php');
 
 global $infra_session_data;
-function infra_session_init(){
-	infra_cache_no();
-	infra_once('infra_session_init',function(){
-		infra_session_sync();
-	});
+
+function infra_session_initId(){
+	//Инициализирует сессию если её нет и возвращает id
+	$id=infra_session_getId();
+	if(!$id)infra_session_set();
+	return infra_session_getId();
 }
 function infra_session_getName($name){
 	return 'infra_session_'.$name;
@@ -113,14 +114,17 @@ function &infra_session_make($list,&$data=array()){
 	return $data;
 }
 function infra_session_get($name='',$def=null){
-	infra_session_init();
+	infra_cache_no();
+	infra_once('infra_session_getinitsync',function(){
+		infra_session_sync();
+	});
 	$name=infra_seq_right($name);
 	global $infra_session_data;
 	$val=infra_seq_get($infra_session_data,$name);
 	if(is_null($val))return $def;
 	else return $val;
 }
-function infra_session_set($name,$value=null){
+function infra_session_set($name='',$value=null){
 	//if(infra_session_get($name)===$value)return; //если сохранена ссылка то изменение её не попадает в базу данных и не синхронизируется
 	$right=infra_seq_right($name);
 

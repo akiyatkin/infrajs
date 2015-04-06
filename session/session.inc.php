@@ -51,11 +51,7 @@ END;
 		if(!$db)return;
 		
 		if(is_null($session_id)){
-			$session_id=infra_session_getId();
-			if(!$session_id){
-			   infra_session_set('init', 1);
-			   $session_id=infra_session_getId();
-			}
+			$session_id=infra_session_initId();
 		}
 		$sql='UPDATE ses_sessions
 					SET password = ?
@@ -72,11 +68,7 @@ END;
 		$db=&infra_session_db();
 		if(!$db)return;
 		
-		$session_id=infra_session_getId();
-		if(!$session_id){
-		   infra_session_set('init', 1);
-		   $session_id=infra_session_getId();
-		}
+		$session_id=infra_session_initId();
 		$sql='UPDATE ses_sessions
 					SET email = ?
 					WHERE session_id=?';
