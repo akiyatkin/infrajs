@@ -55,10 +55,11 @@ infrajs.setonsubmit=function(layer){
 					}else{
 						msg='Ошибка связи';
 					}
+					if(layer.global)infrajs.global.set(layer.global);//Удаляет config.ans у слоёв
 					if(!ans)ans={result:0,msg:msg};
 					layer.config.ans=ans;
 					infra.session.syncNow();
-					if(layer.global)infrajs.global.set(layer.global);
+					
 					if(infra.loader)infra.loader.hide();
 					infra.fire(layer,'onsubmit');//в layers.json указывается onsubmit:true, а в tpl осуществляется подписка на событие onsubmit и обработка
 					if(typeof(layer.onsubmit)=='function')layer.onsubmit(layer);

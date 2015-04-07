@@ -14,18 +14,30 @@
 
 			<script>
 				(function(){
-					var request = new XMLHttpRequest();
-					request.onreadystatechange=function(){
-					    if (request.readyState !== 4) return;
-						var header=request.getResponseHeader('infrajs-cache');
-						if(header=='Fail'){
-							$('#cachechecklabel').removeClass('label-warning').addClass('label-danger').html('кэш не используется');
-						}else{
+					window.checkcacheres;
+					var callback=function(r){
+						if(r){
 							$('#cachechecklabel').removeClass('label-warning').addClass('label-success').html('кэш используется');
+						}else{
+							$('#cachechecklabel').removeClass('label-warning').addClass('label-danger').html('кэш не используется');
 						}
-					};
-					request.open('HEAD', document.location, true);
-					request.send(null);
+					}
+					if(typeof(window.checkcacheres)=='undefined'){
+						
+						var request = new XMLHttpRequest();
+						request.onreadystatechange=function(){
+						    if (request.readyState !== 4) return;
+							var header=request.getResponseHeader('infrajs-cache');
+							window.checkcacheres=(header!='Fail');
+							callback(window.checkcacheres);
+						};
+						request.open('HEAD', document.location, true);
+						request.send(null);
+						
+					}else{
+						callback(window.checkcacheres);
+					}
+					
 				})();
 			</script>
 		</div>
@@ -404,7 +416,6 @@
 			if(!schema){
 				schema=infra.loadJSON(d[1]);
 			}
-
 			AUTOEDIT.jsonedit(ta,schema);
 		});
 	</script>

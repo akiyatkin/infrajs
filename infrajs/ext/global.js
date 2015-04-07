@@ -39,16 +39,15 @@ infrajs.global={
 			for(var path in g.unloads){
 				infra.unload(path);
 			}
-			
-			for(var i=0,l=g.layers.length;i<l;i++){
-				var layer=g.layers[i];
-				if(!layer.onsubmit)continue;
-				if(!layer.config)continue;
-				delete layer.config.ans;
-			}
-			
+			//infra.when(infrajs,'onshow',function(){
+				for(var i=0,l=g.layers.length;i<l;i++){
+					var layer=g.layers[i];
+					if(!layer.onsubmit)continue;
+					if(!layer.config)continue;
+					if(layer.config&&layer.config.ans)layer.config.ans={};
+				}
+			//});
 		}.bind(this));
-		
 	}
 	//,onsubmit:[]
 }

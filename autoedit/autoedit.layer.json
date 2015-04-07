@@ -13,10 +13,9 @@
 	},
 	"onsubmit":function(layer){
 		var ans=layer.config.ans;
-		if(ans.close)popup.hide();
-		if(ans.result)infrajs.autosave.clear(layer);//Обнулили сохранённые введённые значения пользователя
+		if(ans&&ans.close)popup.hide();
+		if(ans&&ans.result)infrajs.autosave.clear(layer);//Обнулили сохранённые введённые значения пользователя
 		
 		AUTOEDIT.refreshAll();
-		if(infrajs.global)infrajs.global.set(layer.global);
 	}
 }

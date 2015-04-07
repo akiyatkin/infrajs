@@ -1395,6 +1395,7 @@ jsonwidget.editor.warningOut = function (text) {
 }
 
 jsonwidget.editor.clearWarnings = function () {
+    if(!this.warningwindow)return;
     this.warningwindow.innerHTML ="";
 }
 

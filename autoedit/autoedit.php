@@ -18,7 +18,11 @@
 		}else{
 			$ans['admin']=infra_admin(array(@$_REQUEST['login'],@$_REQUEST['pass']));
 			if(!$ans['admin']){
-				$ans['msg']='Неправильный пароль!';
+				if(isset($_REQUEST['login'])){
+					$ans['msg']='Неправильный пароль!';
+				}else{
+					$ans['msg']='Вы успешно вышли!';
+				}
 			}
 		}
 		return infra_echo($ans);

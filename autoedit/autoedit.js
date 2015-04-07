@@ -113,9 +113,9 @@ AUTOEDIT.setHandlers=function(){
 		if(!layer.autoedit)return;
 		if(!layer.div)return;
 		if(!layer.showed)return;
-		var attr='infrajs_admin'+layer.unick;
+		var attr='data-infrajs-admin-layer';
 		var div=layer.autoedit.div||layer.div;
-		var div=$('#'+div+'['+attr+'!=1]');//Именно для этого слоя мы ещё обработчик не сделали
+		var div=$('#'+div).not('['+attr+']');//Именно для этого слоя мы ещё обработчик не сделали
 		if(!div.length)return;
 
 		div.hover(function(){
@@ -130,7 +130,7 @@ AUTOEDIT.setHandlers=function(){
 			if(!layer.showed)return;
 			$('.adminblock').removeClass('adminblock');
 			return false;
-		}).attr(attr,'1').click(function(e){
+		}).attr(attr,layer.unick).click(function(e){
 			if(!AUTOEDIT.active)return;//false блокирует переход по внешней ссылке
 			if(!layer.showed)return false;
 			if(!layer.autoedit)return false;
