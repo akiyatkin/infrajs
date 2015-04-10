@@ -15,7 +15,7 @@
 			  `session_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id сессии',
 			  `password` varchar(255) NOT NULL COMMENT 'Пароль сессии',
 			  `email` varchar(255) COMMENT 'Email чтоб была возможность авторизироваться и чтоб сессия для одного email-а была уникальная, сама сессия email никак не обрабатывает, обработка делается отдельно кому это надо.',
-			  `verify` BIT NULL DEFAULT NULL,
+			  `verify` BIT NOT NULL DEFAULT '0',
 			  PRIMARY KEY (`session_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 END;
@@ -148,11 +148,20 @@ END;
 				//Теперь старую сессию нужно удалить полностью
 				//Надо подчистить 2 таблицы
 				if($session_id_old){//хз бывает ли такое что его нет
+					$conf=infra_config();
+					$tables=$conf['session']['change_session_tables'];//Массив с таблицами в которых нужно изменить session_id неавторизированного пользователя, при авторизации
 					$db=infra_session_db();
-					$sql='delete from ses_records where session_id=?';
+
+					infra_forr($tables,function() use($session_id_old,$session_id,&$db){
+						$sql='UPDATE images SET session_id = ? WHERE session_id = ?;';
+						$stmt=$db->prepare($sql);
+						$stmt->execute(array($session_id,$session_id_old));
+					});
+					
+					$sql='DELETE from ses_records where session_id=?';
 					$stmt=$db->prepare($sql);
 					$stmt->execute(array($session_id_old));
-					$sql='delete from ses_sessions where session_id=?';
+					$sql='DELETE from ses_sessions where session_id=?';
 					$stmt=$db->prepare($sql);
 					$stmt->execute(array($session_id_old));
 				 }
