@@ -63,7 +63,7 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 		return $name;
 	}
 	
-	function imager_makeGray($img_path){		
+	function imager_makeGray($img_path,$filter=IMG_FILTER_GRAYSCALE){		
 		return infra_cache(array($img_path),'imager_makeGray',function($img_path){
 			@mkdir(ROOT.'infra/cache/imager_gray/');
 			$type=imager_type($img_path);
@@ -79,14 +79,14 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 				$img_png = imagecreatefromPNG( ROOT.$img_path );
 				imagesavealpha( $img_png, TRUE );
 				
-				if( $img_png AND imagefilter( $img_png, IMG_FILTER_GRAYSCALE )) {			
+				if( $img_png AND imagefilter( $img_png, $filter )) {			
 					@unlink( ROOT.$output_path );				
 					imagepng( $img_png, ROOT.$output_path );
 				}
 				imagedestroy( $img_png );
 			}else if($type_img==2 AND ($gd['JPG Support'] == 1  OR $gd['JPEG Support'] == 1 )) { 
 				$img= imagecreatefromJPEG( ROOT.$img_path );		    
-				if($img AND imagefilter( $img, IMG_FILTER_GRAYSCALE )) {			
+				if($img AND imagefilter( $img, $filter )) {			
 					@unlink( ROOT.$output_path );				
 					imagejpeg( $img, ROOT.$output_path );
 				}
@@ -107,7 +107,7 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 				imagedestroy( $img_jpg );*/
 			}elseif( $type_img == 1 AND $gd['GIF Create Support'] == 1  ) { 
 				$img= imagecreatefromGIF( ROOT.$img_path );		    
-				if($img AND imagefilter( $img, IMG_FILTER_GRAYSCALE )) {			
+				if($img AND imagefilter( $img, $filter )) {			
 					@unlink( ROOT.$output_path );				
 					imagegif( $img, ROOT.$output_path );
 				}
