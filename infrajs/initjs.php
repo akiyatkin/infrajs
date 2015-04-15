@@ -26,6 +26,7 @@
 		
 		$html.=$require('*infra/js.php');
 		$html.=$require('*infrajs/infrajs.js');//
+		$html.=$require('*infrajs/ext/once.js');//
 
 		$html.=$require('*infrajs/ext/state.js');//
 		$html.=$require('*infrajs/ext/external.js');//
