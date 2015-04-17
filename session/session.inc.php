@@ -15,7 +15,7 @@
 			  `session_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id сессии',
 			  `password` varchar(255) NOT NULL COMMENT 'Пароль сессии',
 			  `email` varchar(255) COMMENT 'Email чтоб была возможность авторизироваться и чтоб сессия для одного email-а была уникальная, сама сессия email никак не обрабатывает, обработка делается отдельно кому это надо.',
-			  `verify` BIT NOT NULL DEFAULT '0',
+			  `verify` int(1) unsigned,
 			  PRIMARY KEY (`session_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 END;
@@ -78,7 +78,7 @@ END;
 	}
 	function infra_session_getVerify(){
 		$user=infra_session_getUser();
-		return $user['verify'];
+		return (bool)$user['verify'];
 	}
 	function infra_session_setVerify(){
 		$session_id=infra_session_getId();
