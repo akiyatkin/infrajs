@@ -214,43 +214,42 @@ infra.State.setA=function(div){
 		if(isfirst){
 
 			a.onclick=function(old_func,a){
-				return function(){
-					
-					if(typeof(event)!=='undefined'&&event.returnValue===false)return false;
-					var re=old_func.apply(a);
-					if(re===false){
-						if(typeof(event)!=='undefined')event.returnValue=false;
-						return false;
-					}
-					var nohref=a.getAttribute('nohref');
-					if(nohref)return false;
-					if(/\?/.test(a.href)){
-						//var param=a.href.substring(a.href.indexOf('?')+1);
-						var h=a.href;
-						//try {
-							h=decodeURI(h);
-						//}catch(e){
+				return function(event){
+					setTimeout(function(){//Сначало должны выполниться все другие подписки а это как дефолтное поведение в самом конце
+						var re=old_func.apply(a);
+						if(re===false){
+							if(typeof(event)!=='undefined')event.returnValue=false;
+							return false;
+						}
+						var nohref=a.getAttribute('nohref');
+						if(nohref)return false;
+						if(/\?/.test(a.href)){
+							//var param=a.href.substring(a.href.indexOf('?')+1);
+							var h=a.href;
+							//try {
+								h=decodeURI(h);
+							//}catch(e){
 
-						//}
-						var ar=h.split('?');
-						ar.shift();
-						var param=ar.join('?');
-					}else{
-						var param='';
-					}
-					if(!/^=/.test(param)){
-						param='/'+param;
-					}else{
-						param=''+param;
-					}
-					//setTimeout(function(){//Текущий процесс выполнения скрипта закончится с показом всех слоёв
+							//}
+							var ar=h.split('?');
+							ar.shift();
+							var param=ar.join('?');
+						}else{
+							var param='';
+						}
+						if(!/^=/.test(param)){
+							param='/'+param;
+						}else{
+							param=''+param;
+						}
 						try{
 							infra.State.set(param);
 						}catch(e){
 							console.error(e);
 						}
-					//},1);
-					if(typeof(event)!=='undefined')event.returnValue=false;
+
+						
+					},1);
 					return false;
 				}
 			}(old_func,a);

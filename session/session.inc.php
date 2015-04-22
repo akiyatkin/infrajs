@@ -137,7 +137,7 @@ END;
 	function infra_session_change($session_id,$pass=null){
 
 		$email=infra_session_getEmail();
-		$session_id_old=infra_session_getId();
+		$session_id_old=infra_session_initId();
 		if(!$email){//Текущая сессия не авторизированная
 			$email=infra_session_getEmail($session_id);
 			if($email){//А вот новая сессия аторизированна, значит нужно объединить сессии и грохнуть старую

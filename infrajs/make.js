@@ -286,7 +286,10 @@
 	});
 	infrajs.isAdd('show',function(layer){
 		//popup
-		if(layer.popupis===false)return false;
+		do{
+			if(layer.popupis===false)return false;
+			layer=layer.parent;
+		}while(layer)
 	});
 	
 	infrajs.isAdd('show',function(layer){

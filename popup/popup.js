@@ -83,7 +83,7 @@ popup.text=function(obj){
 	if(!st.layer)st.layer={tpl:[obj]}
 	popup.activate(st);
 }
-popup.open=function(obj){//depricated
+popup.open=function(obj){//depricated??? Слой показывается с отступами от краёв, с кнопокй закрыть.
 	if(!obj)return;
 	var st=this.getStLayer(obj,obj,'*popup/open.tpl');
 	popup.activate(st);
@@ -91,6 +91,11 @@ popup.open=function(obj){//depricated
 popup.alert=function(obj){
 	if(!obj)return;
 	var st=this.getStLayer(obj,{tpl:[obj]},'*popup/alert.tpl');
+	popup.activate(st);
+}
+popup.success=function(obj){
+	if(!obj)return;
+	var st=this.getStLayer(obj,{tpl:[obj]},'*popup/success.tpl');
 	popup.activate(st);
 }
 popup.progress=function(val){

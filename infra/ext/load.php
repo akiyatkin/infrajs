@@ -72,10 +72,11 @@ function infra_strtolower($str){
 function infra_json_decode($json){
 	$json2 = preg_replace("#(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|([\s\t]//.*)|(^//.*)#", '', $json);
 	$data = json_decode($json2, true, 512);//JSON_BIGINT_AS_STRING в javascript тоже нельзя такие цифры... архитектурная ошибка.
-	if($json2&&!$data&&!in_array($json2,array('null','false','{}','[]','""','0','"0"'))){
+	if($json2&&!$data&&!is_array($data)&&!in_array($json2,array('null','false','""','0','"0"'))){
 		echo '<h1>json decode error</h1>';
 		echo "\n".'<pre>'."\n";
 		var_dump($json);
+		var_dump($data);
 		echo "\n".'</pre>';
 		exit;
 	}

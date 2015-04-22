@@ -269,7 +269,7 @@ infra.session={
 		this.sync(null,true);
 		//Не срабатывает если id нет
 	},
-	sync:function(list,sync,callback){
+	sync:function(list,sync,callback){//false,false,callback
 		if(!callback)callback=function(){};
 		if(!this.getId()&&(!list||(list.constructor==Array&&list.length==0))){//Если ничего не устанавливается и нет id то sync не делается
 			return callback();
@@ -450,7 +450,7 @@ infra.session={
 		}.bind(this));
 		return data;
 	},
-	get:function(name,def){//data может быть undefined
+	get:function(name,def){//data может быть undefined. get всегда синхронный сессия синхронно в первый раз синхронизировалась.
 		this.init();
 		name=infra.seq.right(name);
 		var val=infra.seq.get(this.data,name);
