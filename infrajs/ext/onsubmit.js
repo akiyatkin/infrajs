@@ -49,11 +49,11 @@ infrajs.setonsubmit=function(layer){
 							if(!text)throw 'Empty response';
 							ans=eval('(function(a){return a})('+text+')');
 						}catch(e){
-							msg='Ошибка на сервере';
+							msg='Server Error';
 							if(infra.debug) msg+='<hr>'+e+'<hr>'+text;
 						}
 					}else{
-						msg='Ошибка связи';
+						msg='Connect Error';
 					}
 					if(layer.global)infrajs.global.set(layer.global);//Удаляет config.ans у слоёв
 					if(!ans)ans={result:0,msg:msg};

@@ -8,6 +8,7 @@
 
 	$src=preg_replace("/\.mht$/",'',$src);
 	$src=preg_replace("/\.tpl$/",'',$src);
+	$src=preg_replace("/\.html$/",'',$src);
 	$src=str_replace("infra/data/",'*',$src);
 
 	$filename=infra_theme($src.'.mht');
