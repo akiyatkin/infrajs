@@ -1,10 +1,9 @@
 {root:}
 <html>
 <head>
-		<script type-"text/javascript" src="../../../infra/lib/jquery/jquery.js"></script>
-		<link rel="stylesheet" href="../../../infra/lib/bootstrap/css/bootstrap.min.css">
-		<link rel="stylesheet" href="../../../infra/lib/bootstrap/css/bootstrap-theme.min.css">
-		<script src="../../../infra/lib/bootstrap/js/bootstrap.min.js"></script>
+	<link href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+	<script src="../../../vendor/components/jquery/jquery.js"></script>
+	<script src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 <body>
 	<table class="table">
