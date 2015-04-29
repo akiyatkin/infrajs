@@ -665,7 +665,7 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 
 			imagecopyresampled($image_p, $image, 0,0,$dw/2,$fromtop, $w, $h, $width_orig-$dw, $height_orig-$dh);
 			$fn='image'.$type;
-			$quality=100;
+			$quality=95;
 			if($type=='png')$quality=2;
 			$fn($image_p, ROOT.$src_cache,$quality);
 			imagedestroy($image);

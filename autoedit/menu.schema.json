@@ -1,19 +1,19 @@
 {
-	title:'Меню',
-	type:'array',
-	items:{
-		title:'Пункт',
-		type:'object',
-		properties:{
-			"name":{
-				title:'Заголовок',
-				type:'string',
-				required:true
+	"title":"Меню",
+	"type":"array",
+	"items":{
+		"title":"Пункт",
+		"type":"object",
+		"properties":{
+			"title":{
+				"title":"Заголовок",
+				"type":"string",
+				"required":true
 			},
 			"href":{
-				title:'Ссылка',
-				type:'string',
-				required:true
+				"title":"Ссылка",
+				"type":"string",
+				"required":true
 			}
 		}
 	}
