@@ -25,13 +25,16 @@
 					if(typeof(window.checkcacheres)=='undefined'){
 						
 						var request = new XMLHttpRequest();
+
 						request.onreadystatechange=function(){
 						    if (request.readyState !== 4) return;
 							var header=request.getResponseHeader('infrajs-cache');
+							console.log(request.getAllResponseHeaders());
 							window.checkcacheres=(header!='Fail');
 							callback(window.checkcacheres);
 						};
 						request.open('HEAD', document.location, true);
+						request.setRequestHeader("If-Modified-Since", new Date(0).toGMTString());
 						request.send(null);
 						
 					}else{
