@@ -50,21 +50,18 @@
 	{Garcnow:}
 		<div style="float:right; text-transform:none"><a href="?{state.parent.name}" onclick="infrajs.scroll=true"><em>К последним</em></a></div>
 {PAGES:}
+	<hr>
 	{data::Pitem}
 	{state.name!:Архив?:Garc?:Garcnow}
 	{Pitem:}
 		<div style="margin-bottom:30px">
-			<h2>{heading|name}</h2>
+			{date:Pdate}
+			<h2 style="margin-top: 5px;">{heading|name}</h2>
 			{preview}
-			<table class="common">
-				<tr>
-				<td> <a href="?{config.link}{name}">Читать&nbsp;полностью</a></td><td>|</td>
-				<td><nobr><a title="Короткая ссылка" href="?{config.link}{id}">{location.host}{location.pathname}?{config.link}{id}</a></nobr></td>
-				<td>|</td>
-				<td style="text-align:right">{date:Pdate}</td></tr>
-			</table>
+			<a style="text-decoration: none; float: right;" href="?{config.link}{name}">Читать полностью</a>
 		</div>
-	{Pdate:}Дата&nbsp;публикации: <i>{:date}&nbsp;г.</i>
+		<hr>
+	{Pdate:}<i style="color: #aaaaaa;">{:date}</i>
 	{date:}{~date(:j F Y,.)}
 	{j F Y:}j{:nbsp}F{:nbsp}Y{:nbsp}
 	{nbsp:}&\n\b\s\p;
