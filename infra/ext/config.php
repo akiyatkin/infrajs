@@ -26,40 +26,43 @@ function &infra_config($sec=false){
 	//if(!$atime||!$data||$data['debug']||$data['time']<$atime){//Если была новая авторизация конфиг считываем снова
 	 	$data=array();
 		$src='infra/plugins/';
-		$list=scandir(ROOT.$src);
-		foreach($list as $name){
-			if($name[0]=='.')continue;
-			if(!is_dir(ROOT.$src.$name))continue;
-			if(!is_file(ROOT.$src.$name.'/.config.json'))continue;
+		if(is_dir(ROOT.$src)){
+			$list=scandir(ROOT.$src);
+			foreach($list as $name){
+				if($name[0]=='.')continue;
+				if(!is_dir(ROOT.$src.$name))continue;
+				if(!is_file(ROOT.$src.$name.'/.config.json'))continue;
 
-			$d=file_get_contents(ROOT.$src.$name.'/.config.json');
-			$d=infra_json_decode($d);
-			if(is_array($d))foreach($d as $k=>&$v) {
-				if(@!is_array($data[$k]))$data[$k]=array();
-				if(isset($d[$k]['pub'])&&isset($data[$k]['pub'])){
-					$d[$k]['pub']=array_unique(array_merge($d[$k]['pub'],$data[$k]['pub']));
+				$d=file_get_contents(ROOT.$src.$name.'/.config.json');
+				$d=infra_json_decode($d);
+				if(is_array($d))foreach($d as $k=>&$v) {
+					if(@!is_array($data[$k]))$data[$k]=array();
+					if(isset($d[$k]['pub'])&&isset($data[$k]['pub'])){
+						$d[$k]['pub']=array_unique(array_merge($d[$k]['pub'],$data[$k]['pub']));
+					}
+					if(is_array($v)) foreach($v as $kk=>$vv)$data[$k][$kk]=$vv;
+					else $data[$k]=$v;
 				}
-				if(is_array($v)) foreach($v as $kk=>$vv)$data[$k][$kk]=$vv;
-				else $data[$k]=$v;
 			}
 		}
-		
 		$src='infra/layers/';
-		$list=scandir(ROOT.$src);
-		foreach($list as $name){
-			if($name[0]=='.')continue;
-			if(!is_dir(ROOT.$src.$name))continue;
-			if(!is_file(ROOT.$src.$name.'/.config.json'))continue;
+		if(is_dir(ROOT.$src)){
+			$list=scandir(ROOT.$src);
+			foreach($list as $name){
+				if($name[0]=='.')continue;
+				if(!is_dir(ROOT.$src.$name))continue;
+				if(!is_file(ROOT.$src.$name.'/.config.json'))continue;
 
-			$d=file_get_contents(ROOT.$src.$name.'/.config.json');
-			$d=infra_json_decode($d);
-			if(is_array($d))foreach($d as $k=>&$v) {
-				if(@!is_array($data[$k]))$data[$k]=array();
-				if(isset($d[$k]['pub'])&&isset($data[$k]['pub'])){
-					$d[$k]['pub']=array_unique(array_merge($d[$k]['pub'],$data[$k]['pub']));
+				$d=file_get_contents(ROOT.$src.$name.'/.config.json');
+				$d=infra_json_decode($d);
+				if(is_array($d))foreach($d as $k=>&$v) {
+					if(@!is_array($data[$k]))$data[$k]=array();
+					if(isset($d[$k]['pub'])&&isset($data[$k]['pub'])){
+						$d[$k]['pub']=array_unique(array_merge($d[$k]['pub'],$data[$k]['pub']));
+					}
+					if(is_array($v)) foreach($v as $kk=>$vv)$data[$k][$kk]=$vv;
+					else $data[$k]=$v;
 				}
-				if(is_array($v)) foreach($v as $kk=>$vv)$data[$k][$kk]=$vv;
-				else $data[$k]=$v;
 			}
 		}
 

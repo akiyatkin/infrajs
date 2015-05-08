@@ -1,8 +1,6 @@
 {	
-	"data":{
-		"menu":["Услуги","О компании","Каталог","Контакты"]
-	},
-	"tpl":["{root:}<h1>Главная</h1>{data.menu::item}{item:}<a href='?{.}'>{.}</a>{~last()?~false?:del}{del:}, "],
+	"tplroot":"root",
+	"tpl":"*layout.tpl",
 	"child":{
 		"parsedtpl":"{state.name}",
 		"data":true,
