@@ -104,6 +104,9 @@ ini_set('display_errors',1);
 infra_require('*infra/ext/admin.php');
 infra_require('*infra/ext/cache.php');
 
+$conf=infra_config();
+if($conf['debug'])infra_cache_no();
+
 infra_require('*infra/ext/once.php');
 
 

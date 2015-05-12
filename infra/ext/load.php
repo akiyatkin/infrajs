@@ -365,12 +365,15 @@ function &infra_loadJSON($path){
 	global $infra;
 	if(isset($store[$path])){	
 		if($store[$path]['com'])$infra['com']=$store[$path]['com'];
+		if(!$store[$path]['cache'])infra_cache_no();
 		return $store[$path]['value'];
 	}
 	$store[$path]=array();
-	$text=infra__load($path);
+
+	$store[$path]['cache']=infra_cache_check(function() use($path,&$text){
+		$text=infra__load($path);
+	});
 	$store[$path]['com']=infra_load_com();
-	
 	/*JSON_FORCE_OBJECT
 	JSON_UNESCAPED_SLASHES
 	JSON_UNESCAPED_UNICODE
@@ -404,11 +407,14 @@ function &infra_loadTEXT($path){
 	global $infra;
 	if(isset($store[$path])){	
 		if($store[$path]['com'])$infra['com']=$store[$path]['com'];
+		if(!$store[$path]['cache'])infra_cache_no();
 		return $store[$path]['value'];
 	}
 	$store[$path]=array();
 	
-	$text=infra__load($path);
+	$store[$path]['cache']=infra_cache_check(function() use($path,&$text){
+		$text=infra__load($path);
+	});
 	$store[$path]['com']=infra_load_com();
 
 	/*JSON_FORCE_OBJECT

@@ -86,6 +86,9 @@ function infra_session_getPass(){
 	return infra_view_getCookie(infra_session_getName('pass'));
 }
 function infra_session_getId(){
+	infra_once('infra_session_getId_cache',function(){
+		infra_cache_no();
+	});
 	return (int)infra_view_getCookie(infra_session_getName('id'));
 }
 function infra_session_getTime(){
@@ -114,7 +117,6 @@ function &infra_session_make($list,&$data=array()){
 	return $data;
 }
 function infra_session_get($name='',$def=null){
-	infra_cache_no();
 	infra_once('infra_session_getinitsync',function(){
 		infra_session_sync();
 	});

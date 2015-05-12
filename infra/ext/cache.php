@@ -61,14 +61,35 @@ function infra_cache_path($name,$args=null){
 	$path=$dirfn.$strargs.'.json';
 	return $path;
 }
+
+
+
+function infra_cache_is(){ //Возможны только значения no-store и no-cache
+	$list=headers_list();
+	foreach($list as $name){
+		$r=explode(':',$name,2);
+		if($r[0]=='Cache-Control')return (strpos($r[1],'no-store')===false);
+	}
+	return true;
+}
 function infra_cache_no(){
-	header("Cache-Control: no-store, no-cache, must-revalidate");
-	header("Expires: ".date("r"));
+	header("Cache-Control: no-store"); //Браузер всегда спрашивает об изменениях. Кэш слоя не делается.
+	//header("Expires: ".date("r"));
 }
 function infra_cache_yes(){
-	header_remove("Cache-Control");
-	header_remove("Expires");
+	header("Cache-Control: no-cache"); //По умолчанию. Браузер должен всегда спрашивать об изменениях. Кэш слоёв делается.
+	//header_remove("Cache-Control");
+	//header_remove("Expires");
 }
+function infra_cache_check($call){
+	$cache=infra_cache_is();
+	if(!$cache)infra_cache_yes();
+	$call();
+	$cache2=infra_cache_is();
+	if(!$cache&&$cache2)infra_cache_no();
+	return $cache2;
+}
+
 function &infra_cache($conds,$name,$fn,$args=array(),$re=false){
 
 	return infra_once('infra_cache_once_'.$name,function($conds,$name,$fn,$args, $re){
@@ -122,26 +143,16 @@ function &infra_cache($conds,$name,$fn,$args=array(),$re=false){
 				$data=unserialize($data);
 			}else{
 
-				$header_name='cache-control';//Проверка установленного заголовока о запрете кэширования, до запуска кэшируемой фукцнии
-				$list=headers_list();
-				$cache_control=infra_forr($list,function($row) use($header_name){
-					$r=explode(':',$row);
-					if(stristr($r[0],$header_name)!==false) return trim($r[1]);
-				});
-				if($cache_control)header_remove('cache-control');
+				$cache_control=infra_cache_is();
+				if($cache_control)infra_cache_no();
 
 				$data=call_user_func_array($fn,array_merge($args,array($re)));
 
 				$list=headers_list();//Проверяем появился ли заголовок после запуска функции кэшируемой
-				$cache_control2=infra_forr($list,function($row) use($header_name){
-					$r=explode(':',$row);
-					if(stristr($r[0],$header_name)!==false){
-						return trim($r[1]);
-					}
-				});
-				if(!$cache_control2&&$cache_control)@header('cache-control: '.$cache_control);
+				$cache_control2=infra_cache_is();
+				if(!$cache_control2&&$cache_control)infra_cache_yes();
 
-				if(!$cache_control2||(stristr($cache_control2,'no-cache')===false&&stristr($cache_control2,'no-store')===false)){
+				if(!$cache_control2){
 					$cache=serialize($data);
 					file_put_contents(ROOT.$path,$cache);
 				}

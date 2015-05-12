@@ -54,7 +54,7 @@
 		exit;
 	}
 	infra_admin(true);
-	if($submit)header('cache-control:no-cache');
+	if($submit)infra_cache_no();
 	
 	
 	if($type=='seo'){

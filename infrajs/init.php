@@ -39,14 +39,14 @@ END;
 			
 			if(!$conf['infrajs']['onlyserver']){
 				$script=<<<END
-					<script>
+					<script type="text/javascript">
 							var layers=infra.loadJSON("{$src}");
 							var div='{$div}'
 							if(div)infra.fora(layers,function(layer){
 								layer.div=div;
 							});
 							infrajs.checkAdd(layers);
-							infra.handle(infra.State,'onchange',function(){
+							infra.listen(infra.State,'onchange',function(){
 								infrajs.check();
 							});
 					</script>

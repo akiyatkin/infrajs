@@ -257,16 +257,19 @@ infra.State.setA=function(div){
 	}
 }
 infra.State.init=function(){
+	this.oldinit=this.init;
 	this.init=function(){};
 	var listen=function(){		
 		var query=infra.view.getQuery();
 		if(infra.State.get()==query)return;//chrome при загрузки запускает собыите а FF нет. Первый запуск мы делаем сами по этому отдельно для всех а тут игнорируются совпадения.
 		infra.State.set(query,'back or forward or first');
 	}
-	if(history.pushState){ //Первый запус должен проходить после того как все слои подключились все кому интересно подписались на события и потом проходит событие и всё работает
-		window.addEventListener('popstate',listen, false); //Генерировать заранее нельзя
-	}
-	listen();//Даже если html5 не поддерживается мы всё равно считаем первую загрузку а дальше уже будут полные переходы и всё повториться
+	document.addEventListener("DOMContentLoaded",function(){
+		if(history.pushState){ //Первый запус должен проходить после того как все слои подключились все кому интересно подписались на события и потом проходит событие и всё работает
+			window.addEventListener('popstate',listen, false); //Генерировать заранее нельзя
+		}
+		listen();//Даже если html5 не поддерживается мы всё равно считаем первую загрузку а дальше уже будут полные переходы и всё повториться
+	});
 }
 
 infra.State.go=function(href){

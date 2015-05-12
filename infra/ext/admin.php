@@ -15,7 +15,7 @@ function infra_admin_modified(){
 
 	if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
 	  // разобрать заголовок
-	  //@header('Cache-control:no-cache');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
+	  //@header('Cache-control:no-store');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
 	  //$if_modified_since=preg_replace('/;.*$/', '', $_SERVER['HTTP_IF_MODIFIED_SINCE']);
 	  $if_modified_since=strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']); 
 	  if ($if_modified_since>$last_modified) {
@@ -44,7 +44,7 @@ function infra_admin_modified(){
 	if(is_array($break)){
 		$admin=($break[0]===$_ADM_NAME&&$break[1]===$_ADM_PASS);
 	}
-	infra_cache_no(); //@header('Cache-control:no-cache');Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start так как сессия может быть уже запущенной
+	infra_cache_no(); //@header('Cache-control:no-store');Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start так как сессия может быть уже запущенной
 	//Кэш делается гостем.. так как скрыт за функцией infra_admin_cache исключение infra_cache когда кэшу интересны только даты изменения файлов.
 	$r=session_start();
 
@@ -180,28 +180,13 @@ function infra_admin_cache($name,$call,$args=array(),$re=false){//Запуска
 
 
 			//здесь для примера показана
-			//@header('Cache-control:no-cache');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
-						$header_name='cache-control';//Проверка установленного заголовока о запрете кэширования, до запуска кэшируемой фукцнии
-						$list=headers_list();
-						$cache_control=infra_forr($list,function($row) use($header_name){
-							$r=explode(':',$row);
-							if(stristr($r[0],$header_name)!==false) return trim($r[1]);
-						});
-						if($cache_control)header_remove('cache-control');
+			//@header('Cache-control:no-store');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
+						
+			$cache_control=infra_cache_check(function() use($call,&$args,&$data,$re){
+				$data['result']=call_user_func_array($call,array_merge($args,array($re)));
+			});	
 
-			$data['result']=call_user_func_array($call,array_merge($args,array($re)));
-
-						$list=headers_list();//Проверяем появился ли заголовок после запуска функции кэшируемой
-						$cache_control2=infra_forr($list,function($row) use($header_name){
-							$r=explode(':',$row);
-							if(stristr($r[0],$header_name)!==false) return trim($r[1]);
-						});
-						if(!$cache_control2&&$cache_control)@header('cache-control: '.$cache_control);
-
-						if(!$re&&(!$cache_control2||stristr($cache_control2,'no-cache')===false)){
-							//Кэшируем только если нет заголовка, или он не содержит no cache.
-							//При повторном вызове session_start нужно руками вызывать header('cache-control:no-cache') чтобы информация была получена что обработка динамическая
-
+						if(!$re&&$cache_control){
 			infra_mem_set('infra_admin_once_'.$name,$data);
 						}else if($data){//Если текущие данные не кэшируются, то удаляются
 							//infra_mem_flush();
