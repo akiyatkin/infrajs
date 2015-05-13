@@ -15,7 +15,7 @@
 			  `session_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id сессии',
 			  `password` varchar(255) NOT NULL COMMENT 'Пароль сессии',
 			  `email` varchar(255) COMMENT 'Email чтоб была возможность авторизироваться и чтоб сессия для одного email-а была уникальная, сама сессия email никак не обрабатывает, обработка делается отдельно кому это надо.',
-			  `date` DATETIME NULL DEFAULT NULL,
+			  `date` DATETIME NULL DEFAULT NULL COMMENT 'Дата верификации',
 			  `verify` int(1) unsigned,
 			  PRIMARY KEY (`session_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
@@ -86,7 +86,7 @@ END;
 		$db=&infra_session_db();
 		if(!$db)return;
 		$sql='UPDATE ses_sessions
-					SET verify = 1
+					SET verify = 1, date=now()
 					WHERE session_id=?';
 		$stmt=$db->prepare($sql);
 		$stmt->execute(array($session_id));
