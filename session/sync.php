@@ -66,7 +66,11 @@
 			
 			$ans['news']=$news;
 			infra_forr($ans['news'],function(&$v) use($list,&$ans){
-				$v['value']=infra_json_decode($v['value']);
+				
+				
+				$v['value']=infra_json_decode($v['value'],true);
+				
+				
 				$v['name']=infra_seq_right($v['name']);
 				$r=infra_forr($list,function($item) use(&$v,&$ans){
 					//Устанавливаемое значение ищим в новости

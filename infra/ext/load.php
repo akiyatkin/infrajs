@@ -69,10 +69,10 @@ function infra_strtolower($str){
 	return $str;
 }
 
-function infra_json_decode($json){
+function infra_json_decode($json,$soft=false){ //soft если об ошибке не нужно сообщать
 	$json2 = preg_replace("#(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|([\s\t]//.*)|(^//.*)#", '', $json);
 	$data = json_decode($json2, true, 512);//JSON_BIGINT_AS_STRING в javascript тоже нельзя такие цифры... архитектурная ошибка.
-	if($json2&&!$data&&!is_array($data)&&!in_array($json2,array('null','false','""','0','"0"'))){
+	if(!$soft&&$json2&&is_null($data)&&!in_array($json2,array('null'))){
 		echo '<h1>json decode error</h1>';
 		echo "\n".'<pre>'."\n";
 		var_dump($json);
