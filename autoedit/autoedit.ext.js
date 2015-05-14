@@ -6,6 +6,8 @@ infrajs.autoeditInit=function(){
 		if(!now)now=ext;
 		return now;
 	});
+	var conf=infra.config();
+	if(!conf.debug&&!conf.admin.popup)return;
 	$(document).bind('keydown',function(event){
 		if (event.keyCode == 113){
 			//infra.loader.show();

@@ -33,12 +33,10 @@
 		$html.=$require('*infra/ext/view.js');
 		
 		$html.=$require('*infra/ext/seq.js');
+		
 		$html.=$require('*infra/ext/admin.js');
-		$html.=$require('*infra/ext/events.js');
-		
-		
-		
 
+		$html.=$require('*infra/ext/events.js');
 		
 		//Внутри расширений зависимости подключаются, если используется API
 		//Здесь подключение дублируется, тем более только здесь это попадёт в кэш
@@ -46,8 +44,8 @@
 		$html.=$require('*infra/ext/template.js');
 		$html.=$require('*infra/ext/state.js');
 		$html.=$require('*infra/ext/loader.js');
-
-		$html.=$require('*infra/ext/test.js');
+		
+		if($conf['debug']||$conf['admin']['popup'])$html.=$require('*infra/ext/test.js');
 
 		
 		return $html;

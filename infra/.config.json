@@ -5,6 +5,8 @@
 		"timezone":"Europe/Moscow"
 	},
 	"admin":{
+		"pub":["popup"],
+		"popup":true,
 		"login":"some",
 		"password":"som",
 		"email":"info@itlf.ru",
