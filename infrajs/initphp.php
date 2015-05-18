@@ -22,6 +22,7 @@
 	infra_require('*infrajs/ext/autosave.php');//
 	infra_require('*infrajs/ext/config.php');//
 	infra_require('*infrajs/ext/parsed.php');//
+	infra_require('*infrajs/ext/seojson.php');//
 	infra_require('*seo/seo.ext.php');//
 
 	infra_require('*session/session.php');

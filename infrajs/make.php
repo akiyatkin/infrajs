@@ -321,7 +321,11 @@
 	});
 
 
-
+	infra_listen($infra,'layer.onshow',function(&$layer){
+		//seojson
+		if(infrajs_tplonlyclient($layer))return;
+		infrajs_seojson($layer);
+	});
 	infra_listen($infra,'layer.onshow',function(&$layer){
 		//seo
 		infrajs_seo_now($layer);

@@ -15,6 +15,7 @@ infra_forr($ar,function($dir) use(&$data){
 		$data[$dir.$plugin]=array();
 
 		$list=infra_loadJSON('*pages/list.php?src='.$src.'/&f=1&d=0');
+
 		infra_forr($list,function($finfo) use($dir,$src,$plugin,&$data){
 			if($finfo['ext']!='php')return;
 
@@ -23,7 +24,7 @@ infra_forr($ar,function($dir) use(&$data){
 				$res=array('title'=>$plugin.' '.$finfo['name'],'result'=>0,'msg'=>'Слишком длинный текст');
 			}else{
 				$res=json_decode($text,true);
-				if(!$res)$res=array('title'=>$plugin.' '.$finfo['name'],'result'=>0,'msg'=>'Некорректный json','class'=>'bg-danger');
+				if(!is_array($res))$res=array('title'=>$plugin.' '.$finfo['name'],'result'=>0,'msg'=>'Некорректный json','class'=>'bg-danger');
 			}
 			$res['src']=$src.$finfo['file'];
 			$res['name']=$finfo['file']; //имя тестируемого файла

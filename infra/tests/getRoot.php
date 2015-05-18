@@ -1,17 +1,18 @@
 <?php
 	@define('ROOT','../../../../');
-
 	require_once(ROOT.'infra/plugins/infra/infra.php');
-
+	$ans = array(
+		'title'=>'infra getRoot'
+	);
 	$root=infra_view_getRoot(ROOT);
-	
-	
-	$d=infra_loadJSON('*infra/tests/getRoot/getRoot.php');
-	echo 'Определение корня сервера на разных уровнях вложенности в разных файлах';
-	
+
+	$d = infra_loadJSON('*infra/tests/getRoot/getRoot.php');
+
 	if($d['root']==$root){
-		echo '<h1 style="color:green">PASS</h1>';
-	}else{
-		echo '<h1 style="color:red">ERROR</h1>';
+		$ans['result'] = 1;
+		return infra_ret($ans, "тест пройден");
 	}
-?>
+	else{
+		$ans['result'] = 0;
+		return infra_err($ans, "Не пройден");
+	}

@@ -13,4 +13,3 @@
 	if($ans['res']!=='')return infra_err($ans,'Непройден тест 2 {res}');
 
 	return infra_ret($ans,'Все теcты пройдены');
-?>
