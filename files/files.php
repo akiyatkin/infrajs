@@ -20,32 +20,43 @@ $conf=infra_config();
 	});
 }*/
 $ans=array();
-if($type=='pages'){
-	$dir=$conf['files']['folder_pages'];
-	$exts=array('docx','tpl','mht','html');
-}else if($type=='files'){
-	$dir=$conf['files']['folder_files'];
-	$exts=array();
-}else if($type=='blog'){
-	$dir=$conf['files']['folder_blog'];
-	$exts=array('docx','tpl','mht','html');
-}else if($type=='texts'){
-	$dir=$conf['files']['folder_texts'];
-	$exts=array('docx','tpl','mht','html');
-}else if($type=='events'){
-	$dir=$conf['files']['folder_events'];
-	$exts=array('docx','tpl','mht','html');
-}else if(isset($_GET['dir'])){
-	$dir=$_GET['dir'];
-	$opt=$conf['files']['folders'][$dir];
-	if(!$opt){
-		return infra_echo($ans,'Неопределённый dir',0);
+if(!empty($conf['rubrics'])){
+	if(empty($conf['rubrics'][$type]))return infra_err($ans,'Неопределённый type');
+	$dir='*'.$type.'/';
+	if($conf['rubrics'][$type]['type']=='info'){
+		$exts=array('docx','tpl','mht','html');
+	}else{
+		$exts=array();
 	}
-	if($opt=='info')$exts=array('docx','tpl','mht','html');
-	else if($opt=='files')$exts=array();
-	else return infra_echo($ans,'Некорректный config',0);
+
 }else{
-	return infra_echo($ans,'Неопределённый type',0);
+	if($type=='pages'){
+		$dir=$conf['files']['folder_pages'];
+		$exts=array('docx','tpl','mht','html');
+	}else if($type=='files'){
+		$dir=$conf['files']['folder_files'];
+		$exts=array();
+	}else if($type=='blog'){
+		$dir=$conf['files']['folder_blog'];
+		$exts=array('docx','tpl','mht','html');
+	}else if($type=='texts'){
+		$dir=$conf['files']['folder_texts'];
+		$exts=array('docx','tpl','mht','html');
+	}else if($type=='events'){
+		$dir=$conf['files']['folder_events'];
+		$exts=array('docx','tpl','mht','html');
+	}else if(isset($_GET['dir'])){
+		$dir=$_GET['dir'];
+		$opt=$conf['files']['folders'][$dir];
+		if(!$opt){
+			return infra_echo($ans,'Неопределённый dir',0);
+		}
+		if($opt=='info')$exts=array('docx','tpl','mht','html');
+		else if($opt=='files')$exts=array();
+		else return infra_echo($ans,'Некорректный config',0);
+	}else{
+		return infra_echo($ans,'Неопределённый type',0);
+	}
 }
 if(isset($_REQUEST['seo'])){
 	//нужно найти все странинцы по данным Поиск для каталога это все существующие Производители, Группы

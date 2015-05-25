@@ -1,4 +1,11 @@
 {
+	"rubrics":{
+		"pub":["pages"],
+		"pages":{
+			"title":"Информация",
+			"type":"info"
+		}
+	},
 	"files":{
 		"pub":["folder_files","folder_pages","folder_events","folder_texts","folder_blog"],
 		"folders":{

@@ -140,3 +140,18 @@
 	{Nimg:}<img style="border: 2px solid #E1E1E1;" src="infra/plugins/imager/imager.php?w=100&src={$encode(.)}">
 	{Nlink:}
 		<tr><td> &mdash;&nbsp;</td><td><a href="{href}">{heading|title}</a></td></tr>
+{rubric-info:}
+	<hr>
+	{data::Pitem}
+	{Pitem:}
+		<div style="margin-bottom:30px">
+			{date:Pdate}
+			<h2 style="margin-top: 5px;">{heading|name}</h2>
+			{preview}
+			<a style="text-decoration: none; float: right;" href="?{config.link}{name}">Читать полностью</a>
+		</div>
+		<hr>
+	{Pdate:}<i style="color: #aaaaaa;">{:date}</i>
+	{date:}{~date(:j F Y,.)}
+	{j F Y:}j{:nbsp}F{:nbsp}Y{:nbsp}
+	{nbsp:}&\n\b\s\p;

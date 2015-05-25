@@ -142,11 +142,14 @@ function files_get($dir,$id){
 }
 function files_list($dir,$start=0,$count=0,$exts=array()){
 	$conf=infra_config();
-	$opt=$conf['files']['folders'][$dir];
-	if(!$opt)return array();
-	if($opt=='info')$exts=array('docx','tpl','mht','html');
-	else if($opt=='files')$exts=array();
-	else return array();
+	
+	if(empty($conf['rubrics'])){
+		$opt=$conf['files']['folders'][$dir];
+		if(!$opt)return array();
+		if($opt=='info')$exts=array('docx','tpl','mht','html');
+		else if($opt=='files')$exts=array();
+		else return array();
+	}
 
 	$files=infra_cache(array($dir),'files_list',function($dir,$start,$count,$exts){
 		$dir=infra_theme($dir);
