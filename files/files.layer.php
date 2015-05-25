@@ -28,7 +28,7 @@ foreach($rubrics as $rub=>$param){
 	$layer['childs'][$rub]=$types[$param['type']];
 	$layer['childs'][$rub]["seo"]["link"]=$param['title'];
 	$layer['childs'][$rub]["seo"]["name"]='Раздел '.$param['title'];
-	$layer['childs'][$rub]["tpl"]=['<h1>'.$param['title'].'</h1><div id="allevents"></div>'];
+	$layer['childs'][$rub]["tpl"]=array('<h1>'.$param['title'].'</h1><div id="allevents"></div>');
 	$layer['childs'][$rub]['divs']['allevents']['tplroot']='rubric-'.$param['type'];
 }
 return infra_ans($layer);
