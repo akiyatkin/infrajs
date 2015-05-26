@@ -187,6 +187,7 @@ ignoremark
 		$crop=false;
 		$info=imager_readInfo($src);
 		$orig=$info['orig'];
+		
 		if($orig){
 			$orig=infra_theme($orig);
 			if(!$orig){
