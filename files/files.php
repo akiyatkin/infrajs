@@ -20,16 +20,7 @@ $conf=infra_config();
 	});
 }*/
 $ans=array();
-if(!empty($conf['rubrics'])){
-	if(empty($conf['rubrics'][$type]))return infra_err($ans,'Неопределённый type');
-	$dir='*'.$type.'/';
-	if($conf['rubrics'][$type]['type']=='info'){
-		$exts=array('docx','tpl','mht','html');
-	}else{
-		$exts=array();
-	}
 
-}else{
 	if($type=='pages'){
 		$dir=$conf['files']['folder_pages'];
 		$exts=array('docx','tpl','mht','html');
@@ -57,7 +48,7 @@ if(!empty($conf['rubrics'])){
 	}else{
 		return infra_echo($ans,'Неопределённый type',0);
 	}
-}
+
 if(isset($_REQUEST['seo'])){
 	//нужно найти все странинцы по данным Поиск для каталога это все существующие Производители, Группы
 	//items:[{data:'Имя производителя',title:'',keywords:'',description:''}] в таком виде

@@ -1,13 +1,24 @@
 {
-	"rubrics":{
-		"pub":["pages"],
-		"pages":{
-			"title":"Информация",
-			"type":"info"
-		}
-	},
 	"files":{
-		"pub":["folder_files","folder_pages","folder_events","folder_texts","folder_blog"],
+		"pub":["rubrics","folder_files","folder_pages","folder_events","folder_texts","folder_blog"],
+		"rubrics":{
+			"Информация":{
+				"title":"Информация",
+				"type":"info"
+			},
+			"Блог":{
+				"title":"Блог",
+				"type":"info"
+			},
+			"Файлы":{
+				"title":"Файлы",
+				"type":"info"
+			},
+			"События":{
+				"title":"События",
+				"type":"info"
+			}
+		},
 		"folders":{
 			"*Информация/":"info",
 			"*Блог/":"info",

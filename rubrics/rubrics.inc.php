@@ -3,10 +3,9 @@
 require_once(ROOT.'infra/plugins/infra/infra.php');
 infra_require('*infra/ext/template.php');
 
-function files_search($dir,$str){//Найти указанный в $str файл
+function rub_search($dir,$str,$exts){//Найти указанный в $str файл
 
-	$files=files_list($dir);
-
+	$files=rub_list($dir,0,0,$exts);
 	if(@$files[$str]){
 	       	$files[$str]['idfinded']=true;//Найдено по id
 	       	return $files[$str];
@@ -14,15 +13,15 @@ function files_search($dir,$str){//Найти указанный в $str фай�
 	foreach($files as $d)if(mb_strtolower($d['name'])==mb_strtolower($str))return $d;
 	return array();
 }
-function files_ptube(){
+function rub_ptube(){
 	$ptube='http.*youtube\.com.*watch.*=([\w\-]+).*';
 	return $ptube;
 }
-function files_ptube2(){
+function rub_ptube2(){
 	$ptube='http.{0,1}:\/\/youtu\.be\/([\w\-]+)';
 	return $ptube;
 }
-function files_article($src){
+function rub_article($src){
 
 	$html=infra_loadTEXT('*pages/get.php?'.$src);
 	
@@ -33,7 +32,7 @@ function files_article($src){
 	$html=preg_replace("/<\/a>/","</a>\n",$html);
 
 	//youtube
-	$ptube=files_ptube();
+	$ptube=rub_ptube();
 	$pattern='/(<a.*href="'.$ptube.'".*>)'.$ptube.'(<\/a>)/i';
 
 	$youtpl = <<<END
@@ -53,7 +52,7 @@ END;
 	}while(sizeof($match)>1);
 
 	//youtube2
-	$ptube=files_ptube2();
+	$ptube=rub_ptube2();
 	$pattern='/(<a.*href="'.$ptube.'".*>)'.$ptube.'(<\/a>)/i';
 	$youtpl = <<<END
 	<iframe width="640" height="480" src="http://www.youtube.com/embed/{3}?rel=0" frameborder="0" allowfullscreen></iframe>
@@ -99,7 +98,7 @@ END;
 	$dir=$conf['files']['folder_files'];
 	$filesd=array();
 	foreach($files as $id){
-		$filed=files_get($dir,$id);
+		$filed=rub_get($dir,$id);
 		if($filed)$filesd[$id]=$filed;
 	}
 
@@ -134,30 +133,24 @@ END;
 	return $html;
 }
 
-function files_get($dir,$id){
-	$files=files_list($dir);
+function rub_get($dir,$id,$exts){
+	$files=rub_list($dir,0,0,$exts);
 	$res=$files[$id];
 	if(!$res)$res=array();
 	return $res;
 }
-function files_list($dir,$start=0,$count=0,$exts=array()){
+function rub_list($dir,$start=0,$count=0,$exts=array()){
 	$conf=infra_config();
 	
 	
-	$opt=$conf['files']['folders'][$dir];
-	if(!$opt)return array();
-	if($opt=='info')$exts=array('docx','tpl','mht','html');
-	else if($opt=='files')$exts=array();
-	else return array();
-
-	$files=infra_cache(array($dir),'files_list',function($dir,$start,$count,$exts){
+	$files=infra_cache(array($dir),'rub_list',function($dir,$start,$count,$exts){
 		$dir=infra_theme($dir);
-		return _files_list($dir,$start,$count,$exts);
+		return _rub_list($dir,$start,$count,$exts);
 	},array($dir,$start,$count,$exts),isset($_GET['re']));
 
 	return $files;
 }
-function _files_list($dir,$start,$count,$exts){
+function _rub_list($dir,$start,$count,$exts){
 	if(!$dir)return array();
 	$dir=infra_toutf($dir);
 	$dir=infra_theme($dir);
@@ -191,8 +184,8 @@ function _files_list($dir,$start,$count,$exts){
 			$links=@$rr['links'];
 			if($links){
 				unset($rr['links']);
-				$ptube=files_ptube();
-				$ptube2=files_ptube();
+				$ptube=rub_ptube();
+				$ptube2=rub_ptube();
 
 				foreach($links as $v){
 					$r=preg_match('/'.$ptube.'/',$v['href'],$match);
@@ -226,25 +219,11 @@ function _files_list($dir,$start,$count,$exts){
 		foreach($files as &$fdata){
 			if($fdata['id']&&$fdata['date'])continue;
 			if(!$fdata['id'])$fdata['id']=++$maxid;
-			if(!$fdata['date'])$fdata['date']=date('ymd');
-
-
-			$file=$fdata['date'].' '.$fdata['name'].'@'.$fdata['id'].'.'.$fdata['ext'];
-
-			$r=@rename(ROOT.$dir.infra_tofs($fdata['file']),ROOT.$dir.infra_tofs($file));
-			
-			if($r)$fdata['file']=$file;
 		}
 		$files=array_reverse($files);
 		if($count||$start) $files=array_splice($files,$start,$count);
 		foreach($files as $fdata){
-			if(@$res[$fdata['id']]){
-				//$a=$res[$fdata['id']];
-				$a=$fdata;
-				$r=rename(ROOT.$dir.infra_tofs($a['file']),ROOT.$dir.'.'.infra_tofs($a['file']));
-			}else{
-				$res[$fdata['id']]=$fdata;
-			}
+			$res[$fdata['id']]=$fdata;
 		}
 	}
 	return $res;

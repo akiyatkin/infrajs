@@ -25,6 +25,7 @@ $rubrics=$conf['rubrics'];
 unset($rubrics['pub']);
 
 foreach($rubrics as $rub=>$param){
+	if(!$param)continue;
 	$layer['childs'][$rub]=$types[$param['type']];
 	$layer['childs'][$rub]["seo"]["link"]=$param['title'];
 	$layer['childs'][$rub]["seo"]["name"]='Раздел '.$param['title'];
