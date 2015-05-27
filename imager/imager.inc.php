@@ -245,9 +245,9 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 
 		$file=file(ROOT.$src);
 		$l=sizeof($file);
-		$metka=preg_replace("/[\s\n]/",'',$file[$l-2]);
+		$metka=preg_replace("/[\n]/",'',$file[$l-2]);
 		if($metka=='imager'){
-			$json=preg_replace("/[\s\n]/",'',$file[$l-1]);
+			$json=preg_replace("/[\n]/",'',$file[$l-1]);
 			$data=json_decode($json, true, 512);
 		}else{
 			$metka=preg_replace("/[\s\n]/",'',$file[$l-1]);
@@ -431,7 +431,7 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 		$info=array();
 		$info['host']=$_SERVER['HTTP_HOST'];
 		$info['size']=filesize(ROOT.infra_tofs($orig));
-		$info['date']=date('j.d.Y');
+		$info['date']=date('j.m.Y');
 		$info['orig']=infra_toutf($orig);
 		return $info;
 	}
@@ -449,16 +449,18 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 		if(@$info['water'])return;//Если нужно повторно наложить водяной знак, для этого нужно удалить все старые знаки
 
 		$water=infra_theme('*imager/mark.png');
+		
 		if(!$water)return;
 		//Добавляем водяной знак
-		
-
 		$orig=$info['orig'];
 
 		if(!$orig)$orig=$src;
-		if(infra_theme($orig))return;//Защита.. оригинал не найден.. значит старая версия водяной знак есть, метке water нет. второй знак не нужен
+		else if(!infra_theme($orig))return;//Защита.. оригинал не найден.. значит старая версия водяной знак есть, 
+		//метке water нет. второй знак не нужен
 
 		
+	
+
 		$fn='imagecreatefrom'.$type;
 		$img = $fn(ROOT.$orig);
 
