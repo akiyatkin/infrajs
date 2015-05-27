@@ -1,11 +1,11 @@
 {
 	"child":{
-		"seojsontpl":"*{infra.conf.rubrics.main}/{istate.name}.json",
 		"tpl":["<h1>{istate.name}</h1><p>{infra.conf.rubrics.404}</p><p><a href='?'>{infra.conf.rubrics.link}</a></p>"],
 		"tplroot":"root",
 		"autoedittpl":{"fast":"*{infra.conf.rubrics.main}/{istate.name}"},
 		"showanimate":true,
 		"layers":{
+			"seojsontpl":"*{infra.conf.rubrics.main}/{istate.name}.json",
 			"tplcheck":true,
 			"autoedittpl":{"fast":"*{infra.conf.rubrics.main}/{istate.name}"},
 			"tpltpl":"*rubrics/rubrics.php?type={infra.conf.rubrics.main}&id={istate.name}&show"
