@@ -42,7 +42,7 @@
 	{data.list::Fitem}
 	</table>
 	{Fitem:}
-		<tr><td><img src="infra/plugins/imager/imager.php?src=*autoedit/icons/{ext}.png&w=16"></td><td>{name}<br><a href="infra/plugins/files/files.php?id={id}&type=files&load">Скачать</a></td><td>{size}&nbsp;Mb</td><td>{$date(:j.m.Y,date)}</td></tr>
+		<tr><td><img src="infra/plugins/imager/imager.php?src=*autoedit/icons/{ext}.png&w=16"></td><td>{name}<br><a href="infra/plugins/rubrics/rubrics.php?id={name}&type={istate.name}&load">Скачать</a></td><td>{size}&nbsp;Mb</td><td>{~date(:j.m.Y,date)}</td></tr>
 		</div>
 {PAGES:}
 	<hr>
