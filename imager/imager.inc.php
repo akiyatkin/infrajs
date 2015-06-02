@@ -413,7 +413,7 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 	}
 	function &imager_makeInfo($src){
 		$info=imager_readInfo($src);
-		if($info)return $info;
+		if(is_array($info))return $info;
 
 		$dir='infra/data/imager/';
 		@mkdir(ROOT.$dir);
