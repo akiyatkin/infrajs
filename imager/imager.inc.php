@@ -408,12 +408,12 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 	}*/
 	function imager_encode($file){//Передаётся имя со слэшами надо сделать имя файла и путь до него
 		$file=preg_replace('/[\/:]/',',',$file);//Если в имени файла уже есть запятая не получится сделать водяной знак
-		if(strlen($file)>50)$file=md5($file);
+		if(mb_strlen($file)>50)$file=md5($file);
 		return $file;
 	}
 	function &imager_makeInfo($src){
 		$info=imager_readInfo($src);
-		if(is_array($info))return $info;
+		if($info)return $info;
 
 		$dir='infra/data/imager/';
 		@mkdir(ROOT.$dir);
