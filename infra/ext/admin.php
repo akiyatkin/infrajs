@@ -90,20 +90,20 @@ function infra_admin($break=null,$ans=array('msg'=>'Требуется авто�
 	if(is_array($break)){
 		$admin=($break[0]===$_ADM_NAME&&$break[1]===$_ADM_PASS);
 		if($admin){
-			setcookie('infra_admin',$realkey);
+			infra_view_setCookie('infra_admin',$realkey);
 		}else{
-			setcookie('infra_admin');
+			infra_view_setCookie('infra_admin');
 		}
 	}else{
 		$key=$_COOKIE['infra_admin'];
 		$admin=($key===$realkey);
 		if($break===false){
-			setcookie('infra_admin');
+			infra_view_setCookie('infra_admin');
 			$admin=false;
 		}else if($break===true&&!$admin){
 			$admin=(@$_SERVER['PHP_AUTH_USER']==$_ADM_NAME&&@$_SERVER['PHP_AUTH_PW']==$_ADM_PASS);
 			if($admin){
-				setcookie('infra_admin',$realkey);
+				infra_view_setCookie('infra_admin',$realkey);
 			}else{
 				header("WWW-Authenticate: Basic realm=\"Protected Area\"");
 				header("HTTP/1.0 401 Unauthorized");
