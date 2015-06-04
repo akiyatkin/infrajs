@@ -220,7 +220,7 @@
 				//if($height)$tag.=' height="'.$height.'px"';
 				//if($width)$tag.=' width="'.$width.'px"';
 				if($alt)$tag.=' alt="'.$alt.'"';
-				if(!$inline&&$align)$tag.=' class="img-thumbnail'.$align.'"';
+				if(!$inline&&$align)$tag.=' class="img-thumbnail '.$align.'"';
 				else $tag.=' class="img-thumbnail"';
 
 				$tag.='>';
