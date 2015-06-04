@@ -31,6 +31,6 @@
 		"folder_events":"*События/",
 		"folder_texts":"*Тексты/",
 		"folder_blog":"*Блог/",
-		"imgmaxwidth":600
+		"imgmaxwidth":1000
 	}
 }

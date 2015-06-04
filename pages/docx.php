@@ -159,7 +159,7 @@
 			//Таблицы
 			if(is_array($el)&&@$el['tbl']=='1'){
 				$param['istable']=true;
-				$tag=array("<table class='common'>\n",'</table>');
+				$tag=array("<table class='table table-striped'>\n",'</table>');
 			}else if($key==='w:tr'&&$param['istable']){
 				$tag=array("<tr>\n",'</tr>');
 			//}else if($key==='w:p'&&$param['istable']){
@@ -220,7 +220,8 @@
 				//if($height)$tag.=' height="'.$height.'px"';
 				//if($width)$tag.=' width="'.$width.'px"';
 				if($alt)$tag.=' alt="'.$alt.'"';
-				if(!$inline&&$align)$tag.=' class="'.$align.'" align="'.$align.'"';
+				if(!$inline&&$align)$tag.=' class="img-thumbnail'.$align.'"';
+				else $tag.=' class="img-thumbnail"';
 
 				$tag.='>';
 				$tag=array($tag,'');
