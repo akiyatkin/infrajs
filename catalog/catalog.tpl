@@ -80,7 +80,7 @@
 	{sep:}<div class="separator"></div>
 {stat:}
 	<h1 title="c {~date(:d.m.Y,data.stat.time)}">Последние запросы набранные в строке поиска по каталогу</h1>
-	<table class="common">
+	<table class="table table-striped">
 		<tr><td></td><td>Фразы</td></tr>
 		{data.stat.users::statuser}
 	</table>

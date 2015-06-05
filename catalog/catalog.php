@@ -582,7 +582,7 @@
 		return $ans;
 	},$args,isset($_GET['re']));
 
-	$ans=infra_admin_cache('cat admin',function(&$ans){
+	$ans=infra_admin_cache('cat admin',function($ans){
 		$type=infra_strtolower($ans['type']);
 		$art=infra_strtolower($ans['art']);
 		$val=infra_strtolower($ans['val']);
@@ -697,9 +697,9 @@
 			}
 		}	
 		return $ans;
-	},array(&$ans));
+	},array($ans),isset($_GET['re']));
 
-	return infra_echo($ans);
+	return infra_ret($ans);
 	
 
 ?>
