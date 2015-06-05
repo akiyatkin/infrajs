@@ -661,18 +661,18 @@
 			$conf=infra_config();
 			if($ans['pos']){
 				$pos=$ans['pos'];
-				$files=explode(',',@$pos['Файлы']);
+				
 
+				xls_preparePosFiles($pos,$conf['catalog']['dir'], array('Производитель','article') );
+				
+				$files=explode(',',@$pos['Файлы']);
 				foreach($files as $f){
 					if(!$f)continue;
 					$f=trim($f);
-					xls_preparePosFiles($pos,$conf['catalog']['dir'].$f, array('Производитель','article'));
+					xls_preparePosFiles($pos,$conf['catalog']['dir'].$f);
 				}
 
-				xls_preparePosFiles($pos,$conf['catalog']['dir'], array('Производитель','article') );
-
 				$files=array();
-
 				foreach($pos['files'] as $f){
 					if(is_string($f)){
 						$d=infra_srcinfo($f);

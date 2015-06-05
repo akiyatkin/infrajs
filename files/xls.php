@@ -743,14 +743,15 @@ function xls_preparePosFiles(&$pos,$pth,$props=array()){
 	})){
 		return;
 	}
-
+	
 	if($dir){
 		$dir=implode('/',$dir).'/';
 		$dir=$pth.$dir;
 	}else{
 		$dir=$pth;
 	}
-	$dir=infra_theme($dir,'fd');
+	
+	$dir=infra_theme($dir);
 	if(!$dir) return false;
 
 
