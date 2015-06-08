@@ -15,7 +15,18 @@
 		
 		if(infra.conf&&infra.conf.scroll&&infra.conf.scroll.scrollFromTop)scrollFromTop=infra.conf.scroll.scrollFromTop;
 		setTimeout(function(){
-			if(infrajs.scroll!==false)window.roller.goTop(scrollFromTop);      
+			if(infrajs.scroll!==false){
+				var delta=0;
+				if(infrajs.scroll){
+					if(typeof(infrajs.scroll)=='number'){
+						delta=infrajs.scroll;
+					}else if(typeof(infrajs.scroll)=='string'){
+						delta=$(infrajs.scroll).offset().top;
+					}
+					scrollFromTop=delta;
+				}
+				window.roller.goTop(scrollFromTop);      
+			}
 			delete infrajs.scroll;
 		},1);
 	});
