@@ -98,7 +98,7 @@ END;
 	$dir=$conf['files']['folder_files'];
 	$filesd=array();
 	foreach($files as $id){
-		$filed=rub_get($dir,$id);
+		$filed=rub_get($dir,$id,array());
 		if($filed)$filesd[$id]=$filed;
 	}
 
