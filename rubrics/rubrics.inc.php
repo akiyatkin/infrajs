@@ -25,9 +25,10 @@ function rub_article($src){
 
 	$html=infra_loadTEXT('*pages/get.php?'.$src);
 	
-
-	//common
-	$html=preg_replace("/<table>/",'<table class="common">',$html);
+	$info=infra_srcinfo($src);
+	if(!in_array($info['ext'],array('html','tpl'))){
+		$html=preg_replace("/<table>/",'<table class="table table-striped">',$html);
+	}
 
 	$html=preg_replace("/<\/a>/","</a>\n",$html);
 
