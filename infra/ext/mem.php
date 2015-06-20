@@ -56,21 +56,6 @@ function &infra_memcache(){
 	$infra_mem->connect($conf['memcache']['host'],$conf['memcache']['port']) or die ("Could not connect");
 	return $infra_mem;
 };
-/*function &infra_mem_cache($name,$fn=false,$args=array(),$re=false){
-	return infra_once('infra_mem',function($name,$fn,$args, $re){
-		$strargs=infra_hash($args);
-		$key=$name.md5($strargs);
 
-		if($re)infra_mem_delete($key);
-
-		$data=&infra_mem_get($key);
-		if(!$data){
-			$res=call_user_func_array($fn,$args);
-			$data=array('res'=>$res);
-			infra_mem_set($key,$data);
-		}
-		return $data['res'];
-	},array($name,$fn,$args),$re);
-}*/
 
 ?>

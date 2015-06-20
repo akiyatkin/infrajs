@@ -552,7 +552,7 @@ function infra_isphp($val=null){
 	if(!is_null($val)&&is_null($FROM_PHP_PLUGIN)){//можно установить false если ещё небыло никаких установок.. если кто-то подключает в php через theme.php или тп... сброс в theme.php уже не сработает
 		$FROM_PHP_PLUGIN=$val;
 	}else{
-		return $FROM_PHP_PLUGIN;
+		return !!$FROM_PHP_PLUGIN;
 	}
 }
 function infra_ret($ans,$str=false){

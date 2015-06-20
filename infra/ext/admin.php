@@ -5,29 +5,24 @@ Copyright 2008-2010 ITLife, Ltd. http://itlife-studio.ru
 
 */
 @define('ROOT','../../../../');
-function infra_admin_modified(){
+function infra_admin_modified($etag=''){//$v изменение которой должно создавать новую копию кэша
 	$conf=infra_config();
-	
-	if($conf['debug'])return;
-	
-	$last_modified=infra_admin_time();
-	
-
-	if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
-	  // разобрать заголовок
-	  //@header('Cache-control:no-store');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
-	  //$if_modified_since=preg_replace('/;.*$/', '', $_SERVER['HTTP_IF_MODIFIED_SINCE']);
-	  $if_modified_since=strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']); 
-	  if ($if_modified_since>$last_modified) {
-		// кэш браузера до сих пор актуален
-		header('HTTP/1.0 304 Not Modified');
-		//header('Cache-control: max-age=8640000, must-revalidate');
-		exit;
-	  }
-	}
-
-	//$now=gmdate('D, d M Y H:i:s', $last_modified).' GMT';
+	//if($conf['debug'])return;
 	$now=gmdate('D, d M Y H:i:s', time()).' GMT';
+	infra_cache_yes();
+	if(!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])){
+		$last_modified=infra_admin_time();
+		if(strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])>$last_modified){
+			if(empty($_SERVER['HTTP_IF_NONE_MATCH'])||$_SERVER['HTTP_IF_NONE_MATCH']==$etag){
+				//header('ETag: '.$etag);
+				//header('Last-Modified: '.$_SERVER['HTTP_IF_MODIFIED_SINCE']);
+				header('HTTP/1.0 304 Not Modified');
+				exit;
+			}
+		}
+	}
+	
+	header('ETag: '.$etag);
 	header('Last-Modified: ' . $now);
 }
 /*function infra_admin($break=null,$ans=array('msg'=>'Требуется авторизация','result'=>0)){

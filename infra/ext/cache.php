@@ -92,73 +92,63 @@ function infra_cache_check($call){
 
 function &infra_cache($conds,$name,$fn,$args=array(),$re=false){
 
-	return infra_once('infra_cache_once_'.$name,function($conds,$name,$fn,$args, $re){
+	return infra_admin_cache('cache_admin_'.$name,function($conds,$name,$fn,$args, $re){
 		
-		return infra_admin_cache('cache_admin_'.$name,function($conds,$name,$fn,$args, $re){
-			
-			//цифры нельзя, будут плодиться кэши
-			//если условие цифра значит это время, и если время кэша меньше.. нужно выполнить
-			
+		//цифры нельзя, будут плодиться кэши
+		//если условие цифра значит это время, и если время кэша меньше.. нужно выполнить
+		
 
 
+		
 			
-				
-			$max_time=1;
-			for($i=0,$l=sizeof($conds);$i<$l;$i++){
-				$mark=$conds[$i];
-				$mark=infra_theme($mark);
-				if($mark){
-					$m=filemtime(ROOT.$mark);
-					if($m>$max_time)$max_time=$m;
-					if(is_dir(ROOT.$mark)){
-						foreach (glob(ROOT.$mark.'*.*') as $filename) {
-							$m=filemtime($filename);
-							if($m>$max_time)$max_time=$m;
-						}
-					}
-				}else{
-					array_splice($conds,$i,1);
-					//Если переданной метки не существует меняется путь до кэша
-				}
-			}
-			$path=infra_cache_path($name,array($conds,$args));
-			$path=infra_tofs($path);
-			/*if($re&&is_file(ROOT.$path)){//удаляем кэш
-				$dir=infra_cache_path($name);//папка
-				$files = glob(ROOT.$dir."/*");
-				if (sizeof($files)>0){
-					foreach($files as $file){      
-						if(file_exists($file))unlink($file);
+		$max_time=1;
+		for($i=0,$l=sizeof($conds);$i<$l;$i++){
+			$mark=$conds[$i];
+			$mark=infra_theme($mark);
+			if($mark){
+				$m=filemtime(ROOT.$mark);
+				if($m>$max_time)$max_time=$m;
+				if(is_dir(ROOT.$mark)){
+					foreach (glob(ROOT.$mark.'*.*') as $filename) {
+						$m=filemtime($filename);
+						if($m>$max_time)$max_time=$m;
 					}
 				}
-			}*/
-			if(is_file(ROOT.$path))$cache_time=filemtime(ROOT.$path);//стартовая временная метка равна дате изменения самого кэша
-			else $cache_time=0;
-			
-			$execute=($max_time>$cache_time)||$re;//re удаляет кэш только для текущих параметров
-			
-
-			if(!$execute){
-				$data=infra_loadTEXT($path);
-				$data=unserialize($data);
 			}else{
-
-				$cache_control=infra_cache_is();
-				if($cache_control)infra_cache_no();
-
-				$data=call_user_func_array($fn,array_merge($args,array($re)));
-
-				$list=headers_list();//Проверяем появился ли заголовок после запуска функции кэшируемой
-				$cache_control2=infra_cache_is();
-				if(!$cache_control2&&$cache_control)infra_cache_yes();
-
-				if(!$cache_control2){
-					$cache=serialize($data);
-					file_put_contents(ROOT.$path,$cache);
-				}
+				array_splice($conds,$i,1);
+				//Если переданной метки не существует меняется путь до кэша
 			}
-			return $data;
-		},array(&$conds,$name,$fn,$args),$re);
-	},array($conds,$name,$fn,$args),$re);
+		}
+		$cache_time=0;
+		$path=infra_cache_path($name,array($conds,$args));
+		if($cond){
+			$path=infra_tofs($path);
+			if(is_file(ROOT.$path))$cache_time=filemtime(ROOT.$path);//стартовая временная метка равна дате изменения самого кэша
+		}
+		
+		$execute=($max_time>$cache_time)||$re;//re удаляет кэш только для текущих параметров
+		
+
+		if(!$execute){
+			$data=infra_loadTEXT($path);
+			$data=unserialize($data);
+		}else{
+
+			$cache_control=infra_cache_is();
+			if($cache_control)infra_cache_no();
+
+			$data=call_user_func_array($fn,array_merge($args,array($re)));
+
+			$list=headers_list();//Проверяем появился ли заголовок после запуска функции кэшируемой
+			$cache_control2=infra_cache_is();
+			if(!$cache_control2&&$cache_control)infra_cache_yes();
+
+			if(!$cache_control2){
+				$cache=serialize($data);
+				file_put_contents(ROOT.$path,$cache);
+			}
+		}
+		return $data;
+	},array(&$conds,$name,$fn,$args),$re);
 }
 ?>
