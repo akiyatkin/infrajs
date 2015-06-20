@@ -3,6 +3,7 @@
     "description": "javascript php framework",
     "version":"v1.0.0",
     "license": "GPL3",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Anton Kiyatkin",
