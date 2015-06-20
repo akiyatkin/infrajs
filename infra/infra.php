@@ -1,4 +1,7 @@
 <?php
+
+echo 1;
+exit;
 /*
 Copyright 2008-2013 ITLife, Ltd. http://itlife-studio.ru
 
@@ -40,20 +43,16 @@ statist - интегрировать как-нибудь
 	@define('ROOT','../../../');
 	
 	ini_set('allow_call_time_reference', true);//http://forum.dklab.ru/viewtopic.php?t=19975 Ошибка Deprecated: Call-time pass-by-reference has been deprecated в PHP 5
-	if(!is_dir(ROOT.'infra/'))die('ROOT выставлен неправильно');
+	if(!is_dir(ROOT.'vendor/'))die('ROOT выставлен неправильно');
 
 	if(ini_get('register_globals')&&ini_get('register_globals')!='Off')die('<h1>Вам нужно установить register_globals Off</h1>');
 
-	if(!is_dir(ROOT.'infra/data/')){
-		mkdir(ROOT.'infra/data/',0755);//Создаём если нет папку infra/cache
-		if(!is_dir(ROOT.'infra/data/')){
-			die('Не удалось создать папку infra/data/, прав нехватает наверно :(');
-		}
-	}
+
+
 	
 	$v=phpversion();
 	$ver=explode('.',$v);
-	if($ver[0]<5||($ver[0]==5&&$ver[1]<4))die('Требуется более новая версия php от 5.3 сейчас '.$v);
+	if($ver[0]<5||($ver[0]==5&&$ver[1]<4))die('Требуется более новая версия php от 5.4 сейчас '.$v);
 	/*
 		5.4 - json_encode($data,JSON_UNESCAPED_UNICODE);
 		5.3 - используются анонимные функции
@@ -84,25 +83,26 @@ statist - интегрировать как-нибудь
 	    $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
 	    */
 	}
-
 /*
-
+ игнор цифр, и расширения infra/infra
 */
 
-require_once(ROOT.'infra/plugins/infra/ext/load.php');
+require_once(ROOT.'vendor/akiyatkin/infrajs/infra/ext/config.php');
+require_once(ROOT.'vendor/akiyatkin/infrajs/infra/ext/load.php');
+
 $_SERVER['QUERY_STRING']=infra_toutf($_SERVER['QUERY_STRING']);
 
 
 
 
-infra_require('*infra/ext/config.php');
+
 //Продакшин должен быть таким же как и тестовый сервер, в том числе и с выводом ошибок. Это упрощает поддержку. Меньше различий в ошибках.
 //ini_set('error_reporting',E_ALL ^ E_STRICT ^ E_NOTICE);
-error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+//error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 //Strict Standards: Only variables should be assigned by reference
 //Notice: Only variable references should be returned by reference
 //Notice: Undefined index: 
-ini_set('display_errors',1);
+//ini_set('display_errors',1);
 
 
 
@@ -133,4 +133,3 @@ infra_require('*infra/ext/view.php');
 infra_require('*infra/ext/seq.php');
 infra_require('*infra/ext/template.php');
 infra_require('*infra/ext/state.php');
-?>

@@ -16,27 +16,9 @@
 @define('ROOT','../../../../');
 global $infra_fscp1251,$infra_fsruspath;
 $infra_fscp1251=NULL;
-$infra_fsruspath='infra/plugins/infra/Тест русского.языка';
+$infra_fsruspath='vendor/akiyatkin/infrajs/infra/Тест русского.языка';
 
 
-function infra_tofs($name){
-	global $infra_fscp1251,$infra_fsruspath;
-	$name=infra_toutf($name);
-	if($infra_fscp1251===NULL){
-		if(is_file(ROOT.$infra_fsruspath)){
-			$infra_fscp1251=false;
-		}else if(is_file(ROOT.iconv('UTF-8','CP1251',$infra_fsruspath))){
-			$infra_fscp1251=true;
-		}else{
-			echo '<h1>Проблемы с кодировкой!</h1>'.'<p>Файл <a href="'.$infra_fsruspath.'">'.$infra_fsruspath.'</a> Должен быть доступен</p>';
-			exit;
-		}
-	}
-	if($infra_fscp1251){
-		$name=iconv('UTF-8','CP1251',$name);
-	}
-	return $name;
-}
 function infra_toutf($str){
 	if(!is_string($str))return $str;
 	if(preg_match('//u', $str)){
@@ -128,7 +110,6 @@ function &infra_storeLoad($name){
 function infra_require($path){
 	$store=&infra_storeLoad('require');
 	if(isset($store[$path]))return $store[$path]['value'];
-	
 	$store[$path]=array('value'=>true);//Метку надо ставить заранее чтобы небыло зацикливаний
 	$rpath=infra_theme($path);
 	if(!$rpath)die('infra_require - не найден путь '.$path);
@@ -259,105 +240,28 @@ function infra_nameinfo($file){//Имя файла без папок// Звёз�
 	);
 	return $ans;
 }
-
-function _infra_sortfile($src1,$setd){//starpath infra/data
-	$p=explode('/',$src1);
-	//$srcext=preg_match('/\.\w{0,4}$/',$src1);//Расширение при поиске не учитываем
-	//$src='infra/data';
-	$src='';
-	//$src=preg_replace('/\/$/','',$starpath);
-	
-
-	for($i=0,$l=sizeof($p);$i<$l;$i++){
-		$name=$p[$i];//Критерий поиска id,name,полное имя файла
-		$last=($i==$l-1);
-		if(!$name)continue;
-		
-		
-		if($i)$src.='/';	
-		if(
-			((!$last||$setd)&&is_dir(ROOT.$src.$name))
-			||($last&&!$setd&&is_file(ROOT.$src.$name))
-		){
-			$src.=$name;	
-			continue;
-		}
-		$namer=infra_strtolower($name);
-	
-		$res=false;
-		if (is_dir(ROOT.$src)&&$dh = opendir(ROOT.$src)) {		
-			while (($file = readdir($dh)) !== false) {
-				if($file=='..'||$file=='.')continue;
-				if((!$setd&&$last&&is_file(ROOT.$src.'/'.$file))||(($setd||!$last)&&is_dir(ROOT.$src.'/'.$file))){
-
-					$r=infra_nameinfo($file);
-					if($namer==$r['id']
-						||$namer==infra_strtolower($r['name'])
-						||$namer==infra_strtolower($r['name']).'.'.infra_strtolower($r['ext'])//Это надо чтобы определённое расширение взялось
-						||$namer==infra_strtolower($r['file'])){
-							$src.=$file;
-							$res=true;
-							break;
-					}
-				}
-			}
-			closedir($dh);
-		}
-		if(!$res)return false;
+function infra_tofs($str){
+	$conf=infra_config();
+	if($conf['infra']['fscharset']!='UTF-8'){
+		$str=infra_toutf($str);
+		$str=iconv('UTF-8','CP1251',$str);
 	}
-
-	if($setd) $src.='/';
-	return $src;
+	return $str;
 }
-function _infra_theme($src){
-//Функция возвращает корректный путь до файла в нужной теме, без *. путь начинается после адреса ROOT
-	//Если путь содержит * но файл не найден возвращается false иначе если файла нет возвращается false или переданный $src
-	//Путь возвращается в кодировкe файловой системы.
+function infra_theme($str){
+	$str=infra_tofs($str);
+	if(!$str||$str{0}!='*')return $str;
+	$str=substr($str,1);
 
-	//d,f,s,h,u,n
-	//$setp=false;
-	//$infra_src_cache[$orig]=$ans;
-	$psrc=_infra_src($src);
-
-	$path=$psrc['path'];
-	$query=$psrc['query'];
-	
-	//if($psrc['secure']&&(!$sets&&!infra_admin()))return false;
-	//if($psrc['secure']&&!$sets)return false;
-	
-	//Самая быстрая проверка
-	if(!$psrc['isfolder']&&is_file(ROOT.$path))return $path.$query;
-	if($psrc['isfolder']&&is_dir(ROOT.$path))return $path.$query;
-
-	
-
-
-	
-	foreach($psrc['paths'] as $path){
-		if(!$psrc['isfolder']&&is_file(ROOT.$path))return $path.$query;
-		if($psrc['isfolder']&&is_dir(ROOT.$path))return $path.$query;
+	$dirs=array(
+		'infra/data/',
+		'infra/layers/',
+		'vendor/akiyatkin/infrajs/',
+		'infra/plugins/'
+	);
+	foreach($dirs as $dir){
+		if(is_file(ROOT.$dir.$str))return $dir.$str;
 	}
-	if($psrc['find']){//find это значит infra/data подойдёт потому что ищим только там
-		foreach($psrc['paths'] as $path){
-
-			$path=_infra_sortfile($path,$psrc['isfolder']);
-
-			if($path){
-				if(!$psrc['isfolder']&&is_file(ROOT.$path))return $path.$query;
-				if($psrc['isfolder']&&is_dir(ROOT.$path))return $path.$query;//Если path это папка слэш у неё обязан уже быть
-				//if($path)return false;
-			}
-		}
-	}
-	
-	//Бежим по всем возможным местам расположения файла... по темам, плагинам и тп...
-	
-	return false;
-}
-function infra_theme($src){
-	$src=infra_tofs($src);
-	$res=_infra_theme($src);
-	return $res; 
 }
 
 function &infra_loadJSON($path){

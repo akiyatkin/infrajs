@@ -2,7 +2,7 @@
 	"debug":1,
 	"infra":{
 		"rootisfolder":true,
-		"timezone":"Europe/Moscow"
+		"fscharset":"UTF-8"
 	},
 	"admin":{
 		"pub":["popup"],

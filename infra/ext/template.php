@@ -35,7 +35,7 @@ parse
  * Функции берутся в следующем порядке сначало от this в данных потом от корня данных потом в спецколлекции потом в глобальной области
  **/
 @define('ROOT','../../../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
+require_once(ROOT.'infra.php');
 infra_require('*infra/ext/seq.php');
 
 function infra_template_prepare($template){
