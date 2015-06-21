@@ -10,7 +10,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "itlife\\infrajs\\":"infrajs/"
+            "itlife\\infrajs\\":["infrajs/","infra/","autoedit/","catalog/","contacts/","files/","imager/","infra/","metrika/","pages/","popup/","rss/","rubrics/","seo/","session/","yml/"]
         }
     }
 }
