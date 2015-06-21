@@ -7,5 +7,10 @@
             "name": "Anton Kiyatkin",
             "email": "aky@list.ru"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "itlife\\infrajs\\":"infrajs/"
+        }
+    }
 }
