@@ -5,8 +5,8 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 getorig
 ignoremark
 */
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'../infra/infra.php');
 	
 	infra_require('*imager/imager.inc.php');
 
@@ -241,5 +241,3 @@ ignoremark
 	}else{
 		header('HTTP/1.1 404 Not Found');
 	}
-	/**/
-?>

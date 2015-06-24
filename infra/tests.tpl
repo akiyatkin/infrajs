@@ -1,9 +1,9 @@
 {root:}
 <html>
 <head>
-	<link href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-	<script src="../../../vendor/components/jquery/jquery.js"></script>
-	<script src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+	<link href="vendor/twbs/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+	<script src="vendor/components/jquery/jquery.js"></script>
+	<script src="vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 <body>
 	<table class="table">
@@ -33,9 +33,9 @@
 		<tr class="bg-info"><th colspan="4">{~key}</th></tr>
 		{::sometest}
 		{sometest:}
-			<tr class="{class?class?(result?:bg-success?:bg-warning)}">
+			<tr class="{class?class?(result?:bg-success?:bg-danger)}">
 				<td>
-				<a href="../../../{src}">{name}</a>
+				<a href="?*{src}">{name}</a>
 				</td>
 				<td>
 				{title}

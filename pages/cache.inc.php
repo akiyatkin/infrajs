@@ -2,8 +2,7 @@
 	/*
 	Copyright 2008-2010 ITLife, Ltd. http://itlife-studio.ru
 	*/
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	require_once(__DIR__.'/../infra/infra.php');
 	function cache(){
 		$ar=func_get_args();
 		return call_user_func_array('pages_cache',$ar);
@@ -112,4 +111,3 @@
 		$_pages_cache_results[$path]=$data;
 		return $data;
 	}
-?>

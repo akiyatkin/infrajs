@@ -1,6 +1,6 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'/../infra/infra.php');
 	infra_require('*autoedit/admin.inc.php');
 
 	$type=infra_toutf(@$_REQUEST['type']);
@@ -444,7 +444,7 @@
 						$v['corable']=in_array(strtolower($v['ext']),$CORABLE);
 						$v['rteable']=in_array(strtolower($v['ext']),$RTEABLE);
 
-						$v['pathload']=infra_theme('infra/plugins/autoedit/download.php?'.$file);
+						$v['pathload']=infra_theme('*autoedit/download.php?'.$file);
 						$v['pathload']=infra_toutf($v['pathload']);
 						if($v['rteable']) $ans['rteable']=(bool)infra_theme('infra/lib/wymeditor/');
 						$v['mytake']=autoedit_ismytake($file);
@@ -681,4 +681,3 @@
 		return infra_echo($ans,'Вам нужно авторизоваться');
 	}
 	return infra_echo($ans);
-?>

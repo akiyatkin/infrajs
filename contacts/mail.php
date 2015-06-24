@@ -113,4 +113,3 @@ function weblifemail($body,$bodydata=array(),$email_to,$name_to,$subject,$email_
 				   $body);
 }
 //var_dump(weblifemail('../layers/contacts/mail'));
-?>

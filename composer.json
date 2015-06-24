@@ -2,15 +2,21 @@
     "name":"itlife/infrajs",
     "description": "javascript php framework",
     "license": "GPL3",
-    "authors": [
-        {
+    "authors": [{
             "name": "Anton Kiyatkin",
             "email": "aky@list.ru"
-        }
-    ],
-    "autoload": {
+	}],
+    "require": {
+		"php": ">=5.3.3",
+		"akiyatkin/phpdate":"1"
+    },
+    "repositories":[{
+        	"type":"vcs",
+       		"url":"https://github.com/akiyatkin/phpdate"
+    }],
+    "autoload":{
         "psr-4": {
-            "itlife\\infrajs\\":["infrajs/","infra/","autoedit/","catalog/","contacts/","files/","imager/","infra/","metrika/","pages/","popup/","rss/","rubrics/","seo/","session/","yml/"]
+            "itlife\\infrajs\\":""
         }
     }
 }

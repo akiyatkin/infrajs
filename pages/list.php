@@ -49,7 +49,7 @@
 	}
 	if(!function_exists('runfolder')){
 		function runfolder($dir,$hidden,$sub,$f,$d,&$filelist=array(),$pre=''){
-			if (is_dir(ROOT.$dir)&&$dh = opendir(ROOT.$dir)) {
+			if (is_dir($dir)&&$dh = opendir($dir)) {
 				while (($file = readdir($dh)) !== false) {
 					if(!$hidden&&$file[0]=='.')continue;
 					if($file[0]=='~')continue;
@@ -61,12 +61,12 @@
 					$path=$dir.$file;
 
 
-					if(!$f && is_file(ROOT.$path)&&(!$d||!is_dir(ROOT.$path)))continue;//Файлы не надо
+					if(!$f && is_file($path)&&(!$d||!is_dir($path)))continue;//Файлы не надо
 
 
 					
 					//if(!$f && is_file(ROOT.$path))continue;//Файлы не надо
-					if(is_dir(ROOT.$path)){
+					if(is_dir($path)){
 						if($sub)runfolder($path.'/',$hidden,$sub,$f,$d,$filelist,$pre.infra_toutf($file).'/');
 						if(!$d)continue;//Папки не надо
 					}
@@ -81,12 +81,12 @@
 		}
 	}
 
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'/../infra/infra.php');
 
 	$images=array();
 	$src=$_GET['src'];
-	$src=infra_theme($src,'dn');
+	$src=infra_theme($src);
 	$d=_infra_src($src);
 
 	if($src){
@@ -95,7 +95,8 @@
 			die('{msg:"list.php - адреса до папок должны заканчиваться на слэш / или *","result":0}');
 		}
 		//Если требуемая папка содержит в своём реальном адресе(без ../) путь до папки infra то можно иначен $ican будет false
-		$ican=(strstr(realpath(ROOT.$dir),realpath(ROOT.'infra'))!==false);
+		$dirs=infra_dirs();
+		$ican=(strstr(realpath($dir),realpath($dirs['ROOT'].'infra'))!==false);
 		/*$ican=$ican1||$ican2;
 		//if(!infra_admin()){
 			$ican2=(strstr(realpath(ROOT.$dir),realpath(ROOT.'infra/')));
@@ -173,8 +174,8 @@
 					$name=$filelist[$i];
 					$d=array('name'=>$name);
 					if($sort=='name')      $val=$filelist[$i];
-					else if($sort=='size') $val=filesize(ROOT.$dir.infra_tofs($name));
-					else if($sort=='time') $val=filemtime(ROOT.$dir.infra_tofs($name));
+					else if($sort=='size') $val=filesize($dir.infra_tofs($name));
+					else if($sort=='time') $val=filemtime($dir.infra_tofs($name));
 					$d['val']=$val;
 
 					$sorted[]=$d;
@@ -208,7 +209,7 @@
 				else $prefile='';
 				$fileXXX = preg_replace( '/^.+[\\\\\\/]/', '', $real_file );
 				$p=infra_nameinfo($fileXXX);
-				$p['f']=is_file(ROOT.$path);
+				$p['f']=is_file($path);
 				$p['dir']=$prefile;
 
 				$ar = explode('.',$fileXXX);
@@ -229,15 +230,15 @@
 				);
 				 */
 					
-				if($e&&is_file(ROOT.$path)){
+				if($e&&is_file($path)){
 					if(!in_array(strtolower($p['ext']),$e))continue;
 				}
 				
-				if($s&&is_file(ROOT.$path)){
-					$p['size']=round(filesize(ROOT.$path)/1000);
+				if($s&&is_file($path)){
+					$p['size']=round(filesize($path)/1000);
 				}
-				if($time&&is_file(ROOT.$path)){
-					$p['time']=filemtime(ROOT.$path);
+				if($time&&is_file($path)){
+					$p['time']=filemtime($path);
 				}
 
 				if($onlyname==2){//Имя без расширения
@@ -356,4 +357,3 @@
 		exit;
 	}
 	return infra_echo($images);
-?>

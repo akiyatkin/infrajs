@@ -1,7 +1,6 @@
 <?php
 
-@define('ROOT','../../../../');
-require_once(ROOT.'infra/plugins/infrajs/initphp.php');
+require_once(__DIR__.'/../../infrajs.php');
 
 $db=&infra_db();
 if($db){

@@ -178,7 +178,7 @@
 					var html = "<li class='wym_tools_newbutton'>"
 							 + "<a name='NewButton' href='#'"
 							 + " style='background-image:"
-							 + " url(infra/plugins/autoedit/images/paint.png)'>"
+							 + " url(?*autoedit/images/paint.png)'>"
 							 + "Do something"
 							 + "</a></li>";
 					//add the button to the tools box
@@ -195,7 +195,7 @@
 					var html = "<li class='wym_tools_newbutton'>"
 							 + "<a name='NewButton' href='#'"
 							 + " style='background-image:"
-							 + " url(infra/plugins/autoedit/images/eraser.png)'>"
+							 + " url(?*autoedit/images/eraser.png)'>"
 							 + "Do something"
 							 + "</a></li>";
 

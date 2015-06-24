@@ -1,7 +1,4 @@
 <?php
-
-echo 1;
-exit;
 /*
 Copyright 2008-2013 ITLife, Ltd. http://itlife-studio.ru
 
@@ -37,13 +34,12 @@ state - серверная обработка адреса сайта
 statist - интегрировать как-нибудь
 
 */
+	//namespace itlife\infrajs\infra;
 
-
-
-	@define('ROOT','../../../');
+	if(defined('ROOT'))die('ROOT depricated');
 	
 	ini_set('allow_call_time_reference', true);//http://forum.dklab.ru/viewtopic.php?t=19975 Ошибка Deprecated: Call-time pass-by-reference has been deprecated в PHP 5
-	if(!is_dir(ROOT.'vendor/'))die('ROOT выставлен неправильно');
+	
 
 	if(ini_get('register_globals')&&ini_get('register_globals')!='Off')die('<h1>Вам нужно установить register_globals Off</h1>');
 
@@ -87,8 +83,8 @@ statist - интегрировать как-нибудь
  игнор цифр, и расширения infra/infra
 */
 
-require_once(ROOT.'vendor/akiyatkin/infrajs/infra/ext/config.php');
-require_once(ROOT.'vendor/akiyatkin/infrajs/infra/ext/load.php');
+require_once(__DIR__.'/../infra/ext/config.php');
+require_once(__DIR__.'/../infra/ext/load.php');
 
 $_SERVER['QUERY_STRING']=infra_toutf($_SERVER['QUERY_STRING']);
 
@@ -105,17 +101,20 @@ $_SERVER['QUERY_STRING']=infra_toutf($_SERVER['QUERY_STRING']);
 //ini_set('display_errors',1);
 
 
-
 infra_require('*infra/ext/admin.php');
+
+
 infra_require('*infra/ext/cache.php');
+infra_cache_checkUpdate();
 
 $conf=infra_config();
+
 if($conf['debug']){
 	@header('Infrajs-Debug:true');
 	infra_cache_no();
 }
-
 infra_require('*infra/ext/once.php');
+
 
 
 
@@ -132,4 +131,5 @@ infra_require('*infra/ext/view.php');
 
 infra_require('*infra/ext/seq.php');
 infra_require('*infra/ext/template.php');
-infra_require('*infra/ext/state.php');
+
+itlife\infrajs\infra\ext\crumb::init();

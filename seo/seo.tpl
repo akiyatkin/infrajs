@@ -17,7 +17,7 @@
 			});
 			if(!layer)return;
 			var name=layer['seo']['name'];
-			var linktpl='{{istate}}';
+			var linktpl='{{crumb}}';
 			var link=infra.template.parse([linktpl],layer);			
 			var	tpl='*seo/seo.tpl';
 			var obj={
@@ -98,7 +98,7 @@
 			<t{user?:h?:d}><span class="a" onclick="infrajs.SEO('edititem','{data.data.name}|{link}')">{link|:Главная}</span></t{user?:h?:d}>
 			<td><div class="action">{layer|:imgdel}</div></td>
 		</tr>
-	{imgdel:}<img onclick="infrajs.SEO('delitem','{data.data.name}|{link}')" src="infra/plugins/imager/imager.php?src=*autoedit/images/delete">
+	{imgdel:}<img onclick="infrajs.SEO('delitem','{data.data.name}|{link}')" src="?*imager/imager.php?src=*autoedit/images/delete">
 {delitem:}
 	<h1>Удалить запись о странице</h1>
 

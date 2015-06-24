@@ -1,6 +1,6 @@
 <?php
-@define('ROOT','../../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
+
+require_once(__DIR__.'../infra/infra.php');
 
 
 $data=array();
@@ -64,5 +64,3 @@ usort($items, function($i, $j){
 $data['items']=$items;
 
 return infra_ans($data);
-
-?>

@@ -1,6 +1,4 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
 	function &infra_session_db(){
 
 		infra_admin_cache('session_db',function(){
@@ -216,4 +214,3 @@ END;
 		return $value;
 	}
 /**/
-?>

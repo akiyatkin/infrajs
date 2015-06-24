@@ -1,6 +1,6 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'../infra/infra.php');
 	infra_require('*files/xls.php');
 	infra_require('*catalog/catalog.inc.php');
 	$conf=infra_config();
@@ -700,6 +700,3 @@
 	},array($ans),isset($_GET['re']));
 
 	return infra_ret($ans);
-	
-
-?>

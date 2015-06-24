@@ -1,6 +1,5 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	require_once(__DIR__.'/../infra/infra.php');
 	//$_GET['re']=1;
 	if(!function_exists('docx_getTextFromZippedXML')){
 		function docx_full_del_dir($directory) {
@@ -210,7 +209,7 @@
 				if(!@$param['images'])$param['images']=array();
 				$param['images'][]=array('src'=>$src);
 
-				$src='infra/plugins/imager/imager.php?src='.$src;
+				$src='?*imager/imager.php?src='.$src;
 				if($height)$src.='&h='.$height;
 				if($width)$src.='&w='.$width;
 
@@ -486,5 +485,3 @@
 			return infra_echo($html);
 		}
 	}
-
-?>

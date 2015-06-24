@@ -72,4 +72,3 @@ function infra_view_getPath(){//depricated
 function infra_view_getCOOKIE($name,$val){
 	return infra_view_getCookie($name,$val);
 }*/
-?>

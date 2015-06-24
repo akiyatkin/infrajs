@@ -1,14 +1,13 @@
 /*
 Загружаются все файлы в initjs.php
 */	
-	infra.State.init();
 //========================
-// infra.State onchange
+// infra.Crumb onchange
 //========================
-
-	infra.listen(infra.State,'onchange',function(){
+	infra.Crumb.init();
+	infra.listen(infra.Crumb,'onchange',function(){
 		//scroll
-		if(infra.State.popstate)return;//Если движение по истории ничего не скролим
+		if(infra.Crumb.popstate)return;//Если движение по истории ничего не скролим
 		var scrollFromTop=0;
 		var store=infrajs.store();
 		if(store.counter==0)return;//Вход на сайт.. не скролим
@@ -30,11 +29,11 @@
 			delete infrajs.scroll;
 		},1);
 	});
-	infra.handle(infra.State,'onchange',function(){
+	infra.handle(infra.Crumb,'onchange',function(){
 		//div
 		infrajs.div_init();	
 	});
-	infra.listen(infra.State,'onchange',function(layer){
+	infra.listen(infra.Crumb,'onchange',function(layer){
 		//seo
 		//infrajs.seo_init();
 	});
@@ -95,44 +94,40 @@
 		//unick
 		infrajs.unickSet(layer);
 	});
-	infra.listen(infra,'layer.oninit',function(layer){//это из-за child// всё что после child начинает плыть. по этому надо state каждый раз определять, брать от родителя.
-		//state
+	infra.listen(infra,'layer.oninit',function(layer){//это из-за child// всё что после child начинает плыть. по этому надо Crumb каждый раз определять, брать от родителя.
+		//Crumb
 		if(!layer['dyn']){//Делается только один раз
-			infrajs.setState(layer,'state',layer['state']);
-			infrajs.setState(layer,'istate',layer['istate']);
+			infrajs.setCrumb(layer,'crumb',layer['crumb']);
 		}
 	});
 	infra.listen(infra,'layer.oninit',function(layer){
-		//state
+		//Crumb
 		if(!layer['parent'])return;//слой может быть в child с динамическим state только если есть родитель
-		infrajs.setState(layer,'istate',layer['dyn']['istate']);//Возможно у родителей обновился state из-за child у детей тоже должен обновиться хотя они не в child
-		infrajs.setState(layer,'state',layer['dyn']['state']);
+		infrajs.setCrumb(layer,'crumb',layer['dyn']['crumb']);//Возможно у родителей обновился state из-за child у детей тоже должен обновиться хотя они не в child
 	});
 	infra.listen(infra,'layer.oninit',function(layer){	
-		//state child		
-		if(!layer['child'])return;//Это услвие после setState 
+		//Crumb child		
+		if(!layer['child'])return;//Это услвие после setCrumb 
 
-		var st=layer['state']['child'];
-		if(st) var state=st['name'];
-		else var state='###child###';
+		var st=layer['crumb']['child'];
+		if(st) var name=st['name'];
+		else var name='###child###';
 
 		infra.fora(layer['child'],function(l){
-			infrajs.setState(l,'state',state);
-			infrajs.setState(l,'istate',state);
+			infrajs.setCrumb(l,'crumb',name);
 		});
 	});
 	infra.listen(infra,'layer.oninit',function(layer){//Должно быть после external, чтобы все свойства у слоя появились
-		//state childs
+		//Crumb childs
 		infra.forx(layer['childs'],function(l,key){//У этого childs ещё не взять external
-			if(!l['state'])l['state']=infrajs.setState(l,'state',key);
-			if(!l['istate'])l['istate']=infrajs.setState(l,'istate',key);
+			if(!l['crumb'])l['crumb']=infrajs.setCrumb(l,'crumb',key);
 		});
 		
 	});	
 
 	/*infra.listen(infra,'layer.oninit',function(layer){
-		//state link
-		if(!layer['link']&&!layer['linktpl'])layer['linktpl']='{istate}';
+		//crumb link
+		if(!layer['link']&&!layer['linktpl'])layer['linktpl']='{crumb}';
 	});*/
 	
 //========================
@@ -147,8 +142,8 @@
 	
 
 	infrajs.isAdd('check',function(layer){
-		//state
-		if(!layer['istate']['obj'])return false;
+		//crumb
+		if(!layer['crumb']['is'])return false;
 	});
 	
 	infrajs.isAdd('check',function(layer){
@@ -201,7 +196,7 @@
 		//infrajs.seo_checkseolinktpl(layer);
 	});
 	/*infra.listen(infra,'layer.oncheck',function(layer){	
-		//state link
+		//crumb link
 		if(layer['linktpl'])layer['link']=infra.template.parse([layer['linktpl']],layer);
 	});	*/
 	
@@ -497,8 +492,8 @@
 		infra.loader.hide();
 	});
 	infra.listen(infrajs,'onshow',function(){
-		//state
-		infra.State.setA(document);//Пробежаться по всем ссылкам и добавить спeциальный обработчик на onclick... для перехода по состояниям сайта.
+		//crumb
+		infra.Crumb.setA(document);//Пробежаться по всем ссылкам и добавить спeциальный обработчик на onclick... для перехода по состояниям сайта.
 	});
 	infra.listen(infrajs,'onshow',function(){
 		//show

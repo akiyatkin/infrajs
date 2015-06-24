@@ -3,7 +3,7 @@
 	var layer={
 		data:true,
 		tpl:[t],
-		datatpl:'*infra/php/goquery.php?query={infra.State.get()}'
+		datatpl:'*infra/php/goquery.php?query={infra.Crumb.query}'
 	}
 	infra.listen(infrajs,'onshow',function(){
 		$('.showGoquery[showGoquery!=true]').attr('showGoquery','true').click(function(){

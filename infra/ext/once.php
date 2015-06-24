@@ -44,4 +44,3 @@ infra_once('somefunc',function(){
 infra_once('somefunc',$value,array($name));
 
 */
-?>

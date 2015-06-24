@@ -11,8 +11,8 @@ History
 09.05.2010
 Добавлена поддерж php файлов и возможность передачи get параметров запрашиваемому файлу
 */
-@define('ROOT','../../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
+
+require_once(__DIR__.'/../infra/infra.php');
 
 $exts=array(
 	'tpl'=>'',
@@ -21,7 +21,7 @@ $exts=array(
 	'mht'=>'*pages/mht/mht.php?src=',
 	'php'=>''
 );
-//..'xls'=>'infra/plugins/pages/xls/xls.php?src='
+//..'xls'=>'?*pages/xls/xls.php?src='
 $isrc=infra_toutf(urldecode($_SERVER['QUERY_STRING']));
 
 
@@ -79,4 +79,3 @@ if($src){
 }else{
 	//@header("HTTP/1.0 404 Not Found");
 }
-?>

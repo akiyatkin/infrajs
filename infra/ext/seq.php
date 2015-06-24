@@ -99,4 +99,3 @@ function &infra_seq_get(&$obj,&$right,$start=0,$end=NULL,$make=false){//полу
 		return NULL;
 	}*/
 }
-?>

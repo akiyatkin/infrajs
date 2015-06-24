@@ -7,16 +7,16 @@
 	"child":[{
 		"tpl":"*catalog/catalog.tpl",
 		"tplroot":"SEARCH",
-		"jsontpl":"*catalog/catalog.php?type=search&val={istate.name}&prod={config.sel}",
+		"jsontpl":"*catalog/catalog.php?type=search&val={crumb.name}&prod={config.sel}",
 		"autoedittpl":{ "fast":"{infra.conf.catalog.dir}" },
-		"linktpl":"{istate}",
+		"linktpl":"{crumb}",
 		"seotpl":{
-			"link":"{istate.parent}/{{.}}"
+			"link":"{crumb.parent}/{{.}}"
 		},
 		"conf_prod":true,
 		"parsedtpl":"{config.sel}",
 		"configtpl":{
-			"sel":"{config.sel|(istate.name|)}"
+			"sel":"{config.sel|(crumb.name|)}"
 		},
 		"seo":{
 			"name":"Группа каталога",
@@ -37,9 +37,9 @@
 		"child":{
 			"tpl":"*catalog/catalog.tpl",
 			"tplroot":"pos",
-			"autoedittpl":{ "fast":"*Каталог/{state.parent.name}/{state.name}/" },
-			"jsontpl":"*catalog/catalog.php?type=pos&val={state.parent.name}&art={state.name}",
-			"seotpl":{"link":"{istate.parent.parent}/{{producer}}/{{article}}"},
+			"autoedittpl":{ "fast":"*Каталог/{crumb.parent.name}/{crumb.name}/" },
+			"jsontpl":"*catalog/catalog.php?type=pos&val={crumb.parent.name}&art={crumb.name}",
+			"seotpl":{"link":"{crumb.parent.parent}/{{producer}}/{{article}}"},
 			"seo":{
 				"name":"Позиция каталога",
 				"json":"*catalog/catalog.php?type=pos&val={producer}&art={article}",
@@ -81,7 +81,7 @@
 			"autoedit":{ "fast":"*Тексты/Производители"},
 
 			"seotpl":{
-				"link":"{istate}",
+				"link":"{crumb}",
 				"json":"{json}"
 			},
 			"seo":{
@@ -96,7 +96,7 @@
 			"json":"*catalog/catalog.php?type=stat",
 			"autoedit":{ "fast":"*Тексты/Статистика поиска по каталогу"},
 			"seotpl":{
-				"link":"{istate}",
+				"link":"{crumb}",
 				"json":"{json}"
 			},
 			"seo":{

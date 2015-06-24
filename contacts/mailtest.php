@@ -1,6 +1,6 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'../infra/infra.php');
 	ini_set("display_errors", 1);
 	ob_start();
 	$from='noreplay@'.$_SERVER['HTTP_HOST'];
@@ -35,4 +35,3 @@
 	
 	if(!$r)return infra_err($ans,'Ошибка. Не удалось отправить тестовое письмо');
 	return infra_ret($ans,'Тестовое письмо отправлено');
-?>

@@ -1,6 +1,5 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	require_once(__DIR__.'/../infra/infra.php');
 	infra_require('*files/xls.php');
 	/*
 	<!—- category id положительные цифры —->
@@ -106,4 +105,3 @@
 		echo $html;
 		
 	};
-?>

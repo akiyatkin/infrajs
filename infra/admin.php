@@ -3,8 +3,8 @@
 Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. http://itlife-studio.ru
 */
 	
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'/infra.php');
 	if(isset($_REQUEST['json'])){//Для данных для слоя
 		$ans=array('result'=>1);
 		$ans['admin']=infra_admin();

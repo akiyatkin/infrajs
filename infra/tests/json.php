@@ -1,10 +1,10 @@
 <?php
-@define('ROOT','../../../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
-$source='""';
+	
+	require_once(__DIR__.'/../../infra/infra.php');
+	$ans = array();
+	$ans['title'] = 'Тест на декодирование JSON';
+	$source='""';
 
-$data=infra_json_decode($source);
-if($data==="")$ans['result'] = 1;
-else $ans['result'] = 0;
-return $ans;
-?>
+	$data=infra_json_decode($source);
+	if($data!=="") return infra_err($ans, 'Не может декодировать');
+	return infra_ret($ans, 'Декодировано');

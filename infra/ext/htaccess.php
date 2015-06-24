@@ -10,16 +10,15 @@
 
 
  */
-@define('ROOT','../../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
 $conf=infra_config();
 if(!$conf['htaccess'])return;
 $ht=$conf['htaccess'];
 infra_admin_cache('htaccess',function($ht){
-
-	if(is_file(ROOT.'.htaccess'))return;
+	
+	if(infra_theme('.htaccess'))return;
+	
 	if(!isset($ht['www']))$ht['www']=false;
-		$text='#Сгенерировано infra/plugins/infra/ext/htaccess.php'."\n";
+		$text='#Сгенерировано infra/ext/htaccess.php'."\n";
 		$text.="\n";
 
 
@@ -90,12 +89,7 @@ infra_admin_cache('htaccess',function($ht){
 
 
 
-		//$text.='#errors'."\n";
-		//$root=infra_view_getRoot(ROOT);
-		//$text.='ErrorDocument 404 /'.$root.'infra/plugins/files/errors.php?code=404'."\n";
-		//$text.='ErrorDocument 403 /'.$root.'infra/plugins/files/errors.php?code=403'."\n";
-		//$text.="\n";
-
-	file_put_contents(ROOT.'.htaccess',$text);
+		
+	$dirs=infra_dirs();
+	file_put_contents($dirs['ROOT'].'.htaccess',$text);
 },array($ht));
-?>

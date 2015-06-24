@@ -1,9 +1,0 @@
-{	
-	"tplroot":"root",
-	"tpl":"*layout.tpl",
-	"child":{
-		"parsedtpl":"{state.name}",
-		"data":true,
-		"tpl":["{root:}<h1>{state.name}</h1><a href='?'>На главную</a>"]
-	}
-}

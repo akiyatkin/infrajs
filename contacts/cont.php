@@ -1,6 +1,6 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'../infra/infra.php');
 	$ans=array();
 	$ans['msg']='Письмо не отправлено';
 	$ans['result']=0;
@@ -104,4 +104,3 @@
 	}
 	@header('Content-type: application/javascript; charset=UTF-8');
 	return infra_echo($ans);
-?>

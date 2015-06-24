@@ -46,9 +46,9 @@ infra.require=function(path){
 	 
 }
 infra.theme=function(path){
-	var r=window.ROOT?ROOT:'';
-	if(/^\*/.test(path))return r+'infra/plugins/infra/theme.php?'+encodeURI(path);
-	else return r+path;
+	//var r=window.ROOT?ROOT:'';
+	if(/^\*/.test(path))return '?'+encodeURI(path);
+	else return path;
 }
 infra.loadJSON=function(path){
 	var store=infra.store('loadJSON');
@@ -109,6 +109,13 @@ infra.loadTEXT=function(path){
 	store[path]=res;
 	infra.com=store[path].com;
 	return store[path].value;
+}
+infra.forFS=function(str){
+	str=str.replace(/[\*<>\'"\|\:\/\\\\#\?\$&]/g,' ');
+	str=str.replace(/^\s+/g,'');
+	str=str.replace(/\s+$/g,'');
+	str=str.replace(/\s+/g,' ');
+	return str;
 }
 infra.srcinfo=function(src){
 	var store=infra.store('srcinfo');

@@ -1,18 +1,12 @@
 <?php
-	@define('ROOT','../../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'/../../infra/infra.php');
 	$ans = array(
-		'title'=>'infra getRoot'
+		'title'=>'Тест на корректность пути'
 	);
 	$root=infra_view_getRoot(ROOT);
 
 	$d = infra_loadJSON('*infra/tests/getRoot/getRoot.php');
 
-	if($d['root']==$root){
-		$ans['result'] = 1;
-		return infra_ret($ans, "тест пройден");
-	}
-	else{
-		$ans['result'] = 0;
-		return infra_err($ans, "Не пройден");
-	}
+	if($d['root']!=$root) return infra_err($ans, "Путь задан не корректно");
+	return infra_ret($ans, "Путь задан корректно");

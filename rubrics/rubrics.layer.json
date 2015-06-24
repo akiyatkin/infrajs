@@ -1,35 +1,35 @@
 {
 	"child":{
-		"tpl":["<h1>{istate.name}</h1><p>{infra.conf.rubrics.404}</p><p><a href='?'>{infra.conf.rubrics.link}</a></p>"],
+		"tpl":["<h1>{crumb.name}</h1><p>{infra.conf.rubrics.404}</p><p><a href='?'>{infra.conf.rubrics.link}</a></p>"],
 		"tplroot":"root",
-		"autoedittpl":{"fast":"*{infra.conf.rubrics.main}/{istate.name}"},
+		"autoedittpl":{"fast":"*{infra.conf.rubrics.main}/{crumb.name}"},
 		"showanimate":true,
 		"layers":{
-			"seojsontpl":"*{infra.conf.rubrics.main}/{istate.name}.json",
+			"seojsontpl":"*{infra.conf.rubrics.main}/{crumb.name}.json",
 			"tplcheck":true,
-			"autoedittpl":{"fast":"*{infra.conf.rubrics.main}/{istate.name}"},
-			"tpltpl":"*rubrics/rubrics.php?type={infra.conf.rubrics.main}&id={istate.name}&show"
+			"autoedittpl":{"fast":"*{infra.conf.rubrics.main}/{crumb.name}"},
+			"tpltpl":"*rubrics/rubrics.php?type={infra.conf.rubrics.main}&id={crumb.name}&show"
 		}
 	},
 	"childs":{
 		"info":{
-			"seojsontpl":"*{istate.name}/{istate.name}.json",
+			"seojsontpl":"*{crumb.name}/{crumb.name}.json",
 			"tpl":["<div id='rubricstitle'></div><div id='rubricscontent'></div>"],
 			"tplroot":"root",
-			"autoedittpl":{"fast":"*{istate.name}/"},
+			"autoedittpl":{"fast":"*{crumb.name}/"},
 			"divs":{
 				"rubricstitle":{
-					"tpl":["<h1>{infra.conf.rubrics.list[istate.name].title}</h1>"],
+					"tpl":["<h1>{infra.conf.rubrics.list[crumb.name].title}</h1>"],
 					"tplroot":"root"
 				},
 				"rubricscontent":{
-					"jsontpl":"*rubrics/rubrics.php?type={istate.name}&list&lim=0,50",
+					"jsontpl":"*rubrics/rubrics.php?type={crumb.name}&list&lim=0,50",
 					"tpl":"*rubrics/rubrics.tpl",
 					"tplroot":"PAGES",
 					"child":{
 						"showanimate":true,
-						"tpltpl":"*rubrics/rubrics.php?type={istate.parent.name}&show&id={istate.name}",
-						"autoedittpl":{ "fast":"*{istate.parent.name}/{istate.name}" },
+						"tpltpl":"*rubrics/rubrics.php?type={crumb.parent.name}&show&id={crumb.name}",
+						"autoedittpl":{ "fast":"*{crumb.parent.name}/{crumb.name}" },
 						"divs":{
 							"rubricstitle":{
 								"tpl":[""]
@@ -40,17 +40,17 @@
 			}
 		},
 		"files":{
-			"seojsontpl":"*seo/{istate.name}.json",
+			"seojsontpl":"*seo/{crumb.name}.json",
 			"tpl":["<div id='rubricstitle'></div><div id='rubricscontent'></div>"],
 			"tplroot":"root",
-			"autoedittpl":{"fast":"*{istate.name}/"},
+			"autoedittpl":{"fast":"*{crumb.name}/"},
 			"divs":{
 				"rubricstitle":{
-					"tpl":["<h1>{infra.conf.rubrics.list[istate.name].title}</h1>"],
+					"tpl":["<h1>{infra.conf.rubrics.list[crumb.name].title}</h1>"],
 					"tplroot":"root"
 				},
 				"rubricscontent":{
-					"jsontpl":"*rubrics/rubrics.php?type={istate.name}&list&lim=0,50",
+					"jsontpl":"*rubrics/rubrics.php?type={crumb.name}&list&lim=0,50",
 					"tpl":"*rubrics/rubrics.tpl",
 					"tplroot":"FILES"
 				}
@@ -59,23 +59,23 @@
 		"list":{
 			"tpl":["<div id='rubricstitle'></div><div id='rubricscontent'></div>"],
 
-			"autoedittpl":{"fast":"*{istate.name}/"},
+			"autoedittpl":{"fast":"*{crumb.name}/"},
 			"divs":{
 				"rubricstitle":{
-					"tpl":["<h1>{infra.conf.rubrics.list[istate.name].title}</h1>"],
+					"tpl":["<h1>{infra.conf.rubrics.list[crumb.name].title}</h1>"],
 					"tplroot":"root"
 				},
 				"rubricscontent":{
 					"tpl":"*rubrics/rubrics.tpl",
 					"tplroot":"PAGES",
-					"jsontpl":"*rubrics/rubrics.php?type={istate.name}&list&lim=0,50",
+					"jsontpl":"*rubrics/rubrics.php?type={crumb.name}&list&lim=0,50",
 					"child":{
 						"showanimate":true,
-						"tpltpl":"*rubrics/rubrics.php?type={istate.parent.name}&show&id={istate.name}",
-						"autoedittpl":{ "fast":"*{istate.parent.name}/{istate.name}" },
+						"tpltpl":"*rubrics/rubrics.php?type={crumb.parent.name}&show&id={crumb.name}",
+						"autoedittpl":{ "fast":"*{crumb.parent.name}/{crumb.name}" },
 						"divs":{
 							"rubricstitle":{
-								"tpl":["<a href='?{istate.parent.name}'>{infra.conf.rubrics.list[istate.parent.name].title}</a>"],
+								"tpl":["<a href='?{crumb.parent.name}'>{infra.conf.rubrics.list[crumb.parent.name].title}</a>"],
 								"tplroot":"root"
 							}
 						}

@@ -3,24 +3,24 @@
 /*
 Карта сайта обновляется при клике и если файла вообще нет
 */
-@define('ROOT','../../../');
+use itlife\infrajs\infrajs;
 
 function infrajs_seo_init(){//Делается при каждой пробежки
-	$store=&infrajs_store();
+	$store=&infrajs::store();
 	$store['seo']=array();
 	$store['seolayer']=array();
 	$conf=infra_config();
 	if(!$conf['seo']['seo'])return;
 	if(!$conf['seo']['robots'])return;
 	infra_admin_cache('infrajs_seo_init',function(){
-		if(!is_file(ROOT.'robots.txt')){
+		if(!infra_theme('robots.txt')){
 			$data=array();
 			$data['host']=$_SERVER['HTTP_HOST'];
 			$data['root']=infra_view_getRoot(ROOT);
 			
 			$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots')."\n";
-			
-			file_put_contents(ROOT.'robots.txt',$html);
+			$dirs=infra_dirs();
+			file_put_contents($dirs['ROOT'].'robots.txt',$html);
 		}
 		/*else{//Проверка что sitemap корректный
 
@@ -70,7 +70,7 @@ function infrajs_seo_checkopt(&$layer){
 	}
 	$seo['name']=infra_State_forFS($seo['name']);
 	if(!isset($seo['link'])){
-		$seo['link']=$layer['istate']->toString();
+		$seo['link']=$layer['crumb']->toString();
 		if(preg_match("/###/",$seo['link'])){
 			die("Невозможно автоматически определить Link Необходимо указать в layers.json ".$seo['link'].". Слой:".$seo['name']);
 		}
@@ -151,7 +151,7 @@ function infrajs_seo_apply(){
 	if(!$layer)return;
 	$seo=$layer['seo'];
 
-	$reallink=$layer['istate']->toString();
+	$reallink=$layer['crumb']->toString();
 
 	$item=$seo;
 	if(isset($seo['name'])){
@@ -196,6 +196,3 @@ function infrajs_seo_apply(){
 	infra_html($html,true);
 	
 }
-
-
-?>

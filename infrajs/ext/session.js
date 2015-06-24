@@ -12,10 +12,5 @@ infra.wait(infrajs,'oninit',function(){
 	infra.seq.set(infra.template.scope,infra.seq.right('infra.session.getId'),function(){
 		return infra.session.getId();
 	});
-	infra.seq.set(infra.template.scope,infra.seq.right('infra.State.get'),function(){
-		return infra.State.get();
-	});
-	infra.seq.set(infra.template.scope,infra.seq.right('infra.State.getState'),function(){
-		return infra.State.getState();
-	});
+	
 });

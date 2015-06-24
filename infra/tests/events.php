@@ -1,13 +1,8 @@
 <?php
-	@define('ROOT','../../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
-
-	function ara($t){
-		echo '<pre>';
-			print_r($t);
-		echo '</pre>';
-	};
-
+	
+	require_once(__DIR__.'/../../infra/infra.php');
+	$ans = array();
+	$ans['title'] = 'events.php';
 
 	$i=1;
 	$obj=array();
@@ -40,10 +35,5 @@
 	infra_fire($obj,'obj.onsome');
 	infra_fire($obj2,'obj.onsome');
 
-	if($i==4 && $j==4){ // не корректно
-		$ans['result'] = 1;
-	}
-	else{
-		$ans['result'] = 0;
-	}
-	return $ans;
+	if($i!=4 && $j!=4) return infra_err($ans, 'err');
+	return infra_ret($ans, 'ret');

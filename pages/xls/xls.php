@@ -6,11 +6,11 @@ Copyright 2008 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. http:/
 History
 13.05.2010 modified
 */
-@define('ROOT','../../../../');//Лучшая запись
-require_once(ROOT.'infra/plugins/pages/xls/excel_parser/oleread.php');
-require_once(ROOT.'infra/plugins/pages/xls/excel_parser/reader.php');
-require_once(ROOT.'infra/plugins/pages/xls/xlstojs.inc.php');
-require_once(ROOT.'infra/plugins/infra/infra.php');
+
+require_once(__DIR__.'/../../pages/xls/excel_parser/oleread.php');
+require_once(__DIR__.'/../../pages/xls/excel_parser/reader.php');
+require_once(__DIR__.'/../../pages/xls/xlstojs.inc.php');
+require_once(__DIR__.'/../../infra/infra.php');
 //readxls(ROOT.'infra/lib/excel_parser/catalog.xls')
 //$url='infra/lib/excel_parser/catalog.xls';
 if(!isset($_GET['src'])){
@@ -40,4 +40,4 @@ if(!isset($_GET['src'])){
 	exit;*/
 	return infra_echo($data);
 }
-?>
+

@@ -31,8 +31,7 @@ view объект - на клиенте создаваемый, как view=infr
 * pass
 **/
 /**/
-@define('ROOT','../../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
+
 infra_require('*infra/ext/seq.php');
 infra_require('*session/session.inc.php');
 
@@ -173,7 +172,7 @@ function infra_session_getLink($email=false){
 		$pass=infra_view_getCookie(infra_session_getName('pass'));
 		$id=infra_view_getCookie(infra_session_getName('id'));
 	}
-	$link='http://'.$host.'/'.$path.'infra/plugins/session/login.php?id='.$id.'&pass='.$pass;
+	$link='http://'.$host.'/'.$path.'?*session/login.php?id='.$id.'&pass='.$pass;
 	return $link;
 }
 /*
@@ -190,6 +189,3 @@ function infra_session_getText($name,$def){ //load для <texarea>...
 	$value=preg_replace('/>/','&gt;',$value);
 	return $value;
 }*/
-
-
-?>

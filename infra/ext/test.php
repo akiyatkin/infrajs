@@ -1,6 +1,5 @@
 <?php
-	@define('ROOT','../../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	require_once(__DIR__.'/../infra.php');
 	
 	infra_admin(true);
 

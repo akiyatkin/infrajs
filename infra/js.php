@@ -1,6 +1,5 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	require_once(__DIR__.'/infra.php');
 	infra_admin_modified();
 	$re=isset($_GET['re']);
 	$html=infra_admin_cache('infra_js_php',function($str){
@@ -42,7 +41,7 @@
 		//Здесь подключение дублируется, тем более только здесь это попадёт в кэш
 		$html.=$require('*infra/ext/html.js');
 		$html.=$require('*infra/ext/template.js');
-		$html.=$require('*infra/ext/state.js');
+		$html.=$require('*infra/ext/crumb.js');
 		$html.=$require('*infra/ext/loader.js');
 		
 		if($conf['debug']||$conf['admin']['popup'])$html.=$require('*infra/ext/test.js');
@@ -52,4 +51,3 @@
 	},array($_SERVER['QUERY_STRING']),$re);
 	@header('content-type: text/javascript; charset=utf-8');
 	echo $html;
-?>

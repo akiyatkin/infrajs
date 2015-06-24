@@ -1,6 +1,6 @@
 <?php
-@define('ROOT','../../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
+
+require_once(__DIR__.'../infra/infra.php');
 
 infra_require('*rubrics/rubrics.inc.php');
 $type=$_GET['type'];
@@ -62,7 +62,7 @@ if(!empty($_GET['id'])){//Загрузка файла
 			//@header("HTTP/1.0 404 Not Found");
 			@header('location: http://'.$_SERVER['HTTP_HOST'].'/'.infra_view_getRoot(ROOT).'?Файлы/'.$id);
 		}else{
-			@header('location: http://'.$_SERVER['HTTP_HOST'].'/'.infra_view_getRoot(ROOT).'infra/plugins/autoedit/download.php?'.$dir.$res['file']);
+			@header('location: http://'.$_SERVER['HTTP_HOST'].'/'.infra_view_getRoot(ROOT).'?*autoedit/download.php?'.$dir.$res['file']);
 		}
 		exit;
 	}else{
@@ -84,4 +84,3 @@ if(!empty($_GET['id'])){//Загрузка файла
 }else{
 	return infra_echo($ans,'Недостаточно параметров');
 }
-?>

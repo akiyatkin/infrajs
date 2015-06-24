@@ -54,4 +54,3 @@ function infra_html($html=null,$id=null){
 		return false;
 	}
 }
-?>

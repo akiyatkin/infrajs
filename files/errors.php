@@ -1,6 +1,6 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'../infra/infra.php');
 	global $infra;
 	$ans=array();
 	$code=$_GET['code'];
@@ -24,4 +24,3 @@
 		}
 		return infra_echo($ans);
 	}
-?>

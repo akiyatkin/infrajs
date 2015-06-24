@@ -13,12 +13,10 @@
 	infra_loadTEXT
 	infra_loadJSON
 */
-@define('ROOT','../../../../');
+
 global $infra_fscp1251,$infra_fsruspath;
 $infra_fscp1251=NULL;
 $infra_fsruspath='vendor/akiyatkin/infrajs/infra/Тест русского.языка';
-
-
 function infra_toutf($str){
 	if(!is_string($str))return $str;
 	if(preg_match('//u', $str)){
@@ -113,62 +111,22 @@ function infra_require($path){
 	$store[$path]=array('value'=>true);//Метку надо ставить заранее чтобы небыло зацикливаний
 	$rpath=infra_theme($path);
 	if(!$rpath)die('infra_require - не найден путь '.$path);
-	require_once(ROOT.$rpath);//Просто require позволяет загрузить самого себя. А мы текущий скрипт не добавляем в список подключённых
+	require_once($rpath);//Просто require позволяет загрузить самого себя. А мы текущий скрипт не добавляем в список подключённых
 
 }
-function _infra_src($orig){//Возвращает список адресов которые нужно проверить
-	$store=infra_storeLoad('_infra_src');
-	//Возвращает последний слэш так как было передано... если небыло то и не будет
-	if(isset($store[$orig]))return $store[$orig];
-
-	$ans=array();
-	$ans['orig']=$orig;
-	$ans['query']='';
-
-	$src=$orig;
-	
-	if(preg_match('/^(.*)(\?.*)$/',$src,$match)){
-		$src=$match[1];
-		$ans['query']=$match[2];
-	}else{
-		$ans['query']='';
-	}
-	$ans['path']=$src;//Есть всегда
-
-	$ans['secure']=preg_match('/\/\./',$src);
-	if(!$ans['secure'])$ans['secure']=preg_match('/^\./',$src);
-	if(!$ans['secure'])$ans['secure']=preg_match('/\*\./',$src);
-
-	$ans['isfolder']=preg_match('/\/+$/',$src);
-
-	
-	$ans['isstar']=preg_match('/\*/',$src);
-	if(!$ans['isstar']){
-		$ans['paths']=array($src);
-		$ans['path']=$src;
-		$ans['find']=preg_replace('/^infra\/data\//','*',$src);
-	}else{
-		$ans['paths']=array();
-
-		if($ans['isfolder'])$src=preg_replace('/\/+$/','',$src);//Удалили последний слэш, временно
-		$src=preg_replace('/^\*/','',$src);
-		$p=explode('/',$src);
-		$file=array_pop($p);//Не может быть пустой строкой
-		$plugin=array_shift($p);//Может быть пустой строкой
-		if($plugin)$plugin.='/';
-		$folder=implode('/',$p);//Путь от плагина до файла
-		if($folder)$folder.='/';
-		$file=$folder.$file;//Есть обязательно
-		if($ans['isfolder'])$file=$file.'/';
-
-		$ans['path']='infra/data/'.$plugin.$file;
-		$ans['paths'][]='infra/data/'.$plugin.$file;
-		$ans['paths'][]='infra/layers/'.$plugin.$file;
-		$ans['paths'][]='infra/plugins/'.$plugin.$file;
-		$ans['find']='*'.$plugin.$file;//Этот путь можно вывести со звёздочкой и по нему опять будет файл найден при необходимости.		
-	}
-	if($orig=='*')$ans['isfolder']=true;
-	return $ans;
+function infra_forFS($str){
+	//Начинаться и заканчиваться пробелом не может
+	//два пробела не могут идти подряд
+	//символов ' " /\#&?$ быть не может удаляются som e будет some
+	//& этого символа нет, значит не может быть htmlentities
+	//символов <> удаляются из-за безопасности
+	//Виндовс запрещает символы в именах файлов  \/:*?"<>|
+	//% приводит к ошибке malfomed URI при попадании в адрес так как там используется decodeURI
+	$str=preg_replace('/[%\*<>\'"\|\:\/\\\\#\?\$&]/',' ',$str);
+	$str=preg_replace('/^\s+/','',$str);
+	$str=preg_replace('/\s+$/','',$str);
+	$str=preg_replace('/\s+/',' ',$str);
+	return $str;
 }
 function infra_srcinfo($src){
 
@@ -248,20 +206,32 @@ function infra_tofs($str){
 	}
 	return $str;
 }
-function infra_theme($str){
+function infra_theme($str){//Небезопасная функция
+	//Повторно для адреса не работает Путь только отностельно корня сайта или со звёздочкой
 	$str=infra_tofs($str);
-	if(!$str||$str{0}!='*')return $str;
-	$str=substr($str,1);
+	$dirs=infra_dirs();
+	if(!$str)return null;
+	$is_fn=($str{strlen($str)-1}=='/')?'is_dir':'is_file';
 
-	$dirs=array(
-		'infra/data/',
-		'infra/layers/',
-		'vendor/akiyatkin/infrajs/',
-		'infra/plugins/'
-	);
-	foreach($dirs as $dir){
-		if(is_file(ROOT.$dir.$str))return $dir.$str;
+
+	$q=explode('?',$str,2);
+	$str=$q[0];
+	$query='';
+	if(isset($q[1]))$query='?'.$q[1];
+	if($str{0}!='*'){
+
+		if($is_fn($str))return $str.$query;//Относительный путь в первую очередь, если повторный вызов для пути попадём сюда
+		
+		if($is_fn($dirs['ROOT'].$str))return $dirs['ROOT'].$str.$query;		
+		return null;
 	}
+	$str=substr($str,1);
+	foreach($dirs['search'] as $dir){
+		
+		
+		if($is_fn($dir.$str))return $dir.$str.$query;
+	}
+	return null;
 }
 
 function &infra_loadJSON($path){
@@ -389,7 +359,7 @@ function infra__load($path){
 
 			ob_start();
 			//headers надо ловить
-			$rrr=include(ROOT.$plug);
+			$rrr=include($plug);
 			$result=ob_get_contents();
 			$resecho=$result;
 			ob_end_clean();
@@ -413,7 +383,7 @@ function infra__load($path){
 			
 			//$data='php file';
 		}else{
-			$data=file_get_contents(ROOT.$plug);
+			$data=file_get_contents($plug);
 		}
 		$store['status']=200;
 		$store['value']=$data;
@@ -486,4 +456,3 @@ function infra_echo($ans=array(),$msg=false,$res=null){//Окончание ск
 	}
 	return infra_ans($ans);
 }
-?>

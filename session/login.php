@@ -1,6 +1,5 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	require_once(__DIR__.'/../infra/infra.php');
 	infra_require('*infra/ext/seq.php');
 	infra_require('*session/session.php');
 
@@ -16,7 +15,7 @@
 	else $src='?'.$src;
 	$conf=infra_config();
 	$path='http://'.infra_view_getHost().'/';
-	$path.=infra_view_getRoot(ROOT).$src;
+	$dirs=infra_dirs();
+	$path.=infra_view_getRoot($dirs['ROOT']).$src;
 	@header('Location: '.$path);
 	//return infra_echo($ans);
-?>

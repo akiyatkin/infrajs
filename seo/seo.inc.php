@@ -405,4 +405,3 @@ function seo_pageResearch($page,&$v){
 	$v['description']=preg_replace("/\..*/si",".",strip_tags($page));
 	$v['description']=seo_normalizeValue($v['description']);
 }
-?>

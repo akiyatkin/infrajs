@@ -1,6 +1,6 @@
 <?php
-	@define('ROOT','../../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'/../../infra/infra.php');
 	infra_require('*infra/ext/template.php');
 	$tpls=infra_loadJSON('*infra/tests/resources/templates.json');
 	
@@ -11,31 +11,31 @@
 	    //return ((float)$usec + (float)$sec); 
 	} 
 	echo '<table style="font-size:14px; font-family:monospace;">';
-	$time=getmicrotime();
-	infra_forr($tpls,function($t,$key) use(&$time){
-		if(isset($_GET['key'])&&$_GET['key']!=$key)return;
-		echo '<tr><td>';
-		echo $key;
-		echo '</td><td>';
-		echo htmlentities($t['tpl']);
-		echo '</td><td nowrap="1">';
-		if(@is_null($t['data']))$data=array();
-		else $data=$t['data'];
+		$time=getmicrotime();
+		infra_forr($tpls,function($t,$key) use(&$time){
+			if(isset($_GET['key'])&&$_GET['key']!=$key)return;
+			echo '<tr><td>';
+			echo $key;
+			echo '</td><td>';
+			echo htmlentities($t['tpl']);
+			echo '</td><td nowrap="1">';
+			if(@is_null($t['data']))$data=array();
+			else $data=$t['data'];
 
-		//for($i=0,$l=10;$i<$l;$i++){
-			$r=infra_template_parse(array($t['tpl']),$data);
-		//}
-		echo ceil((getmicrotime()-$time)*1000);
-		echo 'мс';
-		echo '</td><td>';
+			//for($i=0,$l=10;$i<$l;$i++){
+				$r=infra_template_parse(array($t['tpl']),$data);
+			//}
+			echo ceil((getmicrotime()-$time)*1000);
+			echo 'мс';
+			echo '</td><td>';
 
-		if($r===$t['res'])echo '"<b>'.htmlentities($r).'</b>"';
-		else echo '<span style="color:red; font-weight:bold"><b>"'.htmlentities($r).'"</b></span><br>"<b style="color:gray">'.htmlentities($t['res']).'</b>"';
-		echo '</td><td>';
-		echo infra_json_encode($data);
-		echo '</td><td>';
-		echo @$t['com'];
-		echo '</td><tr>';
-	});
+			if($r===$t['res'])echo '"<b>'.htmlentities($r).'</b>"';
+			else echo '<span style="color:red; font-weight:bold"><b>"'.htmlentities($r).'"</b></span><br>"<b style="color:gray">'.htmlentities($t['res']).'</b>"';
+			echo '</td><td>';
+			echo infra_json_encode($data);
+			echo '</td><td>';
+			echo @$t['com'];
+			echo '</td><tr>';
+		});
 	echo '</table>';
 ?>

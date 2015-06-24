@@ -3,8 +3,8 @@
 Copyright 2008-2010 http://itlife-studio.ru
 
 */
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'/../infra/infra.php');
 	if(!function_exists('file_download')){
 		function infra_download_browser($agent=false){
 			if(!$agent)$agent=$_SERVER['HTTP_USER_AGENT'];
@@ -217,5 +217,3 @@ Copyright 2008-2010 http://itlife-studio.ru
 			}
 		}
 	}
-
-?>

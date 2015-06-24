@@ -1,30 +1,30 @@
 <?php
-	@define('ROOT','../../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'/../../infra/infra.php');
+	infra_require('*infra/ext/crumb.php');
+	use itlife\infrajs\infra\ext\crumb;
+	crumb->init();
 
-	infra_require('*infra/ext/state.php');
+	$ans = array();
+	$ans['title'] = 'Хлебные крошки';
 
-	infra_State_set('');
-	$state=infra_State_getState('');
-	$f=$state->obj;
+	crumb::change('');
+	$crumb=crumb::getInstance('');
+	$f=$crumb->query;
 
-	infra_State_set('?test');
+	crumb::change('test');
 
-	$s=&infra_State_getState('some');
-	$s2=&infra_State_getState('some');
+	$s=&crumb::getInstance('some');
+	$s2=&crumb::getInstance('some');
 	$r=infra_isEqual($s,$s2);
 
-	$s=infra_State_store();
-	$r2=infra_isEqual($s['first'],infra_State_getState());
+	$s=crumb::$childs;
+	$r2=infra_isEqual($s[''],crumb::getInstance());
 
 	$r=$r&&$r2;
 
-	$state=infra_State_getState('test');
-	$state2=infra_State_getState('test2');
-	if($f==Null&&$r&&!is_null($state->obj)&&is_null($state2->obj)){
-		$ans['result'] = 1;
-	}
-	else{
-		$ans['result'] = 0;
-	}
-	return $ans;
+	$crumb=crumb::getInstance('test');
+	$crumb2=crumb::getInstance('test2');
+
+	if($f==Null&&$r&&!is_null($crumb->query)&&is_null($crumb2->query)) return infra_ret($ans, 'ret');
+	else return infra_err($ans, 'ret');

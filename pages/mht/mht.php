@@ -1,6 +1,5 @@
 <?php
-	@define('ROOT','../../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	require_once(__DIR__.'/../../infra/infra.php');
 	
 	$src=urldecode($_GET['src']);
 
@@ -287,11 +286,11 @@
 						if($isbig){
 							$alt=preg_replace('/#/','',$alt);
 						}
-						//$i="<IMG title='$alt' src='infra/plugins/imager/imager.php?w=$w&h=$h&src=".($path.$big)."' align='$align' class='$align' alt='$alt'>";
-						$i="<IMG src='infra/plugins/imager/imager.php?w=$w&h=$h&src=".($path.$big)."' align='$align' class='$align'>";
+						//$i="<IMG title='$alt' src='?*imager/imager.php?w=$w&h=$h&src=".($path.$big)."' align='$align' class='$align' alt='$alt'>";
+						$i="<IMG src='?*imager/imager.php?w=$w&h=$h&src=".($path.$big)."' align='$align' class='$align'>";
 						//urlencode решает проблему с ie7 когда иллюстрации с адресом содержащим пробел не показываются
 						if($isbig){
-							$i="<a target='about:blank' href='infra/plugins/imager/imager.php?src=".urlencode($path.$big)."'>$i</a>";
+							$i="<a target='about:blank' href='?*imager/imager.php?src=".urlencode($path.$big)."'>$i</a>";
 						}
 						//$i.='<textarea style="width:500px; height:300px">'.$i.'</textarea>';
 						$html=preg_replace($patern,$i,$html,1);
@@ -327,9 +326,9 @@
 						$alt=preg_replace('/#/','',$alt);
 					}
 					
-					$i="<img title='$alt' src='infra/plugins/imager/imager.php?w=$w&h=$h&src=$path$big' align='$align' class='$align' alt='$alt'>";
+					$i="<img title='$alt' src='?*imager/imager.php?w=$w&h=$h&src=$path$big' align='$align' class='$align' alt='$alt'>";
 					if($isbig){
-						$i="<a target='about:blank' href='infra/plugins/imager/imager.php?src=$path$big'>$i</a>";
+						$i="<a target='about:blank' href='?*imager/imager.php?src=$path$big'>$i</a>";
 					}
 					//$i.='<textarea style="width:500px; height:300px">'.$i.'</textarea>';
 					$html=preg_replace($patern,$i,$html,1);
@@ -498,4 +497,3 @@
 	}else{
 		//@header("HTTP/1.0 404 Not Found");
 	}
-?>

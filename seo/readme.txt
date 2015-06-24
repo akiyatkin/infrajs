@@ -12,7 +12,7 @@ link: ссылка которая определяет содержание сл
 linktpl: если содержимое слоя зависит от адреса, то шаблон адреса
 
 
-link:'?{state.parent.parent.name}/{state.parent.name}/{state.parent.name}',
+link:'?{crumb.parent.parent.name}/{crumb.parent.name}/{crumb.parent.name}',
 	Путь с использованием переменных state
 seo:{
 	name: имя чтобы было понятно что за информация в этом слое показывается или какое назначение у этого слоя	

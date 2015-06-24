@@ -5,7 +5,7 @@ infra.wait(infrajs,'onshow',function(){
 		'В одной секунде. Клиент потом сервер',
 		function(){
 			infra.session.set('test','Клиент',true);
-			var path='infra/plugins/session/set.php?name=test&val=Сервер';
+			var path='?*session/set.php?name=test&val=Сервер';
 			infra.unload(path);
 			infra.loadJSON(path);
 			infra.session.syncNow();
@@ -22,7 +22,7 @@ infra.wait(infrajs,'onshow',function(){
 	test.tasks.push([
 		'В одной секунде. Cервер потом клиент',
 		function(){
-			var path='infra/plugins/session/set.php?name=test&val=Сервер';
+			var path='?*session/set.php?name=test&val=Сервер';
 			infra.unload(path);
 			infra.loadJSON(path);
 			infra.session.set('test','Клиент',true);
@@ -40,7 +40,7 @@ infra.wait(infrajs,'onshow',function(){
 		'Асинхронно. В одной секунде. Клиент потом сервер',
 		function(){
 			infra.session.set('test','Клиент');
-			var path='infra/plugins/session/set.php?name=test&val=Сервер';
+			var path='?*session/set.php?name=test&val=Сервер';
 			infra.unload(path);
 			infra.loadJSON(path);
 			infra.session.syncNow();
@@ -57,7 +57,7 @@ infra.wait(infrajs,'onshow',function(){
 	test.tasks.push([
 		'Асинхронно. В одной секунде. Cервер потом клиент',
 		function(){
-			var path='infra/plugins/session/set.php?name=test&val=Сервер';
+			var path='?*session/set.php?name=test&val=Сервер';
 			infra.unload(path);
 			infra.loadJSON(path);
 			infra.session.set('test','Клиент');

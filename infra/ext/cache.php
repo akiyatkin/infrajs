@@ -5,59 +5,52 @@
 infra_cache(true,'somefn',array($arg1,$arg2)); - выполняется всегда
 infra_cache(true,'somefn',array($arg1,$arg2),$data); - Установка нового значения в кэше 
 */
-@define('ROOT','../../../../');
 
 
-function infra_cache_fullrmdir($delfile){
-	if (file_exists(ROOT.$delfile)){
+function infra_cache_fullrmdir($delfile,$ischild){
+	//$dirs=infra_dirs();
+	$delfile=infra_theme($delfile);
+	if (file_exists($delfile)){
 		//chmod($delfile,0777);
-		if (is_dir(ROOT.$delfile)){
-            $handle = opendir(ROOT.$delfile);
+		if (is_dir($delfile)){
+            $handle = opendir($delfile);
             while($filename = readdir($handle)){
 				if ($filename != '.' && $filename != '..'){
 					$src=$delfile.$filename;
-					if(is_dir(ROOT.$src))$src.='/';
-					
-						infra_cache_fullrmdir($src);
-					
+					if(is_dir($src))$src.='/';
+					infra_cache_fullrmdir($src,true);
 				}
 			}
             closedir($handle);
-            return rmdir(ROOT.$delfile);
+            if($ischild) rmdir($delfile);
+            return;
 		}else{
-			return unlink(ROOT.$delfile);
+			return unlink($delfile);
 		}
 	}
 }
+function infra_cache_checkUpdate(){
+	$dirs=infra_dirs();
+	$file=infra_theme('infra/update');
+	if(!$file)return;
 
-if(is_file(ROOT.'infra/update')){//Файл появляется после заливки из svn и если с транка залить без проверки на продакшин, то файл зальётся и на продакшин
-	@unlink(ROOT.'infra/update');
+	$r=@unlink($file);//Файл появляется после заливки из svn и если с транка залить без проверки на продакшин, то файл зальётся и на продакшин
+	if(!$r)return;
 	$r=@infra_cache_fullrmdir('infra/cache/');
-	if(!$r)header('infra-update:Fail');
-	else header('infra-update:OK');
-	infra_admin_time_set(time()-1);
+	header('infra-update:'.($r?'Fail':'OK'));
+	infra_admin_time_set(time()-1);//Нужно чтобы был а то как-будто админ постоянно 
 }
 
 
-if(!is_dir(ROOT.'infra/cache/')){
-	mkdir(ROOT.'infra/cache/');//Создаём если нет папку infra/cache
-	if(!is_dir(ROOT.'infra/cache/')){
-		die('Не удалось создать папку infra/cache/, пользователю от которого запущен процесс php нужно дать права на редактирование папки с сайтом');
-	}
-	@unlink(ROOT.'infra/update');
-}
-
-
-
-define('INFRA_CACHE_DIR','infra/cache/infra_cache_once/');//Используется в xml/xml.php
-@mkdir(ROOT.INFRA_CACHE_DIR,0755);
 function infra_cache_path($name,$args=null){
+	$dirs=infra_dirs();
+	$dir=$dirs['cache'].'infra_cache_once/';
+	@mkdir($dir);
 	$name=infra_tofs($name);
-	$dirfn=INFRA_CACHE_DIR.$name.'/';
-	@mkdir(ROOT.$dirfn,0755);
+	$dirfn=$dir.$name.'/';
+	@mkdir($dirfn);
 	if(is_null($args))return $dirfn;
 	$strargs=infra_hash($args);
-	//$strargs=md5($strargs);
 	$path=$dirfn.$strargs.'.json';
 	return $path;
 }
@@ -151,4 +144,3 @@ function &infra_cache($conds,$name,$fn,$args=array(),$re=false){
 		return $data;
 	},array(&$conds,$name,$fn,$args),$re);
 }
-?>

@@ -1,6 +1,5 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	require_once(__DIR__.'/../infra/infra.php');
 	infra_require('*infra/ext/seq.php');
 	infra_require('*session/session.inc.php');
 
@@ -115,4 +114,3 @@
 	
 	return infra_echo($ans);
 /**/
-?>

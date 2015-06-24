@@ -31,11 +31,10 @@
 	$data=xls_init(path,conf)
 */	
 
-@define('ROOT','../../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
+
+require_once(__DIR__.'../infra/infra.php');
 infra_require('*infra/ext/seq.php');
 
-infra_require('*infra/ext/state.php');
 /*var pathlib=require('path');
 var util=require('util');
 var csv=require('node-csv');
@@ -59,8 +58,8 @@ function &xls_parseAll($path){
 		
 		$data=array();
 		if($in['ext']=='xls'){
-			require_once(ROOT.'infra/plugins/files/excel_parser/oleread.php');
-			require_once(ROOT.'infra/plugins/files/excel_parser/reader.php');
+			require_once(__DIR__.'/excel_parser/oleread.php');
+			require_once(__DIR__.'/excel_parser/reader.php');
 			
 			if(!$file)return $data;
 			$d = new Spreadsheet_Excel_Reader();
@@ -1001,4 +1000,3 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 	});
 	return $data;
 };
-?>

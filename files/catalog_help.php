@@ -1,11 +1,9 @@
 <?
-//Для работы требуются плагины infra/plugins/infra и infra/plugins/files 
-//svn://itlf.ru/iable/trunk/infra/plugins/infra plugins/infra
-//svn://itlf.ru/iable/trunk/infra/plugins/files plugins/files
-//В папке data должен лежать файл infra/data/.config.json пример этого файла можно взять в infra/plugins/infra/config.json
 
-@define('ROOT','../../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
+//В папке data должен лежать файл infra/data/.config.json пример этого файла можно взять в ?*infra/config.json
+
+
+require_once(__DIR__.'../infra/infra.php');
 
 infra_admin(true);
 
@@ -80,5 +78,3 @@ print_r($group);
 
 
 
-
-?>

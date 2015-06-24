@@ -1,11 +1,8 @@
 <?php
-	@define('ROOT','../../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	require_once(__DIR__.'/../../infra/infra.php');
 	$db = infra_db(true);
 	$ans = array(
 		'title'=>'Проверка соединения с базой данных'
 	);
-
 	if(!$db)return infra_err($ans,'Нет соединения с базой данных');
-		
 	return infra_ret($ans,'Есть соединение с базой данных');

@@ -1,6 +1,4 @@
 <?php
-@define('ROOT','../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
 infra_require('*infra/ext/template.php');
 
 function files_search($dir,$str){//Найти указанный в $str файл
@@ -106,8 +104,8 @@ END;
 	$pattern='/(<a.*href="[^"]*infra\/[^"]*\/files\.php[^"]*id=(\d+)&[^"]*load".*>)([^~<]*?)~(<\/a>)/u';
 	$tpl=<<<END
 		<nobr>
-			<a href="infra/plugins/files/files.php?id={id}&type=files&load" title="{name}">{title}</a>
-			<img style="margin-right:3px; margin-bottom:-4px;" src="infra/plugins/imager/imager.php?src=*autoedit/icons/{ext}.png&w=16" title="{name}"> {size} Mb</nobr>
+			<a href="?*files/files.php?id={id}&type=files&load" title="{name}">{title}</a>
+			<img style="margin-right:3px; margin-bottom:-4px;" src="?*imager/imager.php?src=*autoedit/icons/{ext}.png&w=16" title="{name}"> {size} Mb</nobr>
 END;
 	do{
 		preg_match($pattern,$html,$match);
@@ -249,4 +247,3 @@ function _files_list($dir,$start,$count,$exts){
 	}
 	return $res;
 }
-?>

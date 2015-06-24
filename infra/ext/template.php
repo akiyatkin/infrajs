@@ -34,8 +34,6 @@ parse
 /*
  * Функции берутся в следующем порядке сначало от this в данных потом от корня данных потом в спецколлекции потом в глобальной области
  **/
-@define('ROOT','../../../../');
-require_once(ROOT.'infra.php');
 infra_require('*infra/ext/seq.php');
 
 function infra_template_prepare($template){
@@ -1152,4 +1150,3 @@ $pathname=$p[0];
 infra_seq_set($infra_template_scope,array('location','host'),$host);
 infra_seq_set($infra_template_scope,array('location','pathname'),$pathname);
 /**/
-?>

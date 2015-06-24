@@ -208,4 +208,3 @@ function readxls(
 	}
 	return $result;
 }
-?>

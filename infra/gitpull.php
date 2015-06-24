@@ -20,4 +20,3 @@ $output[]='return '.$return;
 
 echo '<h1>GIT pull</h1><pre>';
 print_r($output);
-?>

@@ -8,14 +8,14 @@
 	</div>
 	{data.text}
 	<div style="margin-top:10px">
-		<a href="?{state.parent}">Каталог</a>
+		<a href="?{crumb.parent}">Каталог</a>
 	</div>
 	{catprod1:}
-	<a href="?{state.parent}/{$key}" title="{$key} {.}">{$key}</a>{$last()?:point?:comma} 
+	<a href="?{crumb.parent}/{$key}" title="{$key} {.}">{$key}</a>{$last()?:point?:comma} 
 	{comma:}, 
 	{point:}.
 	{catprod:}
-		<a href="?{state.parent}/{$key}" title="{$key} {.}"><img alt="{$key}" style="margin-bottom:10px" src="infra/plugins/imager/imager.php?w=100&src={infra.conf.catalog.dir}{$key}/&or=*imager/empty"></a>
+		<a href="?{crumb.parent}/{$key}" title="{$key} {.}"><img alt="{$key}" style="margin-bottom:10px" src="?*imager/imager.php?w=100&src={infra.conf.catalog.dir}{$key}/&or=*imager/empty"></a>
 {rubrics:}
 	<style>
 		.cat_rub {
@@ -85,7 +85,7 @@
 		{data.stat.users::statuser}
 	</table>
 	<p>
-		<a href="?{state.parent}">Каталог</a>
+		<a href="?{crumb.parent}">Каталог</a>
 	</p>
 	{data.text}
 	{statuser:}
@@ -93,14 +93,14 @@
 			<td style="vertical-align:bottom; font-size:20px; text-align:left; color:gray;"><b title="от {~date(:d.m.Y,time)}">{cat_id}</b></td>
 			<td>{list::statitem}</td>
 		</tr>
-	{statitem:}<a href="?{state.parent}/{val}" title="от {~date(:d.m.Y,time)}">{val}</a><sup>{count}</sup>{~last()|:statsep}
+	{statitem:}<a href="?{crumb.parent}/{val}" title="от {~date(:d.m.Y,time)}">{val}</a><sup>{count}</sup>{~last()|:statsep}
 	{statsep:} |  
 {find:}
 	<h1>Поиск по каталогу</h1>
 	<form onsubmit="
 		var val=$(this).find('[type=text]').val();
-		val=infra.State.forFS(val);
-		infra.State.go('{state.parent.name}/'+val);
+		val=infra.forFS(val);
+		infra.Crumb.go('{crumb.parent.name}/'+val);
 		setTimeout(function(){
 			$.getJSON(infra.theme('*catalog/catalog.php?type=stat&submit=1&val='+val));
 		},1);
@@ -113,7 +113,7 @@
 				<td style="text-align:right">
 					<button style="
 					font-size:19px; 
-					padding:5px 26px; margin:0 0 0 20px;" href="?{state.parent.name}" onclick="$(this).parents('form').submit(); return false;">Искать</button>    
+					padding:5px 26px; margin:0 0 0 20px;" href="?{crumb.parent.name}" onclick="$(this).parents('form').submit(); return false;">Искать</button>    
 				</td>
 			</tr>
 		</table>
@@ -137,7 +137,7 @@
 			infra.wait(infrajs,'oncheck',function(){
 
 				var layer=infrajs.getUnickLayer({unick});
-				window.catalog.search=infra.State.getState().child.child.name;
+				window.catalog.search=infra.Crumb.getInstance().child.child.name;
 
 				infra.when(layer,'onhide',function(){
 					window.catalog.search='';
@@ -158,7 +158,7 @@
 				К сожалению ничего не найдено.
 			</p>
 			<p>
-				<a href="?{state.parent}">{state.parent.name}</a>
+				<a href="?{crumb.parent}">{crumb.parent.name}</a>
 			</p>
 			{text}
 		{isproducer:}producer
@@ -182,9 +182,9 @@
 			{text}
 			{text?:groupsonly}
 			{cat_childs:}
-				<a style="font-size:16px; line-height:24px;" href="?{state.parent}/{title}" title="Показать группу «{title}»">{title}</a>{~last()|:br}
+				<a style="font-size:16px; line-height:24px;" href="?{crumb.parent}/{title}" title="Показать группу «{title}»">{title}</a>{~last()|:br}
 			{cat_childsp:}
-				<a href="?{state.parent}{title!:Каталог?:cat_plink}" title="Показать группу «{title}»">{title}</a>{~last()|:br}
+				<a href="?{crumb.parent}{title!:Каталог?:cat_plink}" title="Показать группу «{title}»">{title}</a>{~last()|:br}
 			{br:}<br>
 			{cat_plink:}/{title}
 		{search_groups:}
@@ -201,7 +201,7 @@
 					if(!layer.config)layer.config={ };
 					var data=infrajs.getData(layer);
 					if(data.prodpage){
-						layer.config.sel=layer.state.name;
+						layer.config.sel=layer.crumb.name;
 					}
 					$('#'+layer.div).find('.someprod').click(function(){
 						var sel=$(this).data('name');
@@ -225,10 +225,10 @@
 			</button> 
 		{bread_sel2:} border: 2px inset gray;
 		{bread_sel:} font-weight:bold
-		{bread_logo:}<a href="?{state.parent}/{data.sel}"><img class="right" style="margin:5px" src="infra/plugins/imager/imager.php?h=40&or=img/bg.png&src=*Каталог/{data.sel}/"></a>
+		{bread_logo:}<a href="?{crumb.parent}/{data.sel}"><img class="right" style="margin:5px" src="?*imager/imager.php?h=40&or=img/bg.png&src=*Каталог/{data.sel}/"></a>
 		{bread_group:}
 			{$even()?:s_tr}
-			<td style="padding:2px 10px 2px 0;{title=state.name?:bread_sel}"><a href="?{state.parent}/{title}">{name}</a></td>
+			<td style="padding:2px 10px 2px 0;{title=crumb.name?:bread_sel}"><a href="?{crumb.parent}/{title}">{name}</a></td>
 			{$odd()?:e_tr}
 {groupsonly:}
 	<style>
@@ -277,7 +277,7 @@
 		<table>
 			<tr>
 				<td class="img">
-					<img  src="infra/plugins/imager/imager.php?w=100&h=80&src={infra.conf.catalog.dir}{pos.producer}/{pos.article}/&or=*imager/empty">
+					<img  src="?*imager/imager.php?w=100&h=80&src={infra.conf.catalog.dir}{pos.producer}/{pos.article}/&or=*imager/empty">
 				</td>
 				<td class="name">
 					{name}
@@ -310,25 +310,25 @@
 	</div>
 	
 {logo:}
-	<img src="infra/plugins/imager/imager.php?w=300&src={infra.conf.catalog.dir}{Производитель}/{article}/" style="margin:0 0 5px 5px;">
+	<img src="?*imager/imager.php?w=300&src={infra.conf.catalog.dir}{Производитель}/{article}/" style="margin:0 0 5px 5px;">
 {cat_item:}
 	<div class="position">
 		<div style="text-align:right">{time?~date(:j F Y,time)}</div>
 		<h2>
-			<a class="href" href="?{state.parent}/{Производитель}/{article}">{Наименование}</a>
+			<a class="href" href="?{crumb.parent}/{Производитель}/{article}">{Наименование}</a>
 		</h2>
 		<table style="width:100%">
 		<tr>
 		<td style="width:160px; padding-right:10px;">
-			<a class="href" href="?{state.parent}/{Производитель}/{article}">
+			<a class="href" href="?{crumb.parent}/{Производитель}/{article}">
 				<div class="pic">
-					<img src="infra/plugins/imager/imager.php?mark=1&w=160&src={infra.conf.catalog.dir}{Производитель}/{article}/&or=*imager/empty" />
+					<img src="?*imager/imager.php?mark=1&w=160&src={infra.conf.catalog.dir}{Производитель}/{article}/&or=*imager/empty" />
 				</div>
 			</a>
 		</td>
 		<td style="padding-right:5px">
 			{:producerSmall}
-			<a class="href" href="?{state.parent}/{Производитель}/{article}">
+			<a class="href" href="?{crumb.parent}/{Производитель}/{article}">
 				<h3 style="margin-top:0; margin-bottom:10px;">
 					{Производитель} {Артикул}
 				</h3>
@@ -344,14 +344,14 @@
 
 {group:}
 	<div style="margin-top:5px; font-size:12px;">
-		<a title="Посмотреть продукцию {Производитель}" href="?{state.parent}/{Производитель}">{Производитель}</a>, 
-		<a title="Перейти к группе {group_title}" href="?{state.parent}/{group_title}">{group_title}</a>
+		<a title="Посмотреть продукцию {Производитель}" href="?{crumb.parent}/{Производитель}">{Производитель}</a>, 
+		<a title="Перейти к группе {group_title}" href="?{crumb.parent}/{group_title}">{group_title}</a>
 	</div>
 
 {producerSmall:}
 	<div style="float:right; background-color:white; padding:5px; margin-left:5px; margin-bottom:5px;">
-		<a title="Посмотреть продукцию {Производитель}" href="?{state.parent}/{Производитель}">
-			<img  src="infra/plugins/imager/imager.php?w=100&h=100&src={infra.conf.catalog.dir}{Производитель}/&or=*imager/empty" />
+		<a title="Посмотреть продукцию {Производитель}" href="?{crumb.parent}/{Производитель}">
+			<img  src="?*imager/imager.php?w=100&h=100&src={infra.conf.catalog.dir}{Производитель}/&or=*imager/empty" />
 		</a>
 	</div>
 
@@ -428,7 +428,7 @@
 			infra.wait(infrajs,'oncheck',function(){
 
 				var layer=infrajs.getUnickLayer({unick});
-				window.catalog.search=infra.State.getState().child.child.name;
+				window.catalog.search=infra.Crumb.getInstance().child.child.name;
 
 				infra.when(layer,'onhide',function(){
 					window.catalog.search='';
@@ -460,7 +460,7 @@
 			Задать вопрос о {Производитель} {Артикул} можно с помощью <span class="a showContacts">формы для сообщений</span> или c помощью других <a href="?Контакты">контактов</a>.
 		</p>
 		<p>
-			Перейти к группе <a href="?{state.parent.parent}/{group_title}">{group_title}</a><br>
+			Перейти к группе <a href="?{crumb.parent.parent}/{group_title}">{group_title}</a><br>
 			
 		</p>
 	</div>
@@ -475,7 +475,7 @@
 			{files::file}
 		</ul>
 	{file:}
-		<li class="ico" style="background-image:url('infra/plugins/infra/theme.php?*/autoedit/icons/{ext}.png')">
+		<li class="ico" style="background-image:url('?*infra/theme.php?*/autoedit/icons/{ext}.png')">
 			<a href="{src}">{name}</a> {size}&nbsp;Mb
 		</li>
 {text:}
@@ -487,18 +487,18 @@
 	</div>
 	<div class="bigimage"></div>
 	{image:}
-	<a onclick="return false" title="{..Наименование}" href="infra/plugins/imager/imager.php?src={:imgsrc}">
+	<a onclick="return false" title="{..Наименование}" href="?*imager/imager.php?src={:imgsrc}">
 		 <img 
 		title="{data.pos.Производитель} {data.pos.Артикул}"
 		style="cursor:pointer"
 		onclick="var img=document.getElementById('catimg{$key}'); if(img){ $(img).toggle(); return; }; 
-				$('#position .bigimage').html('<img style=\'border-bottom:1px dotted gray;\' onclick=\'$(this).hide()\' id=\'catimg{$key}\' src=\'infra/plugins/imager/imager.php?mark=1&w=590&src={:imgsrc}\' />')" 
-		src="infra/plugins/imager/imager.php?mark=1&h=100&src={:imgsrc}" />
+				$('#position .bigimage').html('<img style=\'border-bottom:1px dotted gray;\' onclick=\'$(this).hide()\' id=\'catimg{$key}\' src=\'?*imager/imager.php?mark=1&w=590&src={:imgsrc}\' />')" 
+		src="?*imager/imager.php?mark=1&h=100&src={:imgsrc}" />
 		</a>
 {producer:}
 	<div style="float:right; background-color:white; padding:10px 10px 10px 10px; margin-left:5px; margin-bottom:5px;">
-		<a title="Посмотреть продукцию {producer.Производитель}" href="?{state.parent.parent}/{producer.Производитель}">
-			<img style="margin-left:5px" src="infra/plugins/imager/imager.php?w=160&h=100&src={infra.conf.catalog.dir}{producer.Производитель}/" />
+		<a title="Посмотреть продукцию {producer.Производитель}" href="?{crumb.parent.parent}/{producer.Производитель}">
+			<img style="margin-left:5px" src="?*imager/imager.php?w=160&h=100&src={infra.conf.catalog.dir}{producer.Производитель}/" />
 		</a>
 	</div>
 <!--	<div style="text-align:right; font-size: 11px; margin-top:5px;">

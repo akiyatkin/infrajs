@@ -1,6 +1,6 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'/../infra/infra.php');
 	function autoedit_setLastFolderUpdate($path){
 		$path=infra_theme($path);
 		if(!$path)return;
@@ -65,7 +65,7 @@
 		$ans['folder']=infra_toutf(implode('/',$p));
 		if($ans['folder']=='/'||!$ans['folder'])$ans['folder']='*';
 		else $ans['folder'].='/';
-		$ans['path']=infra_theme('infra/plugins/autoedit/download.php?'.$origpath,'fu');
+		$ans['path']=infra_theme('?*autoedit/download.php?'.$origpath,'fu');
 		return $ans;
 	}
 	function autoedit_folder($file){
@@ -124,4 +124,3 @@
 		closedir($dir);
 		return true;
 	}
-?>

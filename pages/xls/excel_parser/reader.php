@@ -1080,5 +1080,3 @@ class Spreadsheet_Excel_Reader
  * c-hanging-comment-ender-p: nil
  * End:
  */
-
-?>

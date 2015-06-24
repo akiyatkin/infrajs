@@ -1,6 +1,6 @@
 <?
-@define('ROOT','../../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
+
+require_once(__DIR__.'../infra/infra.php');
 infra_load('*files/xls.php','r');//Подключили api для работы с Excel документами
 define('CAT_PATH','*Каталог/Каталог.xls');
 
@@ -10,4 +10,3 @@ $list=array();
 $data=xls_init(CAT_PATH);
 echo '<pre>';
 print_r($data);
-?>

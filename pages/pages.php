@@ -1,6 +1,5 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	require_once(__DIR__.'/../infra/infra.php');
 
 
 	$ans=array('result'=>1);
@@ -56,4 +55,3 @@
 
 	if($FROM_PHP) return $ans;
 	else echo infra_tojs($ans);
-?>

@@ -4,10 +4,9 @@ Copyright 2008-2010 ITLife, Ltd. http://itlife-studio.ru
 
 
 */
-@define('ROOT','../../../../');
 function infra_admin_modified($etag=''){//$v изменение которой должно создавать новую копию кэша
 	$conf=infra_config();
-	//if($conf['debug'])return;
+	if($conf['debug'])return;
 	$now=gmdate('D, d M Y H:i:s', time()).' GMT';
 	infra_cache_yes();
 	if(!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])){
@@ -90,7 +89,8 @@ function infra_admin($break=null,$ans=array('msg'=>'Требуется авто�
 			infra_view_setCookie('infra_admin');
 		}
 	}else{
-		$key=$_COOKIE['infra_admin'];
+		$key=infra_view_getCookie('infra_admin');
+
 		$admin=($key===$realkey);
 		if($break===false){
 			infra_view_setCookie('infra_admin');
@@ -115,11 +115,10 @@ function infra_admin($break=null,$ans=array('msg'=>'Требуется авто�
 	return $admin;
 }
 function infra_admin_time_set($t=null){
-	$dir='infra/cache/';
-	@mkdir(ROOT.'infra/cache/');
+	$dirs=infra_dirs();
 	if(is_null($t))$t=time();
 	$adm=array("time"=>$t);
-	file_put_contents(ROOT.$dir.'last_admin.json',infra_json_encode($adm));
+	file_put_contents($dirs['cache'].'last_admin.json',infra_json_encode($adm));
 }
 /*function infra_admin_lastupdate_time(){
 	return infra_once('infra_admin_lastupdate_time',function(){
@@ -194,4 +193,3 @@ function infra_admin_cache($name,$call,$args=array(),$re=false){//Запуска
 		return $data['result'];
 	},array($args,$name),$re);
 }
-?>

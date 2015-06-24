@@ -1,9 +1,11 @@
 <?php
 //Свойство css	
-	
-	function infrajs_csscheck(&$layer){
+namespace itlife\infrajs\infrajs\ext;
+use itlife\infrajs\infrajs;
+class css{
+	function check(&$layer){
 		if(!isset($layer['css']))return;
-		$sotre=infrajs_store();
+		$sotre=infrajs::store();
 		if(!$store['css'])$store['css']=array();
 		if($store['css'][$css])return;
 		infra_fora($layer['css'],function($css) use(&$layer,&$store){			
@@ -12,4 +14,4 @@
 			infra_html('<style>'.$code.'</style>',$layer['div']);
 		});
 	}
-?>
+}

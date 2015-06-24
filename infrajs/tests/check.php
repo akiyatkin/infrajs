@@ -1,21 +1,17 @@
 <?php
-@define('ROOT','../../../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
-infra_require('*infrajs/initphp.php');
+	
+	require_once(__DIR__.'/../../infra/infra.php');
+	infra_require('*infrajs/initphp.php');
+	use itlife\infrajs\infrajs;
+	$ans = array();
+	$ans['title'] = 'проверка функции infrajs::check';
 
+	infra_html('<div id="oh"></div>');
 
+	$layer=array('tpl'=>array('хой'),"div"=>"oh");
+	infrajs::check($layer);
 
-infra_html('<div id="oh"></div>');
+	$html=infra_html();
 
-$layer=array('tpl'=>array('хой'),"div"=>"oh");
-infrajs_check($layer);
-
-$html=infra_html();
-
-
-if($html=='<div id="oh">хой</div>'){
-	echo '<h1 style="color:green">PASS</h1>';
-}else{
-	echo '<h1 style="color:red">ERROR</h1>';
-}
-?>
+	if($html!='<div id="oh">хой</div>') return infra_err($ans, 'ошибка');
+	return infra_ret($ans, 'работает');

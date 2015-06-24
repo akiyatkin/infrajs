@@ -56,6 +56,3 @@ function &infra_memcache(){
 	$infra_mem->connect($conf['memcache']['host'],$conf['memcache']['port']) or die ("Could not connect");
 	return $infra_mem;
 };
-
-
-?>

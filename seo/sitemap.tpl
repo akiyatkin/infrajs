@@ -1,5 +1,5 @@
 {robots:}User-agent: *
-sitemap: http://{host}/{root}infra/plugins/seo/seo.php?type=sitemap
+sitemap: http://{host}/{root}?*seo/seo.php?type=sitemap
 Disallow: /infra/cache/
 Disallow: /infra/backup/
 Disallow: /infra/lib/

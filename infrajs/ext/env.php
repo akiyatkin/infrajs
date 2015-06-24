@@ -1,29 +1,31 @@
 <?php
-	global $infra,$infrajs;
-	infra_wait($infrajs,'oninit',function(){
-		//Обработка envs, envtochild, myenvtochild, envframe
-		infrajs_externalAdd('myenv','config');//Обрабатывается также как config
-		//infrajs_externalAdd('env','');//Никак не обрабатывается.. будет установлено только если нечего небыло
-		infrajs_externalAdd('envs','childs');//Объединяется так же как childs
+namespace itlife\infrajs\infrajs\ext;
+use itlife\infrajs\infrajs;
+use itlife\infrajs\infrajs\ext\external;
+class env {
+	function init(){
+		global $infra,$infrajs;
+		infra_wait($infrajs,'oninit',function(){
+			//Обработка envs, envtochild, myenvtochild, envframe
+			external::add('myenv','config');//Обрабатывается также как config
+			//infrajs_externalAdd('env','');//Никак не обрабатывается.. будет установлено только если нечего небыло
+			external::add('envs','childs');//Объединяется так же как childs
 
-		infrajs_runAddKeys('envs');//Теперь бегаем и по envs свойству
-	});
-	function &infrajs_test(){
-		$layers=infrajs_getWorkLayers();
-		return $layers[0];
+			infrajs::runAddKeys('envs');//Теперь бегаем и по envs свойству
+		});
 	}
-	function infrajs_envCheck(&$layer){
+	function check(&$layer){
 		if(@!$layer['env'])return;
-		$store=&infrajs_store();
+		$store=&infrajs::store();
 		$r=null;
 		//Слои myenv надо показывать тогдаже когда и показывается сам слой
 		$myenv=null;
 		$ll=null;
-		infrajs_run(infrajs_getWorkLayers(),function(&$l) use(&$layer,&$myenv,&$ll){//Есть окружение и мы не нашли ни одного true для него
+		infrajs::run(infrajs::getWorkLayers(),function(&$l) use(&$layer,&$myenv,&$ll){//Есть окружение и мы не нашли ни одного true для него
 			if(!isset($l['myenv']))return;
 
 			
-			if(!infrajs_is('check',$l))return;//В back режиме выйти нельзя.. смотрятся все слои
+			if(!infrajs::is('check',$l))return;//В back режиме выйти нельзя.. смотрятся все слои
 
 			
 
@@ -32,7 +34,7 @@
 			if(!isset($l['myenv'][$layer['env']]))return;
 			if(is_null($l['myenv'][$layer['env']]))return;
 
-			if(infrajs_is('show',$l)){//Ищим последнюю установку на счёт env
+			if(infrajs::is('show',$l)){//Ищим последнюю установку на счёт env
 				$myenv=$l['myenv'][$layer['env']];
 				$ll=&$l;
 				
@@ -47,7 +49,7 @@
 				$r=true;
 			}else{
 				$r=false;
-				infrajs_isSaveBranch($layer,!!infrajs_isParent($ll,$layer));
+				infrajs::isSaveBranch($layer,!!infrajs::isParent($ll,$layer));
 				//infrajs_isSaveBranch($layer,false);
 			}
 		}
@@ -58,7 +60,7 @@
 					$r=true;
 				}else{//Если слой по умолчанию скрыт его детей не показываем
 					$r=false;
-					infrajs_isSaveBranch($layer,false);
+					infrajs::isSaveBranch($layer,false);
 				}
 			}
 		}
@@ -90,14 +92,14 @@
 	});
 	*/
 
-	function infrajs_envEnvs(&$layer){
+	function checkinit(&$layer){
 		if(@!$layer['envs'])return;
 		infra_forx($layer['envs'],function(&$l,$env){//Из-за забегания вперёд external не применился а в external могут быть вложенные слои
 			$l['env']=$env;
 			$l['envtochild']=true;
 		});
 	}
-	function infrajs_envtochild(&$layer){
+	function envtochild(&$layer){
 		$parent=$layer;
 		while(@$parent['parent']&&@$parent['parent']['env']){
 			$parent=$parent['parent'];
@@ -107,7 +109,7 @@
 			}
 		}
 	}
-	function infrajs_envframe(&$layer){
+	function envframe(&$layer){
 		if(@!$layer['envframe'])return;
 		if(@$layer['env'])return;
 
@@ -116,7 +118,7 @@
 		$stor['envcouter']++;
 		$layer['env']='envframe'.$stor['envcouter'];
 	}
-	function infrajs_envframe2(&$layer){
+	function envframe2(&$layer){
 		$parent=@$layer['parent'];
 		if(!$parent)return;
 		if(@!$parent['envframe'])return;
@@ -124,7 +126,7 @@
 		$layer['myenv'][$parent['env']]=true;
 		$layer['myenvtochild']=true;
 	}
-	function infrajs_envmytochild(&$layer){
+	function envmytochild(&$layer){
 		$parent=$layer;
 		while(@$parent['parent']&&@$parent['parent']['myenv']){
 			$parent=$parent['parent'];
@@ -137,7 +139,4 @@
 			}
 		}
 	}
-	
-
-
-?>
+}

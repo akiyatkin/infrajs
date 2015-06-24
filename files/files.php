@@ -1,6 +1,6 @@
 <?php
-@define('ROOT','../../../');
-require_once(ROOT.'infra/plugins/infra/infra.php');
+
+require_once(__DIR__.'../infra/infra.php');
 
 infra_require('*files/files.inc.php');
 $type=$_GET['type'];
@@ -95,7 +95,7 @@ if(@$_GET['id']){//Загрузка файла
 		if(@$res['idfinded']&&@$res['id']!==@$res['name']){//Надено по id такой результат нельзя кэшировать, потому что тут будет редирект
 			if(!empty($_GET['redirect'])){
 				infra_cache_no(); //Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start, который второй раз не срабатывает
-				//Критерий что у работает сборка.. работаем сейчас в пространстве infrajs_check()
+				//Критерий что у работает сборка.. работаем сейчас в пространстве infrajs::check()
 				//Подписка на события infra_wait(infra,oninit) во всех остальных случаях событие не сработает. и подписка потеряется. а в нужном случае сразу выполнится			
 				global $infrajs;
 				infra_wait($infrajs,'oninit',function() use(&$res,$type){
@@ -142,7 +142,7 @@ if(@$_GET['id']){//Загрузка файла
 			//@header("HTTP/1.0 404 Not Found");
 			@header('location: http://'.$_SERVER['HTTP_HOST'].'/'.infra_view_getRoot(ROOT).'?Файлы/'.$id);
 		}else{
-			@header('location: http://'.$_SERVER['HTTP_HOST'].'/'.infra_view_getRoot(ROOT).'infra/plugins/autoedit/download.php?'.$dir.$res['file']);
+			@header('location: http://'.$_SERVER['HTTP_HOST'].'/'.infra_view_getRoot(ROOT).'?*autoedit/download.php?'.$dir.$res['file']);
 		}
 		exit;
 	}else{
@@ -163,4 +163,3 @@ if(@$_GET['id']){//Загрузка файла
 }else{
 	return infra_echo($ans,'Недостаточно параметров');
 }
-?>

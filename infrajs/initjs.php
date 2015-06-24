@@ -1,6 +1,5 @@
 <?php
-	@define('ROOT','../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	require_once(__DIR__.'/../infra/infra.php');
 	infra_admin_modified();
 	$re=isset($_GET['re']);
 	$html=infra_admin_cache('infra_initjs_php',function($str){
@@ -28,7 +27,7 @@
 		$html.=$require('*infrajs/infrajs.js');//
 		$html.=$require('*infrajs/ext/once.js');//
 
-		$html.=$require('*infrajs/ext/state.js');//
+		$html.=$require('*infrajs/ext/crumb.js');//
 		$html.=$require('*infrajs/ext/external.js');//
 		$html.=$require('*infrajs/ext/env.js');//
 		
@@ -97,4 +96,3 @@
 	},array($_SERVER['QUERY_STRING']),$re);
 	@header('content-type: text/javascript; charset=utf-8');
 	echo $html;
-?>

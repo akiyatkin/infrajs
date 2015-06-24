@@ -41,5 +41,3 @@ function &infra_db($debug=false){
 		return $db;
 	},array($debug));
 }
-
-?>

@@ -130,6 +130,8 @@ function &infra_fora(&$el,$callback,$back=false,$nar=array(),&$_group=null,$_key
 	}else if(!is_null($el)){//Если undefined callback не вызывается, Таким образом можно безжать по переменной не проверя определена она или нет.
 		//return $callback($el,$_key,$_group);
 		return infra_forcall($callback,$nar,$el,$_key,$_group);
+	}else{
+		return $el;
 	}
 }
 function &infra_fori(&$el,$callback,$nar=false,$back=false,$_key=null,&$_group=null){//Бежим по объекту рекурсивно
@@ -159,9 +161,9 @@ function &infra_foro(&$obj,$callback,$back=false){//Бежим по объект
 		$ar[]=array('key'=>$key,'val'=>&$val);
 	}
 	return infra_forr($ar,function&(&$el) use($callback,&$obj){
-		if(is_null($el['val']))return;
+		if(is_null($el['val']))return $el['val'];
 		$r=&$callback($el['val'],$el['key'],$obj);
-		if(is_null($r))return;
+		if(is_null($r))return $r;
 		if($r instanceof infra_Fix){
 			if($r->opt['del']){
 				unset($obj[$el['key']]);
@@ -187,7 +189,8 @@ function &infra_foro(&$obj,$callback,$back=false){//Бежим по объект
 function &infra_forx(&$obj,$callback,$back=false){//Бежим сначало по объекту а потом по его свойствам как по массивам
 	return infra_foro($obj,function&(&$v,$key) use(&$obj,$callback,$back){
 		return infra_fora($v,function&(&$el,$i,&$group) use($callback,$key){
-			return $callback($el,$key,$group,$i);
+			$r=&$callback($el,$key,$group,$i);
+			return $r;
 		},$back);
 	},$back);
 };

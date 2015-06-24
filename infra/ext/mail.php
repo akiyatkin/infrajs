@@ -97,4 +97,3 @@ function infra_mail_admin($subject,$body,$debug=false){//письмо админ
 	}
 	return infra_mail_sent($subject,$from,$to,$body);
 }
-?>

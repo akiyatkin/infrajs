@@ -1,7 +1,7 @@
 {
 	"child":{
-		"tpltpl":["<h1>{state.name}</h1><p>Статья на сайте не найдена.</p><p><a href='?'>Перейти на главную страницу</a></p>"],
-		"autoedittpl":{"fast":"{infra.conf.files.folder_pages}{state.name}"},
+		"tpltpl":["<h1>{crumb.name}</h1><p>Статья на сайте не найдена.</p><p><a href='?'>Перейти на главную страницу</a></p>"],
+		"autoedittpl":{"fast":"{infra.conf.files.folder_pages}{crumb.name}"},
 		"showanimate":true,
 		"layers":{
 			"seo":{
@@ -15,17 +15,17 @@
 				"defitems":"*files/files.php?type=pages&seo"
 			},
 			"tplcheck":true,
-			"autoedittpl":{"fast":"{infra.conf.files.folder_pages}{state.name}"},
-			"tpltpl":"*files/files.php?type=pages&id={state.name}&show&redirect=1"
+			"autoedittpl":{"fast":"{infra.conf.files.folder_pages}{crumb.name}"},
+			"tpltpl":"*files/files.php?type=pages&id={crumb.name}&show&redirect=1"
 		}
 	},
 	"childs":{
 		"Error404":{
-			"jsontpl":"*/files/errors.php?code=404&src={~encode(infra.State.get())}",
+			"jsontpl":"*/files/errors.php?code=404&src={~encode(infra.Crumb.query)}",
 			"tpl":["<h1>404 Страница не найдена</h1><p>'/{data.path}'</p>"]
 		},
 		"Error403":{
-			"jsontpl":"*/files/errors.php?code=403&src={~encode(infra.State.get())}",
+			"jsontpl":"*/files/errors.php?code=403&src={~encode(infra.Crumb.query)}",
 			"tpl":["<h1>403 Доступ запрещён</h1><p>'/{data.path}'</p>"]
 		},
 		"Информация":{
@@ -112,8 +112,8 @@
 							},
 							"defitems":"*files/files.php?type=blog&seo"
 						},
-						"tpltpl":"*files/files.php?type=blog&show&redirect=1&id={state.name}",
-						"autoedittpl":{ "fast":"{infra.conf.files.folder_blog}{state.name}" },
+						"tpltpl":"*files/files.php?type=blog&show&redirect=1&id={crumb.name}",
+						"autoedittpl":{ "fast":"{infra.conf.files.folder_blog}{crumb.name}" },
 						"divs":{
 							"blogtitle":{
 								"tpl":["<a href='?Блог'>Блог</a>"]
@@ -166,8 +166,8 @@
 							},
 							"defitems":"*files/files.php?type=events&seo"
 						},
-						"tpltpl":"*files/files.php?type=events&show&redirect=1&id={state.name}",
-						"autoedittpl":{ "fast":"{infra.conf.files.folder_events}{state.name}" },
+						"tpltpl":"*files/files.php?type=events&show&redirect=1&id={crumb.name}",
+						"autoedittpl":{ "fast":"{infra.conf.files.folder_events}{crumb.name}" },
 						"divs":{
 							"eventtitle":{
 								"tpl":["<a href='?События'>События</a>"]
@@ -202,8 +202,8 @@
 						"link":"Тексты/"
 					},
 					"child":{
-						"tpltpl":"*files/files.php?type=texts&show&redirect=1&id={state.name}",
-						"autoedittpl":{ "fast":"{infra.conf.files.folder_texts}{state.name}" },
+						"tpltpl":"*files/files.php?type=texts&show&redirect=1&id={crumb.name}",
+						"autoedittpl":{ "fast":"{infra.conf.files.folder_texts}{crumb.name}" },
 						"divs":{
 							"ftitle":{
 								"tpl":["<a href='?Тексты'>Тексты</a>"]

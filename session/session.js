@@ -49,9 +49,9 @@ infra.session={
 		var id=infra.view.getCookie(this._getName('id'));
 		if(!id)return '';
 		var host=infra.view.getHost();
-		var path=infra.view.getRoot(window.ROOT);
+		var path=infra.view.getRoot();
 		var pass=infra.view.getCookie(this._getName('pass'));
-		var link='http://'+host+'/'+path+'infra/plugins/session/login.php?id='+id+'&pass='+pass;
+		var link='http://'+host+'/'+path+'?*session/login.php?id='+id+'&pass='+pass;
 		return link;
 	},
 	_getName:function(name){

@@ -3,10 +3,10 @@
 {POPTUBEs:}
 	<iframe style="margin:5px auto" width="640" height="480" src="http://www.youtube.com/embed/{.}?rel=0" frameborder="0" allowfullscreen></iframe>
 {POPIMG:}
-	<div><img style="margin:5px auto;" src="infra/plugins/imager/imager.php?w=500&src={conf_ids[conf_sel]}"></div>
+	<div><img style="margin:5px auto;" src="?*imager/imager.php?w=500&src={conf_ids[conf_sel]}"></div>
 	{conf_ids::POPIMGs}
 {POPIMGs:}
-	<img style="margin:5px; cursor:pointer;" src="infra/plugins/imager/imager.php?w=40&src={.}" onclick="var layer=infrajs.getUnickLayer('{unick}'); layer.conf_sel={$key}; infrajs.check(layer);"></div>
+	<img style="margin:5px; cursor:pointer;" src="?*imager/imager.php?w=40&src={.}" onclick="var layer=infrajs.getUnickLayer('{unick}'); layer.conf_sel={$key}; infrajs.check(layer);"></div>
 {LIST:}
 	<style>
 		.biga {
@@ -42,7 +42,7 @@
 	{data.list::Fitem}
 	</table>
 	{Fitem:}
-		<tr><td><img src="infra/plugins/imager/imager.php?src=*autoedit/icons/{ext}.png&w=16"></td><td>{name}<br><a href="infra/plugins/rubrics/rubrics.php?id={name}&type={istate.name}&load">Скачать</a></td><td>{size}&nbsp;Mb</td><td>{~date(:j.m.Y,date)}</td></tr>
+		<tr><td><img src="?*imager/imager.php?src=*autoedit/icons/{ext}.png&w=16"></td><td>{name}<br><a href="?*rubrics/rubrics.php?id={name}&type={crumb.name}&load">Скачать</a></td><td>{size}&nbsp;Mb</td><td>{~date(:j.m.Y,date)}</td></tr>
 		</div>
 {PAGES:}
 	<hr>
@@ -60,7 +60,7 @@
 	{date:}{~date(:j F Y,.)}
 	{j F Y:}j{:nbsp}F{:nbsp}Y{:nbsp}
 	{nbsp:}&\n\b\s\p;
-	{Pimg:}<img src="infra/plugins/imager/imager.php?src={src}&w=100" class="right">
+	{Pimg:}<img src="?*imager/imager.php?src={src}&w=100" class="right">
 {EVENTS:}
 	<style>
 		.eborder_post {
@@ -132,6 +132,6 @@
 			</tr>
 		</table>
 		<div class="eborder_post"></div>
-	{Nimg:}<img style="border: 2px solid #E1E1E1;" src="infra/plugins/imager/imager.php?w=100&src={$encode(.)}">
+	{Nimg:}<img style="border: 2px solid #E1E1E1;" src="?*imager/imager.php?w=100&src={$encode(.)}">
 	{Nlink:}
 		<tr><td> &mdash;&nbsp;</td><td><a href="{href}">{heading|title}</a></td></tr>

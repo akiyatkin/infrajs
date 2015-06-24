@@ -1,7 +1,10 @@
 <?php
-	@define('ROOT','../../../../');
-	require_once(ROOT.'infra/plugins/infra/infra.php');
+	
+	require_once(__DIR__.'/../../infra/infra.php');
 	$result=true;
+
+	$ans = array();
+	$ans['title']='fix.php';
 
 	//back ret
 	$ar=array('a','b','c','e');
@@ -66,7 +69,6 @@
 		$result=false;
 	}
 
-
 	//obj
 	$ar=array('a'=>111,'b'=>222,'c'=>333,'e'=>444);
 	$count=0;
@@ -123,10 +125,5 @@
 		$result=false;
 	}
 
-	if($result){
-		$ans['result'] = 1;
-	}
-	else{
-		$ans['result'] = 0;
-	}
-	return $ans;
+	if(!$result) return infra_err($ans, 'err');
+	return infra_ret($ans, 'ret');

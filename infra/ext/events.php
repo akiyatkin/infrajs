@@ -98,4 +98,3 @@ function infra_fire_exec(&$depot,&$callback){
 		return $r;
 	}
 }
-?>
