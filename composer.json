@@ -3,16 +3,16 @@
     "description": "javascript php framework",
     "license": "GPL3",
     "authors": [{
-            "name": "Anton Kiyatkin",
-            "email": "aky@list.ru"
+        "name": "itlife",
+        "email": "info@itlife-studio.ru"
 	}],
     "require": {
 		"php": ">=5.3.3",
-		"akiyatkin/phpdate":"1"
+		"itlife/phpdate":"1"
     },
     "repositories":[{
-        	"type":"vcs",
-       		"url":"https://github.com/akiyatkin/phpdate"
+    	"type":"vcs",
+   		"url":"https://github.com/akiyatkin/phpdate"
     }],
     "autoload":{
         "psr-4": {
