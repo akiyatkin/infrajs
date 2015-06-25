@@ -42,6 +42,7 @@ function infra_dirs(){
 	echo infra_realpath(__DIR__.'/../../../../../').'/';//АД Папка vendor'а
 	*/
 
+
 	$vendorroot=substr(infra_realpath(__DIR__.'/../../../../../'),strlen(infra_realpath($_SERVER['DOCUMENT_ROOT']))).'/';//AВ до vendor
 	//$vendor=infra_dir2();
 	$siteroot=substr(infra_getcwd(),strlen(infra_realpath($_SERVER['DOCUMENT_ROOT']))).'/';//AВ Путь до сайта
@@ -78,6 +79,13 @@ function infra_dirs(){
 			$ROOT.'vendor/itlife/infrajs/'
 		)
 	);
+	$vendors=__DIR__.'/../../../../';
+	$list=scandir($vendors);
+	foreach($list as $name){
+		if($name[0]=='.')continue;
+		if(!is_dir($vendors.$name))continue;
+		$infra_dirs['search'][]=$ROOT.'vendor/'.$name.'/';
+	}
 	//echo '<pre>';
 	//print_r($dirs);
  	//echo '<br>'.DIRECTORY_SEPARATOR; //AВ Путь до корня веб сервера
