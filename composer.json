@@ -6,6 +6,7 @@
         "name": "itlife",
         "email": "info@itlife-studio.ru"
 	}],
+	"minimum-stability": "dev",
     "require": {
 		"php": ">=5.3.3",
 		"itlife/phpdate":"dev-master"
