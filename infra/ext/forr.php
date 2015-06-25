@@ -50,7 +50,8 @@ class infra_Fix {
 	}
 }
 function &infra_forr(&$el,$callback,$back=false){//Бежим по индекснему массиву
-	if(!is_array($el))return;
+	$r=null;//Notice без этого генерируется Only variable references should be returned by reference
+	if(!is_array($el))return $r;
 
 	if($back){
 		for($i=sizeof($el)-1;$i>=0;$i--){
@@ -69,7 +70,7 @@ function &infra_forr(&$el,$callback,$back=false){//Бежим по индекс�
 		}
 	}else{
 		for($i=0,$l=sizeof($el);$i<$l;$i++){
-			if(is_null($el[$i]))continue;
+			if(@is_null($el[$i]))continue;
 			$r=&$callback($el[$i],$i,$el);
 			if(is_null($r))continue;
 			if($r instanceof infra_Fix){
@@ -84,7 +85,7 @@ function &infra_forr(&$el,$callback,$back=false){//Бежим по индекс�
 			}
 		}
 	}
-	$r=null;//Notice без этого генерируется Only variable references should be returned by reference
+	
 	return $r;
 }
 function &infra_forcall($callback,$nar,&$val,$key=null, &$group=null,$i=null){

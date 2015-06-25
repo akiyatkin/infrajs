@@ -1,5 +1,8 @@
 <?php
+
 require_once(__DIR__.'/infra.php');
+
+
 infra_admin(true);
 ini_set('error_reporting',E_ALL & ~E_NOTICE & ~E_STRICT);
 ini_set('display_errors', 1);
@@ -14,7 +17,10 @@ infra_forr($dirs['search'],function($dir) use(&$data){
 		$src=$dir.$plugin.'/tests/';
 		
 		if(!is_dir($src))return;
-		
+		if(!is_file($dir.$plugin.'/.config.json')){
+			$data['<small title=".config.json required" style="color:gray; font-weight:normal;">'.$dir.$plugin.'/tests/</small>']=array();
+			return;
+		}
 		$data[$dir.$plugin]=array();
 
 		$list = scandir($src);

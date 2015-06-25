@@ -1,32 +1,22 @@
 <?php
-
-require_once(__DIR__.'/../../infrajs.php');
+require_once(__DIR__.'/../session.php');
+$ans=array();
+$ans['title']='Проверка сессии на сервере';
 
 $db=&infra_db();
-if($db){
-	$val=infra_session_get('test');
+if(!$db)return infra_err($ans,'ERROR нет базы данных');
+$val=infra_session_get('test');
 
 
-	echo "Было: ";
-	var_dump($val);
-	echo "\nУстановили: ";
-	$val++;
-	infra_session_set('test',$val);
 
-	var_dump($val);
-	echo '<hr>';
-	echo 'infra_session_getId()='.infra_session_getId();
-	echo '<hr>';
-	echo '<pre>';
-	$d=infra_session_get();
-	print_r($d);
-	if($d['test']>1){
-		echo '<h1 id="res" style="color:green;">PASS</h1>';
-	}else{
-		echo '<h1 id="res" style="color:red;">ERROR нажмите 1 раз F5</h1>';
-	}
+$val++;
+infra_session_set('test',$val);
+
+
+$d=infra_session_get();
+$ans['test']=$d['test'];
+if($d['test']>1){
+	return infra_ret($ans,'PASS');
 }else{
-	echo '<h1 id="res" style="color:red;">ERROR нет базы данных</h1>';
+	return infra_err($ans,'ERROR нажмите 1 раз F5');
 }
-
-?>

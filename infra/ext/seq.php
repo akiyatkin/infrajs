@@ -39,7 +39,7 @@ function infra_seq_right($val,$offen=INFRA_SEQ_OFFEN,$seldom=INFRA_SEQ_SELDOM){/
 	$res=array();
 	for($i=0,$l=sizeof($val);$i<$l;$i++){
 		$s=$val[$i];
-		if($s===''&&sizeof($res)!=0&&$res[$i-1]!==''){//Сами себя не должны отменять
+		if($s===''&&sizeof($res)!=0&&@$res[$i-1]!==''){//Сами себя не должны отменять
 			array_pop($res);
 		}else{
 			$res[]=$s;

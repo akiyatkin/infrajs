@@ -1,7 +1,6 @@
 
 infra.Crumb=function(){};
 infra.Crumb.childs={};
-
 infra.Crumb.prototype={
 	
 	getInstance:function(name){
@@ -97,11 +96,20 @@ infra.Crumb.init=function(){
 	//infra.Crumb.child=infra.Crumb.getInstance();
 	var listen=function(){		
 		var query=decodeURI(location.search.slice(1));
+		if(query[0]=='*'){
+			var q=query.split('?',2);
+			infra.Crumb.prefix='?'+q[0];
+			query=q[1]||'';
+		}
 		if(infra.Crumb.query===query)return;//chrome при загрузки запускает собыите а FF нет. Первый запуск мы делаем сами по этому отдельно для всех а тут игнорируются совпадения.
 		infra.Crumb.popstate=true;
 		infra.Crumb.change(query);
 		infra.fire(infra.Crumb,'onchange');
+		if(infra.Crumb.prefix){
+			infra.Crumb.setA(document);
+		}
 	}
+	if(document.readyState === "complete") return listen();
 	document.addEventListener("DOMContentLoaded",function(){
 		if(history.pushState){//Первый запус должен проходить после того как все слои подключились все кому интересно подписались на события и потом проходит событие и всё работает
 			//Вперёд назад
@@ -114,12 +122,13 @@ infra.Crumb.go=function(query){
 	var q=query.split('?',2);
 	if(q.length>1)query=q[1];
 	if(infra.Crumb.query===query)return;
-	if(history.pushState){
-		var path=query?('?'+encodeURI(query)):location.pathname;
+	if(!infra.Crumb.prefix&&history.pushState){
+		var path=(query?('?'+encodeURI(query)):location.pathname);
 		document.http_referrer=location.href;
 		history.pushState(null,null,path);//При переходе назад этой записи не должно быть
 	}else{
-		var path=query?('?'+query):location.pathname;
+		if(query&&query[0]=='*')infra.Crumb.prefix='';
+		var path=(query?(infra.Crumb.prefix+'?'+query):location.pathname+infra.Crumb.prefix);
 		location.href=path;	
 	}
 	infra.Crumb.popstate=false;
@@ -196,8 +205,11 @@ infra.Crumb.setA=function(div){
 		href=crumb.toString();
 
 		var siteroot=infra.view.getRoot();
-		
-		var sethref=href?('http://'+location.host+'/'+siteroot+'?'+encodeURI(href)):('http://'+location.host+'/'+siteroot);
+		if(href[0]=='*'){
+			var sethref=href?('http://'+location.host+'/'+siteroot+'?'+encodeURI(href)):('http://'+location.host+'/'+siteroot);
+		}else{
+			var sethref=href?('http://'+location.host+'/'+siteroot+infra.Crumb.prefix+'?'+encodeURI(href)):('http://'+location.host+'/'+siteroot+infra.Crumb.prefix);
+		}
 		a.setAttribute('href',sethref);//Если параметров нет, то указывам путь на главную страницу
 
 		a.onclick=function(old_func,a,crumb){
@@ -210,6 +222,7 @@ infra.Crumb.setA=function(div){
 					}
 					var nohref=a.getAttribute('nohref');
 					if(nohref)return false;
+
 					infra.Crumb.go(crumb.toString());
 				},1);
 				return false;
@@ -228,6 +241,7 @@ infra.Crumb.setA=function(div){
 	static $params;//Всё что после первого амперсанда
 	static $get;
 	public $is;*/
+infra.Crumb.prefix='';
 infra.Crumb.value='';
 infra.Crumb.query=null;
 infra.Crumb.path=[];

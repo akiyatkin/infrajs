@@ -13,8 +13,7 @@
 	}
 
 	if(!$db)return infra_echo($ans,'Нет соединения с базой данных. Сессия только в браузере.',0);
-	$conf=infra_config();
-	$conf=$conf['http'];
+	
 	
 	$session_id=infra_view_getCookie('infra_session_id');
 	$session_pass=infra_view_getCookie('infra_session_pass');
@@ -53,7 +52,7 @@
 		}
 	}
 	//Здесь session_id проверенный
-
+	$ans['news']=array();
 	if($session_id&&$timelast<=$time){
 		$sql='select name, value, unix_timestamp(time) as time from ses_records where session_id=? and time>=from_unixtime(?) order by time, rec_id';
 		$stmt=$db->prepare($sql);

@@ -1,15 +1,18 @@
 <?php
 	use itlife\infrajs\infrajs;
+	use itlife\infrajs\infra;
 	require_once(__DIR__.'/../../infra/infra.php');
 	$ans = array();
 	$ans['title'] = 'check3';
 
 	infra_require('*infrajs/initphp.php');
 
-	infra_html('<div id="main"></div>');
+	infra_html('<div id="main"></div>',true);
 
 	$layers=infra_loadJSON('*infrajs/tests/resources/check3.json');
-	infra_State_set("?test");
+	
+	infra\ext\crumb::change("test");
+	
 	infrajs::check($layers);
 
 	$html=infra_html();

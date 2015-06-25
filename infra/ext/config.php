@@ -64,15 +64,13 @@ function infra_dirs(){
 		$up=implode('/',array_slice($vr, $i));
 		$ROOT=$down.$up;
 	}
-
-
 	//$ROOT=infra_getcwd().'/';
-
 
 	$infra_dirs=array(
 		'ROOT'=>$ROOT,
 		'cache'=>$ROOT.'infra/cache/',
-		'backup'=>$ROOT.'infra/backup',
+		'data'=>$ROOT.'infra/data/',
+		'backup'=>$ROOT.'infra/backup/',
 		'search'=>array(
 			$ROOT.'infra/data/',
 			$ROOT.'infra/layers/',

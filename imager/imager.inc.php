@@ -63,32 +63,33 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 		return $name;
 	}
 	
-	function imager_makeGray($img_path,$filter=IMG_FILTER_GRAYSCALE){		
+	function imager_makeGray($img_path){		
 		return infra_cache(array($img_path),'imager_makeGray',function($img_path){
-			@mkdir(ROOT.'infra/cache/imager_gray/');
+			$dirs=infra_dirs();
+			@mkdir($dirs['cache'].'imager_gray/');
 			$type=imager_type($img_path);
 			$name=md5($img_path);
-			$output_path='infra/cache/imager_gray/'.$name.'.'.$type;
+			$output_path=$dirs['cache'].'imager_gray/'.$name.'.'.$type;
 
-			$type_img = exif_imagetype(ROOT.$img_path );
+			$type_img = exif_imagetype( $img_path );
 			$gd = gd_info();
 
 
 			if($type_img == 3 AND $gd['PNG Support'] == 1 ){ 					
 				
-				$img_png = imagecreatefromPNG( ROOT.$img_path );
+				$img_png = imagecreatefromPNG( $img_path );
 				imagesavealpha( $img_png, TRUE );
 				
-				if( $img_png AND imagefilter( $img_png, $filter )) {			
-					@unlink( ROOT.$output_path );				
-					imagepng( $img_png, ROOT.$output_path );
+				if( $img_png AND imagefilter( $img_png, IMG_FILTER_GRAYSCALE )) {			
+					@unlink( $output_path );				
+					imagepng( $img_png, $output_path );
 				}
 				imagedestroy( $img_png );
-			}else if($type_img==2 AND ($gd['JPG Support'] == 1  OR $gd['JPEG Support'] == 1 )) { 
-				$img= imagecreatefromJPEG( ROOT.$img_path );		    
-				if($img AND imagefilter( $img, $filter )) {			
-					@unlink( ROOT.$output_path );				
-					imagejpeg( $img, ROOT.$output_path );
+			}else if($type_img==2){
+				$img= imagecreatefromJPEG( $img_path );		    
+				if($img AND imagefilter( $img, IMG_FILTER_GRAYSCALE )) {			
+					@unlink( $output_path );				
+					imagejpeg( $img, $output_path );
 				}
 				imagedestroy($img);
 				/*
@@ -103,13 +104,13 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 				 imagecolorset( $img_jpg, $c, $i, $i, $i );
 			    }		    
 				@unlink( $output_path );
-				imagejpeg( $img_jpg, ROOT.$output_path );
+				imagejpeg( $img_jpg, $output_path );
 				imagedestroy( $img_jpg );*/
-			}elseif( $type_img == 1 AND $gd['GIF Create Support'] == 1  ) { 
-				$img= imagecreatefromGIF( ROOT.$img_path );		    
-				if($img AND imagefilter( $img, $filter )) {			
-					@unlink( ROOT.$output_path );				
-					imagegif( $img, ROOT.$output_path );
+			}elseif( $type_img == 1) { 
+				$img= imagecreatefromGIF( $img_path );		    
+				if($img AND imagefilter( $img, IMG_FILTER_GRAYSCALE )) {			
+					@unlink( $output_path );				
+					imagegif( $img, $output_path );
 				}
 				imagedestroy($img);
 			    /*if(!$color_total = imagecolorstotal( $img_gif )) {
@@ -122,8 +123,8 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 					 $i   = ( $col['red']+$col['green']+$col['blue'] )/3;
 				 imagecolorset( $img_gif, $c, $i, $i, $i );
 			    }		    
-				@unlink( ROOT.$output_path );
-				imagegif( $img_gif, ROOT.$output_path );
+				@unlink( $output_path );
+				imagegif( $img_gif, $output_path );
 				imagedestroy( $img_gif );*/
 			}else{
 				return $img_path;
@@ -163,9 +164,9 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 				//exit;
 			}
 		}
-		if($src&&is_dir(ROOT.$src)){//папка смотрим в ней для src
+		if($src&&is_dir($src)){//папка смотрим в ней для src
 			$ar=infra_loadJSON('*pages/list.php?src='.infra_toutf($src).'&e=jpg,gif,png&onlyname=1');
-			//$ar=glob(ROOT.$src.'*.{png,gif,jpg}',GLOB_BRACE);
+			//$ar=glob($src.'*.{png,gif,jpg}',GLOB_BRACE);
 			$r=false;
 			if(@$ar[0]){
 				$src=$src.infra_tofs($ar[0]);
@@ -177,25 +178,27 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 		return $src;
 	}
 	function imager_remote($src,$t){
-		$dir='infra/cache/imager_remote/';
-		@mkdir(ROOT.$dir);
+		$dirs=infra_dirs();
+		$dir=$dirs['cache'].'imager_remote/';
+		
+		@mkdir($dir);
 		$esrc=$dir.infra_tofs(imager_encode($src));
 		$remotecache=infra_theme($esrc);
 		if($remotecache&&!isset($_GET['re'])){
-			$cachetime=filemtime(ROOT.$remotecache);
+			$cachetime=filemtime($remotecache);
 			$now=time();
 			if($now-($t*60*60)<$cachetime){
 				return $esrc;
 			}
 		}
 		$filecontent=file_get_contents($src);
-		file_put_contents(ROOT.$esrc,$filecontent);
+		file_put_contents($esrc,$filecontent);
 		return $esrc;
 	}
 	function imager_type($src){
 		$src=infra_tofs($src);
 		return infra_cache(array($src),'imager_type',function($src){
-			$handle = fopen(ROOT.$src,'r');
+			$handle = fopen($src,'r');
 			$line=fgets($handle,50);
 			$line2=fgets($handle,50);
 			fclose($handle);
@@ -243,7 +246,7 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 		}
 		*/
 
-		$file=file(ROOT.$src);
+		$file=file($src);
 		$l=sizeof($file);
 		$metka=preg_replace("/[\n]/",'',$file[$l-2]);
 		if($metka=='imager'){
@@ -282,7 +285,7 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 	}
 	
 	function imager_writeinfo($src,$data){
-		$file=file(ROOT.$src);
+		$file=file($src);
 		$l=sizeof($file);
 		$metka=preg_replace("/[\s\n]/",'',$file[$l-2]);
 		$json=json_encode($data,JSON_UNESCAPED_UNICODE);
@@ -315,97 +318,9 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 		$file[]="\n".'imager';
 		$file[]="\n".$json;
 		infra_once('imager_readInfo',$data,array($src));
-		return file_put_contents(ROOT.$src, implode("", $file));
+		return file_put_contents($src, implode("", $file));
 	}
-	/*function imager_getMetka($src,$name){
-		$data=imager_getFileMetka($src);
-		return $data[$name];
-	}
-	function imager_setMetka($src,$name,$value){
-		$data=imager_getFileMetka($src);
-		$data[$name]=$value;
-		return imager_setFileMetka($src,$data);
-	}*/
 	
-
-
-	/*function imager_getIgnore($src){
-		$data=imager_readInfo($src);
-		return $data['ignore'];
-	}
-	function imager_getWater($src){
-		$data=imager_readInfo($src);
-		return $data['water'];
-	}
-	function imager_getOrig($src){
-		$data=imager_readInfo($src);
-		return $data['orig'];
-	}
-	function imager_setWater($src,$value){
-		$data=imager_readInfo($src);
-		$data['water']=$value;
-		return imager_writeInfo($src,$data);
-	}
-	function imager_setIgnore($src,$value){
-		$data=imager_readInfo($src);
-		$data['ignore']=$value;//Ставится на оригинал
-		return imager_writeInfo($src,$data);
-	}
-	function imager_setOrig($src,$orig){//Выполняется после создания бэкапа
-		$info=imager_readInfo($src);
-		imager_setInfoOrig($info,$orig);
-		return imager_writeInfo($src,$info);
-	}*/
-	/*function imager_addMetka($src,$orig,$setmetka='imager'){
-		$file=file(ROOT.$src);
-		$l=sizeof($file);
-		$metka=preg_replace("/[\s\n]/",'',$file[$l-1]);
-		if($metka==$setmetka){
-			die('Попытка повторно добавить метку '.$setmetka);
-		}
-		
-		$file[]="\n".date('j.d.Y');
-		$file[]="\n".$_SERVER['HTTP_HOST'];
-		if($orig)$file[]="\n".filesize(ROOT.$orig);
-		if($orig)$file[]="\n".$orig;
-		$file[]="\n".$setmetka;
-
-		$r=file_put_contents(ROOT.$src, implode("", $file));//Сохранили эту информацию для потомков
-		if(!$r)die('Не смогли сохранить путь до оригинала в файле с водяным знаком... хотя в новое место его уже положили');
-		touch(ROOT.$orig);//Время изменения backupа должно быть больше чем время файла с водяным знаком		
-	}*/
-	
-	/*function imager_orig($src,&$metka=false){
-		$file=file(ROOT.$src);
-		$l=sizeof($file);
-		$orig=false;
-		
-		24.24.2010
-		premjera.ru
-		47579
-		core/data/imager/.notwater/core,data,Каталог,ISC,TRONICFUTURA,TRONICFUTURA.jpg
-		imager
-		28.28.2013
-		127.0.0.1
-		''
-		oldignore
-		
-		//var_dump($metka);
-		//exit;
-
-		
-		$metka=preg_replace("/[\s\n]/",'',$file[$l-1]);//-1
-		
-		if($metka=='imager'){//Водяной знак уже есть
-			$orig=trim(infra_toutf($file[$l-2]));//Путь до оригинала
-		}else{
-			$metka=preg_replace("/[\s\n]/",'',$file[$l-5]);//-1
-			if($metka=='imager'){//Водяной знак уже есть
-				$orig=trim(infra_toutf($file[$l-6]));//Путь до оригинала
-			}
-		}
-		return $orig;
-	}*/
 	function imager_encode($file){//Передаётся имя со слэшами надо сделать имя файла и путь до него
 		$file=preg_replace('/[\/:]/',',',$file);//Если в имени файла уже есть запятая не получится сделать водяной знак
 		if(mb_strlen($file)>50)$file=md5($file);
@@ -415,22 +330,23 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 		$info=imager_readInfo($src);
 		if($info)return $info;
 
-		$dir='infra/data/imager/';
-		@mkdir(ROOT.$dir);
+		$dirs=infra_dirs();
+		$dir=$dirs['data'].'imager/';
+		@mkdir($dir);
 		$dir.='.notwater/';
-		@mkdir(ROOT.$dir);
+		@mkdir($dir);
 
 		$i='';
 		$orig=$dir.imager_encode($src);
-		while(is_file(ROOT.$orig)){
+		while(is_file($orig)){
 			$orig=$orig.$i;
 			$i.='i';
 		}
-		$r=copy(ROOT.$src,ROOT.$orig);//по адресу orig не существует файла было проверено
+		$r=copy($src,$orig);//по адресу orig не существует файла было проверено
 		if(!$r)die('Не удалось сохранить оригинал');
 		$info=array();
 		$info['host']=$_SERVER['HTTP_HOST'];
-		$info['size']=filesize(ROOT.infra_tofs($orig));
+		$info['size']=filesize(infra_tofs($orig));
 		$info['date']=date('j.m.Y');
 		$info['orig']=infra_toutf($orig);
 		return $info;
@@ -458,25 +374,22 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 		else if(!infra_theme($orig))return;//Защита.. оригинал не найден.. значит старая версия водяной знак есть, 
 		//метке water нет. второй знак не нужен
 
-		
-	
-
 		$fn='imagecreatefrom'.$type;
-		$img = $fn(ROOT.$orig);
+		$img = $fn($orig);
 
-
-		list($w, $h) = getimagesize(ROOT.$orig);
+		$orig=infra_theme($orig);
+		list($w, $h) = getimagesize($orig);
 		$w=$w*9/10;
 		$h=$h*9/10;
 		$water=imager_resize($water,'png',$w,$h);
-		$water=imagecreatefrompng(ROOT.$water);
+		$water=imagecreatefrompng($water);
 		$img=create_watermark($type,$img,$water,100);//$img - картинка с водяным знаком
 
 
 		$info=imager_makeInfo($src);//Сделали бэкап, или считали info у существующего файла, чтобы после изменений сохранить прошлые
 
 		$fn='image'.$type;
-		$fn($img,ROOT.$src);//Подменили картинку на картинку с водяным знаком
+		$fn($img,$src);//Подменили картинку на картинку с водяным знаком
 
 		$info['water']=true;
 		imager_writeInfo($src,$info);
@@ -575,11 +488,13 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 	}
 	function imager_resize($src,$type,$w,$h,$crop=false,$top=false,$bottom=false){
 		if(!$type||(!$w&&!$h))return $src;
-		$dir='infra/cache/imager_resize/';
-		@mkdir(ROOT.$dir);
+		$dirs=infra_dirs();
+		$dir=$dirs['cache'].'imager_resize/';
+
+		@mkdir($dir);
 		$dir=$dir.imager_encode($src);
-		@mkdir(ROOT.$dir);
-		list($width_orig, $height_orig) = getimagesize(ROOT.$src);
+		@mkdir($dir);
+		list($width_orig, $height_orig) = getimagesize($src);
 		if(!$height_orig)return $src;
 		
 		
@@ -630,13 +545,13 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 			die('Требуется модуль GD');
 		}
 		
-		if(!is_file(ROOT.$src_cache)||filemtime(ROOT.$src_cache)<filemtime(ROOT.$src)
-				||filemtime(ROOT.$src_cache)<filemtime(__FILE__)
+		if(!is_file($src_cache)||filemtime($src_cache)<filemtime($src)
+				||filemtime($src_cache)<filemtime(__FILE__)
 			){
 			$image_p=imagecreatetruecolor($w, $h);
 
 			$fn='imagecreatefrom'.$type;
-			$image=$fn(ROOT.$src);
+			$image=$fn($src);
 
 
 
@@ -669,7 +584,7 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 			$fn='image'.$type;
 			$quality=95;
 			if($type=='png')$quality=2;
-			$fn($image_p, ROOT.$src_cache,$quality);
+			$fn($image_p, $src_cache,$quality);
 			imagedestroy($image);
 			imagedestroy($image_p);
 		}

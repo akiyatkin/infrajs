@@ -3,6 +3,9 @@
 function infra_view_getHost(){
 	return $_SERVER['HTTP_HOST'];
 }
+function infra_view_getSchema(){
+	return $_SERVER['REQUEST_SCHEME'].'://';
+}
 function infra_view_getAgent(){
 	return $_SERVER['HTTP_USER_AGENT'];
 }
@@ -53,16 +56,6 @@ function infra_view_getRoot($root=false){
 		$path.='/';
 	}
 
-	return $path;
-}
-function infra_view_getPath(){//depricated
-	$conf=infra_config();
-	$path=$conf['http']['siteroot'];
-	return $path;
-
-	$path=$_SERVER['REQUEST_URI'];
-	$p=explode('?',$path);
-	$path=$p[0];
 	return $path;
 }
 

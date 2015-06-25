@@ -83,26 +83,19 @@ function infra_cache_check($call){
 	return $cache2;
 }
 
-function &infra_cache($conds,$name,$fn,$args=array(),$re=false){
-
+function infra_cache($conds,$name,$fn,$args=array(),$re=false){
 	return infra_admin_cache('cache_admin_'.$name,function($conds,$name,$fn,$args, $re){
-		
 		//цифры нельзя, будут плодиться кэши
 		//если условие цифра значит это время, и если время кэша меньше.. нужно выполнить
-		
-
-
-		
-			
 		$max_time=1;
 		for($i=0,$l=sizeof($conds);$i<$l;$i++){
 			$mark=$conds[$i];
 			$mark=infra_theme($mark);
 			if($mark){
-				$m=filemtime(ROOT.$mark);
+				$m=filemtime($mark);
 				if($m>$max_time)$max_time=$m;
-				if(is_dir(ROOT.$mark)){
-					foreach (glob(ROOT.$mark.'*.*') as $filename) {
+				if(is_dir($mark)){
+					foreach (glob($mark.'*.*') as $filename) {
 						$m=filemtime($filename);
 						if($m>$max_time)$max_time=$m;
 					}
@@ -114,9 +107,9 @@ function &infra_cache($conds,$name,$fn,$args=array(),$re=false){
 		}
 		$cache_time=0;
 		$path=infra_cache_path($name,array($conds,$args));
-		if($cond){
+		if($conds){
 			$path=infra_tofs($path);
-			if(is_file(ROOT.$path))$cache_time=filemtime(ROOT.$path);//стартовая временная метка равна дате изменения самого кэша
+			if(is_file($path))$cache_time=filemtime($path);//стартовая временная метка равна дате изменения самого кэша
 		}
 		
 		$execute=($max_time>$cache_time)||$re;//re удаляет кэш только для текущих параметров
@@ -138,7 +131,7 @@ function &infra_cache($conds,$name,$fn,$args=array(),$re=false){
 
 			if(!$cache_control2){
 				$cache=serialize($data);
-				file_put_contents(ROOT.$path,$cache);
+				file_put_contents($path,$cache);
 			}
 		}
 		return $data;

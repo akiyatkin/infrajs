@@ -30,6 +30,8 @@ class crumb {
 			$that->name=@$right[sizeof($right)-1];
 			$that->value=$that->query=$that->is=$that->counter=null;
 			crumb::$childs[$short]=$that;
+			
+
 			if($that->name)$that->parent=$that->getInstance('//');
 			
 		}
@@ -66,11 +68,13 @@ class crumb {
 		crumb::$child=crumb::getInstance((string)@$right[0]);
 		$that=crumb::getInstance(crumb::$path);
 		$child=null;
+
 		while($that){
 			$that->counter=$counter;
 			$that->is=true;
 			$that->child=$child;
 			$that->value=(string)@$right[sizeof($that->path)];
+
 			$that->query=crumb::short(array_slice($right,sizeof($that->path)));
 			$child=$that;
 			$that=$that->parent;
@@ -78,6 +82,7 @@ class crumb {
 		$that=crumb::getInstance($old);
 		if(!$that)return;
 		while($that){
+
 			if($that->counter==$counter)break;
 			$that->is=$that->child=$that->value=$that->query=null;
 			$that=$that->parent;

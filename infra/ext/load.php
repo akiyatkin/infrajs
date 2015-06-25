@@ -212,23 +212,20 @@ function infra_theme($str){//Небезопасная функция
 	$dirs=infra_dirs();
 	if(!$str)return null;
 	$is_fn=($str{strlen($str)-1}=='/')?'is_dir':'is_file';
-
-
 	$q=explode('?',$str,2);
 	$str=$q[0];
 	$query='';
 	if(isset($q[1]))$query='?'.$q[1];
 	if($str{0}!='*'){
-
-		if($is_fn($str))return $str.$query;//Относительный путь в первую очередь, если повторный вызов для пути попадём сюда
+		
+		//Проверка что путь уже правильный... происходит когда нет звёздочки... Неопределённость может возникнуть только с явными путями
+		//if($is_fn($str))return $str.$query;//Относительный путь в первую очередь, если повторный вызов для пути попадём сюда
 		
 		if($is_fn($dirs['ROOT'].$str))return $dirs['ROOT'].$str.$query;		
 		return null;
 	}
 	$str=substr($str,1);
 	foreach($dirs['search'] as $dir){
-		
-		
 		if($is_fn($dir.$str))return $dir.$str.$query;
 	}
 	return null;

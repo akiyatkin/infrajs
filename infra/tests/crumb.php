@@ -3,7 +3,7 @@
 	require_once(__DIR__.'/../../infra/infra.php');
 	infra_require('*infra/ext/crumb.php');
 	use itlife\infrajs\infra\ext\crumb;
-	crumb->init();
+	crumb::init();
 
 	$ans = array();
 	$ans['title'] = 'Хлебные крошки';

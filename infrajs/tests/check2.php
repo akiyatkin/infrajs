@@ -10,8 +10,7 @@
 	infra_html('<div id="main"></div>');
 
 	$layers=infra_loadJSON('*infrajs/tests/resources/check2.json');
-	infrajs::checkAdd($layers);
-	infrajs::check();
+	infrajs::check($layers);
 
 	$layer=&$layers['layers'];
 

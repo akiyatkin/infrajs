@@ -402,7 +402,7 @@ function infra_template_getCommaVar(&$conf,&$d,$term=false){
 		if(is_callable($func)){
 			$param=array();
 			for($i=0,$l=sizeof($d['var']);$i<$l;$i++){//Количество переменных
-				if(infra_template_bool($d['var'][$i]['orig'])){
+				if(infra_template_bool(@$d['var'][$i]['orig'])){
 					$v=infra_template_getValue($conf,$d['var'][$i],$term);
 					$param[]=$v;
 				}else if($d['var']){
@@ -452,8 +452,11 @@ function infra_template_getOnlyVar(&$conf,&$d,$term,$i=0){
 		}
 		$v=$h;
 	}else{
-		
-		$r=infra_template_getVar($conf,$d['var'][$i]);
+		if(isset($d['var'][$i])){
+			$r=infra_template_getVar($conf,$d['var'][$i]);
+		}else{
+			$r=null;
+		}
 
 		
 		$v=$r['value'];
