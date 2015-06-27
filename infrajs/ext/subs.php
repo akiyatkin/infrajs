@@ -16,7 +16,7 @@ use itlife\infrajs\infrajs;
 use itlife\infrajs\infrajs\ext\external;
 
 class subs {
-	function init(){
+	static function init(){
 		global $infra,$infrajs;
 		infra_wait($infrajs,'oninit',function(){
 			infrajs::runAddKeys('subs');
@@ -29,7 +29,7 @@ class subs {
 			 */
 		});
 	}
-	function check(&$layer){
+	static function check(&$layer){
 		if(@!$layer['parent'])return;
 		if(@$layer['parent']['subs']){
 			//forx бежим по свойствам объекта, как по массивам. Массивы могут быть вложенные

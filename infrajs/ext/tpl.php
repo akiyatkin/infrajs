@@ -6,14 +6,14 @@ namespace itlife\infrajs\infrajs\ext;
 global $infra;
 global $infrajs;
 class tpl {
-	function onlyclient(&$layer){
+	static function onlyclient(&$layer){
 		$parent=$layer;
 		while($parent){
 			if(@$parent['onlyclient'])return true;
 			$parent=@$parent['parent'];
 		}
 	}
-	function tplroottpl(&$layer){
+	static function tplroottpl(&$layer){
 		$prop='tplroot';
 		$proptpl=$prop.'tpl';
 		if(!isset($layer[$proptpl]))return;
@@ -25,14 +25,14 @@ class tpl {
 			$layer[$prop]=infra_template_parse(array($p),$layer);
 		}
 	}
-	function dataroottpl(&$layer){
+	static function dataroottpl(&$layer){
 		$prop='dataroot';
 		$proptpl=$prop.'tpl';
 		if(!isset($layer[$proptpl]))return;
 		$p=$layer[$proptpl];
 		$layer[$prop]=infra_template_parse(array($p),$layer);
 	}
-	function tpltpl(&$layer){
+	static function tpltpl(&$layer){
 		$prop='tpl';
 		$proptpl=$prop.'tpl';
 		if(@!$layer[$proptpl])return;
@@ -43,7 +43,7 @@ class tpl {
 		if($ar)$layer[$prop]=array($p);	
 		else $layer[$prop]=$p;	
 	}
-	function jsontpl(&$layer){
+	static function jsontpl(&$layer){
 		$prop='json';
 		$proptpl=$prop.'tpl';
 		if(@!$layer[$proptpl])return;
@@ -54,7 +54,7 @@ class tpl {
 		if($ar)$layer[$prop]=array($p);	
 		else $layer[$prop]=$p;		
 	}
-	function &getData(&$layer){//Используется в propcheck.js
+	static function &getData(&$layer){//Используется в propcheck.js
 		if(!isset($layer['json']))return $layer['data'];
 		$data=@$layer['json'];
 		if(infra_isAssoc($data)===false){//Если массив то это просто строка в виде данных
@@ -64,7 +64,7 @@ class tpl {
 		}
 		return $data;
 	}
-	function getTpl(&$layer){
+	static function getTpl(&$layer){
 		$tpl=$layer['tpl'];
 		if(is_string($tpl)){
 
@@ -79,7 +79,7 @@ class tpl {
 		return $tpl;
 	}
 
-	function getHtml(&$layer){//Вызывается как для основных так и для подслойв tpls frame. Расширяется в tpltpl.prop.js
+	static function getHtml(&$layer){//Вызывается как для основных так и для подслойв tpls frame. Расширяется в tpltpl.prop.js
 		//if(@$layer['tplclient'])return '';
 		$row=parsed::check($layer);
 		//$row=$_SERVER['QUERY_STRING'],$layer['unick'];
@@ -109,7 +109,7 @@ class tpl {
 		
 		return $html;
 	}
-	function _getHtml(&$layer){//Вызывается как для основных так и для подслойв tpls frame. Расширяется в tpltpl.prop.js
+	static function _getHtml(&$layer){//Вызывается как для основных так и для подслойв tpls frame. Расширяется в tpltpl.prop.js
 
 		if(@$layer['data']||@$layer['json']||@$layer['tpls']||@$layer['tplroot']){
 			$tpls=infra_template_make($layer['tpl']);//С кэшем перепарсивания
@@ -142,7 +142,7 @@ class tpl {
 		return $html;
 
 	}
-	function jsoncheck(&$layer){
+	static function jsoncheck(&$layer){
 		if(@$layer['data']&&!is_null(@$layer['jsoncheck'])){
 			$data=&infrajs_getData($layer);
 			if(@$layer['jsoncheck']){//Если true значит да только если данные есть

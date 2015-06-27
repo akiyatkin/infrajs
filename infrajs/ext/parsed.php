@@ -5,7 +5,7 @@ namespace itlife\infrajs\infrajs\ext;
 class parsed {
 	//Расширяется в global.js
 	static $props=array();
-	function init(){
+	static function init(){
 		parsed::add('dataroot');
 		parsed::add('tplroot');
 		parsed::add('envval');
@@ -19,7 +19,7 @@ class parsed {
 		});
 	}
 	
-	function check($layer){//Функция возвращает строку характеризующую настройки слоя 
+	static function check($layer){//Функция возвращает строку характеризующую настройки слоя 
 		$str=array();
 		for($i=0,$l=sizeof(parsed::$props);$i<$l;$i++){
 			$call=parsed::$props[$i];
@@ -28,7 +28,7 @@ class parsed {
 		}
 		return implode('|',$str);
 	}
-	function add($fn){
+	static function add($fn){
 		if(is_string($fn))$func=function($layer) use($fn){
 			if(!isset($layer[$fn]))return '';
 			return print_r($layer[$fn],true);

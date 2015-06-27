@@ -1,13 +1,11 @@
 <?php
 
-require_once(__DIR__.'/infra.php');
-
-
 infra_admin(true);
-ini_set('error_reporting',E_ALL & ~E_NOTICE & ~E_STRICT);
+//ini_set('error_reporting',E_ALL & ~E_NOTICE & ~E_STRICT);
 ini_set('display_errors', 1);
 $data=array();
 $dirs=infra_dirs();
+
 infra_forr($dirs['search'],function($dir) use(&$data){
 	
 	$list = scandir($dir);

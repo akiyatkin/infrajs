@@ -88,9 +88,10 @@ function &infra_forr(&$el,$callback,$back=false){//Бежим по индекс�
 	
 	return $r;
 }
+/*
 function &infra_forcall($callback,$nar,&$val,$key=null, &$group=null,$i=null){
 	$param=array_merge($nar,array(&$val,$key,&$group,$i));
-	/*$param=array();
+	//$param=array();
 	$j=0;
 	while(sizeof($nar)>$j){
 		$param[]=&$nar[$j];
@@ -99,11 +100,11 @@ function &infra_forcall($callback,$nar,&$val,$key=null, &$group=null,$i=null){
 	$param[]=&$val;
 	$param[]=&$key;
 	$param[]=&$group;
-	$param[]=&$i;*/
+	$param[]=&$i;
 	
-	/*for($i=sizeof($param)-1,$l=10;$i<$l;$i++){
-		$param[$i]=null;
-	}*/
+	//for($i=sizeof($param)-1,$l=10;$i<$l;$i++){
+	//	$param[$i]=null;
+	//}
 	
 	$r=&$callback(
 		$param[0],
@@ -118,19 +119,16 @@ function &infra_forcall($callback,$nar,&$val,$key=null, &$group=null,$i=null){
 		@$param[9]);
 	//$r=call_user_func_array($callback,$param);
 	return $r;
-}
-function &infra_fora(&$el,$callback,$back=false,$nar=array(),&$_group=null,$_key=null){//Бежим по массиву рекурсивно
-	if(is_array($back)){
-		$nar=$back;
-		$back=false;
-	}
+}*/
+function &infra_fora(&$el,$callback,$back=false,&$_group=null,$_key=null){//Бежим по массиву рекурсивно
+	if(is_array($back))throw 'infra_fora back is array!';
 	if(infra_isAssoc($el)===false){
-		return infra_forr($el,function&(&$v,$i) use(&$el,$callback,$back,$nar){
-			return infra_fora($v,$callback,$back,$nar,$el,$i);
+		return infra_forr($el,function&(&$v,$i) use(&$el,$callback,$back){
+			return infra_fora($v,$callback,$back,$el,$i);
 		},$back);
 	}else if(!is_null($el)){//Если undefined callback не вызывается, Таким образом можно безжать по переменной не проверя определена она или нет.
-		//return $callback($el,$_key,$_group);
-		return infra_forcall($callback,$nar,$el,$_key,$_group);
+		return $callback($el,$_key,$_group);
+		//return infra_forcall($callback,$nar,$el,$_key,$_group);
 	}else{
 		return $el;
 	}

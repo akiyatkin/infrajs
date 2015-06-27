@@ -88,8 +88,9 @@ function infra_template_analysis(&$group){
 	 *
 	 * 'as.df',[ 'sdf[as.d',[] ],']'
 	 * */
-	infra_forr($group,function($exp,$i) use(&$group){
-		if(is_string($exp))return;
+	infra_forr($group,function&($exp,$i) use(&$group){
+		$r=null;
+		if(is_string($exp))return $r;
 		else $exp=$exp[0];
 
 
@@ -113,7 +114,7 @@ function infra_template_analysis(&$group){
 		//
 		if(@$exp[0]=='{'&&@$exp[strlen($exp)-1]=='}'){
 			$group[$i]=$exp;
-			return;
+			return $r;
 		}
 
 		$group[$i]=infra_template_parseexp($exp);
@@ -125,11 +126,12 @@ function infra_template_analysis(&$group){
 		 * 'a[', ['(b',['(c)'],')',] ,']',['()']
 		 * */
 		//print_r($group[$i]);
-
+		return $r;
 	});
 }
 function infra_template_parse($url,$data=array(),$tplroot='root',$dataroot='',$tplempty='root'){
 	$tpls=infra_template_make($url,$tplempty);
+
 	$text=infra_template_exec($tpls,$data,$tplroot,$dataroot);
 	return $text;
 }
@@ -217,10 +219,11 @@ function infra_template_exec(&$tpls,&$data,$tplroot='root',$dataroot=''){//То�
 	if(is_null($tpldata)||$tpldata===false||$tpldata==='')return '';//Данные должны быть 0 подходит
 
 
-
-	$tpl=infra_fora($tpls,function &($tplroot, &$t){
+	$tpl=infra_fora($tpls,function&(&$t) use($tplroot){
 		return $t[$tplroot];
-	},array($tplroot));
+	});
+
+
 	if(is_null($tpl))return $tplroot;//Когда нет шаблона
 	$conftpl['tpl']=&$tpl;
 
@@ -246,13 +249,16 @@ function infra_template_execTpl($conf){
 	//var - asdf[asdf] но получить такую переменную нельзя нужно расчитать этот путь getPath asdf.qwer и где же хранить этот путь
 	//lastroot нужен чтобы прощитать с каким dataroot нужно подключить шаблон это всегда путь от корня
 
-	infra_forr($conf['tpl'],function(&$d) use(&$conf,&$html){
+	infra_forr($conf['tpl'],function&(&$d) use(&$conf,&$html){
+		$r=null;
 		$var=infra_template_getValue($conf,$d);//В getValue будет вызываться execTpl но dataroot всегда будет возвращаться в прежнее значение
 
 		if(is_string($var))$html.=$var;
 		if(is_float($var))$html.=$var;
 		if(is_int($var))$html.=$var;
 		else $html.='';
+		
+		return $r;
 	});
 
 	//$conf['dataroot']=$dataroot;
@@ -265,7 +271,7 @@ function &infra_template_getPath(&$conf,$var){//dataroot это прощитан
 	 * asdf[asdf()]
 	 * */
 	$ar=array();
-	infra_forr($var,function(&$v) use(&$conf,&$ar){ //'[asdf,asdf,[asdf],asdf]'
+	infra_forr($var,function&(&$v) use(&$conf,&$ar){ //'[asdf,asdf,[asdf],asdf]'
 		if(is_string($v)||is_int($v)){//name
 			$ar[]=$v;
 		}else if(@is_array($v)&&@is_array($v[0])&&@is_string($v[0]['orig'])){//name[name]  [name,[{}],name]
@@ -305,6 +311,7 @@ function &infra_template_getPath(&$conf,$var){//dataroot это прощитан
 			$r=$r['value'];
 			$ar[]=$r;
 		}
+		$r=null;return $r;
 	});
 	return $ar;
 }
@@ -615,8 +622,9 @@ function infra_template_parseexp($exp,$term=false,$fnnow=null){// Приорит
 	$cond=explode(',',$exp);
 	if(sizeof($cond)>1){
 		$res['var']=array();
-		infra_forr($cond,function($c) use(&$res){
+		infra_forr($cond,function&($c) use(&$res){
 			$res['var'][]=infra_template_parseexp($c,true);
+			$r=null;return $r;
 		});
 		return $res;
 	}
@@ -711,16 +719,17 @@ function infra_template_parseCommaVar($var){//Разбиваем на запят
 	
 	
 
-	infra_fora($ar,function($v) use(&$res,&$var){
+	infra_fora($ar,function&($v) use(&$res,&$var){
 		$r=infra_template_parsevar($v);
 		
 		$res[]=$r;
+		$r=null;return $r;
 	});
 	infra_template_checkInsert($res);
 	return $res;
 }
 function infra_template_checkInsert(&$r){
-	infra_fora($r,function(&$vv,$i,&$group){//точки, скобки
+	infra_fora($r,function&(&$vv,$i,&$group){//точки, скобки
 		global $infra_template_replacement;
 		if(is_string($vv)){
 			if(preg_match("/^xinsert(\d+)$/",$vv,$m)){
@@ -729,7 +738,7 @@ function infra_template_checkInsert(&$r){
 		}else if($vv&&$vv['orig']){
 			infra_template_checkInsert($vv['var']);
 		}
-
+		$r=null;return $r;
 	});
 };
 function infra_template_parsevar($var){//Ищим скобки as.df[asdf[y.t]][qwer][ert]   asdf[asdf][asdf]

@@ -7,8 +7,10 @@ function infra_seq_short($val,$offen=INFRA_SEQ_OFFEN,$seldom=INFRA_SEQ_SELDOM){/
 	if(is_string($val)=='string')return $val;
 	if(!is_array($val))$val=array();
 	$nval=array();
-	infra_forr($val,function($s) use(&$nval,$offen,$seldom){ 
+	infra_forr($val,function&($s) use(&$nval,$offen,$seldom){ 
 		$nval[]=str_replace($offen,$seldom,$s);
+		$r=null;
+		return $r;
 	});
 	return implode($offen,$nval);
 }
@@ -28,8 +30,10 @@ function infra_seq_right($val,$offen=INFRA_SEQ_OFFEN,$seldom=INFRA_SEQ_SELDOM){/
 		if(!is_string($val))$val='';
 		$val=explode($offen,$val);
 
-		infra_forr($val,function(&$s,$i) use($seldom,$offen){
+		infra_forr($val,function&(&$s,$i) use($seldom,$offen){
 			$s=str_replace($seldom,$offen,$s);
+			$r=null;
+			return $r;
 		});
 		if($val[sizeof($val)-1]==='')array_pop($val);
 		if(isset($val[0])&&$val[0]==='')array_shift($val);

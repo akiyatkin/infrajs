@@ -8,20 +8,21 @@
 	<script>infra.Crumb.init()</script>
 </head>
 <body>
+	<h1>Tests</h1>
 	<table class="table">
 	<thead>
 		<tr class="bg-primary">
 			<td>
-			Имя файла
+			Filename
 			</td>
 			<td>
-			Название теста
+			Title
 			</td>
 			<td>
-			Результат
+			Result
 			</td>
 			<td>
-			Сообщение
+			Message
 			</td>
 		</tr>
 	</thead>

@@ -1,14 +1,13 @@
 <?php
-@define('ROOT','../../../../');
-@define('INFRA_MEM_DIR','infra/cache/mem/');
-@mkdir(ROOT.INFRA_MEM_DIR,0755);
 function infra_mem_set($key,&$val){
+	
 	$mem=&infra_memcache();
 	if($mem){
 		$mem->set($key,$val);
 	}else{
+		$dirs=infra_dirs(); $dir=$dirs['cache'].'mem/';
 		$v=serialize($val);
-		file_put_contents(ROOT.INFRA_MEM_DIR.$key.'.ser',$v);
+		file_put_contents($dir.$key.'.ser',$v);
 	}
 }
 function infra_mem_get($key){
@@ -16,8 +15,9 @@ function infra_mem_get($key){
 	if($mem){
 		$r=$mem->get($key);
 	}else{
-		if(is_file(ROOT.INFRA_MEM_DIR.$key.'.ser')){
-			$r=file_get_contents(ROOT.INFRA_MEM_DIR.$key.'.ser');
+		$dirs=infra_dirs(); $dir=$dirs['cache'].'mem/';
+		if(is_file($dir.$key.'.ser')){
+			$r=file_get_contents($dir.$key.'.ser');
 			$r=unserialize($r);
 		}else{
 			$r=null;
@@ -30,7 +30,8 @@ function infra_mem_delete($key){
 	if($mem){
 		$r=$mem->delete($key);
 	}else{
-		$r=@unlink(ROOT.INFRA_MEM_DIR.$key.'.ser');
+		$dirs=infra_dirs(); $dir=$dirs['cache'].'mem/';
+		$r=@unlink($dir.$key.'.ser');
 	}
 	return $r;
 }
@@ -39,7 +40,8 @@ function &infra_mem_flush(){
 	if($mem){
 		$mem->flush();
 	}else{
-		foreach (glob(ROOT.INFRA_MEM_DIR.'*.*') as $filename) {
+		$dirs=infra_dirs(); $dir=$dirs['cache'].'mem/';
+		foreach (glob($dir.'*.*') as $filename) {
 			@unlink($filename);
 		}
 	}

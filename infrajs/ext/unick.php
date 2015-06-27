@@ -5,10 +5,10 @@ namespace itlife\infrajs\infrajs\ext;
 use itlife\infrajs\infrajs;
 class unick {
 	static $counter=1;
-	function set(&$layer){
+	static function set(&$layer){
 		if(@!$layer['unick'])$layer['unick']=unick::$counter++;
 	}
-	function &find($name,$value){
+	static function &find($name,$value){
 		$layers=infrajs::getAllLayers();
 		$right=infra_seq_right($name);
 		return infrajs::run($layers,function&(&$layer) use($right,$value){
@@ -17,7 +17,7 @@ class unick {
 			return $r;
 		});
 	}
-	function init(){
+	static function init(){
 		global $infra,$infrajs;
 		infra_wait($infrajs,'oninit',function(){
 			//session и template

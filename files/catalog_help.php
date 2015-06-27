@@ -44,8 +44,9 @@ xls_runPoss($data,function(&$pos) use(&$list){
 	}
 	//return true;//выход из цикла
 });
-infra_forr($list,function(&$val){
+infra_forr($list,function&(&$val){
 	unset($val['group']);//У каждой позиции есть рекурсивное свойство ссылка на группу. Для того чтобы закэшировать результат, или вывести в json формате в ответе. Нужно удалять рекурсивные такие свойства чтобы небыло зацикливания.
+	$r=null;return $r;
 });
 echo '<pre>';
 print_r($list);

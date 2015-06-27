@@ -3,7 +3,7 @@ namespace itlife\infrajs\infrajs\ext;
 use itlife\infrajs\infrajs;
 use itlife\infrajs\infrajs\ext\external;
 class env {
-	function init(){
+	static function init(){
 		global $infra,$infrajs;
 		infra_wait($infrajs,'oninit',function(){
 			//Обработка envs, envtochild, myenvtochild, envframe
@@ -14,7 +14,7 @@ class env {
 			infrajs::runAddKeys('envs');//Теперь бегаем и по envs свойству
 		});
 	}
-	function check(&$layer){
+	static function check(&$layer){
 		if(@!$layer['env'])return;
 		$store=&infrajs::store();
 		$r=null;
@@ -92,14 +92,14 @@ class env {
 	});
 	*/
 
-	function checkinit(&$layer){
+	static function checkinit(&$layer){
 		if(@!$layer['envs'])return;
 		infra_forx($layer['envs'],function(&$l,$env){//Из-за забегания вперёд external не применился а в external могут быть вложенные слои
 			$l['env']=$env;
 			$l['envtochild']=true;
 		});
 	}
-	function envtochild(&$layer){
+	static function envtochild(&$layer){
 		$parent=$layer;
 		while(@$parent['parent']&&@$parent['parent']['env']){
 			$parent=$parent['parent'];
@@ -109,7 +109,7 @@ class env {
 			}
 		}
 	}
-	function envframe(&$layer){
+	static function envframe(&$layer){
 		if(@!$layer['envframe'])return;
 		if(@$layer['env'])return;
 
@@ -118,7 +118,7 @@ class env {
 		$stor['envcouter']++;
 		$layer['env']='envframe'.$stor['envcouter'];
 	}
-	function envframe2(&$layer){
+	static function envframe2(&$layer){
 		$parent=@$layer['parent'];
 		if(!$parent)return;
 		if(@!$parent['envframe'])return;
@@ -126,7 +126,7 @@ class env {
 		$layer['myenv'][$parent['env']]=true;
 		$layer['myenvtochild']=true;
 	}
-	function envmytochild(&$layer){
+	static function envmytochild(&$layer){
 		$parent=$layer;
 		while(@$parent['parent']&&@$parent['parent']['myenv']){
 			$parent=$parent['parent'];

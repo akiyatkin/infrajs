@@ -2,7 +2,7 @@
 namespace itlife\infrajs\infrajs\ext;
 use itlife\infrajs\infra;
 class session {
-	function init(){
+	static function init(){
 		global $infrajs;
 		infra_wait($infrajs,'oninit',function(){//интеграция session template
 			global $infra_template_scope;

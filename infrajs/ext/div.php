@@ -21,7 +21,7 @@ namespace itlife\infrajs\infrajs\ext;
 use itlife\infrajs\infrajs;
 use itlife\infrajs\infrajs\ext\external;
 class div {
-	function init(){
+	static function init(){
 		infrajs::runAddKeys('divs');
 		external::add('divs',function(&$now,$ext){//Если уже есть пропускаем
 			if(!$now)$now=array();
@@ -35,11 +35,11 @@ class div {
 			return $now;
 		});
 	}
-	function divtpl(&$layer){
+	static function divtpl(&$layer){
 		if(!isset($layer['divtpl']))return;
 		$layer['div']=infra_template_parse(array($layer['divtpl']),$layer);
 	}
-	function divcheck(&$layer){
+	static function divcheck(&$layer){
 		$start=false;
 		if(infrajs::run(infrajs::getWorkLayers(),function(&$l) use(&$layer,&$start){//Пробежка не по слоям на ветке, а по всем слоям обрабатываемых после.. .то есть и на других ветках тоже
 			if(!$start){

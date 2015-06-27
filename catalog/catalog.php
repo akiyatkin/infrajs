@@ -438,12 +438,14 @@
 			
 			$prods=array();
 			if($ans['is']=='group'){
-				xls_runPoss($group,function(&$pos) use(&$prods){
+				xls_runPoss($group,&function(&$pos) use(&$prods){
 					$prods[infra_strtolower($pos['Производитель'])]=$pos['Производитель'];
+					$r=null;return $r;
 				});
 			}else if($ans['is']=='search'){
-				infra_forr($ans['list'],function(&$pos) use(&$prods){
+				infra_forr($ans['list'],function&(&$pos) use(&$prods){
 					$prods[infra_strtolower($pos['Производитель'])]=$pos['Производитель'];
+					$r=null;return $r;
 				});
 			}else{
 				xls_runPoss($data,function(&$pos) use(&$prods){
@@ -494,8 +496,8 @@
 			$groups=array();
 			if($ans['sel']){//Выбран производитель
 				if($ans['is']=='group'&&sizeof($ans['path'])<2){//Группа 1ого уровня
-					infra_forr($data['childs'],function(&$g) use(&$groups,$prod){//Оставляем тольк те группы в которхы есть этот производитель
-						xls_runPoss($g,function(&$pos) use(&$g,&$groups,$prod){
+					infra_forr($data['childs'],function&(&$g) use(&$groups,$prod){//Оставляем тольк те группы в которхы есть этот производитель
+						xls_runPoss($g,function&(&$pos) use(&$g,&$groups,$prod){
 							$p=mb_strtolower($pos['Производитель']);
 							if($p==$prod){
 								$title=$g['title'];
@@ -505,7 +507,9 @@
 								$groups[]=array('name'=>$name,'title'=>$title);
 								return false;
 							}
+							$r=null;return $r;
 						});
+						$r=null;return $r;
 					});
 				}
 			}

@@ -7,11 +7,11 @@ use itlife\infrajs\infra;
 use itlife\infrajs\infrajs\ext\external;
 
 class crumb {
-	function init(){
+	static function init(){
 		global $infra,$infrajs;
 		infra_wait($infrajs,'oninit',function(){
-			
-			infra_seq_set($infra_template_scope,infra_seq_right('infra.Crumb.query'),infra\ext\crumb::$query);
+			$root=infra\ext\crumb::getInstance();
+			infra_seq_set($infra_template_scope,infra_seq_right('infra.Crumb.query'),$root->query);
 			$cl=function($mix=null){ return infra\ext\crumb::getInstance($mix); };
 			infra_seq_set($infra_template_scope,infra_seq_right('infra.Crumb.getInstance'),$cl);
 
@@ -37,7 +37,7 @@ class crumb {
 		});
 			
 	}
-	function set(&$layer,$name,&$value){
+	static function set(&$layer,$name,&$value){
 		if(!isset($layer['dyn']))$layer['dyn']=array();
 		$layer['dyn'][$name]=$value;
 		if(isset($layer['parent'])){

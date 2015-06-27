@@ -28,11 +28,11 @@ infrajs::checkAdd(layer);
 global $infrajs;
 $infrajs=array();
 class infrajs {
-	function &storeLayer(&$layer){
+	static function &storeLayer(&$layer){
 		if(@!$layer['store'])$layer['store']=array('counter'=>0);//Кэш используется во всех is функциях... iswork кэш, ischeck кэш используется для определения iswork слоя.. путём сравнения ))
 		return $layer['store'];//Очищается кэш в checkNow	
 	}
-	function &store(){//Для единобразного доступа в php, набор глобальных переменных
+	static function &store(){//Для единобразного доступа в php, набор глобальных переменных
 		global $infrajs_store;
 		if(!$infrajs_store)$infrajs_store=array(
 				"timer"=>false,
@@ -46,11 +46,11 @@ class infrajs {
 		return $infrajs_store;
 	}
 
-	function getAllLayers(){
+	static function getAllLayers(){
 		$store=&infrajs::store();
 		return $store['alayers'];	
 	}
-	function &getWorkLayers(){
+	static function &getWorkLayers(){
 		$store=&infrajs::store();
 		return $store['wlayers'];
 	}
@@ -63,7 +63,7 @@ class infrajs {
 		Гипотетически можем работать вне клиента.. дай один html дай другой... выдай клиенту третий
 		без mainrun мы не считаем env
 	*/
-	function check(&$layers=null){//Пробежка по слоям
+	static function check(&$layers=null){//Пробежка по слоям
 		$store=&infrajs::store();
 		global $infrajs;
 		//if($store['process'])return;//Уже выполняется
@@ -109,19 +109,19 @@ class infrajs {
 		infra_fire($infrajs,'onshow');//loader, setA, seo добавить в html, можно зациклить check
 		//$store['process']=false;
 	}
-	function checkAdd(&$layers){//Два раза вызов добавит слой повторно
+	static function checkAdd(&$layers){//Два раза вызов добавит слой повторно
 		//Чтобы сработал check без аргументов нужно передать слои в add
 		//Слои переданные в check напрямую не сохраняются
 		$store=&infrajs::store();
 		$store['alayers'][]=&$layers;//Только если рассматриваемый слой ещё не добавлен
 	}
 
-	function isAdd($name,$callback){//def undefined быть не может
+	static function isAdd($name,$callback){//def undefined быть не может
 		$store=&infrajs::store();
 		if(!isset($store[$name]))$store[$name]=array();//Если ещё нет создали очередь
 		return $store[$name][]=$callback;
 	}
-	function &is($name,&$layer=null){
+	static function &is($name,&$layer=null){
 
 		$store=&infrajs::store();
 		if(!$store[$name])$store[$name]=array();//Если ещё нет создали очередь
@@ -156,7 +156,7 @@ class infrajs {
 		}
 		return $cache[$name];
 	}
-	function &run(&$layers,$callback,&$parent=null){
+	static function &run(&$layers,$callback,&$parent=null){
 		//$store=&infrajs::store('run_array');//$r, $props=$infrajs_run_props;
 		//if($layers===true)$layers=&infrajs_getWorkLayers();
 		//if($layers===false)$layers=&infrajs_getAllLayers();
@@ -195,29 +195,29 @@ class infrajs {
 		});
 		return $r;
 	}
-	function runAddKeys($name){
+	static function runAddKeys($name){
 		$store=&infrajs::store();
 		$store['run']['keys'][$name]=true;
 	}
-	function runAddList($name){
+	static function runAddList($name){
 		$store=&infrajs::store();
 		$store['run']['list'][$name]=true;
 	}
 
 
-	function isWork($layer){//val для отладки, делает метку что слой в работе
+	static function isWork($layer){//val для отладки, делает метку что слой в работе
 		$store=&infrajs::store();
 		$cache=&infrajs::storeLayer($layer);//work
 		return $cache['counter']&&$cache['counter']==$store['counter'];//Если слой в работе метки будут одинаковые
 	}
-	function isParent(&$layer,&$parent){
+	static function isParent(&$layer,&$parent){
 		 while($layer){
 			 if(infra_isEqual($parent,$layer))return true;
 			 $layer=&$layer['parent'];
 		 }
 		 return false;
 	}
-	function isSaveBranch(&$layer,$val=null){
+	static function isSaveBranch(&$layer,$val=null){
 		$cache=&infrajs::storeLayer($layer);
 		if(!is_null($val))$cache['is_save_branch']=$val;	
 		return @$cache['is_save_branch'];
@@ -225,7 +225,7 @@ class infrajs {
 
 
 
-	function init($index,$div,$src){
+	static function init($index,$div,$src){
 		
 		if(!empty($_SERVER['QUERY_STRING'])){
 			$query=urldecode($_SERVER['QUERY_STRING']);
@@ -234,7 +234,6 @@ class infrajs {
 				return include($theme);
 			}
 		}
-
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
 		$html=infra_admin_cache('index.php',function($index,$div,$src){
 			@header("infrajs-cache: Fail");//Афигенный кэш, когда используется infrajs не подгружается даже
@@ -247,11 +246,14 @@ class infrajs {
 			
 			$layers=&infra_loadJSON($src);
 			
-			infra_fora($layers,function(&$layer) use($div){
+			infra_fora($layers,function&(&$layer) use($div){
 				$layer['div']=$div;
+				$r=null; return $r;
 			});
 			
+
 			infrajs::checkAdd($layers);
+
 			infrajs::check();//В infra_html были добавленыs все указаные в layers слои
 			
 			$html=infra_html();

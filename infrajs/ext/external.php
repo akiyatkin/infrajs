@@ -39,16 +39,16 @@ class external {
 			}
 		);
 	}
-	function add($name,$func){
+	static function add($name,$func){
 		external::$props[$name]=$func;
 	}
-	function check(&$layer){
+	static function check(&$layer){
 		while(@$layer['external']&&(!isset($layer['onlyclient'])||!$layer['onlyclient'])){
 			$ext=&$layer['external'];
 			external::checkExt($layer,$ext);
 		}
 	}
-	function merge(&$layer,&$external,$i){//Используется в configinherit
+	static function merge(&$layer,&$external,$i){//Используется в configinherit
 		if(infra_isEqual($external[$i],$layer[$i])){//Иначе null равено null но null свойство есть и null свойства нет разные вещи
 
 		}else if(isset(external::$props[$i])){
@@ -62,7 +62,7 @@ class external {
 			if(is_null($layer[$i]))$layer[$i]=$external[$i];
 		}
 	}
-	function checkExt(&$layer,&$external){
+	static function checkExt(&$layer,&$external){
 		if(!$external)return;
 		unset($layer['external']);
 		infra_fora($external,function(&$exter) use(&$layer){

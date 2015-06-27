@@ -6,7 +6,7 @@
 namespace itlife\infrajs\infrajs\ext;
 
 class config {
-	function configtpl(&$layer){
+	static function configtpl(&$layer){
 		$name='config';//stencil//
 		$nametpl=$name.'tpl';
 		if(isset($layer[$nametpl])){
@@ -16,7 +16,7 @@ class config {
 			}
 		}
 	}
-	function init(){
+	static function init(){
 		external::add('configtpl',function&(&$now,&$ext,&$layer,&$external,$i){
 			//if(!isset($layer['configtpl']))return $now;
 			//if(isset($layer['config']))return $now;
@@ -24,7 +24,7 @@ class config {
 			return $now;
 		});
 	}
-	function configinherit($layer){
+	static function configinherit($layer){
 		if(isset($layer['configinherit'])){
 			$layer['config']=$layer['parent']['config'];
 			unset($layer['configinherit']);

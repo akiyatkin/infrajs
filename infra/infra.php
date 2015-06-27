@@ -61,7 +61,7 @@ statist - интегрировать как-нибудь
 	if(function_exists('mb_internal_encoding')){
 		mb_internal_encoding('UTF-8');//ХЗ зачем очень давно появилось...
 	}
-
+	
 
 
 	//Убираем магически появляющийся ниоткуда кавычки

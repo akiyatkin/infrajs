@@ -15,8 +15,9 @@
 		xls_runGroups($data,function(&$gr){
 			$gr['name']=$gr['descr']['Наименование'];
 			if(!$gr['name'])$gr['name']=$gr['title'];
-			infra_forr($gr['data'],function(&$pos) use(&$gr){
+			infra_forr($gr['data'],function&(&$pos) use(&$gr){
 				$pos['group_name']=$gr['name'];
+				$r=null;return $r;
 			});
 		});
 	}

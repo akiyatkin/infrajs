@@ -1,11 +1,11 @@
 <?php
-	require_once(__DIR__.'/../../infra/infra.php');
 	use itlife\infrajs\infrajs;
 	infra_require('*infrajs/initphp.php');
 	$ans = array();
 	$ans['title'] = 'is.php';
 
 	$i=0;
+	
 	infrajs::isAdd('test',function(&$layer){
 		global $i;
 		$i++;

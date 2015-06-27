@@ -6,17 +6,18 @@ require_once(__DIR__.'/seq.php');
 class crumb {
 	public $name;
 	public $parent;
-	static $child;
-	static $value;//Строка или null
-	static $query;
+	public $child;
+	public $value;//Строка или null
+	public $query;
 	static $childs=array();
-	static $counter=0;
-	static $path;//Путь текущей крошки
+	public $counter=0;
+	static $globalcounter=0;
+	public $path;//Путь текущей крошки
 	static $params;//Всё что после первого амперсанда
 	static $get;
 	public $is;
 	protected function __construct($right){}
-	public function getInstance($name=''){
+	static public function &getInstance($name=''){
 		if(!empty($this))$right=$this->path;
 		else $right=array();
 		$right=crumb::right(array_merge($right,crumb::right($name)));
@@ -43,6 +44,9 @@ class crumb {
 	static function short($right){
 		return infra_seq_short($right,'/');
 	}
+	public function getGET(){
+		return crumb::$get;
+	}
 	static function change($query){
 		$amp=explode('&',$query,2);
 
@@ -60,13 +64,15 @@ class crumb {
 		parse_str($params,crumb::$get);
 
 		$right=crumb::right($query);
-		$counter=++crumb::$counter;
-		$old=crumb::$path;
-		crumb::$path=$right;
-		crumb::$value=(string)@$right[0];
-		crumb::$query=crumb::short($right);
-		crumb::$child=crumb::getInstance((string)@$right[0]);
-		$that=crumb::getInstance(crumb::$path);
+		$counter=++crumb::$globalcounter;
+
+		$inst=crumb::getInstance();
+		$old=$inst->path;
+		//crumb::$path=$right;
+		//crumb::$value=(string)@$right[0];
+		//crumb::$query=crumb::short($right);
+		//crumb::$child=crumb::getInstance((string)@$right[0]);
+		$that=crumb::getInstance($right);
 		$child=null;
 
 		while($that){

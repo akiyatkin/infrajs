@@ -16,8 +16,9 @@
 	if(empty($_GET['type'])){
 		echo '<table style="font-size:14px; font-family:monospace;">';
 			$time=getmicrotime();
-			infra_forr($tpls,function($t,$key) use(&$time){
-				if(isset($_GET['key'])&&$_GET['key']!=$key)return;
+			infra_forr($tpls,function&($t,$key) use(&$time){
+				$r=null;
+				if(isset($_GET['key'])&&$_GET['key']!=$key)return $r;
 				echo '<tr><td>';
 				echo $key;
 				echo '</td><td>';
@@ -40,6 +41,7 @@
 				echo '</td><td>';
 				echo @$t['com'];
 				echo '</td><tr>';
+				$r=null;return $r;
 			});
 		echo '</table>';
 	}else{
