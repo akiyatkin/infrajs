@@ -7,10 +7,8 @@
         "email": "info@itlife-studio.ru"
 	}],
 	"require": {
-		"php": ">=5.3.3",
-		"itlife/phpdate":"dev-master"
+		"itlife/phpdate":"1.*"
     },
-    "minimum-stability": "dev",
     "repositories":[{
     	"type":"vcs",
    		"url":"https://github.com/akiyatkin/phpdate"
