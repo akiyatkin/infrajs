@@ -1,0 +1,46 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "10b5b76dc20b7545bdd54733fbd240f7",
+    "packages": [
+        {
+            "name": "itlife/phpdate",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/akiyatkin/phpdate.git",
+                "reference": "f9ba69db965d719eb60ff613d5da36fe720b795d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/akiyatkin/phpdate/zipball/f9ba69db965d719eb60ff613d5da36fe720b795d",
+                "reference": "f9ba69db965d719eb60ff613d5da36fe720b795d",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL3"
+            ],
+            "authors": [
+                {
+                    "name": "itlife",
+                    "email": "info@itlife-studio.ru"
+                }
+            ],
+            "description": "javascript function date like php date",
+            "time": "2015-06-29 06:21:58"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
