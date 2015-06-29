@@ -7,7 +7,7 @@
         "email": "info@itlife-studio.ru"
 	}],
 	"require": {
-		"itlife/phpdate":"1.*"
+		"itlife/phpdate":"1.0.3"
     },
     "repositories":[{
     	"type":"vcs",
