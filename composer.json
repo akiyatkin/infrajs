@@ -9,10 +9,6 @@
 	"require": {
 		"itlife/phpdate":"1.0.3"
     },
-    "repositories":[{
-    	"type":"vcs",
-   		"url":"https://github.com/akiyatkin/phpdate"
-    }],
     "autoload":{
         "psr-4": {
             "itlife\\infrajs\\":""
