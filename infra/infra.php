@@ -57,7 +57,7 @@ statist - интегрировать как-нибудь
 	
 
 
-	//error_reporting(E_ALL & ~E_NOTICE);
+	error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 	if(function_exists('mb_internal_encoding')){
 		mb_internal_encoding('UTF-8');//ХЗ зачем очень давно появилось...
 	}
