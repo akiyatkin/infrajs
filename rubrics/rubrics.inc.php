@@ -5,6 +5,7 @@ infra_require('*infra/ext/template.php');
 function rub_search($dir,$str,$exts){//Найти указанный в $str файл
 
 	$files=rub_list($dir,0,0,$exts);
+	
 	if(@$files[$str]){
 	       	$files[$str]['idfinded']=true;//Найдено по id
 	       	return $files[$str];
@@ -151,23 +152,24 @@ function rub_list($dir,$start=0,$count=0,$exts=array()){
 	return $files;
 }
 function _rub_list($dir,$start,$count,$exts){
+
 	if(!$dir)return array();
 	$dir=infra_toutf($dir);
 	$dir=infra_theme($dir);
 
 	$res=array();
-	if(!$dir||!is_dir(ROOT.$dir))return $res;
-	//@mkdir('ROOT'.'infra/cache/files.json');
-	if (is_dir(ROOT.$dir)&&$dh = opendir(ROOT.$dir)) {
+
+	if(!$dir||!is_dir($dir))return $res;
+	if (is_dir($dir)&&$dh = opendir($dir)) {
 		$files=array();
 		while (($file = readdir($dh)) !== false) {
 			if($file[0]=='.')continue;
 			if($file[0]=='~')continue;
 			if($file=='Thumbs.db')continue;
-			if(!is_file(ROOT.$dir.$file))continue;
+			if(!is_file($dir.$file))continue;
 			$rr=infra_nameinfo(infra_toutf($file));
 			if($exts&&!in_array($rr['ext'],$exts))continue;
-			$size=filesize(ROOT.$dir.$file);
+			$size=filesize($dir.$file);
 			$file=infra_toutf($file);
 			$ext=$rr['ext'];
 			if(isset($_GET['re']))$re='&re=1';
@@ -226,5 +228,6 @@ function _rub_list($dir,$start,$count,$exts){
 			$res[$fdata['id']]=$fdata;
 		}
 	}
+
 	return $res;
 }

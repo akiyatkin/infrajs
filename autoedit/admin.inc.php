@@ -1,35 +1,25 @@
 <?php
 	
-	require_once(__DIR__.'/../infra/infra.php');
-	function autoedit_setLastFolderUpdate($path){
-		$path=infra_theme($path);
-		if(!$path)return;
-		$p=explode('/',$path);
-		if($p[0]!=='infra')return;
-		$dir='';
-		foreach($p as $d){
-			$dir=$dir.$d.'/';
-			if(@is_file(ROOT.$dir.'last_folder_update.txt')){
-				$fle = fopen(ROOT.$dir.'last_folder_update.txt',"a");
-				$r=fwrite($fle,"\nАдминка ".date('H:i d.m.Y').' '.infra_toutf($path));
-				break;
-			}
-		}
-	}
+
 	function autoedit_createPath($p,$path=''){//путь до файла или дирректории со * или без, возвращается тот же путь без звёздочки
-		$f=infra_tofs('');
+		//Если путь приходит от пользователя нужно проверять и префикс infra/data добавляется автоматически чтобы ограничить места создания
+		//if(preg_match("/\/\./",$ifolder))return err($ans,'Path should not contain points at the beginning of filename /.');
+		//if(!preg_match("/^\*/",$ifolder))return err($ans,'First symbol should be the asterisk *.');
+
 		if(is_string($p)){
-			$f=preg_replace('/^\*\/*/','*/',$p);
-			$p=explode('/',$f);
-			if($p[0]=='*')$p[0]='infra/data';
+			$dirs=infra_dirs();
+			$p=preg_replace("/^\*/",$dirs['data'],$p);
+			$p=explode('/',$p);
 			$f=array_pop($p);//достали файл или пустой элемент у дирректории
 			$f=infra_tofs($f);
+		}else{
+			$f='';
 		}
-		$dir=array_shift($p);
+		$dir=array_shift($p);//Создаём первую папку в адресе
 		$dir=infra_tofs($dir);
 		if($dir){
-			if(!is_dir(ROOT.$path.$dir)){
-				$r=mkdir(ROOT.$path.$dir);
+			if(!is_dir($path.$dir)){
+				$r=mkdir($path.$dir);
 			}else{
 				$r=true;
 			}
@@ -48,26 +38,6 @@
 		$ext=$match[1];
 		return $ext;
 	}
-	function autoedit_parsefile($origpath){//Путь со звёздочкой до файла
-		$ans=array();
-		$path=infra_theme($origpath);
-		if($path&&is_file(ROOT.$path)){//Если файл есть
-			$p=explode('/',$path);//Имя с расширением
-			$file=array_pop($p);
-		}else if(!$path){//Если файла нет.. определяем имя path 
-			$p=explode('/',$origpath);//Имя с расширением
-			$file=array_pop($p);
-			$file=preg_replace("/^\*/",'',infra_toutf($file));
-		}
-		$ans['file']=$file;
-		$p=explode('/',$origpath);
-		array_pop($p);
-		$ans['folder']=infra_toutf(implode('/',$p));
-		if($ans['folder']=='/'||!$ans['folder'])$ans['folder']='*';
-		else $ans['folder'].='/';
-		$ans['path']=infra_theme('?*autoedit/download.php?'.$origpath,'fu');
-		return $ans;
-	}
 	function autoedit_folder($file){
 		$s=explode('/',$file);
 		$name=array_pop($s);
@@ -76,9 +46,10 @@
 		return $folder;
 	}
 	function autoedit_takepath($file=false){
-		$takepath='infra/cache/admin_takefiles/';
+
+		$takepath=$dirs['cache'].'admin_takefiles/';
 		if($file===false)return $takepath;
-		@mkdir(ROOT.$takepath,0755);
+		
 		$path=$takepath.preg_replace('/[\\/\\\\\*]/','_',infra_tofs($file)).'.js';
 		return $path;
 	}
@@ -96,12 +67,10 @@
 		}
 	}
 	function autoedit_backup($file){
-		$backup='infra/backup/';
-		@mkdir(ROOT.$backup,0755);
-		$backup.='admin_deletedfiles/';
-		@mkdir(ROOT.$backup,0755);
+		$dirs=infra_dirs();
+		$backup=$dirs['backup'].'admin_deletedfiles/';
 		$backup.=date('Y.m.d_H-i-s').'_'.preg_replace('/[\\/\\\\\*]/','_',$file);
-		$r=@copy(ROOT.$file,ROOT.$backup);
+		$r=@copy($file,$backup);
 		if(!$r){
 			infra_echo($ans,'Не удалось сделать backup '.infra_toutf($file).'<br>Скопировать файл в '.infra_toutf($backup),0);
 			return false;

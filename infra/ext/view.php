@@ -1,5 +1,4 @@
 <?php
-@define('ROOT','../../../../');
 function infra_view_getHost(){
 	return $_SERVER['HTTP_HOST'];
 }
@@ -21,7 +20,7 @@ function infra_view_getCookie($name=null){
 }
 function infra_view_setCookie($name,$val=null){
 	$_COOKIE[$name]=$val;
-	$root=infra_view_getRoot(ROOT);
+	$root=infra_view_getRoot();
 	if(is_null($val)){
 		$time=time()-60*60*24*30*24;
 	}else{
@@ -30,8 +29,10 @@ function infra_view_setCookie($name,$val=null){
 	return setcookie($name,$val,$time,'/'.$root);
 }
 
-function infra_view_getRoot($root=false){
+function infra_view_getRoot(){
 	//Путь начинается без слэша svn/project/ например
+	$dirs=infra_dirs();
+	$root=$dirs['ROOT'];
 	$path=$_SERVER['PHP_SELF'];
 	$p=explode('?',$path);
 	$path=explode('/',$p[0]);

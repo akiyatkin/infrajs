@@ -38,7 +38,7 @@
 		{sometest:}
 			<tr class="{class?class?(result?:bg-success?:bg-danger)}">
 				<td>
-				<a href="?*{src}">{name}</a>
+				<a href="{src}">{name}</a>
 				</td>
 				<td>
 				{title}

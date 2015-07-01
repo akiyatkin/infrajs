@@ -121,7 +121,7 @@ infra.Crumb.init=function(){
 infra.Crumb.go=function(query){
 	var q=query.split('?',2);
 	if(q.length>1)query=q[1];
-	if(infra.Crumb.query===query)return;
+	//if(infra.Crumb.query===query)return;
 	if(!infra.Crumb.prefix&&history.pushState){
 		var path=(query?('?'+encodeURI(query)):location.pathname);
 		document.http_referrer=location.href;
@@ -164,6 +164,9 @@ infra.Crumb.setA=function(div){
 			}catch(e){
 				var href=r[1];
 			}
+		}else if(href=='.'){
+			var href='';
+			var beforequest='';
 		}else if(href=='./'){
 			var href='';
 			var beforequest='';

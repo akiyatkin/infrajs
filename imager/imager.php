@@ -6,8 +6,6 @@ getorig
 ignoremark
 */
 	
-	require_once(__DIR__.'../infra/infra.php');
-	
 	infra_require('*imager/imager.inc.php');
 
 	$src=(string)infra_toutf(@$_GET['src']);
@@ -20,7 +18,7 @@ ignoremark
 /*---------$src---------------*/
 	if(!preg_match('/\.php/',$isrc)){//Нельзя считывать напрямую такое
 		$tsrc=infra_theme($isrc);
-		$date=filemtime(ROOT.$tsrc);//даже если это папка
+		$date=filemtime($tsrc);//даже если это папка
 		$last_modified=gmdate('D, d M Y H:i:s', $date).' GMT';
 		if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
 		  // разобрать заголовок
@@ -133,7 +131,7 @@ ignoremark
 	
 	$src=infra_tofs($src);
 	$type=imager_type($src);
-	
+
 	if(!is_null($ignoremark)){
 		infra_admin(true);
 		//Метку ignore может выставить только администратор
@@ -145,7 +143,7 @@ ignoremark
 			if($orig){
 				$orig=infra_theme($orig);
 				if($orig){//Если оригинальный файл найден
-					$r=copy(ROOT.$orig,ROOT.$src);//Востановили оригинал без удаления оригинала
+					$r=copy($orig,$src);//Востановили оригинал без удаления оригинала
 					$info['water']=false;
 					if(!$r){
 						imager_writeInfo($src,$info);
@@ -230,7 +228,8 @@ ignoremark
 		header("Cache-control: public");//Заголовок разрешающий сохранение на прокси-серверах 
 	}
 	header('Content-Disposition: filename="'.$name.'";');
-	$data=file_get_contents(ROOT.$src);
+	$data=file_get_contents($src);
+	
 	if($data){
 		if($type){
 			header('content-type: image/'.$type);

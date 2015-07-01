@@ -1,24 +1,12 @@
 <?php
 
-require_once(__DIR__.'../infra/infra.php');
 
 infra_require('*files/files.inc.php');
 $type=$_GET['type'];
 $conf=infra_config();
 
 
-/*if($type=='redirect'){
- //Была мысль чтобы загрузка данных для некоего слоя всегда приходило к редиректу.. а на клиенте слой показывал бы ошибку 404 а при обновлении открывал бы главную
-	//Признано лишней сущностью и закоменчено.
-	global $infra;
-	infra_wait($infra,'oninit',function(){
-		$conf=infra_config();
-		$r=infra_view_getRoot(ROOT);
-		$src='http://'.$_SERVER['HTTP_HOST'].'/'.$r;
-		@header('location: '.$src); 
-		exit;
-	});
-}*/
+
 $ans=array();
 
 	if($type=='pages'){
@@ -85,7 +73,7 @@ if(@$_GET['id']){//Загрузка файла
 	$res=files_search($dir,$id);
 	if(isset($_GET['image'])){
 		if($res['images']){
-			$data=file_get_contents(ROOT.infra_tofs($res['images'][0]['src']));
+			$data=file_get_contents(infra_tofs($res['images'][0]['src']));
 			echo $data;
 		}else{
 			//@header('HTTP/1.1 404 Not Found');
@@ -100,7 +88,8 @@ if(@$_GET['id']){//Загрузка файла
 				global $infrajs;
 				infra_wait($infrajs,'oninit',function() use(&$res,$type){
 					$conf=infra_config();
-					$r=infra_view_getRoot(ROOT);
+					$dirs=infra_dirs();
+					$r=$dirs['ROOT'];
 					
 					if($r)$r='/'.$r;
 					//else $r='';
@@ -140,9 +129,10 @@ if(@$_GET['id']){//Загрузка файла
 		if(!$res){
 			//@header("Status: 404 Not Found");
 			//@header("HTTP/1.0 404 Not Found");
-			@header('location: http://'.$_SERVER['HTTP_HOST'].'/'.infra_view_getRoot(ROOT).'?Файлы/'.$id);
+			$dirs=infra_dirs();
+			@header('location: http://'.$_SERVER['HTTP_HOST'].'/'.infra_view_getRoot().'?Файлы/'.$id);
 		}else{
-			@header('location: http://'.$_SERVER['HTTP_HOST'].'/'.infra_view_getRoot(ROOT).'?*autoedit/download.php?'.$dir.$res['file']);
+			@header('location: http://'.$_SERVER['HTTP_HOST'].'/'.infra_view_getRott().'?*autoedit/download.php?'.$dir.$res['file']);
 		}
 		exit;
 	}else{

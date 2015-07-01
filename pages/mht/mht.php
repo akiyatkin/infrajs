@@ -1,5 +1,4 @@
 <?php
-	require_once(__DIR__.'/../../infra/infra.php');
 	
 	$src=urldecode($_GET['src']);
 
@@ -8,15 +7,16 @@
 	$src=preg_replace("/\.mht$/",'',$src);
 	$src=preg_replace("/\.tpl$/",'',$src);
 	$src=preg_replace("/\.html$/",'',$src);
-	$src=str_replace("infra/data/",'*',$src);
+	$dirs=infra_dirs();
+	$src=str_replace($dirs['data'],'*',$src);
 
 	$filename=infra_theme($src.'.mht');
 
 	$ftype='mht';
-	infra_require('*pages/cache.inc.php');
+
 	if(!$filename){
 		$ftype='tpl';
-		$filename=infra_theme($src.'.tpl');
+		$filename=infra_theme($src.'.tpl',true);
 		if(!$filename){
 			$ftype='html';
 			$filename=infra_theme($src.'.html');
@@ -27,6 +27,7 @@
 			$ftype=$p['ext'];
 		}
 	}
+
 
 	if($filename){
 		//@header("Content-Type: text/plain");
@@ -48,7 +49,7 @@
 
 
 		$data=infra_cache(array($filename),'mhtparse',function ($filename,$what,$ftype,$imgmaxwidth,$previewlen){
-			$data=file_get_contents(ROOT.$filename);
+			$data=file_get_contents($filename);
 			$p=explode("/",$filename);
 			$fname=array_pop($p);
 			$fnameext=$fname;
@@ -66,9 +67,10 @@
 					unset($ar[sizeof($ar)-1]);
 				}
 				$ar=array_values($ar);
-				@mkdir(ROOT.'infra/cache/pages_mht/',0755);
-				$folder='infra/cache/pages_mht/'.preg_replace('/[\/\\\.]/','_',$filename).'/';
-				@mkdir(ROOT.$folder,0755);
+				$dirs=infra_dirs();
+
+				$folder=$dirs['cache'].'pages_mht/'.preg_replace('/[\/\\\.]/','_',$filename).'/';
+				@mkdir($folder);
 				$html='';
 				for($i=0,$l=sizeof($ar);$i<$l;$i++){
 					if(!$ar[$i])continue;
@@ -99,7 +101,7 @@
 						$html.=$content;
 					}else{
 						
-						@file_put_contents(ROOT.$folder.$name,base64_decode($content));//Сохраняем картинку или тп...
+						@file_put_contents($folder.$name,base64_decode($content));//Сохраняем картинку или тп...
 					}
 					
 				}
@@ -119,8 +121,8 @@
 			if($ftype=='mht'){
 				preg_match_all('/src=3D".*\.files\/(image.+)"/U',$html,$match);
 				for($i=0,$l=sizeof($match[1]);$i<$l;$i=$i+2){
-					/*$r1=filesize(ROOT.$folder.$match[1][$i]);
-					$r2=filesize(ROOT.$folder.$match[1][$i+1]);
+					/*$r1=filesize($folder.$match[1][$i]);
+					$r2=filesize($folder.$match[1][$i+1]);
 					if($r1>$r2){
 						$images[$match[1][$i+1]]=$match[1][$i+1];
 						echo infra_toutf($folder.$match[1][$i]);
@@ -448,7 +450,7 @@
 			$html=trim($html);
 			
 			if($what){
-				$filetime=filemtime(ROOT.$filename);
+				$filetime=filemtime($filename);
 
 				$s=infra_toutf($fnameext);
 				$data=infra_nameinfo($s);

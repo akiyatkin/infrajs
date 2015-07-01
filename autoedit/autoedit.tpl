@@ -282,10 +282,10 @@
 	<span class="a" onclick="AUTOEDIT('addfile','{data.id}')">загрузить файл</span>,  
 	<span class="a" onclick="AUTOEDIT('corfile','{data.id}Новый файл.tpl')">создать файл</span>, 
 	<span class="a" onclick="AUTOEDIT('mkdir','{data.id}')">создать папку</span>
-	<table class="teditfolder" style="margin-top:10px">
+	<table class="teditfolder table table-striped table-hover" style="margin-top:10px">
 		<thead>
 			<tr onmouseover="$(this).find('.action').css('visibility','visible')" onmouseout="$(this).find('.action').css('visibility','hidden')">
-				<td></td><td style="padding:5px">Файл</td><td>Кб</td><td colspan="2">Дата&nbsp;изменения</td><td>
+				<td></td><td>Файл</td><td>Кб</td><td colspan="2">Дата&nbsp;изменения</td><td>
 			</tr>
 		</thead>
 		<tbody>
@@ -298,7 +298,7 @@
 	{edftop:}
 		<tr>
 			<td><img src="{infra.theme(:*autoedit/icons/dir.png)}" title="dir"></td>
-			<td class="folder" style="padding:3px">
+			<td class="folder">
 				<span class="a" onclick="AUTOEDIT('editfolder','{data.parent}')">..</span>
 			</td>
 			<td></td>
@@ -308,11 +308,11 @@
 	{folders:}
 		<tr style="color:{take?red}" onmouseover="$(this).find('.action').css('visibility','visible')" onmouseout="$(this).find('.action').css('visibility','hidden')">
 			<td><img src="{infra.theme(:*autoedit/icons/)}dir.png" title="dir"></td>
-			<td class="folder" style="padding:3px">
+			<td class="folder">
 				<span class="a" onclick="AUTOEDIT('editfolder','{data.id}{name}/')">{name}</span>
 			</td>
 			<td>&nbsp;</td><td>{date?:date?}</td>
-			<td style="padding:0;padding-top:2px">
+			<td>
 				<span class="action" style="visibility:hidden">
 					<img alt="del" style="cursor:pointer" onclick="AUTOEDIT('rmdir','{data.id}{name}/')" title="Удалить" src="{infra.theme(:*autoedit/images/delete.png)}"> 
 					<img alt="name" style="cursor:pointer" onclick="AUTOEDIT('mvdir','{data.id}{name}/')" title="Переименовать" src="{infra.theme(:*autoedit/images/rename.png)}">
@@ -323,10 +323,10 @@
 	{file:}
 		<tr style="color:{take?red}" onmouseover="$(this).find('.action').css('visibility','visible')" onmouseout="$(this).find('.action').css('visibility','hidden')">
 			<td><img alt=" " src="{infra.theme(:*autoedit/icons/)}{ext}.png" title="{ext}"></td>
-			<td class="file" style="padding:3px">
+			<td class="file">
 				<span class="a" onclick="AUTOEDIT('editfile','{data.id}{name}{ext?:point}{ext}');">{name}{ext?:point}{ext}</span>
 			</td>
-			<td>{size}</td><td>{$date(:d.m.Y,date)}</td>
+			<td>{size}</td><td>{~date(:d.m.Y,date)}</td>
 			{mytake?:actions?:strtake}
 		</tr>
 	{point:}.
@@ -335,7 +335,7 @@
 				<span class="a" onclick="AUTOEDIT('takeinfo','{data.id}{name}{ext?:point}{ext}')">{$date(:_takedate,take)}</span>
 			</td>
 	{actions:}
-			<td style="padding:0;padding-top:2px">
+			<td>
 				<nobr class="action" style="visibility:hidden">
 					<a href="{pathload}"><img alt="load" title="Скачать" src="{infra.theme(:*autoedit/images/floppy.png)}"></a>
 					<img alt="del" style="cursor:pointer" onclick="AUTOEDIT('deletefile','{data.id}{name}{ext?:point}{ext|}')" title="Удалить" src="{infra.theme(:*autoedit/images/delete.png)}"> 

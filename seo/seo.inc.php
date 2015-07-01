@@ -16,12 +16,13 @@ function seo_delitem($name,$link){
 		}
 	}
 	if(!$r)return $r;
-	return file_put_contents(ROOT.$src,infra_json_encode($seo));
+	return file_put_contents($src,infra_json_encode($seo));
 }
 
 function infrajs_seo_saveitem($name,$item){
-	@mkdir(ROOT.'infra/data/seo/');
-	$src='infra/data/seo/'.infra_tofs($name).'.json';
+	$dirs=infra_dirs();
+	@mkdir($dirs['data'].'seo/');
+	$src=$dirs['data'].'seo/'.infra_tofs($name).'.json';
 	$data=infra_loadJSON($src);
 	if(!$data){
 		$data=array('items'=>array());
@@ -43,7 +44,7 @@ function infrajs_seo_saveitem($name,$item){
 		break;
 	}
 	if(!$r)$data['items'][]=$item;
-	file_put_contents(ROOT.$src,infra_json_encode($data));
+	file_put_contents($src,infra_json_encode($data));
 	return $src;
 }
 function infrajs_seo_list(){

@@ -7,7 +7,7 @@ infra_cache(true,'somefn',array($arg1,$arg2),$data); - Установка нов
 */
 
 
-function infra_cache_fullrmdir($delfile,$ischild){
+function infra_cache_fullrmdir($delfile,$ischild=true){
 	//$dirs=infra_dirs();
 	$delfile=infra_theme($delfile);
 	if (file_exists($delfile)){
@@ -29,23 +29,25 @@ function infra_cache_fullrmdir($delfile,$ischild){
 		}
 	}
 }
-function infra_cache_checkUpdate(){
+function infra_install(){
 	$dirs=infra_dirs();
-	$file=infra_theme('infra/update');
-	if(!$file)return;
-
-	$r=@unlink($file);//Файл появляется после заливки из svn и если с транка залить без проверки на продакшин, то файл зальётся и на продакшин
-	if(!$r)return;
-	$r=@infra_cache_fullrmdir('infra/cache/');
-	header('infra-update:'.($r?'Fail':'OK'));
-	infra_admin_time_set(time()-1);//Нужно чтобы был а то как-будто админ постоянно 
+	$file=infra_theme($dirs['data'].'update');
+	if($file){
+		$r=@unlink($file);//Файл появляется после заливки из svn и если с транка залить без проверки на продакшин, то файл зальётся и на продакшин
+		if(!$r)return;
+		$r=@infra_cache_fullrmdir($dirs['cache']);
+		header('infra-update:'.($r?'Fail':'OK'));
+		require_once(__DIR__.'/../../infra/install.php'); 
+	}else if(!is_dir($dirs['cache'])){
+		mkdir($dirs['cache']);
+		require_once(__DIR__.'/../../infra/install.php');
+	}
 }
 
 
 function infra_cache_path($name,$args=null){
 	$dirs=infra_dirs();
 	$dir=$dirs['cache'].'infra_cache_once/';
-	@mkdir($dir);
 	$name=infra_tofs($name);
 	$dirfn=$dir.$name.'/';
 	@mkdir($dirfn);

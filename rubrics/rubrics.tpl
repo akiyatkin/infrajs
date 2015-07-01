@@ -21,14 +21,14 @@
 	</table>
 	{news_item:}
 			<tr><td rowspan="3" style="width:120px">
-				<a href="?{state}/{name}" style="color:#333">
+				<a href="?{crumb}/{name}" style="color:#333">
 					{images.0.src:Nimg}
 				</a>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2">
-					<a href="?{state}/{name}" class="biga">
+					<a href="?{crumb}/{name}" class="biga">
 						<div style="margin-left:10px; font-weight:normal; font-size:14px; color:gray; float:right; text-transform: lowercase;">{$date(:j F Y,date)}</div>
 						<span style="margin-top:10px; font-size:22px;">{name}</span>
 					</a>
@@ -53,7 +53,7 @@
 			{date:Pdate}
 			<h2 style="margin-top: 5px;">{heading|name}</h2>
 			{preview}
-			<a style="text-decoration: none; float: right;" href="?{state}/{name}">Читать полностью</a>
+			<a style="text-decoration: none; float: right;" href="?{crumb}/{name}">Читать полностью</a>
 		</div>
 		<hr>
 	{Pdate:}<i style="color: #aaaaaa;">{:date}</i>
@@ -125,7 +125,7 @@
 					<table>
 						{links::Nlink}
 					</table>
-					<a href="?{state}/{name}">
+					<a href="?{crumb}/{name}">
 					<div class="date"><span>{$date(:j.m.Y,date)}</span></div>
 					</a>
 				</td>

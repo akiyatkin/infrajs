@@ -1,5 +1,5 @@
 <?php
-	require_once(__DIR__.'/../../infra/infra.php');
+
 	$db = infra_db(true);
 	$ans = array(
 		'title'=>'Проверка соединения с базой данных'

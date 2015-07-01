@@ -206,16 +206,23 @@ function infra_tofs($str){
 	}
 	return $str;
 }
-function infra_theme($str){//Небезопасная функция
+function infra_theme($str,$debug=false){//Небезопасная функция
 	//Повторно для адреса не работает Путь только отностельно корня сайта или со звёздочкой
 	$str=infra_tofs($str);
 	$dirs=infra_dirs();
 	if(!$str)return null;
-	$is_fn=($str{strlen($str)-1}=='/')?'is_dir':'is_file';
+	if($str=='*')return $dirs['data'];
+	
+
 	$q=explode('?',$str,2);
 	$str=$q[0];
+
+	$is_fn=($str{strlen($str)-1}=='/')?'is_dir':'is_file';
+
 	$query='';
 	if(isset($q[1]))$query='?'.$q[1];
+
+	
 	if($str{0}!='*'){
 		
 		//Проверка что путь уже правильный... происходит когда нет звёздочки... Неопределённость может возникнуть только с явными путями
@@ -224,7 +231,8 @@ function infra_theme($str){//Небезопасная функция
 		if($is_fn($dirs['ROOT'].$str))return $dirs['ROOT'].$str.$query;		
 		return null;
 	}
-	$str=substr($str,1);
+
+	$str=mb_substr($str,1);
 	foreach($dirs['search'] as $dir){
 		if($is_fn($dir.$str))return $dir.$str.$query;
 	}

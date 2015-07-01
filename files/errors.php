@@ -1,13 +1,13 @@
 <?php
 	
-	require_once(__DIR__.'../infra/infra.php');
+
 	global $infra;
 	$ans=array();
 	$code=$_GET['code'];
 	if(!$infra&&$code){
 		$p=$_SERVER['REQUEST_URI'];
-		$root=infra_view_getRoot(ROOT);
-		$root='/'.$root;
+		$dirs=infra_dirs();
+		$root='/'.$dirs['ROOT'];
 		$p=explode($root,$p,2);
 		$p=$p[1];
 		$path='http://'.$_SERVER['HTTP_HOST'].$root.'?Error'.$code.'/'.$p;

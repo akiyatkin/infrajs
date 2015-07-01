@@ -44,7 +44,7 @@
 			}
 
 			$data['host']=$_SERVER['HTTP_HOST'];
-			$data['root']=infra_view_getRoot(ROOT);
+			$data['root']=infra_view_getRoot();
 			$data['date']=time();
 			$html=infra_template_parse('*seo/sitemap.tpl',$data,'sitemap');
 			return $html;
@@ -135,7 +135,7 @@
 				$item['data']=$da;
 				$src=infrajs_seo_saveitem($name,$item);
 				$ans['noclose']=1;
-				$ans['msg']='Сохранено '.date('d.m.Y H:i',filemtime(ROOT.$src));
+				$ans['msg']='Сохранено '.date('d.m.Y H:i',filemtime($src));
 				$ans['result']=1;
 			}
 		}

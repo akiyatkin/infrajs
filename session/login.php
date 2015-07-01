@@ -1,5 +1,5 @@
 <?php
-	require_once(__DIR__.'/../infra/infra.php');
+
 	infra_require('*infra/ext/seq.php');
 	infra_require('*session/session.php');
 
@@ -16,6 +16,6 @@
 	$conf=infra_config();
 	$path='http://'.infra_view_getHost().'/';
 	$dirs=infra_dirs();
-	$path.=infra_view_getRoot($dirs['ROOT']).$src;
+	$path.=infra_view_getRoot().$src;
 	@header('Location: '.$path);
 	//return infra_echo($ans);

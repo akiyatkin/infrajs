@@ -206,12 +206,12 @@ Copyright 2008-2010 http://itlife-studio.ru
 		}
 		if(!$dyn&&$ext&&$file_types_user[$ext]){
 			//header( "Content-type: ".$file_types[$ext] ) ;
-			//header( "Last-Modified: ".gmdate("D, d M Y H:i:s",filemtime(ROOT.$path))." GMT" );
-			file_download(ROOT.$path,$file_types_user[$ext]);
+			//header( "Last-Modified: ".gmdate("D, d M Y H:i:s",filemtime($path))." GMT" );
+			file_download($path,$file_types_user[$ext]);
 		}else{
 			infra_admin(true);
 			if(!$dyn&&$ext&&$file_types_admin[$ext]){
-				file_download(ROOT.$path,$file_types_admin[$ext]);
+				file_download($path,$file_types_admin[$ext]);
 			}else{
 				die('Исключение');
 			}

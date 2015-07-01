@@ -162,7 +162,7 @@ function infra_session_set($name='',$value=null){
 
 function infra_session_getLink($email=false){
 	$host=infra_view_getHost();
-	$path=infra_view_getRoot(ROOT);
+	$path=infra_view_getRoot();
 	if($email){
 		$user=infra_session_getUser($email);
 		if(!$user)return 'http://'.$host.'/'.$path;

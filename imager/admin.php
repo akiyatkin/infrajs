@@ -7,15 +7,15 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 	require_once(__DIR__.'../infra/infra.php');
 	infra_require('*imager/imager.inc.php');
 	infra_admin(true);
-	@mkdir(ROOT.'infra/data/imager/.notwater/');
+	
 	if(!function_exists('runfolder')){
 		function runfolder($dir,$f=1,$d=0,$sub=false,$exts=false,&$filelist=array(),$pre=''){
-			if (is_dir(ROOT.$dir)&&$dh = opendir(ROOT.$dir)) {
+			if (is_dir($dir)&&$dh = opendir($dir)) {
 				while (($file = readdir($dh)) !== false) {
 					if($file[0]=='.')continue;
 					if($file[0]=='~')continue;
 					$path=$dir.$file;
-					if(is_file(ROOT.$path)&&$exts){
+					if(is_file($path)&&$exts){
 						preg_match('/\.(\w{0,4})$/',$file,$math);//Расширение при поиске не учитываем
 						$ext=strtolower($math[1]);
 						if(!in_array($ext,$exts))continue;
@@ -26,12 +26,12 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 					//if($count>=($lims+$limc))break;
 
 
-					if(!$f && is_file(ROOT.$path)&&(!$d||!is_dir(ROOT.$path)))continue;//Файлы не надо
+					if(!$f && is_file($path)&&(!$d||!is_dir($path)))continue;//Файлы не надо
 
 
 					
-					//if(!$f && is_file(ROOT.$path))continue;//Файлы не надо
-					if(is_dir(ROOT.$path)){
+					//if(!$f && is_file($path))continue;//Файлы не надо
+					if(is_dir($path)){
 						if($sub)runfolder($path.'/',$f,$d,$sub,$exts,$filelist,$pre.$file.'/');
 						if(!$d)continue;//Папки не надо
 					}
@@ -60,10 +60,10 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 		if($act=='togglemark'){
 			if($iswater){
 				$new=preg_replace('/mark\.png$/','.mark.png',$iswater);
-				rename(ROOT.$iswater,ROOT.$new);
+				rename($iswater,$new);
 			}else if($ishwater&&!$iswater){
 				$new=preg_replace('/\.mark\.png$/','mark.png',$ishwater);
-				rename(ROOT.$ishwater,ROOT.$new);
+				rename($ishwater,$new);
 			}
 		}else if($act=='removemarks'){
 			//$dir='infra/data/';
@@ -100,33 +100,31 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 				}
 
 				foreach($srcs as $src){
-					$r=copy(ROOT.$origf,ROOT.$src);
+					$r=copy($origf,$src);
 					if(!$r)die('Не удалось скопировать на место оригинал '.infra_toutf($src));
 				}
-				$r=unlink(ROOT.$origf);
+				$r=unlink($origf);
 				if(!$r)die('Не удалось удалить востановленный оригинал');
 				unset($_SESSION['imager']['origs'][$orig]);//Пометили что этот оригинал уже востановили
 			}
 			
 			$files=runfolder($dirorig,1,0);
 			if(sizeof($files)>0){//Если остались не востановленные оригиналы.. делаем их backup
-				$dirbackup='infra/backup/';
-				@mkdir(ROOT.$dirbackup,0755);
-				$dirbackup.='imager_orig/';
-				@mkdir(ROOT.$dirbackup,0755);
+				$dirs=infra_dirs();
+				$dirbackup=$dirs['backup'].'imager_orig/';
 				$dirbackup.=date('j.d.Y').'_'.time().'/';
-				$r=rename(ROOT.$dirorig,ROOT.$dirbackup);
+				$r=rename($dirorig,$dirbackup);
 				if(!$r)die('Не удалось сделать backup оставшихся оригиналов');
 			}
 			unset($_SESSION['imager']);
 		}else if($act=='delcache'){
 			$files=runfolder($dircache,1,0,true);
 			foreach($files as $file){
-				unlink(ROOT.$dircache.$file);
+				unlink($dircache.$file);
 			}
 			$files=runfolder($dircache,0,1);
 			foreach($files as $file){
-				rmdir(ROOT.$dircache.$file.'/');
+				rmdir($dircache.$file.'/');
 			}
 		}
 		header('location: admin.php');

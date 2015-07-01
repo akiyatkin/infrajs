@@ -3,7 +3,7 @@
 Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. http://itlife-studio.ru
 */
 	
-	require_once(__DIR__.'/../infra/infra.php');
+
 	
 	function infra_imager_browser($agent=false){
 		if(!$agent)$agent=$_SERVER['HTTP_USER_AGENT'];
@@ -158,12 +158,10 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 			if(preg_match("/\.php/",$src)){//Такое может быть если путь до картинки передан тоже с imager то есть двойной вызов
 				$src=imager_getReal($src);
 			}else{
-				
-				$src=infra_theme($src);
-				//var_dump($src);
-				//exit;
+				$src=infra_theme($src,true);
 			}
 		}
+
 		if($src&&is_dir($src)){//папка смотрим в ней для src
 			$ar=infra_loadJSON('*pages/list.php?src='.infra_toutf($src).'&e=jpg,gif,png&onlyname=1');
 			//$ar=glob($src.'*.{png,gif,jpg}',GLOB_BRACE);

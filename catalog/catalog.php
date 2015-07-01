@@ -1,6 +1,5 @@
 <?php
 	
-	require_once(__DIR__.'../infra/infra.php');
 	infra_require('*files/xls.php');
 	infra_require('*catalog/catalog.inc.php');
 	$conf=infra_config();
@@ -72,7 +71,7 @@
 			if(sizeof($data['users'])>100){
 				$data['users']=array_slice($data['users'],0,50);
 			}
-			file_put_contents(ROOT.$dir.'catalog_stat.json',infra_json_encode($data));
+			file_put_contents($dir.'catalog_stat.json',infra_json_encode($data));
 			$ans['data']=$data;
 			return infra_echo($ans);
 		}else{
@@ -86,6 +85,7 @@
 		
 		$conf=infra_config();
 		$data=cat_init();
+
 		$ans=array(//Оригинальные значения
 			'val'=>$val,
 			'prod'=>$prod,
@@ -104,16 +104,24 @@
 		$ans['prod']=$prod;
 		if($type=='rubrics'){
 			$data=$data['childs'];
-			foreach($data as &$gr){
+
+			foreach($data as $k=>&$gr){
 				$pos=&xls_runPoss($gr,function&(&$pos){
+					$conf=infra_config();
+					xls_preparePosFiles($pos,$conf['catalog']['dir'], array('producer','article') );
+					if(!$pos['images'])return;
 					return $pos;
 				});
+
 				if($pos){
+					unset($gr['desrc']);
+					unset($gr['childs']);
+					unset($gr['data']);
+
 					$gr['pos']=array('article'=>$pos['article'],'producer'=>$pos['Производитель']);
+				}else{
+					unset($data[$k]);
 				}
-				unset($gr['desrc']);
-				unset($gr['childs']);
-				unset($gr['data']);
 			}
 			$ans['childs']=$data;
 		}else if($type=='pos'){
@@ -341,10 +349,13 @@
 							});
 						}
 						$pos=&xls_runPoss($v,function&(&$pos){
+							$conf=infra_config();
+							xls_preparePosFiles($pos,$conf['catalog']['dir'], array('producer','article') );
+							if(!$pos['images'])return false;
 							return $pos;
 						});
 						if($pos){
-							$pos=array('article'=>$pos['article'],'producer'=>$pos['Производитель']);
+							$pos=array('article'=>$pos['article'],'producer'=>$pos['producer']);
 						}else{
 							$pos=array();
 						}
@@ -438,7 +449,7 @@
 			
 			$prods=array();
 			if($ans['is']=='group'){
-				xls_runPoss($group,&function(&$pos) use(&$prods){
+				xls_runPoss($group,function&(&$pos) use(&$prods){
 					$prods[infra_strtolower($pos['Производитель'])]=$pos['Производитель'];
 					$r=null;return $r;
 				});
@@ -644,11 +655,11 @@
 					$dir=infra_theme($conf['catalog']['dir'].$pos['Производитель'].'/'.$pos['article'].'/');
 					if(!$dir)return;
 
-					$pos['time']=filemtime(ROOT.$dir);
+					$pos['time']=filemtime($dir);
 					$list=infra_loadJSON('*pages/list.php?src='.infra_toutf($dir).'&onlyname=1');
 					foreach($list as $f){
 						$t=$dir.infra_tofs($f);
-						$t=filemtime(ROOT.$t);
+						$t=filemtime($t);
 						if($t>$pos['time'])$pos['time']=$t;
 					}
 					$poss[]=&$pos;
@@ -667,7 +678,7 @@
 				$pos=$ans['pos'];
 				
 
-				xls_preparePosFiles($pos,$conf['catalog']['dir'], array('Производитель','article') );
+				xls_preparePosFiles($pos,$conf['catalog']['dir'], array('producer','article') );
 				
 				$files=explode(',',@$pos['Файлы']);
 				foreach($files as $f){
@@ -684,7 +695,7 @@
 						$d=$f;
 						$f=$d['src'];
 					}
-					$d['size']=round(filesize(ROOT.infra_tofs($f))/1000000,2);
+					$d['size']=round(filesize(infra_tofs($f))/1000000,2);
 					if(!$d['size'])$d['size']='0.01';
 					
 					$files[]=$d;

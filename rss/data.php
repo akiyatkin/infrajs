@@ -21,7 +21,7 @@ if(!empty($seo['item']['description'])){
 }
 $data['time']=infra_admin_time();
 
-$data['link']='http://'.infra_view_getHost().'/'.infra_view_getRoot(ROOT);
+$data['link']='http://'.infra_view_getHost().'/'.infra_view_getRoot();
 
 
 infra_require('*files/files.inc.php');

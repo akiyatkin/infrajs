@@ -42,7 +42,7 @@
 
 		$d=array(
 			"conf"=>$conf,
-			"site"=>infra_view_getHost().'/'.infra_view_getRoot(ROOT),
+			"site"=>infra_view_getHost().'/'.infra_view_getRoot(),
 			"poss"=>$poss,
 			"groups"=>$groups
 		);

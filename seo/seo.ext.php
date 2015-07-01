@@ -16,38 +16,12 @@ function infrajs_seo_init(){//Делается при каждой пробеж�
 		if(!infra_theme('robots.txt')){
 			$data=array();
 			$data['host']=$_SERVER['HTTP_HOST'];
-			$data['root']=infra_view_getRoot(ROOT);
+			$data['root']=infra_view_getRoot();
 			
 			$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots')."\n";
 			$dirs=infra_dirs();
 			file_put_contents($dirs['ROOT'].'robots.txt',$html);
 		}
-		/*else{//Проверка что sitemap корректный
-
-			$robots=file(ROOT.'robots.txt');
-			$res=false;
-			foreach($robots as $num=>$line){
-				$r=explode(':',$line,2);
-				$r[0]=trim($r[0]);
-				if($r[0]=='sitemap'){
-
-					$res=true;
-					$path=trim($r[1]);
-					$r=explode('/',$path,4);
-					$host=$r[2];
-					if($host!==$data['host']){
-						$robots[$num]=$html;
-						$html=implode("",$robots);
-						file_put_contents(ROOT.'robots.txt',$html);
-					}
-				}
-			}
-			if(!$res){//не найдена запись sitemap
-				$robots[]=$html;//"\r\n"
-				$html=implode("",$robots);
-				file_put_contents(ROOT.'robots.txt',$html);
-			}
-		}*/
 	});
 }
 function infrajs_seo_checkseolinktpl(&$layer){
@@ -120,21 +94,21 @@ function infrajs_seo_save(){
 	infra_admin_cache('infrajs_seo_save',function(){
 		$store=&infrajs_store();
 		$dir='infra/cache/seo/';
-		if(is_dir(ROOT.$dir)){
+		if(is_dir($dir)){
 			$list=infra_loadJSON('*pages/list.php?src='.$dir.'&onlyname=1');
 			foreach($list as $file){
-				unlink(ROOT.$dir.infra_tofs($file));
+				unlink($dir.infra_tofs($file));
 			}
-			$r=rmdir(ROOT.$dir);
+			$r=rmdir($dir);
 			if(!$r){
 				$conf=infra_config();
 				if($conf['debug'])die('Не удалось удалить папку '.$dir);
 			}
 
 		}
-		@mkdir(ROOT.$dir);
+		@mkdir($dir);
 		foreach($store['seo'] as $name=>$seo){
-			file_put_contents(ROOT.$dir.infra_tofs($name).'.json',infra_json_encode($seo));
+			file_put_contents($dir.infra_tofs($name).'.json',infra_json_encode($seo));
 		}
 	});
 }

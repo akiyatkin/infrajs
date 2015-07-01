@@ -1,28 +1,26 @@
 <?php
-	require_once(__DIR__.'/../infra/infra.php');
-	//$_GET['re']=1;
 	if(!function_exists('docx_getTextFromZippedXML')){
 		function docx_full_del_dir($directory) {
 			if(!$directory)return;
-			$dir = @opendir(ROOT.$directory);
+			$dir = @opendir($directory);
 			if(!$dir)return;
 			while($file = readdir($dir)) {
-				if (is_file(ROOT.$directory."/".$file)) {
-					unlink(ROOT.$directory."/".$file);
-				} elseif (is_dir(ROOT.$directory."/".$file) && $file !== "." && $file !=="..") {
+				if (is_file($directory."/".$file)) {
+					unlink($directory."/".$file);
+				} elseif (is_dir($directory."/".$file) && $file !== "." && $file !=="..") {
 					docx_full_del_dir($directory."/".$file);
 				}
 			}
 			closedir($dir);
-			rmdir(ROOT.$directory);
+			rmdir($directory);
 		} 
 		function docx_getTextFromZippedXML($archiveFile, $contentFile,$cacheFolder,$debug) {
 		    // Создаёт "реинкарнацию" zip-архива...
 		    $zip = new ZipArchive;
 		    // И пытаемся открыть переданный zip-файл
 		    if ($zip->open($archiveFile)) {
-				@mkdir(ROOT.$cacheFolder);
-				$zip->extractTo(ROOT.$cacheFolder.'/');
+				@mkdir($cacheFolder);
+				$zip->extractTo($cacheFolder.'/');
 			// В случае успеха ищем в архиве файл с данными
 			$xml=false;
 				$xml2=false;
@@ -197,10 +195,10 @@
 					$height='';
 				}
 				$src=$param['folder'].'word/media/image'.$imgnum;
-				if(is_file(ROOT.$src.'.jpeg'))$src.='.jpeg';
-				else if(is_file(ROOT.$src.'.jpg'))$src.='.jpg';
-				else if(is_file(ROOT.$src.'.png'))$src.='.png';
-				else if(is_file(ROOT.$src.'.gif'))$src.='.gif';
+				if(is_file($src.'.jpeg'))$src.='.jpeg';
+				else if(is_file($src.'.jpg'))$src.='.jpg';
+				else if(is_file($src.'.png'))$src.='.png';
+				else if(is_file($src.'.gif'))$src.='.gif';
 				else $src.='.wtf';
 
 
@@ -364,7 +362,8 @@
 
 			$dhtml=infra_cache(array($src),'docx_parse',function($src,$type,$imgmaxwidth,$previewlen,$debug){
 				$cachename=md5($src);
-				$cachefolder='infra/cache/docx/'.$cachename.'/';
+				$dirs=infra_dirs();
+				$cachefolder=$dirs['cache'].'docx/'.$cachename.'/';
 				
 				//В винде ингда вылетает о шибка что нет прав удалить какой-то файл в папке и как следствие саму папку
 				//Обновление страницы проходит уже нормально
@@ -373,7 +372,7 @@
 
 
 
-				$xmls=docx_getTextFromZippedXML(ROOT.$src, "word/document.xml",$cachefolder,$debug);
+				$xmls=docx_getTextFromZippedXML($src, "word/document.xml",$cachefolder,$debug);
 				$rIds=array();
 				$param=array('com'=>array(),'folder'=>$cachefolder,'imgmaxwidth'=>$imgmaxwidth,'previewlen'=>$previewlen,'type'=>$type,'rIds'=>$rIds);
 				if($xmls[0]){
@@ -438,7 +437,7 @@
 					}else{
 						$img=false;
 					}
-					$filetime=filemtime(ROOT.$src);
+					$filetime=filemtime($src);
 					$data['modified']=$filetime;
 					if(@$param['links'])$data['links']=$param['links'];
 					if(@$param['heading'])$data['heading']=$param['heading'];
@@ -465,10 +464,6 @@
 	if(isset($_GET['preview']))$type='preview';
 	if(isset($_GET['news']))$type='news';
 	if($src){
-		infra_admin_cache('docx',function(){
-			@mkdir(ROOT.'infra/cache/docx/');
-		});
-
 		$dhtml=docx_get($src,$type,isset($_GET['re']));
 		$html=$dhtml[0];
 		$com=$dhtml[1];//Команды из вордовского файла

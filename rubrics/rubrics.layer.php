@@ -19,7 +19,7 @@ foreach($list as $rub=>$param){
 	if(!$types[$param['type']])continue;
 	$layer['childs'][$rub]=$types[$param['type']];
 	if($conf['rubrics']['main']==$rub){
-		$layer['childs'][$rub]['state']='.';
+		$layer['childs'][$rub]['crumb']='/';
 	}
 }
 return infra_ans($layer);

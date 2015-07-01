@@ -11,11 +11,11 @@
 		<a href="?{crumb.parent}">Каталог</a>
 	</div>
 	{catprod1:}
-	<a href="?{crumb.parent}/{$key}" title="{$key} {.}">{$key}</a>{$last()?:point?:comma} 
+	<a href="?{crumb.parent}/{~key}" title="{~key} {.}">{~key}</a>{~last()?:point?:comma} 
 	{comma:}, 
 	{point:}.
 	{catprod:}
-		<a href="?{crumb.parent}/{$key}" title="{$key} {.}"><img alt="{$key}" style="margin-bottom:10px" src="?*imager/imager.php?w=100&src={infra.conf.catalog.dir}{$key}/&or=*imager/empty"></a>
+		<a href="?{crumb.parent}/{~key}" title="{~key} {.}"><img alt="{~key}" style="margin-bottom:10px" src="?*imager/imager.php?w=100&src={infra.conf.catalog.dir}{~key}/&or=*imager/empty"></a>
 {rubrics:}
 	<style>
 		.cat_rub {
@@ -73,10 +73,10 @@
 	</div>
 	{item:}
 		<div class="lev1">
-			<img src="{infra.theme(:*catalog/minus.png)}" />
-			<a href="?{state}/{title}">{title}</a>
+			<img src="?*catalog/minus.png" />
+			<a href="?{crumb}/{title}">{title}</a>
 		</div>
-		{$last()|:sep}
+		{~last()|:sep}
 	{sep:}<div class="separator"></div>
 {stat:}
 	<h1 title="c {~date(:d.m.Y,data.stat.time)}">Последние запросы набранные в строке поиска по каталогу</h1>
@@ -227,9 +227,9 @@
 		{bread_sel:} font-weight:bold
 		{bread_logo:}<a href="?{crumb.parent}/{data.sel}"><img class="right" style="margin:5px" src="?*imager/imager.php?h=40&or=img/bg.png&src=*Каталог/{data.sel}/"></a>
 		{bread_group:}
-			{$even()?:s_tr}
+			{~even()?:s_tr}
 			<td style="padding:2px 10px 2px 0;{title=crumb.name?:bread_sel}"><a href="?{crumb.parent}/{title}">{name}</a></td>
-			{$odd()?:e_tr}
+			{~odd()?:e_tr}
 {groupsonly:}
 	<style>
 		.catgrouplist .img {
@@ -273,11 +273,11 @@
 	</script>
 	
 {groups_group:}
-	<a href="{infra.conf.catalog.link}/{title}">
+	<a href="?{crumb}/{title}">
 		<table>
 			<tr>
 				<td class="img">
-					<img  src="?*imager/imager.php?w=100&h=80&src={infra.conf.catalog.dir}{pos.producer}/{pos.article}/&or=*imager/empty">
+					<img  src="?{infra.conf.catalog.dir}{pos.producer}/{pos.article}/&w=100&h=80">
 				</td>
 				<td class="name">
 					{name}
@@ -292,10 +292,10 @@
 		{data.childs::cat_group}
 	</div>
 	<div style="border-top:1px gray dotted; margin-top:10px; padding-top:10px;">
-		<a href="?{state}/Поиск">Поиск</a>
-		| <a href="?{state}/Статистика">Статистика поиска</a> 
-		| <a href="?{state}/Производители">Производители</a>
-		| <a href="?{state}/Изменения">Последние изменения</a>
+		<a href="?{crumb}/Поиск">Поиск</a>
+		| <a href="?{crumb}/Статистика">Статистика поиска</a> 
+		| <a href="?{crumb}/Производители">Производители</a>
+		| <a href="?{crumb}/Изменения">Последние изменения</a>
 	</div>
 
 	{cat_group:}
@@ -305,7 +305,7 @@
 			{descr.Описание группы}
 		</p>
 		<p>
-			<a href="?{state}/{title}" title="Открыть группу {~lower(title)}">{title}</a>
+			<a href="?{crumb}/{title}" title="Открыть группу {~lower(title)}">{title}</a>
 		</p>
 	</div>
 	
@@ -491,8 +491,8 @@
 		 <img 
 		title="{data.pos.Производитель} {data.pos.Артикул}"
 		style="cursor:pointer"
-		onclick="var img=document.getElementById('catimg{$key}'); if(img){ $(img).toggle(); return; }; 
-				$('#position .bigimage').html('<img style=\'border-bottom:1px dotted gray;\' onclick=\'$(this).hide()\' id=\'catimg{$key}\' src=\'?*imager/imager.php?mark=1&w=590&src={:imgsrc}\' />')" 
+		onclick="var img=document.getElementById('catimg{~key}'); if(img){ $(img).toggle(); return; }; 
+				$('#position .bigimage').html('<img style=\'border-bottom:1px dotted gray;\' onclick=\'$(this).hide()\' id=\'catimg{~key}\' src=\'?*imager/imager.php?mark=1&w=590&src={:imgsrc}\' />')" 
 		src="?*imager/imager.php?mark=1&h=100&src={:imgsrc}" />
 		</a>
 {producer:}

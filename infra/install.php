@@ -1,4 +1,12 @@
 <?php
+	/*
+		install безопасная обработка доступная всем. Работа с файлами и постоянные изменения
+
+		исключение только папка cache её наличие проверяется при каждом запуске
+		в install создаются папки.. И в install редактируются data/.config.json
+		весь конфиг сохраняется в data/.config.json.. 
+		интерфейс показывает сравнение собранного конфига всей системы с файлом data/.config.json
+	*/
 	$dirs=infra_dirs();
 	if(!is_dir($dirs['ROOT'].'/infra'))mkdir($dirs['ROOT'].'/infra');
 	if(!is_dir($dirs['cache']))mkdir($dirs['cache']);
@@ -11,4 +19,10 @@
 		file_put_contents($dirs['data'].'.config.json','{"debug":true,"admin":{"login":"admin","password":"'.$pass.'"}}');
 		exit;
 	}
-	header('location: ?*infra/tests.php');
+	@mkdir($dirs['cache'].'infra_cache_once/');
+	infra_admin_time_set(time()-1);//Нужно чтобы был, а то как-будто админ постоянно
+	infra_pluginRun(function($dir){
+		if(realpath($dir)==realpath(__DIR__))return;//Себя исключили
+		if(!is_file($dir.'install.php'))return;
+		require_once($dir.'install.php');
+	});

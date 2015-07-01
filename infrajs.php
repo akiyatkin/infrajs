@@ -234,8 +234,9 @@ class infrajs {
 				return include($theme);
 			}
 		}
+
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
-		$html=infra_admin_cache('index.php',function($index,$div,$src){
+		$html=infra_admin_cache('index.php',function($index,$div,$src,$query){
 			@header("infrajs-cache: Fail");//Афигенный кэш, когда используется infrajs не подгружается даже
 			infra_require('*infrajs/initphp.php');
 			global $infrajs;
@@ -251,7 +252,8 @@ class infrajs {
 				$r=null; return $r;
 			});
 			
-
+			//$crumb=infra\ext\crumb::getInstance();
+			
 			infrajs::checkAdd($layers);
 
 			infrajs::check();//В infra_html были добавленыs все указаные в layers слои
@@ -282,7 +284,7 @@ END;
 			}
 
 			return $html;
-		},array($index,$div,$src,$_SERVER['QUERY_STRING']));//Если не кэшировать то будет reparse
+		},array($index,$div,$src,$query));//Если не кэшировать то будет reparse
 
 		@header("HTTP/1.1 200 Ok");
 		echo $html;

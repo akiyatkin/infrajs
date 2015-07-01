@@ -46,7 +46,6 @@ infra.require=function(path){
 	 
 }
 infra.theme=function(path){
-	//var r=window.ROOT?ROOT:'';
 	if(/^\*/.test(path))return '?'+encodeURI(path);
 	else return path;
 }

@@ -96,7 +96,7 @@ class crumb {
 	}
 	static function init(){
 		//crumb::$child=crumb::getInstance();
-		$query=urldecode($_SERVER['QUERY_STRING']);
+		$query=urldecode(infra_toutf($_SERVER['QUERY_STRING']));
 		crumb::change($query);
 	}
 	public function toString(){

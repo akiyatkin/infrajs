@@ -161,18 +161,18 @@ function _files_list($dir,$start,$count,$exts){
 	$dir=infra_theme($dir);
 
 	$res=array();
-	if(!$dir||!is_dir(ROOT.$dir))return $res;
-	//@mkdir('ROOT'.'infra/cache/files.json');
-	if (is_dir(ROOT.$dir)&&$dh = opendir(ROOT.$dir)) {
+	if(!$dir||!is_dir($dir))return $res;
+	
+	if (is_dir($dir)&&$dh = opendir($dir)) {
 		$files=array();
 		while (($file = readdir($dh)) !== false) {
 			if($file[0]=='.')continue;
 			if($file[0]=='~')continue;
 			if($file=='Thumbs.db')continue;
-			if(!is_file(ROOT.$dir.$file))continue;
+			if(!is_file($dir.$file))continue;
 			$rr=infra_nameinfo(infra_toutf($file));
 			if($exts&&!in_array($rr['ext'],$exts))continue;
-			$size=filesize(ROOT.$dir.$file);
+			$size=filesize($dir.$file);
 			$file=infra_toutf($file);
 			$ext=$rr['ext'];
 			if(isset($_GET['re']))$re='&re=1';
@@ -229,7 +229,7 @@ function _files_list($dir,$start,$count,$exts){
 
 			$file=$fdata['date'].' '.$fdata['name'].'@'.$fdata['id'].'.'.$fdata['ext'];
 
-			$r=@rename(ROOT.$dir.infra_tofs($fdata['file']),ROOT.$dir.infra_tofs($file));
+			$r=@rename($dir.infra_tofs($fdata['file']),$dir.infra_tofs($file));
 			
 			if($r)$fdata['file']=$file;
 		}
@@ -239,7 +239,7 @@ function _files_list($dir,$start,$count,$exts){
 			if(@$res[$fdata['id']]){
 				//$a=$res[$fdata['id']];
 				$a=$fdata;
-				$r=rename(ROOT.$dir.infra_tofs($a['file']),ROOT.$dir.'.'.infra_tofs($a['file']));
+				$r=rename($dir.infra_tofs($a['file']),$dir.'.'.infra_tofs($a['file']));
 			}else{
 				$res[$fdata['id']]=$fdata;
 			}

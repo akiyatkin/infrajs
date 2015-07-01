@@ -7,7 +7,7 @@ History
 function readxlsmain($file){
 	$d = new Spreadsheet_Excel_Reader();
 	$d->setOutputEncoding('utf-8');
-	$d->read(ROOT.$file);
+	$d->read($file);
 	$data=array();
 	$data['boundsheets']=&$d->boundsheets;
 	$data['sheets']=&$d->sheets;

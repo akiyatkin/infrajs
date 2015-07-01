@@ -120,30 +120,9 @@ function infra_admin_time_set($t=null){
 	$adm=array("time"=>$t);
 	file_put_contents($dirs['cache'].'last_admin.json',infra_json_encode($adm));
 }
-/*function infra_admin_lastupdate_time(){
-	return infra_once('infra_admin_lastupdate_time',function(){
-		if(is_file(ROOT.'infra/update')){
-			$data=array('time'=>time());
-			file_put_contents(ROOT.'infra/cache/lastupdate.json',infra_json_encode($data));
-			unlink(ROOT.'infra/update');
-		}else{
-			$data=infra_loadJSON('infra/cache/lastupdate.json');
-			if(!$data){
-				$data=array('time'=>time());
-				file_put_contents(ROOT.'infra/cache/lastupdate.json',infra_json_encode($data));
-			}
-		}
-		return $data['time'];
-	});
-}*/
 
 function infra_admin_time(){
 	return infra_once('infra_admin_time',function(){
-		//if(is_file(ROOT.'admin')){//Файл появляется после заливки из svn и если с транка залить без проверки на продакшин, то файл зальётся и на продакшин
-		//	unlink(ROOT.'admin');
-		//	infra_admin_time_set();
-		//}
-		
 		
 
 

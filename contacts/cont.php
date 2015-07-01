@@ -1,6 +1,6 @@
 <?php
 	
-	require_once(__DIR__.'../infra/infra.php');
+
 	$ans=array();
 	$ans['msg']='Письмо не отправлено';
 	$ans['result']=0;
@@ -49,12 +49,12 @@
 				//имя отправителя
 				//Папка с копиями писем
 				//$maildir=infra_tofs('infra/data/.Сообщения с сайта/');
-				//@mkdir(ROOT.$maildir,0755);
+				//@mkdir($maildir,0755);
 				
 				infra_require('*autoedit/admin.inc.php');
 				$maildir='*.Сообщения с сайта/';
 				$maildir=autoedit_createPath($maildir);//путь до файла или дирректории со * или без
-				//$mdata=@file_get_contents(ROOT.'infra/data/.contacts.js');
+				//$mdata=@file_get_contents('infra/data/.contacts.js');
 				//$mdata=infra_tophp($mdata);
 				
 				$mdata=array();
@@ -77,12 +77,8 @@
 
 				if($maildir){
 					$arg=$mdata;
-					$folder=infra_theme($maildir,'sdn');
-					if(!$folder){
-						$folder=infra_tofs(preg_replace('/^\*/','infra/data/',$maildir));
-						mkdir(ROOT.$folder,'0755');
-					}
-					file_put_contents(ROOT.$folder.date('Y F j H-i').' '.time().'.txt',print_r($body,true)."\n\n\n\n\n".print_r($arg,true));
+					$folder=infra_theme($maildir);
+					file_put_contents($folder.date('Y F j H-i').' '.time().'.txt',print_r($body,true)."\n\n\n\n\n".print_r($arg,true));
 				}
 
 

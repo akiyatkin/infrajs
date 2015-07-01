@@ -36,57 +36,20 @@ statist - интегрировать как-нибудь
 */
 	//namespace itlife\infrajs\infra;
 
-	if(defined('ROOT'))die('ROOT depricated');
-	
-	ini_set('allow_call_time_reference', true);//http://forum.dklab.ru/viewtopic.php?t=19975 Ошибка Deprecated: Call-time pass-by-reference has been deprecated в PHP 5
-	
-
-	if(ini_get('register_globals')&&ini_get('register_globals')!='Off')die('<h1>Вам нужно установить register_globals Off</h1>');
-
-
-
-	
-	$v=phpversion();
-	$ver=explode('.',$v);
-	if($ver[0]<5||($ver[0]==5&&$ver[1]<4))die('Требуется более новая версия php от 5.4 сейчас '.$v);
-	/*
-		5.4 - json_encode($data,JSON_UNESCAPED_UNICODE);
-		5.3 - используются анонимные функции
-		5.3 - не всегда ставится закрывающие тег php
-	*/
+//Скрипт не должен управлять этими опциями
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+ini_set('display_errors',1);	
 	
 
 
-	error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-	if(function_exists('mb_internal_encoding')){
-		mb_internal_encoding('UTF-8');//ХЗ зачем очень давно появилось...
-	}
 	
-
-
-	//Убираем магически появляющийся ниоткуда кавычки
-	if (get_magic_quotes_gpc()) {
-		die('get_magic_quotes_gpc() должны быть отключены');
-		/*if(!function_exists('stripslashes_deep')){
-			function stripslashes_deep($value){
-				$value = is_array($value)?array_map('stripslashes_deep',$value):stripslashes($value);
-				return $value;
-			}
-		}
-	    $_POST = array_map('stripslashes_deep', $_POST);
-	    $_GET = array_map('stripslashes_deep', $_GET);
-	    $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
-	    $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
-	    */
-	}
 /*
  игнор цифр, и расширения infra/infra
 */
 
 require_once(__DIR__.'/../infra/ext/config.php');
-require_once(__DIR__.'/../infra/ext/load.php');
 
-$_SERVER['QUERY_STRING']=infra_toutf($_SERVER['QUERY_STRING']);
+require_once(__DIR__.'/../infra/ext/load.php');
 
 
 
@@ -105,7 +68,7 @@ infra_require('*infra/ext/admin.php');
 
 
 infra_require('*infra/ext/cache.php');
-infra_cache_checkUpdate();
+
 
 $conf=infra_config();
 
@@ -132,4 +95,5 @@ infra_require('*infra/ext/view.php');
 infra_require('*infra/ext/seq.php');
 infra_require('*infra/ext/template.php');
 
+infra_install();
 itlife\infrajs\infra\ext\crumb::init();

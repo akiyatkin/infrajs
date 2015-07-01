@@ -25,14 +25,16 @@ $file=urldecode($_SERVER['QUERY_STRING']);
 //$file='*'.urldecode($_SERVER['QUERY_STRING']);//depricated... надо передавать со звёздочкой	
 //$file='*'.$_SERVER['QUERY_STRING'];//depricated... надо передавать со звёздочкой
 //$file=preg_replace("/^\*+/","*",$file);//Если вдруги получилось две из-за того что одна уже была.. будет одна
+$filesrc=$file;
 $a=strpos($file,'&');
 if($a!==false){
+	//Амперсанд идущий до вопроса или без вопроса, заменяется на вопрос ?*file.php&stat=2 >>> ?*file.php?stat=2
 	$q=strpos($file,'?');
 	if(!$q||$a<$q){
-		$file=substr_replace($file,'?',$a,1);
-	}
+		$filesrc=substr_replace($file,'?',$a,1);
+	}	
 }
-$src=infra_theme($file);
+$src=infra_theme($filesrc);
 infra_isphp(false);//Метка для подключаемого файла если такой будет, что он рабоает вне php и должен проверять права и делать соответствующие выводы
 
 if($src){
@@ -104,14 +106,13 @@ if($src){
 		}else{
 			$type='application/octet-stream';
 		}
-		if($type){
-			@header('Content-Type: '.$type);
+		if($p['query']&&(!$p['ext']||in_array($p['ext'],array('jpeg','jpg','png')))){
+			$fex=explode('?',$filesrc);
+			$src=infra_theme('*imager/imager.php').'?src='.$fex[0].'&'.mb_substr($p['query'],1);
+			
 		}else{
-			$p=infra_srcinfo($src);
-			if($p['ext']=='gif')@header('Content-Type: image/gif');
-			else if($p['ext']=='png')@header('content-type: image/png');
-			else if($p['ext']=='jpeg')@header('content-type: image/jpeg');
-			else if($p['ext']=='css')@header('content-type: text/css');
+
+			@header('Content-Type: '.$type);
 		}
 	}
 	

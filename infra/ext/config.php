@@ -25,7 +25,29 @@ if(DIRECTORY_SEPARATOR=='/'){
 		return str_replace(DIRECTORY_SEPARATOR,'/',$dir);
 	}
 }
-
+function infra_pluginRun($callback){
+	$dirs=infra_dirs();
+	global $infra_plugins;
+	if(empty($infra_plugins)){
+		$infra_plugins=array();
+		for($i=0,$il=sizeof($dirs['search']);$i<$il;$i++){
+			$dir=$dirs['search'][$i];
+			$list = scandir($dir);
+			for($j=0,$jl=sizeof($list);$j<$jl;$j++){
+				$plugin=$list[$j];
+				if($plugin{0}=='.')continue;
+				if(!is_dir($dir.$plugin))continue;
+				if(!is_file($dir.$plugin.'/.config.json'))continue;
+				$plugins[]=array('dir'=>$dir,'name'=>$plugin);
+			}
+		}
+	}
+	for($i=0,$il=sizeof($plugins);$i<$il;$i++){
+		$pl=$plugins[$i];
+		$r=$callback($pl['dir'].$pl['name'].'/',$pl['name']);
+		if(!is_null($r))return $r;
+	}
+}
 function infra_dirs(){
 	global $infra_dirs;
 	if(!empty($infra_dirs))return $infra_dirs;
@@ -66,6 +88,8 @@ function infra_dirs(){
 	}
 	//$ROOT=infra_getcwd().'/';
 
+	//$folder=preg_replace("/^\*/",$dirs['data'],$folder);				
+	//$folder=preg_replace('/^'.str_replace('/','\/',$dirs['data']).'/',"*",$folder);
 	$infra_dirs=array(
 		'ROOT'=>$ROOT,
 		'cache'=>$ROOT.'infra/cache/',

@@ -32,7 +32,7 @@
 */	
 
 
-require_once(__DIR__.'../infra/infra.php');
+
 infra_require('*infra/ext/seq.php');
 
 /*var pathlib=require('path');
@@ -64,7 +64,7 @@ function &xls_parseAll($path){
 			if(!$file)return $data;
 			$d = new Spreadsheet_Excel_Reader();
 			$d->setOutputEncoding('utf-8');
-			$d->read(ROOT.$file);
+			$d->read($file);
 
 
 			infra_forr($d->boundsheets,function&($v,$k) use(&$d,&$data){
@@ -72,35 +72,33 @@ function &xls_parseAll($path){
 				$r=null;return $r;
 			});
 		}else if($in['ext']=='xlsx'){
-			$cacheFolder='infra/cache/xlsx/';
-			if(!is_dir(ROOT.$cacheFolder))mkdir(ROOT.$cacheFolder);
-
-			
+			$dirs=infra_dirs();
+			$cacheFolder=$dirs['cache'].'xlsx/';
 			$cacheFolder.=infra_hash($path).'/';//кэш
 			infra_cache_fullrmdir($cacheFolder);//удалить старый кэш
 			
 			//разархивировать
 		    $zip = new ZipArchive;
-		    if ($zip->open(ROOT.infra_theme($path))) {
+		    if ($zip->open(infra_theme($path))) {
 
-		    	mkdir(ROOT.$cacheFolder);
-				$zip->extractTo(ROOT.$cacheFolder);
+		    	mkdir($cacheFolder);
+				$zip->extractTo($cacheFolder);
 				$zip->close();
 
-				$contents = simplexml_load_file(ROOT.$cacheFolder.'xl/sharedStrings.xml');
+				$contents = simplexml_load_file($cacheFolder.'xl/sharedStrings.xml');
 
 				$contents = $contents->si;
 
-				$workbook = simplexml_load_file(ROOT.$cacheFolder.'xl/workbook.xml');				
+				$workbook = simplexml_load_file($cacheFolder.'xl/workbook.xml');				
 				$sheets=$workbook->sheets->sheet;
 				
-				$handle = opendir(ROOT.$cacheFolder.'xl/worksheets/');
+				$handle = opendir($cacheFolder.'xl/worksheets/');
 				$i=0;
 				$syms=array();
 	            while($file = readdir($handle)){
 					if($file{0}== '.')continue;
 					$src=$cacheFolder.'xl/worksheets/'.$file;
-					if(!is_file(ROOT.$src))continue;
+					if(!is_file($src))continue;
 					$files[]=$file;
 				}
 				closedir($handle);
@@ -119,7 +117,7 @@ function &xls_parseAll($path){
 
 					$data[$list]=array();
 					
-					$sheet=simplexml_load_file(ROOT.$cacheFolder.'xl/worksheets/'.$file);
+					$sheet=simplexml_load_file($cacheFolder.'xl/worksheets/'.$file);
 					$rows=$sheet->sheetData->row;
 					foreach($rows as $row){
 						
@@ -262,9 +260,10 @@ function &xls_make($path){
 					}
 				}
 			}else{
-				$isnewgroup=(isset($row[$first_index])&&($count==1)&&strlen($row[$first_index])>1);//Если есть только первая ячейка и та длинее одного символа
+				$isnewgroup=(isset($row[$first_index])&&($count==1)&&mb_strlen($row[$first_index])>1);//Если есть только первая ячейка и та длинее одного символа
+
+				if(!$isnewgroup&&$pgpy&&mb_strlen($row[$first_index])!==1){//один символ в первой ячейке имеет специальное значение выхода на уровень вверх
 				
-				if(!$isnewgroup&&$pgpy&&strlen($row[$first_index])!==1){//один символ в первой ячейке имеет специальное значение выхода на уровень вверх
 					$roww=array_values($row);
 					$isnewgroup=!$roww[$pgpy];
 				}
@@ -287,10 +286,11 @@ function &xls_make($path){
 					//$group=&$g;//Теперь ссылка на новую группу и следующие данные будут добавляться в неё
 					//Новая ссылка забивает на старую, простое присвоение это новое место куда указывает ссылка
 				}else{
+					
 					if($count===1&&strlen($row[$first_index])===1){//подъём на уровень выше
 
-						if(@$argr[0]['parent']&&@$group['parent']['parent']){
-							$argr=array(&$group['parent']);
+						if(@$argr[0]['parent']){
+							$argr=array(&$argr[0]['parent']);
 							//echo '<b>'.$group['title'].'</b><br>';
 						}
 					}else{
@@ -439,14 +439,11 @@ function xls_processPossBe(&$data,$check1,$check2){//Если у позиции 
 		if(is_null($pos[$check2]))$pos[$check2]=$pos[$check1];
 	});
 }
-function xls_forFS($str){
-	return infra_State_forFS($str);
-}
 function xls_processPossFS(&$data,$props){
 	xls_runPoss($data,function(&$pos) use(&$props){	
 		infra_foro($props,function($name,$key) use(&$pos){
 			if(isset($pos[$key])){
-				$pos[$name]=xls_forFS($pos[$key]);
+				$pos[$name]=infra_forFS($pos[$key]);
 			}
 		});
 	});
@@ -614,18 +611,18 @@ function xls_processClass(&$data,$clsname,$musthave=false){
 	$run=function(&$data,$run,$clsname,$musthave, $clsvalue=''){
 		if($data['type']=='book'&&$musthave){
 			$data['miss']=true;
-			$clsvalue=xls_forFS($data['title']);
+			$clsvalue=infra_forFS($data['title']);
 		}else if($data['type']=='list'&&@$data['descr'][$clsname]){//Если в descr указан класс то имя листа игнорируется иначе это будет группой каталога, а классом будет считаться имя книги
 			$data['miss']=true;//Если у листа есть позиции без группы он не расформировывается
-			$clsvalue=xls_forFS($data['descr'][$clsname]);
+			$clsvalue=infra_forFS($data['descr'][$clsname]);
 		}else if($data['type']=='row'&&@$data['descr'][$clsname]){
-			$clsvalue=xls_forFS($data['descr'][$clsname]);
+			$clsvalue=infra_forFS($data['descr'][$clsname]);
 		}
 		infra_forr($data['data'],function&(&$pos) use($clsname,$clsvalue){
 			if(!isset($pos[$clsname])){
 				$pos[$clsname]=$clsvalue;//У позиции будет установлен ближайший класс
 			}else{
-				$pos[$clsname]=xls_forFS($pos[$clsname]);
+				$pos[$clsname]=infra_forFS($pos[$clsname]);
 			}
 			$r=null;return $r;
 		});
@@ -772,13 +769,14 @@ function xls_preparePosFiles(&$pos,$pth,$props=array()){
 	if(!$dir) return false;
 
 
-	if(is_dir(ROOT.$dir)){
-		$paths=glob(ROOT.$dir.'*');
-	}else if(is_file(ROOT.$dir)){
-		$paths=array(ROOT.$dir);
+	if(is_dir($dir)){
+		$paths=glob($dir.'*');
+	}else if(is_file($dir)){
+		$paths=array($dir);
 		$p=infra_srcinfo($dir);
 		$dir=$p['folder'];
 	}
+
 	infra_forr($paths,function&($p) use(&$pos,$dir){
 		
 		$d=explode('/',$p);
@@ -790,12 +788,14 @@ function xls_preparePosFiles(&$pos,$pth,$props=array()){
 
 
 		//if(!$ext)return;
-		if(!is_file(ROOT.$dir.$name))return;
+		if(!is_file($dir.$name))return;
 		//$name=preg_replace('/\.\w{0,4}$/','',$name);
 
 		/*$p=pathinfo($p);
 		$name=$p['basename'];
 		$ext=strtolower($p['extension']);*/
+		$dirs=infra_dirs();
+		$dir=preg_replace('/^'.str_replace('/','\/',$dirs['data']).'/',"*",$dir);
 		$name=infra_toutf($dir.$name);
 		if($name{0}=='.')return;
 		$im=array('png','gif','jpg');
@@ -822,8 +822,7 @@ $config=array(
 		'more'=>false,
  		'Переименовать колонки'=>array(),
  		'Удалить колонки'=>array(),
-		'Подготовить для адреса'=>array(),//Ничего
-		'Обязательные колонки'=>array(),//ничего array('Артикул')
+		'Подготовить для адреса'=>array('Артикул'=>'article','Производитель'=>'producer'),//Ничего
 		'Ссылка parent'=>false,//Нет ссылки
 		'group_title'=>true,
 		'parent_title'=>true,
@@ -833,9 +832,6 @@ $config=array(
 		'Известные колонки'=>array('Наименование','Артикул','Производитель')//Остальные в свойстве more
 	);
  * */
-function &xls_init2($path,$config=array()){//Возвращает полностью гототовый массив
-	return xls_init($path,$config);
-}
 function &xls_init($path,$config=array()){//Возвращает полностью гототовый массив
 	//if(infra_isAssoc($path)===true)return $path;//Это если переданы уже готовые данные вместо адреса до файла данных
 	
@@ -846,7 +842,7 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 	infra_fora($path,function($path) use(&$isonefile,&$ar){
 		$p=infra_theme($path);
 
-		if($p&&!is_dir(ROOT.$p)){
+		if($p&&!is_dir($p)){
 			if($isonefile===true)$isonefile=$p;
 			else $isonefile=false;
 			$ar[]=$path;
@@ -874,12 +870,12 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 		
 	infra_forr($ar,function&($path) use(&$data){
 		$d=&xls_make($path);
+
 		if(!$d)return;
 		$d['parent']=&$data;
 		$data['childs'][]=&$d;
 		$r=null;return $r;
 	});
-
 	
 	
 	
@@ -905,37 +901,15 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 		}
 	});
 
-	if(@!is_array($config['Подготовить для адреса']))$config['Подготовить для адреса']=array('Артикул'=>'article');
-	xls_processPossFS($data,$config['Подготовить для адреса']);//Заменяем левые символы в свойстве
+
+
+	
 	if(!isset($config['Имя файла']))$config['Имя файла']='Производитель';//Группа остаётся, а производитель попадает в описание каждой позиции
 
 	
 
 	if(@$config['Имя файла']=='Производитель')xls_processClass($data,'Производитель',true);//Должен быть обязательно miss раставляется
-	else {
-		//xls_processClassEmpty($data,'Производитель');
-	}
 	
-	/*
-	if($config['Обязательные колонки']){
-
-		xls_runPoss($data,function(&$pos,$i,&$group) use($config){// пустая позиция
-			for($i=0,$l=sizeof($config['Обязательные колонки']);$i<$l;$i++){
-
-				$v=$config['Обязательные колонки'][$i];
-				
-				if(!isset($pos[$v])){
-					echo 1;
-					unset($pos['group']['data'][$i]);
-					return;
-				}
-			}
-		});
-	}
-	echo '<pre>';
-	print_r($data);
-	exit;
-	*/
 	xls_runPoss($data,function(&$pos,$i,&$group){// пустая позиция
 		if(sizeof($pos)==2){ //group_title Производитель
 			unset($group['data'][$i]);
@@ -955,18 +929,32 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 	
 	//xls_processGroupCalculate($data);//Добавляются свойства count groups сколько позиций и групп группы должны быть уже определены... почищены...				
 	
+	xls_runGroups($data,function(&$gr,$i,&$parent){//Имя листа или файла короткое и настоящие имя группы прячется в descr. но имя листа или файла также остаётся в title
+		$gr['name']=$gr['descr']['Наименование'];//name крутое правильное Наименование группы
+		if(!$gr['name'])$gr['name']=$gr['title'];//title то как называется файл или какое имя используется в адресной строке
+		if(!$gr['tparam'])$gr['tparam']=$parent['tparam'];//tparam наследуется Оборудование:что-то, что-то
+
+		if($gr['descr']['Производитель']){
+			for($i=0,$il=sizeof($gr['data']);$i<$il;$i++){
+				if(!empty($gr['data'][$i]['Производитель']))continue;
+				$gr['data'][$i]['Производитель']=$gr['descr']['Производитель'];
+				$gr['data'][$i]['producer']=infra_forFS($gr['descr']['Производитель']);
+			}
+		}
+
+	});
 
 
-	if(@$config['Основные колонки'])$config['Известные колонки']=$config['Основные колонки'];//temp для совместимости с одним старым сайтом каким сайтом?
+	if(@!is_array($config['Подготовить для адреса']))$config['Подготовить для адреса']=array('Артикул'=>'article','Производитель'=>'producer');
+	xls_processPossFS($data,$config['Подготовить для адреса']);//Заменяем левые символы в свойстве
+	
 
 	if(@!$config['Известные колонки'])$config['Известные колонки']=array('Производитель','Наименование','Описание','Артикул');
 	$config['Известные колонки'][]='group';
-	if(@$config['Производитель'])$config['Известные колонки'][]='Производитель';
 	foreach($config['Подготовить для адреса'] as $k=>$v){
 		$config['Известные колонки'][]=$v;
 		$config['Известные колонки'][]=$k;
 	}
-
 	if(@$config['more']){
 		xls_processPossMore($data,$config['Известные колонки']);//позициям + more		
 	}
@@ -1014,10 +1002,6 @@ function &xls_init($path,$config=array()){//Возвращает полност�
 	xls_runPoss($data,function(&$pos,$i,&$group){
 		$pos['path']=$group['path'];
 	});
-	xls_runGroups($data,function(&$gr,$i,&$parent){//Имя листа или файла короткое и настоящие имя группы прячется в descr. но имя листа или файла также остаётся в title
-		$gr['name']=$gr['descr']['Наименование'];//name крутое правильное Наименование группы
-		if(!$gr['name'])$gr['name']=$gr['title'];//title то как называется файл или какое имя используется в адресной строке
-		if(!$gr['tparam'])$gr['tparam']=$parent['tparam'];//tparam наследуется Оборудование:что-то, что-то
-	});
+	
 	return $data;
 };

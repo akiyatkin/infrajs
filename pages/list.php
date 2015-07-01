@@ -65,7 +65,7 @@
 
 
 					
-					//if(!$f && is_file(ROOT.$path))continue;//Файлы не надо
+
 					if(is_dir($path)){
 						if($sub)runfolder($path.'/',$hidden,$sub,$f,$d,$filelist,$pre.infra_toutf($file).'/');
 						if(!$d)continue;//Папки не надо
@@ -81,13 +81,11 @@
 		}
 	}
 
-	
-	require_once(__DIR__.'/../infra/infra.php');
 
 	$images=array();
 	$src=$_GET['src'];
+
 	$src=infra_theme($src);
-	$d=_infra_src($src);
 
 	if($src){
 		$dir=$src;
@@ -96,12 +94,8 @@
 		}
 		//Если требуемая папка содержит в своём реальном адресе(без ../) путь до папки infra то можно иначен $ican будет false
 		$dirs=infra_dirs();
-		$ican=(strstr(realpath($dir),realpath($dirs['ROOT'].'infra'))!==false);
-		/*$ican=$ican1||$ican2;
-		//if(!infra_admin()){
-			$ican2=(strstr(realpath(ROOT.$dir),realpath(ROOT.'infra/')));
-			$ican=$ican1||$ican2;
-		//}*/
+		$ican=(strstr(realpath($dir),realpath($dirs['data']))!==false);
+	
 		if($ican){
 			if(isset($_GET['e'])&&$_GET['e']){//Какие нужны расширения//Делятся запятой
 				$e=preg_split('/,/',$_GET['e']);
@@ -222,13 +216,7 @@
 					$filename = array_pop($ar);
 					$ext = '';
 				}
-				/*$p=array(
-					'f'=>is_file(ROOT.$path),
-					'dir'=>$prefile,
-					'name'=>$filename,
-					'ext'=>$ext
-				);
-				 */
+				
 					
 				if($e&&is_file($path)){
 					if(!in_array(strtolower($p['ext']),$e))continue;
@@ -339,7 +327,6 @@
 				$filename = array_pop($ar);
 				$ext = '';
 			}
-
 			if($ext=='mht'||$ext=='tpl'||$ext=='html'||$ext=='htm'){
 				$s='*pages/mht/mht.php?preview=1&src='.infra_toutf($src).$images[$i];
 			}else if($ext=='docx'){

@@ -1,5 +1,5 @@
 //Свойства seo, seotpl
-infra.wait(infra,'AUTOEDIT',function(){
+/*infra.wait(infra,'AUTOEDIT',function(){
 	AUTOEDIT.menu.push({
 		name:'SEO оптимизация',
 		click:function(){
@@ -7,7 +7,7 @@ infra.wait(infra,'AUTOEDIT',function(){
 			infrajs.SEO('seo');
 		}
 	})
-});
+});*/
 
 /*infrajs.seo_checkseolinktpl=function(layer){
 	if(!layer.seotpl)return;

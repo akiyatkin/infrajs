@@ -1,6 +1,6 @@
 <?php
 	
-	require_once(__DIR__.'/../infra/infra.php');
+	
 	infra_require('*autoedit/admin.inc.php');
 
 	$type=infra_toutf(@$_REQUEST['type']);
@@ -80,28 +80,28 @@
 					if(infra_theme($newpath,'snd'))return infra_echo($ans,'Такая папка уже существует или имя занято'); 
 				}
 				if($type==='mvdir'){
-					if(@rename(ROOT.infra_theme($oldfolder,'snd').infra_tofs($oldname).'/',ROOT.infra_theme($newfolder,'snd').infra_tofs($newname).'/')){
+					if(@rename(infra_theme($oldfolder).infra_tofs($oldname).'/',infra_theme($newfolder).infra_tofs($newname).'/')){
 						$ans['close']=1;
 						return infra_echo($ans,'Директория переименована.',1);
 					}else{
 						return infra_echo($ans,'Не удалось переименовать директорию.',0);
 					}
 				}else if($type==='mkdir'){
-					if(@mkdir(ROOT.infra_theme($newfolder,'snd').infra_tofs($newname).'/',0755)){
+					if(@mkdir(infra_theme($newfolder).infra_tofs($newname).'/')){
 						$ans['close']=1;//Сигнал окну закрыться
 						return infra_echo($ans,'Директория создана',1);
 					}else{
 						return infra_echo($ans,'Создать директорию не получилось.',0);
 					}
 				}else if($type==='cpdir'){
-					if(@copy(ROOT.infra_theme($oldfolder,'snd').infra_tofs($oldname),ROOT.infra_theme($newfolder,'snd').infra_tofs($newname).'/')){
+					if(@copy(infra_theme($oldfolder).infra_tofs($oldname),infra_theme($newfolder).infra_tofs($newname).'/')){
 						$ans['close']=1;
 						return infra_echo($ans,'Директория скопирована',1);
 					}else{
 						return infra_echo($ans,'Скопировать директорию не получилось.',0);
 					}
 				}else if($type==='rmdir'){
-					if (@rmdir(ROOT.infra_theme($oldfolder,'snd').infra_tofs($oldname))){
+					if (@rmdir(infra_theme($oldfolder).infra_tofs($oldname))){
 						$ans['close']=1;
 						return infra_echo($ans,'Директория удалена.',1);
 					}else{
@@ -146,7 +146,7 @@
 						return;
 						//return infra_echo($ans,'Не удалось сделать резервную копию '.infra_toutf($id),0);
 					}
-					$ans['result']=unlink(ROOT.$file);
+					$ans['result']=unlink($file);
 				
 				}else if($type=='renamefile'||$type=='copyfile'){
 					$oldfolder=infra_theme($_REQUEST['oldfolder']);
@@ -155,7 +155,7 @@
 					}
 					$oldname=infra_tofs($_REQUEST['oldname']);
 					$oldfile=infra_theme($oldfolder.$oldname);
-					if(!is_file(ROOT.$oldfile)){
+					if(!is_file($oldfile)){
 						return infra_echo($ans,'Не найден оригинальный файл'.infra_toutf(@$_REQUEST['oldold']));
 					}
 					$takepath=autoedit_takepath($oldfile);
@@ -196,10 +196,10 @@
 				}
 				$ans['close']=1;//закрывать окно по окончанию
 				if($type=='renamefile'){
-					$ans['result']=rename(ROOT.$oldfile,ROOT.$newfile);
+					$ans['result']=rename($oldfile,$newfile);
 				}
 				if($type=='copyfile'){
-					$ans['result']=copy(ROOT.$oldfile,ROOT.$newfile);
+					$ans['result']=copy($oldfile,$newfile);
 				}
 			}
 		}else if($type=='version'){
@@ -220,7 +220,7 @@
 				$ifolder=infra_toutf($id);
 
 				$folder=autoedit_createPath($ifolder);
-				if(!$folder)return err($ans,'Не удалось создать дирректорию');
+				if(!$folder)return err($ans,'Failed to create the directory');
 
 				$rewrite=@$_REQUEST['rewrite'];
 				$ofile=$_FILES['file'];
@@ -243,14 +243,14 @@
 				$ans['name']=$name;
 				$file=$folder.infra_tofs($name);
 
-				if(!$rewrite&&is_file(ROOT.$file)){
+				if(!$rewrite&&is_file($file)){
 					$ans['edit']=$id.infra_toutf($name);
 					return err($ans,'Указанный файл уже есть');
 				}
 
 				$takepath=autoedit_takepath($file);
 				$take=infra_loadJSON($takepath);
-				if($take&&is_file(ROOT.$file)){
+				if($take&&is_file($file)){
 					$ans['edit']=$id.infra_toutf($name);
 					$ans['take']=$take;
 					return err($ans,'Ошибка! Файл существует и сейчас редактируется!');
@@ -258,7 +258,7 @@
 				if(!is_file($ofile['tmp_name'])){
 					return err($ans,'Не найден загруженный файл '.infra_toutf($ofile['name']));
 				}
-				if(!move_uploaded_file($ofile['tmp_name'],ROOT.$file)){
+				if(!move_uploaded_file($ofile['tmp_name'],$file)){
 					return err($ans,'Не удалось загрузить файл '.infra_toutf($id.$name));
 				}
 				$ans['close']=1;
@@ -270,6 +270,7 @@
 				
 				$ofile=$_FILES['file'];
 				$ifolder=infra_toutf($_REQUEST['folder']);
+			
 				$folder=autoedit_createPath($ifolder);
 
 
@@ -310,7 +311,7 @@
 									return infra_echo($ans,'Имя загружаемого файла, расширение должны совпадать с текущим файлом',0);
 								}
 								$file=$oldfile;
-								$r=unlink(ROOT.$file);
+								$r=unlink($file);
 								if(!$r) return err($ans,'Не удалось удалить старый файл '.infra_toutf($file));
 							}else{
 								$extload=preg_match('/\.\w{0,4}$/',$ofile['name'],$match);
@@ -324,9 +325,9 @@
 								return err($ans,'Не найден загруженный файл '.infra_toutf($ofile['name']));
 							}
 							$file=infra_tofs($file);
-							$r=move_uploaded_file($ofile['tmp_name'],ROOT.$file);
-							if(!$r) return err($ans,'Не удалось загрузить файл '.ROOT.infra_toutf($file));
-							autoedit_setLastFolderUpdate($file);
+							$r=move_uploaded_file($ofile['tmp_name'],$file);
+							if(!$r) return err($ans,'Не удалось загрузить файл '.infra_toutf($file));
+							//autoedit_setLastFolderUpdate($file);
 							$ans['msg']='Файл загружен <span title="'.infra_toutf($file).'">'.infra_toutf($ofile['name']).'</span>';
 						}
 					}
@@ -353,8 +354,8 @@
 						$ans['take']=false;
 					}
 
-					$ans['size']=ceil(filesize(ROOT.$file)/1000);
-					$ans['time']=filemtime(ROOT.$file);
+					$ans['size']=ceil(filesize($file)/1000);
+					$ans['time']=filemtime($file);
 					$ans['result']=1;
 					preg_match("/\.([a-zA-Z]+)$/",$file,$match);
 					$ans['ext']=strtolower($match[1]);
@@ -409,19 +410,21 @@
 		}else if($type==='editfolder'){	
 			if(!$submit){
 				$folder=$id;
-				$parent=preg_replace("/^\*/","infra/data/",$folder);
+				$dirs=infra_dirs();
+				$parent=preg_replace("/^\*/",$dirs['data'],$folder);
+
 				$p=explode('/',$parent);
 				array_pop($p);//'/'
 				array_pop($p);//'name/'
 				$parent=implode('/',$p).'/';// *Разделы/
-				if(preg_match('/^\*/',$parent)||preg_match('/^infra\/data/',$parent)){
-					$parent=preg_replace("/^infra\/data\//","*",$parent);
-				       	$ans['parent']=$parent;
-				}
+				
+				$parent=preg_replace('/^'.str_replace('/','\/',$dirs['data']).'/',"*",$parent);
+				$ans['parent']=$parent;
+				
 
-				$folder=infra_theme($id);
+				$folder=infra_theme($id,true);
 				$folder=infra_toutf($folder);
-				$folder=preg_replace("/^infra\/data\//","*",$folder);
+				$folder=preg_replace('/^'.str_replace('/','\/',$dirs['data']).'/',"*",$folder);
 				
 
 				$ans['list']=infra_loadJSON('*pages/list.php?s=1&notsort=1&reverse=0&h=1&time=1&src='.$folder);
@@ -460,8 +463,8 @@
 		}else if($type==='jsoneditor'){
 			$file=explode('|',$id);
 			$file=infra_tofs($file[0]);
-
-			$isfile=infra_theme($file,'sfn');
+			$origfile=$file;
+			$isfile=infra_theme($file);
 			if($isfile){
 				$file=$isfile;
 			}else{
@@ -489,19 +492,21 @@
 					/*$p=explode('/',$f);
 					if($p[0]=='*')$p[0]='infra/data';
 					$f=array_pop($p);//достали файл*/
-					$file=autoedit_createPath($file);
+		
+					$file=autoedit_createPath($origfile);
 
 					$ans['msg'].='Файл был создан<br>';
 					if(!$file) return infra_echo($ans,'Не удалось создать путь до файла '.infra_toutf($file));
 				}
 
-				$r=file_put_contents(ROOT.$file,$_REQUEST['content']);
+				$r=file_put_contents($file,$_REQUEST['content']);
 				$ans['result']=(int)$r;
 				$ans['msg'].='Cохранено';
 				return infra_echo($ans);
 			}
 		}else if($type==='seo'){
-			$dir='infra/data/seo/';//stencil//
+			$dirs=infra_dirs();
+			$dir=$dirs['data'].'seo/';//stencil//
 			$src=infra_tofs($id);
 			$src=str_replace("/","-",$src);
 			$src=str_replace("..","-",$src);
@@ -512,7 +517,7 @@
 				$ans['seo']=$seo;
 			}else{
 				$dir=autoedit_createPath($dir);
-				//$dir=infra_theme($dir,'dm');
+				
 				$seo=$_POST['seo'];
 				$def=$_POST['def'];
 				$keys=array();
@@ -522,11 +527,11 @@
 				});
 
 				if(sizeof($keys)==0){
-					$r=unlink(ROOT.$src);
+					$r=unlink($src);
 				}else{
 					$keys['page']=$id;
 					$keys['time']=time();
-					$r=file_put_contents(ROOT.$src,infra_json_encode($keys));
+					$r=file_put_contents($src,infra_json_encode($keys));
 				}
 				if($r)return infra_echo($ans,'SEO-данные сохранены',1);
 				return infra_echo($ans,'Ошибка. SEO-данные не сохранены',1);
@@ -549,11 +554,10 @@
 				//$isdir=infra_theme($file,'sdn');
 				//if($isdir) return infra_echo($ans,'Существует папка с именем как у файла '.$id);
 
-				$isfile=infra_theme($file,'sfn');
+				$isfile=infra_theme($file);
 				if(!$isfile){
 					if(!autoedit_ext($file)) $file.='.tpl';
 					$ans['msg'].='Файл был создан<br>';
-
 					//$f=preg_replace('/^\*/','*/',infra_tofs($file));
 					/*$p=explode('/',$f);
 					if($p[0]=='*')$p[0]='infra/data';
@@ -568,7 +572,7 @@
 					$file=$isfile;
 				}
 
-				$r=file_put_contents(ROOT.$file,$_REQUEST['content']);
+				$r=file_put_contents($file,$_REQUEST['content']);
 				//autoedit_setLastFolderUpdate($file);
 				
 				$ans['result']=(int)$r;
@@ -577,63 +581,6 @@
 				$ans['msg'].='Cохранено';
 				return infra_echo($ans);
 			}
-		}else if($type==='rte'){//Редактор
-			$dir='infra/lib/wymeditor/wymeditor/iframe/default/';
-			$html='wymiframe.html';
-			if(!is_file(ROOT.$html)){
-				$css='wymiframe.css';
-				if(is_file(ROOT.$dir.$html)){
-					$data=file_get_contents(ROOT.$dir.$html);
-					$data=str_replace($css,$dir.$css,$data);
-					file_put_contents(ROOT.$html,$data);
-				}
-			}
-
-			$file=infra_theme($id);
-			$isfile=(bool)$file;
-
-			if(!$file){
-				$file=infra_tofs(preg_replace("/^\*/","infra/data/",$id));
-			}
-			$p=autoedit_parsefile($id);
-			//$folder=autoedit_folder($id);
-			//$ans['folder']=infra_toutf($folder);
-			$ans['folder']=infra_toutf($p['folder']);
-			$ans['file']=infra_toutf($p['file']);
-			
-			$ans['images']=infra_loadJSON('*pages/list.php?src='.$p['folder'].'&sort=time&e=jpg,gif,png&onlyname=1');
-
-			$ext=autoedit_ext($file);
-			if(!$ext){
-				$ext='tpl';
-				$file.='.'.$ext;
-			}
-
-			if(in_array($ext,array('tpl','htm','html'))){
-				$ans['result']=1;
-			}else{
-				$ans['result']=0;
-				$ans['msg']='Файлы с расширением '.$ext.' нельзя редактировать!';
-			}
-
-			if($ans['result']){
-				if(!$submit){
-					if($isfile){
-						$ans['content']=file_get_contents(ROOT.$file);
-						if(!$ans['content'])$ans['content']='<p>Пустой файл</p>';
-					}else{//Ну файла нет, ну при сохранении создадим
-						$ans['msg']='Файл ещё не создан.';
-						$ans['content']='<p>Новый файл</p>';
-					}
-				}else if($submit){
-					if(!$isfile&&!autoedit_ext($file)){
-						$file.='.tpl';
-					}
-					$content=$_REQUEST['content'];
-					infra_theme($file,'fm');//Могут быть не созданные папки.. создаём их
-					file_put_contents(ROOT.$file,$content);
-				}
-			}
 		}else if($type=='takeshow'){
 			$takepath=autoedit_takepath();
 			$list=infra_loadJSON('*pages/list.php?onlyname=1&src='.$takepath);
@@ -641,13 +588,11 @@
 			if($list){
 				foreach($list as $file){
 					$d=infra_loadJSON($takepath.$file);
-					if(is_dir(ROOT.'infra/')){
-						$d['path']=str_replace("infra/data/","*",$d['path']);
-					}else{
-						$d['path']=str_replace("core/data/","*",$d['path']);//dedicated
-					}
+					$dirs=infra_dirs();
+					$d['path']=str_replace($dirs['data'],"*",$d['path']);
 					
-					$d['modified']=filemtime(ROOT.infra_theme($d['path']));
+					
+					$d['modified']=filemtime(infra_theme($d['path']));
 					preg_match("/\.([a-zA-Z]+)$/",$d['path'],$match);
 					$d['ext']=strtolower($match[1]);
 					$files[]=$d;
@@ -665,11 +610,11 @@
 					$ans['noaction']=true;//Собственно всё осталось как было
 				}else{
 					$takepath=autoedit_takepath($file);
-					if(!$take&&is_file(ROOT.$takepath)){
-						$ans['result']=@unlink(ROOT.$takepath);
-					}else if($take&&!is_file(ROOT.$takepath)){//Повторно захватывать не будем
+					if(!$take&&is_file($takepath)){
+						$ans['result']=@unlink($takepath);
+					}else if($take&&!is_file($takepath)){//Повторно захватывать не будем
 						$save=array('path'=>$id,'date'=>time(),'ip'=>$_SERVER['REMOTE_ADDR'],'browser'=>$_SERVER['HTTP_USER_AGENT']);
-						$ans['result']=file_put_contents(ROOT.$takepath,infra_json_encode($save));
+						$ans['result']=file_put_contents($takepath,infra_json_encode($save));
 					}else{
 						$ans['noaction']=true;//Собственно всё осталось как было
 						$ans['result']=true;
