@@ -273,7 +273,7 @@
 	</script>
 	
 {groups_group:}
-	<a href="?{crumb}/{title}">
+	<a href="?{config.root}/{title}">
 		<table>
 			<tr>
 				<td class="img">

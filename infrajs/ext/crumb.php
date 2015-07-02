@@ -45,7 +45,7 @@ class crumb {
 		}else{
 			$root=&infra\ext\crumb::getInstance();
 		}
-		if($layer['dyn'][$name])$layer[$name]=&$root->getInstance(array($layer['dyn'][$name]));
+		if($layer['dyn'][$name])$layer[$name]=&$root->getInst(array($layer['dyn'][$name]));
 		else $layer[$name]=&$root;
 	}
 }	

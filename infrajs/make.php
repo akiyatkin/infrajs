@@ -30,7 +30,6 @@ use itlife\infrajs\infrajs\ext;
 //========================
 	infra_listen($infra,'layer.oninit',function(&$layer){
 		//external
-
 		ext\external::check($layer);
 	});
 	infra_listen($infra,'layer.oninit',function(&$layer){
@@ -46,6 +45,8 @@ use itlife\infrajs\infrajs\ext;
 		//unick
 		ext\unick::set($layer);
 	});
+
+	
 	infra_listen($infra,'layer.oninit',function(&$layer){//это из-за child// всё что после child начинает плыть. по этому надо crumb каждый раз определять, брать от родителя.
 		//crumb
 		if(!isset($layer['dyn'])){//Делается только один раз
@@ -55,7 +56,7 @@ use itlife\infrajs\infrajs\ext;
 	});
 	infra_listen($infra,'layer.oninit',function(&$layer){
 		//crumb
-		if(!isset($layer['parent']))return;
+		if(empty($layer['parent']))return;
 		
 		ext\crumb::set($layer,'crumb',$layer['dyn']['crumb']);//Возможно у родителей обновился crumb из-за child у детей тоже должен обновиться хотя они не в child
 	});
@@ -76,14 +77,10 @@ use itlife\infrajs\infrajs\ext;
 	infra_listen($infra,'layer.oninit',function(&$layer){//Должно быть после external, чтобы все свойства у слоя появились
 		//crumb childs
 		infra_forx($layer['childs'],function(&$l,$key){//У этого childs ещё не взять external
-			if(!@$l['crumb'])ext\crumb::set($l,'crumb',$key);
+			if(empty($l['crumb']))ext\crumb::set($l,'crumb',$key);
 		});
 	});	
 
-
-
-
-	
 	infra_listen($infra,'layer.oninit',function(&$layer){
 		//seo
 		infrajs_seo_checkseolinktpl($layer);

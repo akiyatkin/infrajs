@@ -39,7 +39,6 @@ function infra_install(){
 		header('infra-update:'.($r?'Fail':'OK'));
 		require_once(__DIR__.'/../../infra/install.php'); 
 	}else if(!is_dir($dirs['cache'])){
-		mkdir($dirs['cache']);
 		require_once(__DIR__.'/../../infra/install.php');
 	}
 }

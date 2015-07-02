@@ -83,16 +83,14 @@ class infrajs {
 
 
 		
-
+		
 		infrajs::run(infrajs::getWorkLayers(),function(&$layer,&$parent) use(&$store){//Запускается у всех слоёв в работе которые wlayers
 			if($parent)$layer['parent']=&$parent;
 			infra_fire($layer,'layer.oninit');
-			if(infrajs::is('check',$layer)){
-				infra_fire($layer,'layer.oncheck');
-			}	
-			
+			if(!infrajs::is('check',$layer))return;
+			infra_fire($layer,'layer.oncheck');
 		});//разрыв нужен для того чтобы можно было наперёд определить показывается слой или нет. oncheck у всех. а потом по порядку.
-
+		
 		infra_fire($infrajs,'oncheck');//момент когда доступны слои по getUnickLayer
 		
 		infrajs::run(infrajs::getWorkLayers(),function(&$layer){//С чего вдруг oncheck у всех слоёв.. надо только у активных
@@ -160,13 +158,13 @@ class infrajs {
 		//$store=&infrajs::store('run_array');//$r, $props=$infrajs_run_props;
 		//if($layers===true)$layers=&infrajs_getWorkLayers();
 		//if($layers===false)$layers=&infrajs_getAllLayers();
-		$r=&infra_fora($layers,function&(&$layer) use(&$parent,&$callback){
+		$r=&infra_fora($layers,function&(&$layer) use(&$parent,$callback){
 			
 			$r=&$callback($layer,$parent);
 
 
 			if(!is_null($r))return $r;
-			$r=&infra_foro($layer,function&(&$val,$name) use(&$layer,&$callback){
+			$r=&infra_foro($layer,function&(&$val,$name) use(&$layer,$callback){
 				
 				$store=&infrajs::store();
 				if(!$store['run'])$store['run']=array();
@@ -177,7 +175,7 @@ class infrajs {
 					$r=&infrajs::run($val,$callback,$layer);
 					if(!is_null($r))return $r;
 				}else if(isset($props['keys'][$name])){
-					$r=&infra_foro($val,function&(&$v,$i) use(&$layer,&$callback){
+					$r=&infra_foro($val,function&(&$v,$i) use(&$layer,$callback){
 
 						$r=&infrajs::run($v,$callback,$layer);
 						//if(!is_null($r))

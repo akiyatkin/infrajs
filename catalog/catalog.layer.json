@@ -3,35 +3,19 @@
 	"tplroot":"groups",
 	"json":"*catalog/catalog.php?type=rubrics",
 	"autoedittpl":{ "fast":"{infra.conf.catalog.dir}"},
-	
+	"configtpl":{
+		"root":"{crumb}"
+	},
 	"child":[{
 		"tpl":"*catalog/catalog.tpl",
 		"tplroot":"SEARCH",
 		"jsontpl":"*catalog/catalog.php?type=search&val={crumb.name}&prod={config.sel}",
 		"autoedittpl":{ "fast":"{infra.conf.catalog.dir}" },
-		"linktpl":"{crumb}",
-		"seotpl":{
-			"link":"{crumb.parent}/{{.}}"
-		},
 		"conf_prod":true,
 		"parsedtpl":"{config.sel}",
 		"configtpl":{
+			"root":"{crumb.parent}",
 			"sel":"{config.sel|(crumb.name|)}"
-		},
-		"seo":{
-			"name":"Группа каталога",
-			"json":"*catalog/catalog.php?type=search&val={.}",
-			"tpl":["<h1>{title}</h1><p>{descr}</p>"],
-			"schema":{
-				"type":"string"
-			},
-			"items":[{	
-				"data":"Каталог"
-			},{	
-				"data":"Новинки"
-			}],
-			//массив items, все данные с дефолтными значениями всего благодаря чему можно получить уникальный контент.php
-			"defitems":"*catalog/catalog.php?type=seo&val=search"
 		}
 	},{
 		"child":{
@@ -64,7 +48,6 @@
 			}
 		}
 	}],
-
 	"childs":{
 		"Поиск":{
 			"tpl":"*catalog/catalog.tpl",

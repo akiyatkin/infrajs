@@ -1,12 +1,26 @@
 <?php
-	
-	require_once(__DIR__.'/../../infra/infra.php');
-	infra_require('*infra/ext/crumb.php');
 	use itlife\infrajs\infra\ext\crumb;
-	crumb::init();
-
 	$ans = array();
 	$ans['title'] = 'Хлебные крошки';
+
+
+	$obj=crumb::getInstance('test/check');
+	$parent=crumb::getInstance('test');
+	if(crumb::$childs['test/check']!==$obj)return infra_err($ans,'Некорректно определяется крошка 1');
+	if(crumb::$childs['test']!==$parent)return infra_err($ans,'Некорректно определяется крошка 2');
+
+
+	if($obj->parent!==$parent)return infra_err($ans,'Некорректно определён parent');
+
+
+	crumb::change('test/hi');
+	$obj=crumb::getInstance('test');
+
+	if(!$obj->is)return infra_err($ans,'Не применилась крошка на втором уровне');
+	
+
+
+	$root=crumb::getInstance();
 
 	crumb::change('');
 	$crumb=crumb::getInstance('');
@@ -26,5 +40,15 @@
 	$crumb=crumb::getInstance('test');
 	$crumb2=crumb::getInstance('test2');
 
-	if($f==Null&&$r&&!is_null($crumb->query)&&is_null($crumb2->query)) return infra_ret($ans, 'ret');
-	else return infra_err($ans, 'ret');
+	if(!($f==Null&&$r&&!is_null($crumb->query)&&is_null($crumb2->query))) return infra_err($ans, 'Изменения крошек');
+
+
+
+	crumb::change('test/test');
+	$inst=crumb::getInstance('test/test/test');
+	
+
+
+ return infra_ret($ans, 'Всё ок');
+
+	

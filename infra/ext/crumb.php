@@ -1,6 +1,5 @@
 <?php
 namespace itlife\infrajs\infra\ext;
-require_once(__DIR__.'/../infra.php');
 require_once(__DIR__.'/seq.php');
 
 class crumb {
@@ -17,13 +16,23 @@ class crumb {
 	static $get;
 	public $is;
 	protected function __construct($right){}
-	static public function &getInstance($name=''){
-		if(!empty($this))$right=$this->path;
-		else $right=array();
+	public function getRoot(){
+		$root=$this;
+		while($root->parent) $root=$root->parent;
+		return $root;
+	}
+	public function getInst($name=''){
+		$right=$this->path;
+		return crumb::getInstance($name,$right); 
+	}
+	static function getInstance($name='',$right=array()){
+		
+		
 		$right=crumb::right(array_merge($right,crumb::right($name)));
 		if(@$right[0]==='')$right=array();
 		
 		$short=crumb::short($right);
+
 		if(empty(crumb::$childs[$short])){
 			$that=new crumb($right);
 			
@@ -33,7 +42,7 @@ class crumb {
 			crumb::$childs[$short]=$that;
 			
 
-			if($that->name)$that->parent=$that->getInstance('//');
+			if($that->name)$that->parent=$that->getInst('//');
 			
 		}
 		return crumb::$childs[$short];
@@ -53,7 +62,7 @@ class crumb {
 		$eq=explode('=',$amp[0],2);
 		$sl=explode('/',$eq[0],2);
 		if(sizeof($eq)!==1&&sizeof($sl)===1){
-			//В первой крошке нельзя использовать символ "="
+			//В первой крошке нельзя использовать символ "=" для совместимости с левыми параметрами для главной страницы, которая всё равно покажется
 			$params=$query;
 			$query='';
 		}else{
