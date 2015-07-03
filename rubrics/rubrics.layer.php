@@ -1,6 +1,5 @@
 <?php
 
-require_once(__DIR__.'../infra/infra.php');
 infra_admin_modified();
 
 infra_require('*rubrics/rubrics.inc.php');

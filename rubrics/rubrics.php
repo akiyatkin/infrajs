@@ -8,9 +8,9 @@ $conf=infra_config();
 $ans=array();
 if(empty($conf['rubrics']['list'][$type]))return infra_err($ans,'Неопределённый type');
 $dirs=infra_dirs();
-$dir=$dirs['data'].$type.'/';
+$dir='*'.$type.'/';
 if($conf['rubrics']['list'][$type]['type']=='info'){
-	$exts=array('docx','tpl','mht','html');
+	$exts=array('docx','tpl','mht','html','php');
 }else{
 	$exts=array();
 }
