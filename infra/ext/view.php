@@ -28,7 +28,9 @@ function infra_view_setCookie($name,$val=null){
 	}
 	return setcookie($name,$val,$time,'/'.$root);
 }
-
+function infra_view_getPath(){
+	return infra_view_getSchema().infra_view_getHost().'/'.infra_view_getRoot();
+}
 function infra_view_getRoot(){
 	//Путь начинается без слэша svn/project/ например
 	$dirs=infra_dirs();

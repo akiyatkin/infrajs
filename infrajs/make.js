@@ -509,10 +509,6 @@
 		infrajs.autoeditLink();
 	});
 	infra.listen(infrajs,'onshow',function(){
-		//common
-		infra.tableCommon();
-	});
-	infra.listen(infrajs,'onshow',function(){
 		//autoedit
 		if(!window.AUTOEDIT)return;
 		if(!AUTOEDIT.active)return;
