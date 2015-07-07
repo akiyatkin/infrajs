@@ -1132,7 +1132,7 @@ $fn=function($path){
 };
 infra_seq_set($infra_template_scope,array('infra','theme'),$fn);
 
-$conf=infra_config('secure');
+$conf=&infra_config('secure');
 infra_seq_set($infra_template_scope,array('infra','conf'),$conf);
 
 $fn=function(){ return infra_view_getPath(); };

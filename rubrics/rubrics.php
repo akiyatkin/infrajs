@@ -4,9 +4,8 @@ infra_require('*rubrics/rubrics.inc.php');
 $type=$_GET['type'];
 $conf=infra_config();
 
-
 $ans=array();
-if(empty($conf['rubrics']['list'][$type]))return infra_err($ans,'Неопределённый type');
+if(empty($conf['rubrics']['list'][$type]))return infra_err($ans,'Undefined type '.$type);
 $dirs=infra_dirs();
 $dir='*'.$type.'/';
 if($conf['rubrics']['list'][$type]['type']=='info'){

@@ -55,13 +55,13 @@ function &infra_seq_set(&$obj,$right,&$val){
 	$make=is_null($val)?false:true;
 	$i=sizeof($right)-1;
 	if($i==-1){
-		$obj=$val;
+		$obj=&$val;
 		return $obj;
 	}
 	if($make&&!is_array($obj))$obj=array();
 	$need=&infra_seq_get($obj,$right,0,$i,$make);
 	if(!$make&&is_array($need))unset($need[$right[$i]]);
-	if($make) $need[$right[$i]]=$val;
+	if($make) $need[$right[$i]]=&$val;
 	return $obj;
 }
 function &infra_seq_get(&$obj,&$right,$start=0,$end=NULL,$make=false){//получить из obj значение right до end(не включая) брать начинаем с start
