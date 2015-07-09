@@ -3,8 +3,6 @@
 Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. http://itlife-studio.ru
 */
 	
-	
-	require_once(__DIR__.'../infra/infra.php');
 	infra_require('*imager/imager.inc.php');
 	infra_admin(true);
 	
@@ -44,16 +42,17 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 			return $filelist;
 		}
 	}
-	$dircache='infra/cache/imager_resize/';
+	$dirs=infra_dirs();
+	$dircache=$dirs['cache'].'imager_resize/';
 	$files=runfolder($dircache,0,1);
 	$countcache=sizeof($files);
 
-	$dirorig='infra/data/imager/.notwater/';
+	$dirorig=$dirs['data'].'imager/.notwater/';
 	$files=runfolder($dirorig,1,0);
 	$countorig=sizeof($files);
 
-	$iswater=infra_theme('infra/data/imager/mark.png');
-	$ishwater=infra_theme('infra/data/imager/.mark.png');
+	$iswater=infra_theme($dirs['data'].'imager/mark.png');
+	$ishwater=infra_theme($dirs['data'].'imager/.mark.png');
 	$water=$iswater||$ishwater;
 	if(isset($_GET['action'])){
 		$act=$_GET['action'];
@@ -134,7 +133,8 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 ?>
 
 <div style="margin:50px 100px; font-family: Tahoma; font-size:14px">
-Количество оригиналов иллюстраций с водяным знаком: <b><?php echo $countorig?></b>. 
+	Config.imager.watermark: <b><?php $conf=infra_config(); echo ($conf['imager']['watermark']?"true":"false");?></b> - глобальный запрет и создавать или нет папку data/imager/<br>
+	Количество оригиналов иллюстраций с водяным знаком: <b><?php echo $countorig?></b>. 
 	<br><a href="?action=removemarks">Удалить на иллюстрациях водяной знак</a>. <small>Если будет ошибка на ограничение времени выполенния скрипта, нужно обновлять страницу пока скрипт не закончит работу.</small><br>
 <!--	<a title="Нажимать нельзя" style="font-size:10px; color:gray;" href="?action=delorig">Удалить оригиналы</a><br>-->
 Количество иллюстарций с изменёнными размерами в кэше: <b><?php echo $countcache?></b>. <a title="Можно нажимать" href="?action=delcache">Удалить кэш</a><br>

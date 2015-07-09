@@ -11,7 +11,7 @@
 		5.3 - используются анонимные функции
 		5.3 - не всегда ставится закрывающие тег php
 	*/
-	if(mb_internal_encoding()!=='UTF-8')return infra_err($ans,'mb_internal_encoding()!=="UTF-8"');
+	if(mb_internal_encoding()!=='UTF-8')return infra_err($ans,'mb_internal_encoding()!=="UTF-8" '.mb_internal_encoding());
 	
 
 	//allow_call_time_reference http://php.net/manual/en/language.references.pass.php

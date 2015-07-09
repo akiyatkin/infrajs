@@ -47,7 +47,7 @@
 	}else{
 		$ans=array();
 		$ans['title']='Тест шаблонизатора. Без 3х известых ошибок.';
-
+		$ans['class']='bg-warning';
 		$msg=infra_forr($tpls,function($t,$key){
 			if($key<3)return;
 			

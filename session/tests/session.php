@@ -9,9 +9,8 @@ $val=infra_session_get('test');
 
 
 
-$val++;
+$val=(int)$val+1;
 infra_session_set('test',$val);
-
 
 $d=infra_session_get();
 $ans['test']=$d['test'];
