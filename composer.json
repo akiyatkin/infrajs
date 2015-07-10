@@ -7,7 +7,9 @@
         "email": "info@itlife-studio.ru"
 	}],
 	"require": {
-		"itlife/phpdate":"1.0.3"
+		"itlife/phpdate":"*",
+		"itlife/user":"*",
+		"itlife/session":"*"
     },
     "autoload":{
         "psr-4": {

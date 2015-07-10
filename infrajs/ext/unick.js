@@ -1,18 +1,18 @@
 //unick:(number),//Уникальное обозначение слоя
 //Нужно для уникальной идентификации какого-то слоя. Для хранения данных слоя в глобальной области при генерации слоя на сервере и его отсутствия на клиенте. Slide
-infra.wait(infrajs,'oninit',function(){
-	//session и template
-	infra.seq.set(infra.template.scope,infra.seq.right('infrajs.getUnickLayer'),function(unick){
-		return infrajs.getUnickLayer(unick);
-	});
-	infra.seq.set(infra.template.scope,infra.seq.right('infrajs.find'),function(){
-		return infrajs.find.apply(infrajs,arguments);
-	});
-});
+
 (function(){
 	var counter=1;
-	infrajs.unickSet=function(layer){
+	infrajs.unickInit=function(){
+		infra.seq.set(infra.template.scope,infra.seq.right('infrajs.find'),function(){
+			return infrajs.find.apply(infrajs,arguments);
+		});
+		infra.seq.set(infra.template.scope,infra.seq.right('infrajs.unicks'),infrajs.unicks);
+	}
+	infrajs.unicks={};
+	infrajs.unickCheck=function(layer){
 		if(!layer.unick)layer.unick=counter++;
+		infrajs.unicks[layer.unick]=layer;
 	}
 	infrajs.find=function(name,value){
 		var right=infra.seq.right(name);

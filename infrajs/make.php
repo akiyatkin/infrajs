@@ -43,7 +43,7 @@ use itlife\infrajs\infrajs\ext;
 	});
 	infra_listen($infra,'layer.oninit',function(&$layer){
 		//unick
-		ext\unick::set($layer);
+		ext\unick::check($layer);
 	});
 
 	
@@ -109,6 +109,7 @@ use itlife\infrajs\infrajs\ext;
 //========================
 //layer oncheck
 //========================
+	
 	infra_listen($infra,'layer.oncheck',function(&$layer){
 		//counter
 		if(@!$layer['counter'])$layer['counter']=0;

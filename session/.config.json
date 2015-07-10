@@ -1,7 +1,0 @@
-{
-	"session":{
-		"pub":["sync"],
-		"sync":false,
-		"change_session_tables":[]
-	}
-}

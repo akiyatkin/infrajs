@@ -5,8 +5,23 @@ namespace itlife\infrajs\infrajs\ext;
 use itlife\infrajs\infrajs;
 class unick {
 	static $counter=1;
-	static function set(&$layer){
+	static function init(){
+		global $infra,$infrajs;
+		infra_wait($infrajs,'oninit',function(){
+			//session и template
+			global $infra_template_scope;
+			$fn=function($name,$value){
+				return unick::find($name,$value);
+			};
+			infra_seq_set($infra_template_scope,infra_seq_right('infrajs.find'),$fn);
+			
+			infra_seq_set($infra_template_scope,infra_seq_right('infrajs.unicks'),unick::$unicks);
+		});		
+	}
+	static $unicks=array();
+	static function check(&$layer){
 		if(@!$layer['unick'])$layer['unick']=unick::$counter++;
+		unick::$unicks[$layer['unick']]=&$layer;
 	}
 	static function &find($name,$value){
 		$layers=infrajs::getAllLayers();
@@ -17,15 +32,5 @@ class unick {
 			return $r;
 		});
 	}
-	static function init(){
-		global $infra,$infrajs;
-		infra_wait($infrajs,'oninit',function(){
-			//session и template
-			global $infra_template_scope;
-			$fn=function($name,$value){
-				return unick::find($name,$value);
-			};
-			infra_seq_set($infra_template_scope,infra_seq_right('infrajs.find'),$fn);
-		});		
-	}
+	
 }

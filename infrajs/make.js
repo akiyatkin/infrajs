@@ -45,16 +45,15 @@
 	infra.wait(infrajs,'oninit',function(layer){
 		//show
 		infrajs.show_init();
-	});
-	infra.wait(infrajs,'oninit',function(){
+
+		//unick
+		infrajs.unickInit();
+	
 		//config
 		infrajs.configinit();
-	})
-	infra.wait(infrajs,'oninit',function(){
+	
 		//onsubmit
 		infrajs.onsubmitinit();
-	});
-	infra.wait(infrajs,'oninit',function(){
 		//parsed
 		infrajs.parsedinit();
 	});
@@ -92,7 +91,7 @@
 	});
 	infra.listen(infra,'layer.oninit',function(layer){
 		//unick
-		infrajs.unickSet(layer);
+		infrajs.unickCheck(layer);
 	});
 	infra.listen(infra,'layer.oninit',function(layer){//это из-за child// всё что после child начинает плыть. по этому надо Crumb каждый раз определять, брать от родителя.
 		//Crumb
@@ -156,6 +155,7 @@
 //========================
 // layer oncheck
 //========================
+
 	infra.listen(infra,'layer.oncheck',function(layer){//Свойство counter должно быть до tpl чтобы counter прибавился а потом парсились
 		//counter
 		if(!layer.counter)layer.counter=0;

@@ -110,7 +110,7 @@ function infra_require($path){
 	if(isset($store[$path]))return $store[$path]['value'];
 	$store[$path]=array('value'=>true);//Метку надо ставить заранее чтобы небыло зацикливаний
 	$rpath=infra_theme($path);
-	if(!$rpath)die('infra_require - не найден путь '.$path);
+	if(!$rpath){ throw new Exception('infra_require - не найден путь '.$path); }
 	require_once($rpath);//Просто require позволяет загрузить самого себя. А мы текущий скрипт не добавляем в список подключённых
 
 }
