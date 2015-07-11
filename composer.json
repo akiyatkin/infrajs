@@ -13,8 +13,8 @@
 		"itlife/phpdate":"*",
 		"itlife/user":"*",
 		"itlife/session":"*",
-		"vsn4ik/bootstrap-checkbox": "1.2.5",
-    },
+		"vsn4ik/bootstrap-checkbox": "1.2.5"
+	},
     "repositories":[{
             "type":"vcs",
             "url":"https://github.com/malsup/form"
