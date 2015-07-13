@@ -57,13 +57,19 @@ class seojson {
 	}
 	function load($src){
 		$item=infra_loadJSON($src);
-		if(!$item)$item=array();
-		if($item['external']){
-			if(!is_array($item['external']))$item['external']=explode(', ',$item['external']);
-			foreach($item['external'] as $esrc){
+		if (!$item) {
+			$item=array();
+		}
+		
+		if ($item['external']) {
+			if (!is_array($item['external'])) {
+				$item['external']=explode(', ', $item['external']);
+			}
+
+			foreach ($item['external'] as $esrc) {
 				$ext=self::load($esrc);
-				foreach($ext as $k=>$v){
-					if(in_array($k,array('itemprops','property','name')))continue;
+				foreach ($ext as $k => $v) {
+					if( in_array($k,array('itemprops','property','name')) )continue;
 					if(isset($item[$k]))continue;
 					$item[$k]=$v;
 				}
@@ -81,6 +87,7 @@ class seojson {
 				}
 			}
 		}
+		
 		return $item;
 	}
 	function value($value){//load для <input value="...
