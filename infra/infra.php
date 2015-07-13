@@ -1,4 +1,5 @@
 <?php
+
 /*
 Copyright 2008-2013 ITLife, Ltd. http://itlife-studio.ru
 
@@ -38,7 +39,7 @@ statist - интегрировать как-нибудь
 
 //Скрипт не должен управлять этими опциями
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-ini_set('display_errors',1);	
+ini_set('display_errors', 1);
 	
 
 
@@ -72,7 +73,7 @@ infra_require('*infra/ext/cache.php');
 
 $conf=infra_config();
 
-if($conf['debug']){
+if ($conf['debug']) {
 	@header('Infrajs-Debug:true');
 	infra_cache_no();
 }
@@ -96,4 +97,5 @@ infra_require('*infra/ext/seq.php');
 infra_require('*infra/ext/template.php');
 
 infra_install();
+
 itlife\infrajs\infra\ext\crumb::init();

@@ -1,24 +1,32 @@
 <?php
+
 namespace itlife\infrajs\infra\ext;
+
 require_once(__DIR__.'/seq.php');
 
-class crumb {
+class crumb
+{
 	public $name;
 	public $parent;
 	public $child;
 	public $value;//Строка или null
 	public $query;
-	static $childs=array();
+	public static $childs = array();
 	public $counter=0;
-	static $globalcounter=0;
+	public static $globalcounter=0;
 	public $path;//Путь текущей крошки
-	static $params;//Всё что после первого амперсанда
-	static $get;
+	public static $params;//Всё что после первого амперсанда
+	public static $get;
 	public $is;
-	protected function __construct($right){}
-	public function getRoot(){
+	protected function __construct($right)
+	{
+	}
+	public function getRoot()
+	{
 		$root=$this;
-		while($root->parent) $root=$root->parent;
+		while ($root->parent) {
+			$root=$root->parent;
+		}
 		return $root;
 	}
 	public function getInst($name=''){

@@ -19,5 +19,8 @@
             "type":"vcs",
             "url":"https://github.com/malsup/form"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": { "itlife\\infrajs\\": "/" }
+    }
 }
