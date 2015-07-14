@@ -1,29 +1,32 @@
 <?php
-function &infra_db($debug=false){
+function &infra_db($debug = false)
+{
 	infra_cache_no();
-	return infra_once('infra_db',function&($debug){
+	return infra_once('infra_db', function &($debug) {
 		$config=infra_config();
-		if(!$debug)$debug=$config['debug'];
+		if (!$debug) {
+			$debug=$config['debug'];
+		}
 		$ans=array();
-		if(!$config['mysql']){
+		if (!$config['mysql']) {
 			//if($debug)die('Нет конфига для соединения с базой данных. Нужно добавить запись mysql: '.infra_json_encode($config['/mysql']));
 			return $ans;
 		}
 		$config=@$config['mysql'];
 		
 		
-		if(!$config['user']){
+		if (!$config['user']) {
 			//if($debug)die('Не указан пользователь для соединения с базой данных');
 			return $ans;
 		}
 		try {
-			@$db=new PDO('mysql:host='.$config['host'].';dbname='.$config['database'].';port='.$config['port'], $config['user'], $config['password']);	
+			@$db=new PDO('mysql:host='.$config['host'].';dbname='.$config['database'].';port='.$config['port'], $config['user'], $config['password']);
 			$db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-			if($debug){
+			if ($debug) {
 				$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			}else{
+			} else {
 				$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
-			} 
+			}
 				/*array(
 				PDO::ATTR_PERSISTENT => true,
 				PDO::ATTR_ERRMODE => true,
@@ -39,5 +42,12 @@ function &infra_db($debug=false){
 			}*/
 		}
 		return $db;
-	},array($debug));
+	}, array($debug));
+}
+function infra_stmt($sql)
+{
+	return infra_once('infra_stmt', function ($sql) {
+		$db=infra_db();
+		return $db->prepare($sql);
+	}, array($sql));
 }
