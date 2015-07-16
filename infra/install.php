@@ -8,7 +8,7 @@
 		интерфейс показывает сравнение собранного конфига всей системы с файлом data/.config.json
 	*/
 	$dirs=infra_dirs();
-	if(!is_dir($dirs['ROOT'].'/infra'))mkdir($dirs['ROOT'].'/infra');
+	if(!is_dir($dirs['ROOT'].'infra'))mkdir($dirs['ROOT'].'infra');
 	if(!is_dir($dirs['cache']))mkdir($dirs['cache']);
 	if(!is_dir($dirs['cache'].'mem/'))mkdir($dirs['cache'].'mem/');
 	if(!is_dir($dirs['data']))mkdir($dirs['data']);

@@ -28,6 +28,8 @@
 			<li role="presentation"><a href="?*infra/admin.php">admin</a></li>
 			<li role="presentation"><a href="?*imager/admin.php">imager</a></li>
 			<li role="presentation"><a href="?*infra/install.php">install</a></li>
+			<li role="presentation"><a href="?*infra/dirs.php">dirs</a></li>
+			<li role="presentation"><a href="?*infra/config.php">config</a></li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
