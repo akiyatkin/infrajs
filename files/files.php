@@ -80,36 +80,7 @@ if(@$_GET['id']){//Загрузка файла
 		}
 		return;
 	}else if(isset($_GET['show'])){
-		if(@$res['idfinded']&&@$res['id']!==@$res['name']){//Надено по id такой результат нельзя кэшировать, потому что тут будет редирект
-			if(!empty($_GET['redirect'])){
-				infra_cache_no(); //Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start, который второй раз не срабатывает
-				//Критерий что у работает сборка.. работаем сейчас в пространстве infrajs::check()
-				//Подписка на события infra_wait(infra,oninit) во всех остальных случаях событие не сработает. и подписка потеряется. а в нужном случае сразу выполнится			
-				global $infrajs;
-				infra_wait($infrajs,'oninit',function() use(&$res,$type){
-					$conf=infra_config();
-					$dirs=infra_dirs();
-					$r=$dirs['ROOT'];
-					
-					if($r)$r='/'.$r;
-					//else $r='';
-					//$r=preg_replace("/\/+/",'/',$r);
-
-					if($type=='pages'){
-						$src='http://'.$_SERVER['HTTP_HOST'].$r.'?'.$res['name'];
-					}else if($type=='blog'){
-						$src='http://'.$_SERVER['HTTP_HOST'].$r.'?Блог/'.$res['name'];
-					}else if($type=='events'){
-						$src='http://'.$_SERVER['HTTP_HOST'].$r.'?События/'.$res['name'];
-					}else{
-						die('Некорректный type');
-					}
-					
-					header('location: '.$src); 
-					exit;
-				});
-			}
-		}
+		
 
 		$conf=infra_config();
 		if(!$res){

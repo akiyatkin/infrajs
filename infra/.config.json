@@ -1,8 +1,8 @@
 {
 	"debug":1,
 	"infra":{
-		"rootisfolder":true,
-		"fscharset":"UTF-8"
+		"fscharset":"UTF-8",
+		"cache":"mem"
 	},
 	"admin":{
 		"pub":["popup"],
@@ -18,7 +18,7 @@
 		"siteroot":"",
 		"honeydomains":["localhost","127.0.0.1"]
 	},
-	"/memcache":{
+	"memcache":{
 		"host":"127.0.0.1",
 		"port":"11211"
 	},

@@ -20,7 +20,7 @@ function infrajs_seo_init(){//Делается при каждой пробеж�
 			
 			$html=infra_template_parse('*seo/sitemap.tpl',$data,'robots')."\n";
 			$dirs=infra_dirs();
-			file_put_contents($dirs['ROOT'].'robots.txt',$html);
+			file_put_contents('robots.txt',$html);
 		}
 	});
 }

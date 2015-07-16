@@ -156,45 +156,46 @@ infra.Crumb.setA=function(div){
 		if(/^javascript:/.test(href))continue;
 		
 
-		var r=href.split('?');
-		if(r.length>1){
-			var beforequest=r[0];
-			try{ //error malfomed URI
-				var href=decodeURI(r[1]);
-			}catch(e){
-				var href=r[1];
-			}
-		}else if(href=='.'){
-			var href='';
-			var beforequest='';
-		}else if(href=='./'){
-			var href='';
-			var beforequest='';
-		}else{
-			var beforequest=href;
-			var href='';
-		}
-		var t=beforequest.split('/');
 		
-		if(t.length>=3){
-			var method=t.shift();
-			if(method=='http:'||method=='https:'){
-				t.shift();//слэш пустой
-				sitehost=t.shift();
-				siteroot=t.join('/');
-				beforequest=siteroot;
-				
-				var islocal=location.host=='127.0.0.1'||location.host=='localhost';
-				if((method=='http:'&&sitehost==location.host&&('/'+siteroot==location.pathname))){
-					//Домен есть но он совпадает с текущим включая siteroot. Значит просто домен не учитывается.
-				}else{
-					a.setAttribute('target','_blank');//Если target не установлен
-					continue;
+		if (href=='.') { //Правильная ссылка на главную страницу
+			var beforequest='';
+			var href='';
+		} else {
+			var r=href.split('?');
+			var beforequest=r[0];
+			if(r.length>1){
+				try{ //error malfomed URI
+					//Пытаемся убрать проценты из адреса
+					var href=decodeURI(r[1]);
+				}catch(e){
+					var href=r[1];
+				}
+			}else{
+				var href='';
+			}
+		}
+
+		if(beforequest) {
+			var t=beforequest.split('/');
+			if(t.length>=3){
+				//разобрали строчку вида http://yandex.ru/site/?test
+				var method=t.shift();
+				if(method=='http:'||method=='https:'){
+					t.shift();//слэш пустой
+					sitehost=t.shift();
+					siteroot=t.join('/');
+					beforequest=siteroot;
+					
+					if((method=='http:'&&sitehost==location.host&&('/'+siteroot==location.pathname))){
+						//Домен есть но он совпадает с текущим включая siteroot. Значит просто домен не учитывается.
+					}else{
+						a.setAttribute('target','_blank');//Если target не установлен
+						continue;
+					}
 				}
 			}
+			continue;//В ссылке есть что-то до вопроса
 		}
-	
-		if(beforequest)continue;//В ссылке есть что-то до вопроса
 	
 		if(typeof(a.onclick)==='function'){
 			var old_func=a.onclick;

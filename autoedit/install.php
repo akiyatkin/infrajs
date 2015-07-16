@@ -1,4 +1,15 @@
 <?php
-	$dirs=infra_dirs();
+
+$conf=infra_config();
+
+$dirs=infra_dirs();
+
+if ($conf['infra']['cache']=='fs') {
+	@mkdir($dirs['cache']);
 	@mkdir($dirs['cache'].'admin_takefiles/');
-	@mkdir($dirs['backup'].'admin_deletedfiles/');
+}
+
+if (!is_dir($dirs['backup'])) {
+	mkdir($dirs['backup']);
+}
+@mkdir($dirs['backup'].'admin_deletedfiles/');

@@ -1,6 +1,8 @@
 <?php
+
 namespace itlife\infrajs;
-require_once(__DIR__.'/infra/infra.php');
+
+require_once __DIR__.'/infra/infra.php';
 
 /*//Функции для написания плагинов
 infrajs::store();
@@ -26,32 +28,45 @@ infrajs::checkAdd(layer);
 */
 
 global $infrajs;
-$infrajs=array();
-class infrajs {
-	static function &storeLayer(&$layer){
-		if(@!$layer['store'])$layer['store']=array('counter'=>0);//Кэш используется во всех is функциях... iswork кэш, ischeck кэш используется для определения iswork слоя.. путём сравнения ))
-		return $layer['store'];//Очищается кэш в checkNow	
+$infrajs = array();
+class Infrajs
+{
+	public static function &storeLayer(&$layer)
+	{
+		if (@!$layer['store']) {
+			$layer['store'] = array('counter' => 0);
+		}//Кэш используется во всех is функциях... iswork кэш, ischeck кэш используется для определения iswork слоя.. путём сравнения ))
+		return $layer['store']; //Очищается кэш в checkNow
 	}
-	static function &store(){//Для единобразного доступа в php, набор глобальных переменных
+	public static function &store()
+	{
+		//Для единобразного доступа в php, набор глобальных переменных
 		global $infrajs_store;
-		if(!$infrajs_store)$infrajs_store=array(
-				"timer"=>false,
-				"run"=>array('keys'=>array(),'list'=>array()),
-				"waits"=>array(),
-				"process"=>false,
-				"counter"=>0,//Счётчик сколько раз перепарсивался сайт, посмотреть можно в firebug
-				"alayers"=>array(),//Записываются только слои у которых нет родителя... 
-				"wlayers"=>array()//Записываются обрабатываемые сейчас слои
-		);
+		if (!$infrajs_store) {
+			$infrajs_store = array(
+				'timer' => false,
+				'run' => array('keys' => array(),'list' => array()),
+				'waits' => array(),
+				'process' => false,
+				'counter' => 0,//Счётчик сколько раз перепарсивался сайт, посмотреть можно в firebug
+				'alayers' => array(),//Записываются только слои у которых нет родителя...
+				'wlayers' => array(),//Записываются обрабатываемые сейчас слои
+			);
+		}
+
 		return $infrajs_store;
 	}
 
-	static function getAllLayers(){
-		$store=&infrajs::store();
-		return $store['alayers'];	
+	public static function getAllLayers()
+	{
+		$store = &self::store();
+
+		return $store['alayers'];
 	}
-	static function &getWorkLayers(){
-		$store=&infrajs::store();
+	public static function &getWorkLayers()
+	{
+		$store = &self::store();
+
 		return $store['wlayers'];
 	}
 	/*
@@ -63,210 +78,246 @@ class infrajs {
 		Гипотетически можем работать вне клиента.. дай один html дай другой... выдай клиенту третий
 		без mainrun мы не считаем env
 	*/
-	static function check(&$layers=null){//Пробежка по слоям
-		$store=&infrajs::store();
+	public static function check(&$layers = null)
+	{
+		//Пробежка по слоям
+		$store = &self::store();
 		global $infrajs;
 		//if($store['process'])return;//Уже выполняется
 		//$store['process']=true;
 		//процесс характеризуется двумя переменными process и timer... true..true..false.....false
-		$store['counter']++;		
-		$store['ismainrun']=is_null($layers);
-		
-		if(!is_null($layers)){
-			$store['wlayers']=array(&$layers);
-		}else{
-			$store['wlayers']=$store['alayers'];
+		++$store['counter'];
+		$store['ismainrun'] = is_null($layers);
+
+		if (!is_null($layers)) {
+			$store['wlayers'] = array(&$layers);
+		} else {
+			$store['wlayers'] = $store['alayers'];
 		}
 
-		infra_fire($infrajs,'oninit');//сборка событий
+		infra_fire($infrajs, 'oninit');//сборка событий
 
 
-
-		
-		
-		infrajs::run(infrajs::getWorkLayers(),function(&$layer,&$parent) use(&$store){//Запускается у всех слоёв в работе которые wlayers
-			if($parent)$layer['parent']=&$parent;
-			infra_fire($layer,'layer.oninit');
-			if(!infrajs::is('check',$layer))return;
-			infra_fire($layer,'layer.oncheck');
+		self::run(self::getWorkLayers(), function (&$layer, &$parent) use (&$store) {
+			//Запускается у всех слоёв в работе которые wlayers
+			if ($parent) {
+				$layer['parent'] = &$parent;
+			}
+			infra_fire($layer, 'layer.oninit');
+			if (!infrajs::is('check', $layer)) {
+				return;
+			}
+			infra_fire($layer, 'layer.oncheck');
 		});//разрыв нужен для того чтобы можно было наперёд определить показывается слой или нет. oncheck у всех. а потом по порядку.
-		
-		infra_fire($infrajs,'oncheck');//момент когда доступны слои по getUnickLayer
-		
-		infrajs::run(infrajs::getWorkLayers(),function(&$layer){//С чего вдруг oncheck у всех слоёв.. надо только у активных
-			if(infrajs::is('show',$layer)){			
-				
-				//Событие в котором вставляется html		
-				infra_fire($layer,'layer.onshow');//при клике делается отметка в конфиге слоя и слой парсится... в oncheck будут подстановки tpl и isRest вернёт false
-				infra_fire($layer,'onshow');
+
+		infra_fire($infrajs, 'oncheck');//момент когда доступны слои по getUnickLayer
+
+		self::run(self::getWorkLayers(), function (&$layer) {
+			//С чего вдруг oncheck у всех слоёв.. надо только у активных
+			if (infrajs::is('show', $layer)) {
+				//Событие в котором вставляется html
+				infra_fire($layer, 'layer.onshow');//при клике делается отметка в конфиге слоя и слой парсится... в oncheck будут подстановки tpl и isRest вернёт false
+				infra_fire($layer, 'onshow');
 				//onchange показанный слой не реагирует на изменение адресной строки, нельзя привязывать динамику интерфейса к адресной строке, только черещ перепарсивание
 			}
 		});//у родительского слоя showed будет реальное а не старое
 
-		
-		infra_fire($infrajs,'onshow');//loader, setA, seo добавить в html, можно зациклить check
+
+		infra_fire($infrajs, 'onshow');
+		//loader, setA, seo добавить в html, можно зациклить check
 		//$store['process']=false;
 	}
-	static function checkAdd(&$layers){//Два раза вызов добавит слой повторно
+	public static function checkAdd(&$layers)
+	{
+		//Два раза вызов добавит слой повторно
 		//Чтобы сработал check без аргументов нужно передать слои в add
 		//Слои переданные в check напрямую не сохраняются
-		$store=&infrajs::store();
-		$store['alayers'][]=&$layers;//Только если рассматриваемый слой ещё не добавлен
+		$store = &self::store();
+		$store['alayers'][] = &$layers;//Только если рассматриваемый слой ещё не добавлен
 	}
 
-	static function isAdd($name,$callback){//def undefined быть не может
-		$store=&infrajs::store();
-		if(!isset($store[$name]))$store[$name]=array();//Если ещё нет создали очередь
-		return $store[$name][]=$callback;
+	public static function isAdd($name, $callback)
+	{
+		//def undefined быть не может
+		$store = &self::store();
+		if (!isset($store[$name])) {
+			$store[$name] = array();
+		}//Если ещё нет создали очередь
+		return $store[$name][] = $callback;
 	}
-	static function &is($name,&$layer=null){
-
-		$store=&infrajs::store();
-		if(!$store[$name])$store[$name]=array();//Если ещё нет создали очередь
+	public static function &is($name, &$layer = null)
+	{
+		$store = &self::store();
+		if (!$store[$name]) {
+			$store[$name] = array();
+		}//Если ещё нет создали очередь
 		//Обновлять с новым check нужно только результат в слое, подписки в store сохраняются, Обновлять только в случае когда слой в работе
-		if(!is_array($layer)&&!$layer)return $store[$name];//Без параметров возвращается массив подписчиков
-		$cache=&infrajs::storeLayer($layer);//кэш сбрасываемый каждый iswork
-		
-		
-		if(!infrajs::isWork($layer)){
-			
-			$cache[$name]=$oldval;
-			if(!is_null($cache[$name])){//Результат уже есть
-				return $cache[$name];//Хранить результат для каждого слоя
-			}else{
+		if (!is_array($layer) && !$layer) {
+			return $store[$name];
+		}//Без параметров возвращается массив подписчиков
+		$cache = &self::storeLayer($layer);//кэш сбрасываемый каждый iswork
+
+
+		if (!self::isWork($layer)) {
+			$cache[$name] = $oldval;
+			if (!is_null($cache[$name])) {
+				//Результат уже есть
+						return $cache[$name];//Хранить результат для каждого слоя
+			} else {
 				return;
-				//die('Слой ни разу не был в работе и у него запрос is');
+						//die('Слой ни разу не был в работе и у него запрос is');
 			}
 		}
 		//слой проверили по всей очередь
 
-		if(@!is_null($cache[$name])){//Результат уже есть
+		if (@!is_null($cache[$name])) {
+			//Результат уже есть
 			return $cache[$name];//Хранить результат для каждого слоя
 		}
 
-		$cache[$name]=true;//взаимозависимость не мешает, Защита от рекурсии, повторный вызов вернёт true как предварительный кэш
-		for($i=0,$l=sizeof($store[$name]); $i<$l; $i++){
-			$r=$store[$name][$i]($layer);
-			if(!is_null($r)&&!$r){
-				$cache[$name]=$r;
+		$cache[$name] = true;//взаимозависимость не мешает, Защита от рекурсии, повторный вызов вернёт true как предварительный кэш
+		for ($i = 0, $l = sizeof($store[$name]); $i < $l; ++$i) {
+			$r = $store[$name][$i]($layer);
+			if (!is_null($r) && !$r) {
+				$cache[$name] = $r;
 				break;
 			}
 		}
+
 		return $cache[$name];
 	}
-	static function &run(&$layers,$callback,&$parent=null){
+	public static function &run(&$layers, $callback, &$parent = null)
+	{
 		//$store=&infrajs::store('run_array');//$r, $props=$infrajs_run_props;
 		//if($layers===true)$layers=&infrajs_getWorkLayers();
 		//if($layers===false)$layers=&infrajs_getAllLayers();
-		$r=&infra_fora($layers,function&(&$layer) use(&$parent,$callback){
-			
-			$r=&$callback($layer,$parent);
+		$r = &infra_fora($layers, function &(&$layer) use (&$parent, $callback) {
 
+			$r = &$callback($layer, $parent);
 
-			if(!is_null($r))return $r;
-			$r=&infra_foro($layer,function&(&$val,$name) use(&$layer,$callback){
-				
-				$store=&infrajs::store();
-				if(!$store['run'])$store['run']=array();
-				$props=&$store['run'];
-				$r=null;
-				if(isset($props['list'][$name])){
+			if (!is_null($r)) {
+				return $r;
+			}
+			$r = &infra_foro($layer, function &(&$val, $name) use (&$layer, $callback) {
 
-					$r=&infrajs::run($val,$callback,$layer);
-					if(!is_null($r))return $r;
-				}else if(isset($props['keys'][$name])){
-					$r=&infra_foro($val,function&(&$v,$i) use(&$layer,$callback){
+				$store = &infrajs::store();
+				if (!$store['run']) {
+					$store['run'] = array();
+				}
+				$props = &$store['run'];
+				$r = null;
+				if (isset($props['list'][$name])) {
+					$r = &infrajs::run($val, $callback, $layer);
+					if (!is_null($r)) {
+						return $r;
+					}
+				} elseif (isset($props['keys'][$name])) {
+					$r = &infra_foro($val, function &(&$v, $i) use (&$layer, $callback) {
 
-						$r=&infrajs::run($v,$callback,$layer);
+						$r = &infrajs::run($v, $callback, $layer);
 						//if(!is_null($r))
 						return $r;
 					});
-					if(!is_null($r))return $r;
+					if (!is_null($r)) {
+						return $r;
+					}
 				}
+
 				return $r;
 			});
-
 
 			//if(!is_null($r))
 			return $r;
 
 		});
+
 		return $r;
 	}
-	static function runAddKeys($name){
-		$store=&infrajs::store();
-		$store['run']['keys'][$name]=true;
+	public static function runAddKeys($name)
+	{
+		$store = &self::store();
+		$store['run']['keys'][$name] = true;
 	}
-	static function runAddList($name){
-		$store=&infrajs::store();
-		$store['run']['list'][$name]=true;
+	public static function runAddList($name)
+	{
+		$store = &self::store();
+		$store['run']['list'][$name] = true;
 	}
 
+	public static function isWork($layer)
+	{
+		//val для отладки, делает метку что слой в работе
+		$store = &self::store();
+		$cache = &self::storeLayer($layer);//work
+		return $cache['counter'] && $cache['counter'] == $store['counter'];//Если слой в работе метки будут одинаковые
+	}
+	public static function isParent(&$layer, &$parent)
+	{
+		while ($layer) {
+			if (infra_isEqual($parent, $layer)) {
+				return true;
+			}
+			$layer = &$layer['parent'];
+		}
 
-	static function isWork($layer){//val для отладки, делает метку что слой в работе
-		$store=&infrajs::store();
-		$cache=&infrajs::storeLayer($layer);//work
-		return $cache['counter']&&$cache['counter']==$store['counter'];//Если слой в работе метки будут одинаковые
+		return false;
 	}
-	static function isParent(&$layer,&$parent){
-		 while($layer){
-			 if(infra_isEqual($parent,$layer))return true;
-			 $layer=&$layer['parent'];
-		 }
-		 return false;
-	}
-	static function isSaveBranch(&$layer,$val=null){
-		$cache=&infrajs::storeLayer($layer);
-		if(!is_null($val))$cache['is_save_branch']=$val;	
+	public static function isSaveBranch(&$layer, $val = null)
+	{
+		$cache = &self::storeLayer($layer);
+		if (!is_null($val)) {
+			$cache['is_save_branch'] = $val;
+		}
+
 		return @$cache['is_save_branch'];
 	}
 
+	public static function init($index, $div, $src)
+	{
+		if (!empty($_SERVER['QUERY_STRING'])) {
+			$query = urldecode($_SERVER['QUERY_STRING']);
+			if ($query{0} == '*') {
+				$theme = infra_theme('*infra/theme.php');
 
-
-	static function init($index,$div,$src){
-		
-		if(!empty($_SERVER['QUERY_STRING'])){
-			$query=urldecode($_SERVER['QUERY_STRING']);
-			if($query{0}=='*'){
-				$theme=infra_theme('*infra/theme.php');
-				return include($theme);
+				return include $theme;
 			}
 		}
 
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
-		$html=infra_admin_cache('index.php',function($index,$div,$src,$query){
-			@header("infrajs-cache: Fail");//Афигенный кэш, когда используется infrajs не подгружается даже
+		$html = infra_admin_cache('index.php', function ($index, $div, $src, $query) {
+			@header('infrajs-cache: Fail');//Афигенный кэш, когда используется infrajs не подгружается даже
 			infra_require('*infrajs/initphp.php');
 			global $infrajs;
 
-			$h=infra_loadTEXT($index);
+			$h = infra_loadTEXT($index);
 
 			infra_html($h);//Добавить снизу
-			
-			$layers=&infra_loadJSON($src);
-			
-			infra_fora($layers,function&(&$layer) use($div){
-				$layer['div']=$div;
-				$r=null; return $r;
+
+			$layers = &infra_loadJSON($src);
+
+			infra_fora($layers, function &(&$layer) use ($div) {
+				$layer['div'] = $div;
+				$r = null;
+
+				return $r;
 			});
-			
-			//$crumb=infra\ext\crumb::getInstance();
-			
+
+//$crumb=infra\ext\crumb::getInstance();
+
 			infrajs::checkAdd($layers);
 
 			infrajs::check();//В infra_html были добавленыs все указаные в layers слои
-			
-			$html=infra_html();
-			
-			$conf=infra_config();
-			if(!$conf['infrajs']['onlyserver']){
-				$script='<script src="?*infrajs/initjs.php?loadJSON='.$src.'"></script>';
-				$html=str_replace('<head>','<head>'.$script,$html);
+
+			$html = infra_html();
+
+			$conf = infra_config();
+			if (!$conf['infrajs']['onlyserver']) {
+				$script = '<script src="?*infrajs/initjs.php?loadJSON='.$src.'"></script>';
+				$html = str_replace('<head>', '<head>'.$script, $html);
 			}
-			
-			
-			if(!$conf['infrajs']['onlyserver']){
-				$script=<<<END
+
+			if (!$conf['infrajs']['onlyserver']) {
+				$script = <<<END
 <script type="text/javascript">
 		var layers=infra.loadJSON('{$src}');
 		infra.fora(layers,function(layer){
@@ -278,13 +329,13 @@ class infrajs {
 		});
 </script>
 END;
-				$html.=$script;
+				$html .= $script;
 			}
 
 			return $html;
-		},array($index,$div,$src,$query));//Если не кэшировать то будет reparse
+		}, array($index, $div, $src, $query));//Если не кэшировать то будет reparse
 
-		@header("HTTP/1.1 200 Ok");
+		@header('HTTP/1.1 200 Ok');
 		echo $html;
 	}
 }
