@@ -16,7 +16,10 @@ function infra_admin_modified($etag = '')
 	infra_cache_yes();
 	if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
 		$last_modified = infra_admin_time();
-		if (strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) > $last_modified) {
+		/*
+			Warning: strtotime(): It is not safe to rely on the system's timezone settings. You are *required* to use the date.timezone setting or the date_default_timezone_set() function. In case you used any of those methods and you are still getting this warning, you most likely misspelled the timezone identifier. We selected the timezone 'UTC' for now, but please set date.timezone to select your timezone
+		*/
+		if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) > $last_modified) {
 			if (empty($_SERVER['HTTP_IF_NONE_MATCH']) || $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) {
 				//header('ETag: '.$etag);
 				//header('Last-Modified: '.$_SERVER['HTTP_IF_MODIFIED_SINCE']);

@@ -1,25 +1,29 @@
 <?php
 use itlife\infrajs\infrajs;
 use itlife\infrajs\infrajs\ext;
+
 //========================
-	global $infrajs,$infra;
+global $infrajs,$infra;
 
 //========================
 //infrajs oninit
 //========================
-	//=======wait=====//
-	infra_wait($infrajs,'oninit',function(){
-		ext\external::init();
-		ext\crumb::init();
-		ext\subs::init();
-		ext\layers::init();
-		ext\unick::init();
-		ext\env::init();
-		ext\div::init();
-		ext\config::init();
-		ext\parsed::init();
-		ext\session::init();
-	});
+//=======wait=====//
+infra_wait($infrajs, 'oninit', function () {
+	ext\external::init();
+	ext\crumb::init();
+	ext\subs::init();
+	ext\layers::init();
+	ext\unick::init();
+	ext\env::init();
+	ext\div::init();
+	ext\config::init();
+	ext\parsed::init();
+	ext\session::init();
+	ext\Htaccess::init();
+});
+
+
 	//=======listen=====//
 	infra_listen($infrajs,'oninit',function(&$layer){
 		//seo

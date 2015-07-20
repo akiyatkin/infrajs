@@ -59,15 +59,15 @@ function &infra_mem_flush()
 		}
 	}
 }
-global $infra_mem;
 function &infra_memcache()
 {
 	global $infra_mem;
-	if ($infra_mem) {
+	if (isset($infra_mem)) {
 		return $infra_mem;
 	}
 	$conf=infra_config();
 	if ($conf['infra']['cache'] != 'mem') {
+		$infra_mem=false;
 		return false;
 	}
 	$r = false;

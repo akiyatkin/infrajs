@@ -2,7 +2,7 @@
 	"debug":1,
 	"infra":{
 		"fscharset":"UTF-8",
-		"cache":"mem"
+		"cache":"fs"
 	},
 	"admin":{
 		"pub":["popup"],

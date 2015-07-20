@@ -7,7 +7,8 @@
 		"scroll":false,
 		"scrollup":false,
 		"onlyserver":false,
-		"onlyclient":false
+		"onlyclient":false,
+		"htaccess":false
 	},
 	"scroll":{
 		"pub":["scrollFromTop"],
