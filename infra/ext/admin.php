@@ -133,6 +133,7 @@ function infra_admin_time_set($t = null)
 	$adm = array('time' => $t);
 
 	infra_mem_set('infra_admin_time', $adm);
+	infra_once('infra_admin_time', $adm['time']);
 }
 
 function infra_admin_time()

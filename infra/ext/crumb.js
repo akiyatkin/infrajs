@@ -41,10 +41,15 @@ infra.Crumb.prototype={
 infra.Crumb.change=function(query){
 	//static
 	//Запускается паблик у класса
-	var amp=query.split('&',2);
+
+	var amp=query.split('&');
+	if(amp.length>1)amp=[amp.pop(),amp.join('&')];
 
 	var eq=amp[0].split('=',2);
+
 	var sl=eq[0].split('/',2);
+
+
 	if( eq.length!==1&&sl.length===1 ){
 		//В первой крошке нельзя использовать символ "="
 		var params=query;
@@ -97,9 +102,9 @@ infra.Crumb.init=function(){
 	var listen=function(){		
 		var query=decodeURI(location.search.slice(1));
 		if(query[0]=='*'){
-			var q=query.split('?',2);
-			infra.Crumb.prefix='?'+q[0];
-			query=q[1]||'';
+			var q=query.split('?');
+			infra.Crumb.prefix='?'+q.pop();
+			query=q.join('?');
 		}
 		if(infra.Crumb.query===query)return;//chrome при загрузки запускает собыите а FF нет. Первый запуск мы делаем сами по этому отдельно для всех а тут игнорируются совпадения.
 		infra.Crumb.popstate=true;
@@ -162,13 +167,13 @@ infra.Crumb.setA=function(div){
 			var href='';
 		} else {
 			var r=href.split('?');
-			var beforequest=r[0];
+			var beforequest=r.pop();
 			if(r.length>1){
 				try{ //error malfomed URI
 					//Пытаемся убрать проценты из адреса
-					var href=decodeURI(r[1]);
+					var href=decodeURI(r.join('?'));
 				}catch(e){
-					var href=r[1];
+					var href=r.join('?');
 				}
 			}else{
 				var href='';
