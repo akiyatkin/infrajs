@@ -43,7 +43,7 @@ infra.Crumb.change=function(query){
 	//Запускается паблик у класса
 
 	var amp=query.split('&');
-	if(amp.length>1)amp=[amp.pop(),amp.join('&')];
+	if(amp.length>1)amp=[amp.shift(),amp.join('&')];
 
 	var eq=amp[0].split('=',2);
 
@@ -99,13 +99,15 @@ infra.Crumb.change=function(query){
 infra.Crumb.init=function(){
 	//static
 	//infra.Crumb.child=infra.Crumb.getInstance();
+
 	var listen=function(){		
 		var query=decodeURI(location.search.slice(1));
 		if(query[0]=='*'){
 			var q=query.split('?');
-			infra.Crumb.prefix='?'+q.pop();
+			infra.Crumb.prefix='?'+q.shift();
 			query=q.join('?');
 		}
+
 		if(infra.Crumb.query===query)return;//chrome при загрузки запускает собыите а FF нет. Первый запуск мы делаем сами по этому отдельно для всех а тут игнорируются совпадения.
 		infra.Crumb.popstate=true;
 		infra.Crumb.change(query);
@@ -159,7 +161,7 @@ infra.Crumb.setA=function(div){
 		var href=a.getAttribute('href');
 		if(typeof(href)=='undefined'||href==null)continue;//У ссылки нет ссылки
 		if(/^javascript:/.test(href))continue;
-		
+		if(/^mailto:/.test(href))continue;
 
 		
 		if (href=='.') { //Правильная ссылка на главную страницу
@@ -167,8 +169,8 @@ infra.Crumb.setA=function(div){
 			var href='';
 		} else {
 			var r=href.split('?');
-			var beforequest=r.pop();
-			if(r.length>1){
+			var beforequest=r.shift();
+			if(r.length>0){
 				try{ //error malfomed URI
 					//Пытаемся убрать проценты из адреса
 					var href=decodeURI(r.join('?'));
@@ -179,7 +181,6 @@ infra.Crumb.setA=function(div){
 				var href='';
 			}
 		}
-
 		if(beforequest) {
 			var t=beforequest.split('/');
 			if(t.length>=3){
@@ -222,9 +223,13 @@ infra.Crumb.setA=function(div){
 		a.setAttribute('href',sethref);//Если параметров нет, то указывам путь на главную страницу
 
 		a.onclick=function(old_func,a,crumb){
+			
 			return function(event){
+
 				setTimeout(function(){//Сначало должны выполниться все другие подписки а это как дефолтное поведение в самом конце
+					
 					var re=old_func.apply(a);
+
 					if(re===false){
 						if(typeof(event)!=='undefined')event.returnValue=false;
 						return false;
