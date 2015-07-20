@@ -68,6 +68,9 @@
 	}
 	function autoedit_backup($file){
 		$dirs=infra_dirs();
+		if (!is_dir($dirs['backup'])) {
+			mkdir($dirs['backup']); //Режим без записи на жёсткий диск
+		}
 		$backup=$dirs['backup'].'admin_deletedfiles/';
 		$backup.=date('Y.m.d_H-i-s').'_'.preg_replace('/[\\/\\\\\*]/','_',$file);
 		$r=@copy($file,$backup);

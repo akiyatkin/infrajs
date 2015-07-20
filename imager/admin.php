@@ -133,6 +133,9 @@ if (!function_exists('runfolder')) {
             if (sizeof($files) > 0) {
                 //Если остались не востановленные оригиналы.. делаем их backup
                 $dirs = infra_dirs();
+                if (!is_dir($dirs['backup'])) {
+                    mkdir($dirs['backup']); //Режим без записи на жёсткий диск
+                }
                 $dirbackup = $dirs['backup'].'imager_orig/';
                 $dirbackup .= date('j.d.Y').'_'.time().'/';
                 $r = rename($dirorig, $dirbackup);

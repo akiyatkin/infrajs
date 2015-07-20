@@ -442,8 +442,12 @@ function imager_mark($src, $type)
 	list($w, $h) = getimagesize($orig);
 	$w = $w * 9 / 10;
 	$h = $h * 9 / 10;
-	$water = imager_resize($water, 'png', $w, $h);
-	$water = imagecreatefrompng($water);
+	$water = imager_scale($water, 'png', $w, $h);
+	
+	$temp=tmpfile();
+	fwrite($temp, $water);
+	$meta=stream_get_meta_data($temp);
+	$water = imagecreatefrompng($meta['uri']);
 	$img = create_watermark($type, $img, $water, 100);//$img - картинка с водяным знаком
 
 
@@ -554,122 +558,6 @@ function imager_setTransparency($new_iamge, $image_source)
 	imagefill($new_image, 0, 0, $transparencyIndex);
 	imagecolortransparent($new_image, $transparencyIndex);
 }
-function imager_resize($src, $type, $w, $h, $crop = false, $top = false, $bottom = false)
-{
-	if (!$type || (!$w && !$h)) {
-		return $src;
-	}
-	$dirs = infra_dirs();
-	$dir = $dirs['cache'].'imager_resize/';
-	
-
-	$dir = $dir.infra_forFS($src);
-	@mkdir($dir);
-	list($width_orig, $height_orig) = getimagesize($src);
-	if (!$height_orig) {
-		return $src;
-	}
-
-//Размер который делаем не должен быть больше оригинального
-	//На случай если требуемый размер слишком большой оставляем оригинальный
-	if (($w && $width_orig < $w) || !$w) {
-		$w = $width_orig;
-	}
-	if (($h && $height_orig < $h) || !$h) {
-		$h = $height_orig;
-	}
-	$dh = 0;
-	$dw = 0;
-	if ($w && $h) {
-		$k = $w / $h;
-		$k_orig = $width_orig / $height_orig;
-		if ($k_orig == $k) {//Не важно.. что уменьшаем пропорции останутся одинаковыми
-		} elseif ($k_orig > $k) {
-			//ширины в оригинале больше чем в требуемом.. с учётом размеров высоты.
-			if (!$crop) {
-				//Значит чтобы ничего не обрезать и быть в рамках меняем ширину а высота и так относительно меньше требуемой
-				$h = false;//Значит высоту нужно высчитать отностительно ширины
-			} else {
-				//Ну а если нужно чтобы указанные размеры были полностью заполнены то ширину надо обрезать и равняться будем уже на высоту
-				$d = $h / $height_orig;//Коэфициент на сколько изменяем оригинальный размер
-				$dw = (($width_orig * $d - $w)) / $d;
-			}
-		} else {
-			if (!$crop) {
-				//Значит меняем ширину а высота и так относительно меньше требуемой
-				$w = false;
-			} else {
-				//Ну а если обрезать, то высоту/ Ровняемся на ширину
-				$d = $w / $width_orig;//Коэфициент на сколько изменяем оригинальный размер
-				$dh = (($height_orig * $d - $h)) / $d;
-			}
-		}
-	}
-
-	if (!$w) {
-		$w = ($h / $height_orig) * $width_orig;
-	}
-	if (!$h) {
-		$h = ($w / $width_orig) * $height_orig;
-	}
-	$c = ($crop && ($dh || $dw)) ? ' crop' : '';
-	$t = ($top && $c) ? ' top' : '';
-	$b = ($bottom && $c) ? ' bottom' : '';
-	$src_cache = $dir.'/w'.$w.' x h'.$h.$c.$t.$b.'.'.$type;
-
-	if (!function_exists('imagecreatetruecolor')) {
-		die('Требуется модуль GD');
-	}
-
-	if (!is_file($src_cache) || filemtime($src_cache) < filemtime($src)
-			|| filemtime($src_cache) < filemtime(__FILE__)
-		) {
-		$image_p = imagecreatetruecolor($w, $h);
-
-		$fn = 'imagecreatefrom'.$type;
-		$image = $fn($src);
-
-		//image_p пустая картинка но нужных размеров
-		//image забрали нужную картинку которую нужно превратить в image_p
-		//echo '<br>w '.$w;echo '<br>width_orig '.$width_orig;echo '<br>k '.$k;echo '<br>k_orig '.$k_orig;echo '<br>d '.$d;echo '<br>dw '.$dw;echo '<br>dh '.$dh;exit;
-		if ($type == 'png') {
-			imagealphablending($image_p, false);
-			imagesavealpha($image_p, true);
-		}
-		if ($type == 'gif') {
-			$colorcount = imagecolorstotal($image);
-			imagetruecolortopalette($image_p, true, $colorcount);
-			imagepalettecopy($image_p, $image);
-			$transparentcolor = imagecolortransparent($image);
-			if ($transparentcolor == -1) {
-				$transparentcolor = 255;
-			}
-			imagefill($image_p, 0, 0, $transparentcolor);
-			imagecolortransparent($image_p, $transparentcolor);
-		}
-		//if($crop&&$top)$dh=0;
-		if ($top) {
-			$fromtop = 0;
-		} elseif ($bottom) {
-			$fromtop = $dh;
-		} else {
-			$fromtop = $dh / 2;
-		}
-
-		imagecopyresampled($image_p, $image, 0, 0, $dw / 2, $fromtop, $w, $h, $width_orig - $dw, $height_orig - $dh);
-		$fn = 'image'.$type;
-		$quality = 95;
-		if ($type == 'png') {
-			$quality = 2;
-		}
-		$fn($image_p, $src_cache, $quality);
-		imagedestroy($image);
-		imagedestroy($image_p);
-	}
-	$src = $src_cache;
-
-	return $src;
-}
 
 function imager_scale($src, $w, $h, $crop = false, $top = false, $bottom = false)
 {
@@ -677,8 +565,7 @@ function imager_scale($src, $w, $h, $crop = false, $top = false, $bottom = false
 	if (!$type || (!$w && !$h)) {
 		return file_get_contents($src);
 	}
-	$dir = 'imager_resize/';
-	$dir = $dir.infra_forFS($src);
+	
 	
 	list($width_orig, $height_orig) = getimagesize($src);
 	if (!$height_orig) {
@@ -730,6 +617,9 @@ function imager_scale($src, $w, $h, $crop = false, $top = false, $bottom = false
 	$c = ($crop && ($dh || $dw)) ? ' crop' : '';
 	$t = ($top && $c) ? ' top' : '';
 	$b = ($bottom && $c) ? ' bottom' : '';
+
+	$dir = 'imager_resize/';
+	$dir = $dir.infra_forFS($src);
 	$src_cache = $dir.'/w'.$w.' x h'.$h.$c.$t.$b.'.'.$type;
 
 	if (!function_exists('imagecreatetruecolor')) {
