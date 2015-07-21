@@ -1,6 +1,7 @@
 {
 	"debug":1,
 	"infra":{
+		"testips":["127.0.0.1"],
 		"fscharset":"UTF-8",
 		"cache":"fs"
 	},

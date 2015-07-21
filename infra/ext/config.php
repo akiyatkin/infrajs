@@ -88,6 +88,24 @@ function infra_dirs()
 
 	return $infra_dirs;
 }
+function infra_test($r = false)
+{
+	$conf=infra_config();
+	$ips=$conf['infra']['testips'];
+	if (!$ips) {
+		$ips=array();
+	}
+	$is=in_array($_SERVER["REMOTE_ADDR"], $ips);
+	
+	if ($r) {
+		if (!$is) {
+			header('HTTP/1.0 403 Forbidden');
+			die('{"msg":"Required config.infra.testips:['.$_SERVER["REMOTE_ADDR"].']"}');
+		}
+	} else {
+		return $is;
+	}
+}
 function &infra_config($sec = false)
 {
 	$sec = $sec ? 'secure' : 'unsec';
