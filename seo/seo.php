@@ -1,6 +1,6 @@
 <?php
 	
-	require_once(__DIR__.'../infra/infra.php');
+
 	infra_require('*seo/seo.inc.php');
 	$type=infra_toutf(@$_REQUEST['type']);
 	$id=infra_toutf(@$_REQUEST['id']);

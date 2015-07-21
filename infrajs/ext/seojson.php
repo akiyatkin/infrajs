@@ -1,9 +1,12 @@
 <?php
 namespace itlife\infrajs\infrajs\ext;
+
 use itlife\infrajs\infrajs;
 use itlife\infrajs\infrajs\ext\external;
+
 class seojson {
-	function check(&$layer){
+	function check(&$layer)
+	{
 		if(!empty($layer['seojsontpl']))$layer['seojson']=infra_template_parse(array($layer['seojsontpl']),$layer);
 		if(empty($layer['seojson']))return;
 		$item=self::load($layer['seojson']);
@@ -20,6 +23,7 @@ class seojson {
 			
 		if(!empty($item['canonical'])){
 			self::meta($html,$item,'link','canonical');
+			self::meta($html,$item,'name','twitter:site',$item['canonical']);
 			self::meta($html,$item,'property','og:url',$item['canonical']);
 			self::meta($html,$item,'property','business:contact_data:website',$item['canonical']);
 		}
@@ -41,6 +45,7 @@ class seojson {
 		if(!empty($item['site_name'])){
 			self::meta($html,$item,'property','site_name');	
 			self::meta($html,$item,'itemprop','name',$item['site_name']);
+			self::meta($html,$item,'property','og:site_name',$item['site_name']);
 		}
 		
 		if(!empty($item['properties']))foreach($item['properties'] as $k=>$v){
