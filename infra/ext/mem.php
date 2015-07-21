@@ -1,9 +1,10 @@
 <?php
 
-function infra_mem_set($key, &$val)
+function infra_mem_set($key, $val)
 {
 	$mem = &infra_memcache();
 	if ($mem) {
+		$mem->delete($key);
 		$mem->set($key, $val);
 	} else {
 		$key=infra_forFS($key);

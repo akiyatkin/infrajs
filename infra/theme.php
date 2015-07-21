@@ -44,113 +44,123 @@ if ($src) {
 		$src = infra_theme($src.'index.php');
 	}
 }
-
-if ($src) {
-	$p = infra_srcinfo($src);
-	if ($p['path'] && (preg_match("/\/\./", $p['path']) || ($p['path']{0} == '.' && $p['path']{1} != '/'))) {
-		header('HTTP/1.0 403 Forbidden');
-		return;
-	}
-	if ($p['ext'] !== 'php') {
-		$mime_types = array(
-			'txt' => 'text/plain',
-			'htm' => 'text/html',
-			'html' => 'text/html',
-			'php' => 'text/html',
-			'css' => 'text/css',
-			'js' => 'application/javascript',
-			'json' => 'application/json',
-			'xml' => 'application/xml',
-			'swf' => 'application/x-shockwave-flash',
-			'flv' => 'video/x-flv',
-
-			// images
-			'png' => 'image/png',
-			'jpe' => 'image/jpeg',
-			'jpeg' => 'image/jpeg',
-			'jpg' => 'image/jpeg',
-			'gif' => 'image/gif',
-			'bmp' => 'image/bmp',
-			'ico' => 'image/vnd.microsoft.icon',
-			'tiff' => 'image/tiff',
-			'tif' => 'image/tiff',
-			'svg' => 'image/svg+xml',
-			'svgz' => 'image/svg+xml',
-
-			// archives
-			'zip' => 'application/zip',
-			'rar' => 'application/x-rar-compressed',
-			'exe' => 'application/x-msdownload',
-			'msi' => 'application/x-msdownload',
-			'cab' => 'application/vnd.ms-cab-compressed',
-
-			// audio/video
-			'mp3' => 'audio/mpeg',
-			'qt' => 'video/quicktime',
-			'mov' => 'video/quicktime',
-
-			// adobe
-			'pdf' => 'application/pdf',
-			'psd' => 'image/vnd.adobe.photoshop',
-			'ai' => 'application/postscript',
-			'eps' => 'application/postscript',
-			'ps' => 'application/postscript',
-
-			// ms office
-			'doc' => 'application/msword',
-			'rtf' => 'application/rtf',
-			'xls' => 'application/vnd.ms-excel',
-			'ppt' => 'application/vnd.ms-powerpoint',
-
-			// open office
-			'odt' => 'application/vnd.oasis.opendocument.text',
-			'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
-
-			//added
-			'tpl' => 'text/html',
-		);
-		if (isset($mime_types[$p['ext']])) {
-			$type = $mime_types[$p['ext']];
-		} else {
-			$type = 'application/octet-stream';
-		}
-
-		if ($p['query']&&in_array($p['ext'], array('jpeg', 'jpg', 'png'))) {
-			$fex = explode('?', $filesrc);
-			$src = infra_theme('*imager/imager.php').'?src='.$fex[0].'&'.mb_substr($p['query'], 1);
-			$p = infra_srcinfo($src);
-		} else {
-			@header('Content-Type: '.$type);
-		}
-	}
-
-	if ($p['ext'] !== 'php') {
-		/*---------$src---------------*/
-		$date = filemtime($src);
-		$last_modified = gmdate('D, d M Y H:i:s', $date).' GMT';
-		if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
-			// разобрать заголовок
-			$if_modified_since = preg_replace('/;.*$/', '', $_SERVER['HTTP_IF_MODIFIED_SINCE']);
-			if ($if_modified_since == $last_modified) {
-				// кэш браузера до сих пор актуален
-				header('HTTP/1.0 304 Not Modified');
-				//header('Cache-Control: max-age=8640000, must-revalidate');
-				exit;
-			}
-		}
-		//header('Cache-Control: max-age=86400, must-revalidate');//Сколько секунд хранить кэш в браузере
-		header('Last-Modified: '.$last_modified);
-		/*------------------------*/
-
-		$data = infra_loadTEXT($src);
-
-		$data = file_get_contents($p['src']);
-	} else {
-		$data = infra_loadTEXT($src);//infra_loadTEXT и infr_loadJSON могут возвращать объект
-	}
-	echo $data;
-} else {
+if (!$src) {
 	header('HTTP/1.0 404 Not Found');
-
 	return;
+}
+
+$p = infra_srcinfo($src);
+if ($p['path'] && (preg_match("/\/\./", $p['path']) || ($p['path']{0} == '.' && $p['path']{1} != '/'))) {
+	header('HTTP/1.0 403 Forbidden');
+	return;
+}
+if ($p['ext'] !== 'php') {
+	$mime_types = array(
+		'txt' => 'text/plain',
+		'htm' => 'text/html',
+		'html' => 'text/html',
+		'css' => 'text/css',
+		'js' => 'application/javascript',
+		'json' => 'application/json',
+		'xml' => 'application/xml',
+		'swf' => 'application/x-shockwave-flash',
+		'flv' => 'video/x-flv',
+
+		// images
+		'png' => 'image/png',
+		'jpe' => 'image/jpeg',
+		'jpeg' => 'image/jpeg',
+		'jpg' => 'image/jpeg',
+		'gif' => 'image/gif',
+		'bmp' => 'image/bmp',
+		'ico' => 'image/vnd.microsoft.icon',
+		'tiff' => 'image/tiff',
+		'tif' => 'image/tiff',
+		'svg' => 'image/svg+xml',
+		'svgz' => 'image/svg+xml',
+
+		// archives
+		'zip' => 'application/zip',
+		'rar' => 'application/x-rar-compressed',
+		'exe' => 'application/x-msdownload',
+		'msi' => 'application/x-msdownload',
+		'cab' => 'application/vnd.ms-cab-compressed',
+
+		// audio/video
+		'mp3' => 'audio/mpeg',
+		'qt' => 'video/quicktime',
+		'mov' => 'video/quicktime',
+
+		// adobe
+		'pdf' => 'application/pdf',
+		'psd' => 'image/vnd.adobe.photoshop',
+		'ai' => 'application/postscript',
+		'eps' => 'application/postscript',
+		'ps' => 'application/postscript',
+
+		// ms office
+		'doc' => 'application/msword',
+		'rtf' => 'application/rtf',
+		'xls' => 'application/vnd.ms-excel',
+		'ppt' => 'application/vnd.ms-powerpoint',
+
+		// open office
+		'odt' => 'application/vnd.oasis.opendocument.text',
+		'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+
+		//added
+		'tpl' => 'text/html',
+	);
+	if (isset($mime_types[$p['ext']])) {
+		$type = $mime_types[$p['ext']];
+	} else {
+		$type = 'application/octet-stream';
+	}
+
+	if ($p['query']&&in_array($p['ext'], array('jpeg', 'jpg', 'png'))) {
+		$fex = explode('?', $filesrc);
+		$src = infra_theme('*imager/imager.php').'?src='.$fex[0].'&'.mb_substr($p['query'], 1);
+		$p = infra_srcinfo($src);
+	} else {
+		@header('Content-Type: '.$type);
+	}
+}
+
+if ($p['ext'] !== 'php') {
+	/*---------$src---------------*/
+	$date = filemtime($src);
+	$last_modified = gmdate('D, d M Y H:i:s', $date).' GMT';
+	if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+		// разобрать заголовок
+		$if_modified_since = preg_replace('/;.*$/', '', $_SERVER['HTTP_IF_MODIFIED_SINCE']);
+		if ($if_modified_since == $last_modified) {
+			// кэш браузера до сих пор актуален
+			header('HTTP/1.0 304 Not Modified');
+			//header('Cache-Control: max-age=8640000, must-revalidate');
+			exit;
+		}
+	}
+	//header('Cache-Control: max-age=86400, must-revalidate');//Сколько секунд хранить кэш в браузере
+	header('Last-Modified: '.$last_modified);
+	/*------------------------*/
+	//$data = infra_loadTEXT($src);
+
+	$data = file_get_contents($p['path']);
+	echo $data;
+	return;
+} else {
+	$getstr = $p['query'];//get параметры в utf8, с вопросом
+	$getstr = preg_replace("/^\?/", '', $getstr);
+	parse_str($getstr, $get);
+	if (!$get) {
+		$get = array();
+	}
+	$GET = $_GET;
+	$_GET = $get;
+	$REQUEST = $_REQUEST;
+	$_REQUEST = array_merge($_GET, $_POST, $_COOKIE);
+	$SERVER_QUERY_STRING = $_SERVER['QUERY_STRING'];
+	$_SERVER['QUERY_STRING'] = $getstr;
+	
+	return include $p['path'];
 }

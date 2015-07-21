@@ -45,10 +45,7 @@ $h = (int) @$_GET['h'];
 
 $top = (bool) @$_GET['top'];
 $crop = (bool) @$_GET['crop'];
-$hour = (int) @$_GET['hour'];
-if (!$hour) {
-	$hour = 24 * 7;
-}//неделя кэша
+
 
 $ignoremark = null;
 if (isset($_GET['ignoremark'])) {
@@ -63,24 +60,9 @@ $conf = infra_config();
 if (!$conf['imager']) {
 	$conf['imager'] = array('waterlim' => 22500);
 }
-$limark = false;//Не делать водяной знак если площать меньше 150x150
 
-if ($w && $h) {
-	$limark = ($conf['imager']['waterlim'] > ($w * $h));
-} elseif ($w || $h) {
-	$wl = $w;
-	$hl = $w;
-	if (!$w) {
-		$wl = $h;
-	}
-	if (!$h) {
-		$hl = $w;
-	}
-	$limark = ($conf['imager']['waterlim'] > $wl * $hl);
-}
 $default = false;
 $orig = false;
-$origsrc = $src;
 $src = imager_prepareSrc($src);
 
 if (!$src && $or) {
@@ -116,144 +98,174 @@ if (!$src) {
 	}
 }
 
-if (isset($_GET['re'])) {
-	$re = '&re';
-} else {
-	$re = '';
-}
-
-$p1 = infra_srcinfo($origsrc);//Нужна папка со звёздочкой
-$p = infra_srcinfo($src);
-if ($p['ext'] == 'docx') {
-	infra_require('*files/files.inc.php');
-	$p = files_get(infra_toutf($p1['folder']), infra_toutf($p['id']));
-	if (!$p['images'][0]) {
-		$src = infra_theme('*imager/noimage.png');
-		//header('HTTP/1.1 404 Not Found');
-		//return;
-	} else {
-		$src = $p['images'][0]['src'];
-	}
-} elseif ($p['ext'] == 'mht') {
-	$p = infra_loadJSON('*pages/mht/mht.php?preview'.$re.'&src='.infra_toutf($p['src']));
-	if (!$p['images'][0]) {
-		$src = infra_theme('*imager/noimage.png');
-		//header('HTTP/1.1 404 Not Found');
-		//return;
-	} else {
-		$src = $p['images'][0]['src'];
-	}
-}
-
-$src = infra_tofs($src);
-$type = imager_type($src);
-
-if (!is_null($ignoremark)) {
-	infra_admin(true);
-	//Метку ignore может выставить только администратор
-	//На файлы с такой меткой водяной знак никогда не ставится
-	$info = imager_makeInfo($src);
-
-	if ($ignoremark && $info['water']) {
-		//Если файл был с водяным знаком
-		$orig = $info['orig'];
-		if ($orig) {
-			$orig = infra_theme($orig);
-			if ($orig) {
-				//Если оригинальный файл найден
-				$r = copy($orig, $src);//Востановили оригинал без удаления оригинала
-				$info['water'] = false;
-				if (!$r) {
-					imager_writeInfo($src, $info);
-					die('Не удалось востановить оригинал чтобы поставить метку ignore');
-				}
-				$info['ignore'] = $ignoremark;
-			} else {
-				imager_writeInfo($src, $info);
-				die('На файле установлен водяной знак. Оригинальный файл не найден. Метку установить неудалось');
-			}
-		} else {
-			imager_writeInfo($src, $info);
-			die('Водяной знак есть а оригинал не указан. исключение.');
-		}
-	} else {
-		//Водяного знака небыло
-		$info['ignore'] = $ignoremark;
-	}
-	imager_writeInfo($src, $info);
-}
-
-if ($type && $mark && !$default) {
-//Это не значит что нужно делать бэкап
-	imager_mark($src, $type);//Накладываем водяной знак
-}
-
-/*$info=imager_readInfo($src);
-if($info['ignore']){
-	$orig=$info['orig'];
-}*/
-
-if ($getorig) {
-	infra_admin(true);
-	$w = 0;
-	$h = 0;
-	$crop = false;
-	$info = imager_readInfo($src);
-	$orig = $info['orig'];
-
-	if ($orig) {
-		$orig = infra_theme($orig);
-		if (!$orig) {
-			die('Оригинал не найден');
-		} else {
-			$src = $orig;//Что далее будет означать что возьмётся для вывода оригинальная картинка
-		}
-	} else {
-		die('Сейчас итак оригинальная картинка');
-	}
-} elseif ($limark) {
-	$info = imager_readInfo($src);
-	if (@$info['water']) {
-		$orig = infra_theme($info['orig']);
-		if ($orig) {
-			$src = $orig;
-		} else {
-			//die('Не найден оригинал');
-		}
-	}
-}
-//$src с водяной меткой если нужно
-if (isset($_GET['gray'])) {
-	$src = imager_makeGray($src);//новый src уже на серую картинку
-}
-
-
-$data = imager_scale($src, $w, $h, $crop, $top);
-
-$br = infra_imager_browser();
-$name = preg_replace("/(.*\/)*/", '', $isrc);
-$name = infra_toutf($name);
-if (!preg_match('/ff/', $br)) {
-	$name = rawurlencode($name);
-}
-if (preg_match('/ie6/', $br)) {
-	$name = preg_replace("/\s/", '%20', $name);
-}
 
 if (!infra_admin()) {
 	//Админ может видить запретные картинки, для него не кэшируем
 	header('Cache-control: public');//Заголовок разрешающий сохранение на прокси-серверах
 }
-header('Content-Disposition: filename="'.$name.'";');
 
 
-if ($data) {
-	if ($type) {
-		header('content-type: image/'.$type);
-	} else {
-		header('content-type: image/jpeg');
-	}
-	echo $data;
-} else {
-	header('HTTP/1.1 404 Not Found');
+
+if ($getorig) {
+	infra_admin(true);
 }
+if (!is_null($ignoremark)) {
+	infra_admin(true);
+}
+if ($getorig) {
+	infra_admin(true);
+}
+
+$args=array($src, $ignoremark, $mark, $default, $getorig, $w, $h, $crop, $top);
+$data=infra_cache(array($isrc), 'imager.php', function ($src, $ignoremark, $mark, $default, $getorig, $w, $h, $crop, $top, $re) use ($isrc) {
+
+	if ($re) {
+		$re = '&re';
+	} else {
+		$re = '';
+	}
+
+	$p1 = infra_srcinfo($isrc);//Нужна папка со звёздочкой
+	$p = infra_srcinfo($src);
+	if ($p['ext'] == 'docx') {
+		infra_require('*files/files.inc.php');
+		$p = files_get(infra_toutf($p1['folder']), infra_toutf($p['id']));
+		if (!$p['images'][0]) {
+			$src = infra_theme('*imager/noimage.png');
+			//header('HTTP/1.1 404 Not Found');
+			//return;
+		} else {
+			$src = $p['images'][0]['src'];
+		}
+	} elseif ($p['ext'] == 'mht') {
+		$p = infra_loadJSON('*pages/mht/mht.php?preview'.$re.'&src='.infra_toutf($p['src']));
+		if (!$p['images'][0]) {
+			$src = infra_theme('*imager/noimage.png');
+			//header('HTTP/1.1 404 Not Found');
+			//return;
+		} else {
+			$src = $p['images'][0]['src'];
+		}
+	}
+
+	$src = infra_tofs($src);
+	$type = imager_type($src);
+
+	if (!is_null($ignoremark)) {
+		//Метку ignore может выставить только администратор
+		//На файлы с такой меткой водяной знак никогда не ставится
+		$info = imager_makeInfo($src);
+
+		if ($ignoremark && $info['water']) {
+			//Если файл был с водяным знаком
+			$orig = $info['orig'];
+			if ($orig) {
+				$orig = infra_theme($orig);
+				if ($orig) {
+					//Если оригинальный файл найден
+					$r = copy($orig, $src);//Востановили оригинал без удаления оригинала
+					$info['water'] = false;
+					if (!$r) {
+						imager_writeInfo($src, $info);
+						die('Не удалось востановить оригинал чтобы поставить метку ignore');
+					}
+					$info['ignore'] = $ignoremark;
+				} else {
+					imager_writeInfo($src, $info);
+					die('На файле установлен водяной знак. Оригинальный файл не найден. Метку установить неудалось');
+				}
+			} else {
+				imager_writeInfo($src, $info);
+				die('Водяной знак есть а оригинал не указан. исключение.');
+			}
+		} else {
+			//Водяного знака небыло
+			$info['ignore'] = $ignoremark;
+		}
+		imager_writeInfo($src, $info);
+	}
+
+	if ($type && $mark && !$default) {
+	//Это не значит что нужно делать бэкап
+		imager_mark($src, $type);//Накладываем водяной знак
+	}
+
+	/*$info=imager_readInfo($src);
+	if($info['ignore']){
+		$orig=$info['orig'];
+	}*/
+
+	$limark = false;//Не делать водяной знак если площать меньше 150x150
+	if ($w && $h) {
+		$limark = ($conf['imager']['waterlim'] > ($w * $h));
+	} elseif ($w || $h) {
+		$wl = $w;
+		$hl = $h;
+		if (!$w) {
+			$wl = $h;
+		}
+		if (!$h) {
+			$hl = $w;
+		}
+		$limark = ($conf['imager']['waterlim'] > $wl * $hl);
+	}
+	if ($getorig) {
+		$w = 0;
+		$h = 0;
+		$crop = false;
+		$info = imager_readInfo($src);
+		$orig = $info['orig'];
+
+		if ($orig) {
+			$orig = infra_theme($orig);
+			if (!$orig) {
+				die('Оригинал не найден');
+			} else {
+				$src = $orig;//Что далее будет означать что возьмётся для вывода оригинальная картинка
+			}
+		} else {
+			die('Already original');
+		}
+	} elseif ($limark) {
+		$info = imager_readInfo($src);
+		if (@$info['water']) {
+			$orig = infra_theme($info['orig']);
+			if ($orig) {
+				$src = $orig;
+			} else {
+				//die('Не найден оригинал');
+			}
+		}
+	}
+	//$src с водяной меткой если нужно
+	if (isset($_GET['gray'])) {
+		$src = imager_makeGray($src);//новый src уже на серую картинку
+	}
+
+
+	$data = imager_scale($src, $w, $h, $crop, $top);
+	if (!$data) {
+		die('Resize Error');
+	}
+
+	$br = infra_imager_browser();
+	$name = preg_replace("/(.*\/)*/", '', $isrc);
+	$name = infra_toutf($name);
+	if (!preg_match('/ff/', $br)) {
+		$name = rawurlencode($name);
+	}
+	if (preg_match('/ie6/', $br)) {
+		$name = preg_replace("/\s/", '%20', $name);
+	}
+
+	if (!$type) {
+		$type='image/jpeg';
+	}
+
+	$data=array('data'=>$data,'name'=>$name,'type'=>$type);
+	return $data;
+}, $args, isset($_GET['re']));
+
+header('Content-Disposition: filename="'.$data['name'].'";');
+header('content-type: image/'.$data['type']);
+echo $data['data'];

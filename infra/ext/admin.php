@@ -162,18 +162,21 @@ function infra_admin_cache($name, $call, $args = array(), $re = false)
 		$conf = infra_config();
 
 		$strargs = infra_hash($args);
-		$name = $name.$strargs;
-
-
-		
+		$name = 'infra_admin_once_'.$name.$strargs;
+		if ($re) {
+			infra_mem_delete($name);
+		}
 
 		$execute=true;
 		if (!$conf['debug'] && !$re && !infra_admin()) {
 			$execute=false;
 		}
+
 		if (!$execute) {
 			$atime = infra_admin_time();
-			$data = infra_mem_get('infra_admin_once_'.$name);
+
+			$data = infra_mem_get($name);
+
 			if (!$data || $data['time'] < $atime) {
 				$execute=true;
 			}
@@ -186,12 +189,15 @@ function infra_admin_cache($name, $call, $args = array(), $re = false)
 			//здесь для примера показана
 			//@header('Cache-control:no-store');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
 
-			$cache_control = infra_cache_check(function () use ($call, &$args, &$data, $re) {
+			$cache = infra_cache_check(function () use ($call, &$args, &$data, $re) {
 				$data['result'] = call_user_func_array($call, array_merge($args, array($re)));
 			});
 
-			//if (!$re && $cache_control) {
-			infra_mem_set('infra_admin_once_'.$name, $data);
+			
+			if ($cache) {
+				infra_mem_set($name, $data);
+			}
+
 			//} elseif ($data) {
 				//Если текущие данные не кэшируются, то удаляются ???
 				//infra_mem_flush();

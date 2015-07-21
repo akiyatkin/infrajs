@@ -105,8 +105,9 @@ function infra_cache_check($call)
 	}
 	$call();
 	$cache2 = infra_cache_is();
-	if (!$cache && $cache2) {
-		infra_cache_no();
+
+	if ($cache && !$cache2) {
+		infra_cache_yes();
 	}
 
 	return $cache2;
@@ -122,8 +123,8 @@ function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 		if (!$conds) {
 			$execute=true;
 		}
+		$path = infra_cache_path($name, array($conds, $args));
 		if (!$execute) {
-			$path = infra_cache_path($name, array($conds, $args));
 			$data=infra_mem_get($path);
 			if ($data) {
 				$cache_time=$data['time'];
@@ -158,23 +159,12 @@ function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 		}
 
 		if ($execute) {
-			$cache_control = infra_cache_is();
-			if ($cache_control) {
-				infra_cache_no();
-			}
-
-			$data = call_user_func_array($fn, array_merge($args, array($re)));
-
-			$list = headers_list();//Проверяем появился ли заголовок после запуска функции кэшируемой
-			$cache_control2 = infra_cache_is();
-			if (!$cache_control2 && $cache_control) {
-				infra_cache_yes();
-			}
-			$data=array('time'=>time(),'result'=>$data);
-			if (!$cache_control2) {
+			$data=array('time'=>time());
+			$cache = infra_cache_check(function () use (&$data, $fn, $args, $re) {
+				$data['result'] = call_user_func_array($fn, array_merge($args, array($re)));
+			});
+			if ($cache) {
 				infra_mem_set($path, $data);
-				//$cache = serialize($data);
-				//file_put_contents($path, $cache);
 			}
 		}
 

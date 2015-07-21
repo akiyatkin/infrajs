@@ -572,7 +572,7 @@ function imager_scale($src, $w, $h, $crop = false, $top = false, $bottom = false
 		return file_get_contents($src);
 	}
 
-//Размер который делаем не должен быть больше оригинального
+	//Размер который делаем не должен быть больше оригинального
 	//На случай если требуемый размер слишком большой оставляем оригинальный
 	if (($w && $width_orig < $w) || !$w) {
 		$w = $width_orig;
@@ -622,66 +622,52 @@ function imager_scale($src, $w, $h, $crop = false, $top = false, $bottom = false
 	$dir = $dir.infra_forFS($src);
 	$src_cache = $dir.'/w'.$w.' x h'.$h.$c.$t.$b.'.'.$type;
 
-	if (!function_exists('imagecreatetruecolor')) {
-		die('Требуется модуль GD');
+
+	$image_p = imagecreatetruecolor($w, $h);
+
+	$fn = 'imagecreatefrom'.$type;
+	$image = $fn($src);
+
+	//image_p пустая картинка но нужных размеров
+	//image забрали нужную картинку которую нужно превратить в image_p
+	//echo '<br>w '.$w;echo '<br>width_orig '.$width_orig;echo '<br>k '.$k;echo '<br>k_orig '.$k_orig;echo '<br>d '.$d;echo '<br>dw '.$dw;echo '<br>dh '.$dh;exit;
+	if ($type == 'png') {
+		imagealphablending($image_p, false);
+		imagesavealpha($image_p, true);
+	}
+	if ($type == 'gif') {
+		$colorcount = imagecolorstotal($image);
+		imagetruecolortopalette($image_p, true, $colorcount);
+		imagepalettecopy($image_p, $image);
+		$transparentcolor = imagecolortransparent($image);
+		if ($transparentcolor == -1) {
+			$transparentcolor = 255;
+		}
+		imagefill($image_p, 0, 0, $transparentcolor);
+		imagecolortransparent($image_p, $transparentcolor);
+	}
+	//if($crop&&$top)$dh=0;
+	if ($top) {
+		$fromtop = 0;
+	} elseif ($bottom) {
+		$fromtop = $dh;
+	} else {
+		$fromtop = $dh / 2;
 	}
 
-	$cachetime = 0;
-	$data=infra_mem_get($src_cache);
-	if ($data) {
-		$cachetime = $data['time'];
+	imagecopyresampled($image_p, $image, 0, 0, $dw / 2, $fromtop, $w, $h, $width_orig - $dw, $height_orig - $dh);
+	$fn = 'image'.$type;
+	$quality = 90;
+	if ($type == 'png') {
+		$quality = 2;
 	}
 	
-	if ($cachetime < filemtime($src)) {
-		$image_p = imagecreatetruecolor($w, $h);
+	ob_start();
+	$fn($image_p, null, $quality);
+	$data=ob_get_contents();
+	ob_end_clean();
+	imagedestroy($image);
+	imagedestroy($image_p);
 
-		$fn = 'imagecreatefrom'.$type;
-		$image = $fn($src);
-
-		//image_p пустая картинка но нужных размеров
-		//image забрали нужную картинку которую нужно превратить в image_p
-		//echo '<br>w '.$w;echo '<br>width_orig '.$width_orig;echo '<br>k '.$k;echo '<br>k_orig '.$k_orig;echo '<br>d '.$d;echo '<br>dw '.$dw;echo '<br>dh '.$dh;exit;
-		if ($type == 'png') {
-			imagealphablending($image_p, false);
-			imagesavealpha($image_p, true);
-		}
-		if ($type == 'gif') {
-			$colorcount = imagecolorstotal($image);
-			imagetruecolortopalette($image_p, true, $colorcount);
-			imagepalettecopy($image_p, $image);
-			$transparentcolor = imagecolortransparent($image);
-			if ($transparentcolor == -1) {
-				$transparentcolor = 255;
-			}
-			imagefill($image_p, 0, 0, $transparentcolor);
-			imagecolortransparent($image_p, $transparentcolor);
-		}
-		//if($crop&&$top)$dh=0;
-		if ($top) {
-			$fromtop = 0;
-		} elseif ($bottom) {
-			$fromtop = $dh;
-		} else {
-			$fromtop = $dh / 2;
-		}
-
-		imagecopyresampled($image_p, $image, 0, 0, $dw / 2, $fromtop, $w, $h, $width_orig - $dw, $height_orig - $dh);
-		$fn = 'image'.$type;
-		$quality = 90;
-		if ($type == 'png') {
-			$quality = 2;
-		}
-		
-		ob_start();
-		$fn($image_p, null, $quality);
-		$data=ob_get_contents();
-		ob_end_clean();
-		imagedestroy($image);
-		imagedestroy($image_p);
-
-		$data=array('time'=>time(), 'result'=>$data);
-		infra_mem_set($src_cache, $data);
-	}
-
-	return $data['result'];
+	return $data;
 }
