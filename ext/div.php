@@ -18,7 +18,7 @@ infra_listen($infra,'layer.onshow',function(&$layer){
 });
 */
 namespace itlife\infrajs\ext;
-use itlife\infrajs;
+use itlife\infrajs\Infrajs;
 use itlife\infrajs\ext\external;
 class div {
 	static function init(){

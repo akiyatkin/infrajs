@@ -1,5 +1,5 @@
 <?php
-	use itlife\infrajs;
+	use itlife\infrajs\Infrajs;
 	use itlife\infra;
 	require_once(__DIR__.'/../../infra/infra.php');
 	$ans = array();

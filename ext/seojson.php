@@ -1,7 +1,7 @@
 <?php
 namespace itlife\infrajs\ext;
 
-use itlife\infrajs;
+use itlife\infrajs\Infrajs;
 use itlife\infrajs\ext\external;
 
 class seojson {

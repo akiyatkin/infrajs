@@ -1,5 +1,5 @@
 <?php
-use itlife\infrajs;
+use itlife\infrajs\Infrajs;
 use itlife\infrajs\ext;
 
 //========================

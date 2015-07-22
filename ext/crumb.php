@@ -2,7 +2,7 @@
 //Свойство dyn, state, crumb
 //infra.load('*infrajs/ext/external.js');//Уже должен быть
 namespace itlife\infrajs\ext;
-use itlife\infrajs;
+use itlife\infrajs\Infrajs;
 use itlife\infra;
 use itlife\infrajs\ext\external;
 

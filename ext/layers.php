@@ -1,7 +1,7 @@
 <?php
 //Свойство layers
 namespace itlife\infrajs\ext;
-use itlife\infrajs;
+use itlife\infrajs\Infrajs;
 class layers {
 	static function init(){
 		global $infrajs;

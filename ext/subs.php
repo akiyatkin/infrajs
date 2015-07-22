@@ -12,7 +12,7 @@
  * object значит что subs будет восприниматься как объект свойства которого это массивы слоёв
  */
 namespace itlife\infrajs\ext;
-use itlife\infrajs;
+use itlife\infrajs\Infrajs;
 use itlife\infrajs\ext\external;
 
 class subs {

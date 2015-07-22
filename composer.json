@@ -12,6 +12,7 @@
         "twbs/bootstrap": "3.3.5",
 		"itlife/phpdate":"~1",
 		"itlife/session":"~1",
+        "itlife/infra":"~1",
 		"vsn4ik/bootstrap-checkbox": "1.2.5"
 	},
     "repositories":[{
