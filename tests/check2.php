@@ -3,7 +3,7 @@
 	require_once(__DIR__.'/../../infra/infra.php');
 	$_SERVER['QUERY_STRING']="?test";
 	infra_require('*infrajs/initphp.php');
-	use itlife\infrajs\infrajs;
+	use itlife\infrajs;
 	$ans = array();
 	$ans['title'] = 'проверка чек';
 

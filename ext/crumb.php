@@ -1,10 +1,10 @@
 <?php
 //Свойство dyn, state, crumb
 //infra.load('*infrajs/ext/external.js');//Уже должен быть
-namespace itlife\infrajs\infrajs\ext;
-use itlife\infrajs\infrajs;
-use itlife\infrajs\infra;
-use itlife\infrajs\infrajs\ext\external;
+namespace itlife\infrajs\ext;
+use itlife\infrajs;
+use itlife\infra;
+use itlife\infrajs\ext\external;
 
 class crumb {
 	static function init(){

@@ -1,6 +1,6 @@
 <?php
 //deep:(number),//Для crumb определяет на каком уровне от текущего будет тру... пропускает родителей. Только когда что-то будет на нужном уровне от указанного crumb
-namespace itlife\infrajs\infrajs\ext;
+namespace itlife\infrajs\ext;
 class deep {
 	function init(){
 		infrajs::isAdd('check',function($layer){

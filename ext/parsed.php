@@ -1,5 +1,5 @@
 <?php
-namespace itlife\infrajs\infrajs\ext;
+namespace itlife\infrajs\ext;
 //parsed
 //Обработка - перепарсиваем слой если изменились какие-то атрибуты
 class parsed {

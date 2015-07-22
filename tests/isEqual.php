@@ -1,5 +1,5 @@
 <?php
-	use itlife\infrajs\infrajs;
+	use itlife\infrajs;
 	require_once(__DIR__.'/../../infra/infra.php');
 	$ans = array();
 	$ans['title'] = 'isEqual';

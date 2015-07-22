@@ -1,6 +1,6 @@
 <?php
-namespace itlife\infrajs\infrajs\ext;
-use itlife\infrajs\infra;
+namespace itlife\infrajs\ext;
+use itlife\infra;
 class session {
 	static function init(){
 		global $infrajs;

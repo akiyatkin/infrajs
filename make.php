@@ -1,6 +1,6 @@
 <?php
-use itlife\infrajs\infrajs;
-use itlife\infrajs\infrajs\ext;
+use itlife\infrajs;
+use itlife\infrajs\ext;
 
 //========================
 global $infrajs,$infra;

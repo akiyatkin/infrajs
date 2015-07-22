@@ -1,6 +1,6 @@
 <?php
-	use itlife\infrajs\infrajs;
-	use itlife\infrajs\infra;
+	use itlife\infrajs;
+	use itlife\infra;
 	require_once(__DIR__.'/../../infra/infra.php');
 	$ans = array();
 	$ans['title'] = 'check_ext_childs';

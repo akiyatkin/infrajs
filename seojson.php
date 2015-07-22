@@ -1,5 +1,5 @@
 <?php
-	use itlife\infrajs\infrajs\ext\seojson;
+	use itlife\infrajs\ext\seojson;
 
 	$src=$_SERVER['QUERY_STRING'];
 	$seo=seojson::load($src);

@@ -1,8 +1,8 @@
 <?php
-namespace itlife\infrajs\infrajs\ext;
+namespace itlife\infrajs\ext;
 //unick:(number),//Уникальное обозначение слоя
 //Нужно для уникальной идентификации какого-то слоя. Для хранения данных слоя в глобальной области при генерации слоя на сервере и его отсутствия на клиенте. Slide
-use itlife\infrajs\infrajs;
+use itlife\infrajs;
 class unick {
 	static $counter=1;
 	static function init(){

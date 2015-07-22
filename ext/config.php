@@ -3,7 +3,7 @@
 	config
 	configinherit:(bool)
 */
-namespace itlife\infrajs\infrajs\ext;
+namespace itlife\infrajs\ext;
 
 class config {
 	static function configtpl(&$layer){

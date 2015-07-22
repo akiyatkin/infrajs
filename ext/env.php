@@ -1,7 +1,7 @@
 <?php
-namespace itlife\infrajs\infrajs\ext;
-use itlife\infrajs\infrajs;
-use itlife\infrajs\infrajs\ext\external;
+namespace itlife\infrajs\ext;
+use itlife\infrajs;
+use itlife\infrajs\ext\external;
 class env {
 	static function init(){
 		global $infra,$infrajs;

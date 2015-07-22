@@ -2,7 +2,7 @@
 //Обработка onshow и onhide, tpl, data, onlyclient, onlyserver, tplclientparse, parsed, datacheck, tplcheck
 //infrajs_parsedAdd
 //infrajs_parsed
-namespace itlife\infrajs\infrajs\ext;
+namespace itlife\infrajs\ext;
 global $infra;
 global $infrajs;
 class tpl {

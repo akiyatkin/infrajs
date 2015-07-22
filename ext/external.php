@@ -1,7 +1,7 @@
 <?php
 //Свойство external
 //
-namespace itlife\infrajs\infrajs\ext;
+namespace itlife\infrajs\ext;
 class external {
 	static $props;
 	static function init(){

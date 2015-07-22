@@ -1,5 +1,5 @@
 <?php
-namespace itlife\infrajs\infrajs\ext;
+namespace itlife\infrajs\ext;
 class is{
 	function check(&$layer){
 		if(!isset($layer['is'])||is_null($layer['is'])){

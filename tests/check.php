@@ -2,7 +2,7 @@
 	
 	require_once(__DIR__.'/../../infra/infra.php');
 	infra_require('*infrajs/initphp.php');
-	use itlife\infrajs\infrajs;
+	use itlife\infrajs;
 	$ans = array();
 	$ans['title'] = 'проверка функции infrajs::check';
 

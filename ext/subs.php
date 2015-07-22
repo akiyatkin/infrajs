@@ -11,9 +11,9 @@
  * Теперь infrajs.run(layers) будет бегать по слоям описанным и в свойстве subs
  * object значит что subs будет восприниматься как объект свойства которого это массивы слоёв
  */
-namespace itlife\infrajs\infrajs\ext;
-use itlife\infrajs\infrajs;
-use itlife\infrajs\infrajs\ext\external;
+namespace itlife\infrajs\ext;
+use itlife\infrajs;
+use itlife\infrajs\ext\external;
 
 class subs {
 	static function init(){

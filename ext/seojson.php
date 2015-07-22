@@ -1,8 +1,8 @@
 <?php
-namespace itlife\infrajs\infrajs\ext;
+namespace itlife\infrajs\ext;
 
-use itlife\infrajs\infrajs;
-use itlife\infrajs\infrajs\ext\external;
+use itlife\infrajs;
+use itlife\infrajs\ext\external;
 
 class seojson {
 	function check(&$layer)

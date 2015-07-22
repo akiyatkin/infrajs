@@ -1,5 +1,5 @@
 <?php
-namespace itlife\infrajs\infrajs\ext;
+namespace itlife\infrajs\ext;
 
 //autosave, autosaveclient, autosavename
 

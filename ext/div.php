@@ -17,9 +17,9 @@ infra_listen($infra,'layer.onshow',function(&$layer){
 	layerindiv($layer['div'],$layer);
 });
 */
-namespace itlife\infrajs\infrajs\ext;
-use itlife\infrajs\infrajs;
-use itlife\infrajs\infrajs\ext\external;
+namespace itlife\infrajs\ext;
+use itlife\infrajs;
+use itlife\infrajs\ext\external;
 class div {
 	static function init(){
 		infrajs::runAddKeys('divs');

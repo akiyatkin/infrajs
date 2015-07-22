@@ -1,7 +1,7 @@
 <?php
 //Свойство css	
-namespace itlife\infrajs\infrajs\ext;
-use itlife\infrajs\infrajs;
+namespace itlife\infrajs\ext;
+use itlife\infrajs;
 class css{
 	function check(&$layer){
 		if(!isset($layer['css']))return;
