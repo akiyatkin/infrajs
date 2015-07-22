@@ -1,9 +1,0 @@
-{
-	title:'Производители',
-	type:'array',
-	required:true,
-	items:{
-		type:'string',
-		title:'Название'
-	}
-}

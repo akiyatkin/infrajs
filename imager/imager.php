@@ -119,35 +119,49 @@ if ($getorig) {
 $args=array($src, $ignoremark, $mark, $default, $getorig, $w, $h, $crop, $top);
 $data=infra_cache(array($isrc), 'imager.php', function ($src, $ignoremark, $mark, $default, $getorig, $w, $h, $crop, $top, $re) use ($isrc) {
 
-	if ($re) {
-		$re = '&re';
-	} else {
-		$re = '';
-	}
+	
 
 	$p1 = infra_srcinfo($isrc);//Нужна папка со звёздочкой
 	$p = infra_srcinfo($src);
-	if ($p['ext'] == 'docx') {
-		infra_require('*files/files.inc.php');
-		$p = files_get(infra_toutf($p1['folder']), infra_toutf($p['id']));
-		if (!$p['images'][0]) {
+
+	if (in_array($p['ext'], array('docx','mht'))) {
+		/*
+			Смотрим подключён ли плагин files для того чтобы достать картинку и файла
+		*/
+		if (!infra_theme('*files/files.inc.php')) {
+			$default=true;
 			$src = infra_theme('*imager/noimage.png');
-			//header('HTTP/1.1 404 Not Found');
-			//return;
 		} else {
-			$src = $p['images'][0]['src'];
-		}
-	} elseif ($p['ext'] == 'mht') {
-		$p = infra_loadJSON('*pages/mht/mht.php?preview'.$re.'&src='.infra_toutf($p['src']));
-		if (!$p['images'][0]) {
-			$src = infra_theme('*imager/noimage.png');
-			//header('HTTP/1.1 404 Not Found');
-			//return;
-		} else {
-			$src = $p['images'][0]['src'];
+			infra_require('*files/files.inc.php');
+
+			if ($re) {
+				$re = '&re';
+			} else {
+				$re = '';
+			}
+			if ($p['ext'] == 'docx') {
+				$p = files_get(infra_toutf($p1['folder']), infra_toutf($p['id']));
+				if (!$p['images'][0]) {
+					$default=true;
+					$src = infra_theme('*imager/noimage.png');
+					//header('HTTP/1.1 404 Not Found');
+					//return;
+				} else {
+					$src = $p['images'][0]['src'];
+				}
+			} elseif ($p['ext'] == 'mht') {
+				$p = infra_loadJSON('*pages/mht/mht.php?preview'.$re.'&src='.infra_toutf($p['src']));
+				if (!$p['images'][0]) {
+					$default=true;
+					$src = infra_theme('*imager/noimage.png');
+					//header('HTTP/1.1 404 Not Found');
+					//return;
+				} else {
+					$src = $p['images'][0]['src'];
+				}
+			}
 		}
 	}
-
 	$src = infra_tofs($src);
 	$type = imager_type($src);
 
