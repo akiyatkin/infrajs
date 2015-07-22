@@ -33,10 +33,6 @@
 		//div
 		infrajs.div_init();	
 	});
-	infra.listen(infra.Crumb,'onchange',function(layer){
-		//seo
-		//infrajs.seo_init();
-	});
 
 //========================
 // infrajs oncheck
@@ -67,10 +63,7 @@
 		var store=infrajs.store();
 		store.divs={};
 	});
-	infra.wait(infrajs,'oninit',function(){
-		//autoedit
-		infrajs.autoeditInit();	
-	});
+	
 	
 //========================
 //layer oninit
@@ -190,10 +183,6 @@
 	infra.listen(infra,'layer.oncheck',function(layer){
 		//config
 		infrajs.configtpl(layer);
-	});
-	infra.listen(infra,'layer.oncheck',function(layer){
-		//seo
-		//infrajs.seo_checkseolinktpl(layer);
 	});
 	/*infra.listen(infra,'layer.oncheck',function(layer){	
 		//crumb link
@@ -415,7 +404,7 @@
 		if(div)div.style.display='';
 		if(infrajs.ignoreDOM(layer))return;
 		if(!div){//Мы не можем проверить это в isshow так как для проверки надо чтобы например родитель показался, Но показ идёт одновременно уже без проверок.. сейчас.  По этому сейчас и проверяем. Пользователь не должне допускать таких ситуаций.
-			if(!layer.divcheck&&infra.conf.debug){//Также мы не можем проверить в layer.oninsert.cond так как ситуация когда див не найден это ошибка, у слоя должно быть определено условие при которых он не показывается и это совпадает с тем что нет родителя. В конце концов указываться divparent
+			if(!layer.divcheck&&infra.debug()){//Также мы не можем проверить в layer.oninsert.cond так как ситуация когда див не найден это ошибка, у слоя должно быть определено условие при которых он не показывается и это совпадает с тем что нет родителя. В конце концов указываться divparent
 				console.log('Не найден контейнер для слоя:'+'\ndiv:'+layer.div+'\ntpl:'+layer.tpl+'\ntplroot:'+layer.tplroot+'\nparent.tpl:'+(layer.parent?layer.parent.tpl:''));
 			}
 			return false;
@@ -461,10 +450,6 @@
 		infrajs.setonsubmit(layer);
 	});
 	infra.listen(infra,'layer.onshow',function(layer){
-		//seo
-		//infrajs.seo_now(layer);
-	});
-	infra.listen(infra,'layer.onshow',function(layer){
 		//autoview
 		infrajs.autoview(layer);
 	});
@@ -504,23 +489,10 @@
 		if(!window.popup||!popup.st)return;
 		popup.render();
 	});
-	infra.listen(infrajs,'onshow',function(){
-		//autoedit
-		infrajs.autoeditLink();
-	});
-	infra.listen(infrajs,'onshow',function(){
-		//autoedit
-		if(!window.AUTOEDIT)return;
-		if(!AUTOEDIT.active)return;
-		if(!infra.admin())return;
-		AUTOEDIT.setHandlers();
-	});
+	
 	
 	infra.wait(infrajs,'onshow',function(){
 		//code
 		infrajs.code_restore();
 	});
-	infra.listen(infrajs,'onshow',function(){
-		//autoedit
-		infrajs.autoedit_SaveOpenedWin();
-	});
+	

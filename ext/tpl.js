@@ -148,15 +148,9 @@
 		var store=infrajs.store();
 		var first=store['counter']===1;
 		var conf=infra.conf;
-		//first - первый запуск
-		//conf.infrajs.onlyclient 
-		//conf.infrajs.onlyserver - infrajs вообще не запускается
-		//layer.onlyclient 
-		//layer.onlyserver - бесмысленно, такого параметра нет
-
 		
 
-		if(conf.infrajs.onlyclient)return false;//Значит сервера небыло впринципе
+		if(!conf.infrajs.server)return false;//Значит сервера небыло впринципе
 
 		if(layer&&infrajs.tplonlyclient(layer))return false;
 		

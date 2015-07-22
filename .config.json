@@ -1,13 +1,10 @@
 {
 	"infrajs":{
-		"pub":["producer","seoname","seoforall","scroll","scrollup","onlyclient"],
-		"producer":"Создание&nbsp;сайта&nbsp;&mdash;&nbsp;<a href='http://itlife-studio.ru'>Айтилайф</a>",
-		"seoname":"",
-		"seoforall":false,
+		"pub":["scroll","scrollup","server"],
 		"scroll":false,
 		"scrollup":false,
-		"onlyserver":false,
-		"onlyclient":false,
+		"server":true,
+		"client":true,
 		"htaccess":false
 	},
 	"scroll":{

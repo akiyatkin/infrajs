@@ -50,7 +50,7 @@ infrajs.setonsubmit=function(layer){
 							ans=eval('(function(a){return a})('+text+')');
 						}catch(e){
 							msg='Server Error';
-							if(infra.debug) msg+='<hr>'+e+'<hr>'+text;
+							if(infra.debug()) msg+='<hr>'+e+'<hr>'+text;
 						}
 					}else{
 						msg='Connect Error';

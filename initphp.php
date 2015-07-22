@@ -5,5 +5,4 @@
 use itlife\infrajs\ext;
 
 infra_require('*infra/ext/html.php');
-infra_require('*seo/seo.ext.php');//
 infra_require('*infrajs/make.php');
