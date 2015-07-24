@@ -10,8 +10,5 @@
 	"scroll":{
 		"pub":["scrollFromTop"],
 		"scrollFromTop":0
-	},
-	"htaccess":{
-		"www":false
 	}
 }
