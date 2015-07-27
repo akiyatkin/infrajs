@@ -7,13 +7,12 @@
         "email": "info@itlife-studio.ru"
 	}],
 	"require": {
-		"components/jquery": "2.1.4",
-		"malsup/form": "3.51",
-        "twbs/bootstrap": "3.3.5",
+		"components/jquery": "~2",
+		"malsup/form": "~3",
+        "twbs/bootstrap": "~3",
 		"itlife/phpdate":"~1",
-		"itlife/session":"~1",
         "itlife/infra":"~1",
-		"vsn4ik/bootstrap-checkbox": "1.2.5"
+		"vsn4ik/bootstrap-checkbox": "~1"
 	},
     "repositories":[{
             "type":"vcs",
