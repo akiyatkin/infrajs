@@ -17,7 +17,7 @@ $html=infra_admin_cache('infra_initjs_php', function ($str) {
 	$require=function ($path) {
 		$html="\n\n".'//requrie '.$path."\n";
 		$html.=infra_loadTEXT($path).';';
-		$html.='infra.store("require")["'.$path.'"]={vlaue:true};'; //код отметки о выполненных файлах
+		$html.='infra.store("require")["'.$path.'"]={value:true};'; //код отметки о выполненных файлах
 		return $html;
 	};
 	$html='';
@@ -47,14 +47,6 @@ $html=infra_admin_cache('infra_initjs_php', function ($str) {
 	$html.=$require('*infrajs/ext/show.js');//
 	$html.=$require('*infrajs/ext/config.js');//
 	
-	
-	
-	
-
-	
-	
-	
-
 	
 	$html.=$require('*infra/ext/tablecommon.js');
 
