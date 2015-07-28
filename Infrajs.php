@@ -284,9 +284,9 @@ class Infrajs
 		}
 
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
-	
+		@header('Infrajs-Cache: true');//Афигенный кэш, когда используется infrajs не подгружается даже
 		$html = infra_admin_cache('index.php', function ($index, $div, $src, $query) {
-			@header('Infrajs-Cache: Fail');//Афигенный кэш, когда используется infrajs не подгружается даже
+			@header('Infrajs-Cache: false');//Афигенный кэш, когда используется infrajs не подгружается даже
 			infra_require('*infrajs/initphp.php');
 			global $infrajs;
 
