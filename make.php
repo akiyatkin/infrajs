@@ -4,11 +4,14 @@ use itlife\infrajs\ext;
 
 //========================
 global $infrajs,$infra;
-
+/*if (!$infrajs) {
+		$infrajs = array();
+}*/
 //========================
 //infrajs oninit
 //========================
 //=======wait=====//
+
 infra_wait($infrajs, 'oninit', function () {
 	ext\external::init();
 	ext\crumb::init();
@@ -44,7 +47,8 @@ infra_listen($infra, 'layer.oninit', function (&$layer) {
 });
 
 
-infra_listen($infra, 'layer.oninit', function (&$layer) {//это из-за child// всё что после child начинает плыть. по этому надо crumb каждый раз определять, брать от родителя.
+infra_listen($infra, 'layer.oninit', function (&$layer) {
+		//это из-за child// всё что после child начинает плыть. по этому надо crumb каждый раз определять, брать от родителя.
 	//crumb
 	if(!isset($layer['dyn'])){//Делается только один раз
 		ext\crumb::set($layer,'crumb',$layer['crumb']);
@@ -57,7 +61,7 @@ infra_listen($infra, 'layer.oninit', function (&$layer) {
 		return;
 	}
 	
-	ext\crumb::set($layer,'crumb',$layer['dyn']['crumb']);//Возможно у родителей обновился crumb из-за child у детей тоже должен обновиться хотя они не в child
+	ext\crumb::set($layer, 'crumb', $layer['dyn']['crumb']);//Возможно у родителей обновился crumb из-за child у детей тоже должен обновиться хотя они не в child
 });
 
 infra_listen($infra, 'layer.oninit', function (&$layer) {	
@@ -102,6 +106,7 @@ infrajs::isAdd('check', function (&$layer) {//может быть у любог�
 infrajs::isAdd('check', function (&$layer) {
 	//crumb
 	if(!$layer['crumb']->is)return false;
+
 });
 
 

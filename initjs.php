@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__.'/../infra/infra.php');
+require_once(__DIR__.'/../infra/Infra.php');
 infra_admin_modified();
 $re=isset($_GET['re']);
 $html=infra_admin_cache('infra_initjs_php', function ($str) {

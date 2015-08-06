@@ -2,7 +2,7 @@
 
 namespace itlife\infrajs;
 
-require_once __DIR__.'/../infra/infra.php';
+require_once __DIR__.'/../infra/Infra.php';
 
 /*//Функции для написания плагинов
 infrajs::store();
@@ -28,7 +28,9 @@ infrajs::checkAdd(layer);
 */
 
 global $infrajs;
-$infrajs = array();
+/*if (!$infrajs) {
+	$infrajs=array();
+}*/
 class Infrajs
 {
 	public static function &storeLayer(&$layer)
@@ -78,8 +80,10 @@ class Infrajs
 		Гипотетически можем работать вне клиента.. дай один html дай другой... выдай клиенту третий
 		без mainrun мы не считаем env
 	*/
+	
 	public static function check(&$layers = null)
 	{
+
 		//Пробежка по слоям
 		$store = &self::store();
 		global $infrajs;
@@ -96,7 +100,6 @@ class Infrajs
 		}
 
 		infra_fire($infrajs, 'oninit');//сборка событий
-
 
 		self::run(self::getWorkLayers(), function (&$layer, &$parent) use (&$store) {
 			//Запускается у всех слоёв в работе которые wlayers
@@ -274,24 +277,18 @@ class Infrajs
 
 	public static function init($index, $div, $src)
 	{
-		if (!empty($_SERVER['QUERY_STRING'])) {
-			$query = urldecode($_SERVER['QUERY_STRING']);
-			if ($query{0} == '*') {
-				$theme = infra_theme('*infra/theme.php');
-
-				return include $theme;
-			}
-		}
-
+		infra_require('*infrajs/make.php');
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
 		@header('Infrajs-Cache: true');//Афигенный кэш, когда используется infrajs не подгружается даже
 		$html = infra_admin_cache('index.php', function ($index, $div, $src, $query) {
 			@header('Infrajs-Cache: false');//Афигенный кэш, когда используется infrajs не подгружается даже
-			infra_require('*infrajs/initphp.php');
+			
 			global $infrajs;
-
-			$h = infra_loadTEXT($index);
-
+			//if (is_string($index)) {
+				$h = infra_loadTEXT($index);
+			//} else {
+			//		$h = $index[0];
+			//}
 			infra_html($h);//Добавить снизу
 			$conf = infra_config();
 			if ($conf['infrajs']['server']) {
@@ -304,7 +301,7 @@ class Infrajs
 					return $r;
 				});
 
-	//$crumb=infra\ext\crumb::getInstance();
+				//$crumb=infra\ext\crumb::getInstance();
 
 				infrajs::checkAdd($layers);
 

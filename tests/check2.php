@@ -1,22 +1,25 @@
 <?php
-	
-	require_once(__DIR__.'/../../infra/infra.php');
-	$_SERVER['QUERY_STRING']="?test";
-	infra_require('*infrajs/initphp.php');
-	use itlife\infrajs\Infrajs;
-	$ans = array();
-	$ans['title'] = 'проверка чек';
+use itlife\infrajs\Infrajs;
 
-	infra_html('<div id="main"></div>');
+itlife\infra\ext\crumb::change('test');
+infra_require('*infrajs/make.php');
 
-	$layers=infra_loadJSON('*infrajs/tests/resources/check2.json');
-	infrajs::check($layers);
+$ans = array();
+$ans['title'] = 'проверка чек';
 
-	$layer=&$layers['layers'];
+infra_html('<div id="main"></div>');
 
-	$html=infra_html();
-	preg_match_all('/x/', $html, $matches);
-	$count=sizeof($matches[0]);
+$layers=infra_loadJSON('*infrajs/tests/resources/check2.json');
+Infrajs::check($layers);
 
-	if($count!=4) return infra_err($ans, 'нууль');
-	return infra_ret($ans, 'daa');
+$layer=&$layers['layers'];
+
+$html=infra_html();
+
+preg_match_all('/x/', $html, $matches);
+$count=sizeof($matches[0]);
+
+if ($count!=4) {
+		return infra_err($ans, 'нууль '.$count);
+}
+return infra_ret($ans, 'daa');

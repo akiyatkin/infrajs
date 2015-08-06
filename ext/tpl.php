@@ -2,7 +2,9 @@
 //Обработка onshow и onhide, tpl, data, onlyclient, onlyserver, tplclientparse, parsed, datacheck, tplcheck
 //infrajs_parsedAdd
 //infrajs_parsed
+
 namespace itlife\infrajs\ext;
+
 global $infra;
 global $infrajs;
 class tpl {
@@ -70,7 +72,8 @@ class tpl {
 
 			$tpl=infra_loadTEXT($tpl);//M доп параметры после :
 			
-		}else if(is_array($tpl)){
+		} else if(is_array($tpl)) {
+
 			$tpl=$tpl[0];
 		}else{
 			$tpl='';
