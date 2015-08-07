@@ -179,7 +179,7 @@ infrajs.check=function(layers){//Пробежка по слоям
 	infrajs.run(infrajs.getWorkLayers(),function(layer){//С чего вдруг oncheck у всех слоёв.. надо только у активных		
 		if(infrajs.is('show',layer)){
 			if(!infrajs.is('rest',layer)){
-				
+
 				infra.fire(layer,'layer.onshow');//Событие в котором вставляется html
 				infra.fire(layer,'onshow');//своевременное выполнение infrajs.when onshow в кэше html когда порядок слоёв не играет роли
 				//при клике делается отметка в конфиге слоя и слой парсится... в oncheck будут подстановки tpl и isRest вернёт false
