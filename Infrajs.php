@@ -277,9 +277,11 @@ class Infrajs
 
 	public static function init($index, $div, $src)
 	{
+		\itlife\infra\Infra::init();
 		infra_require('*infrajs/make.php');
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
 		@header('Infrajs-Cache: true');//Афигенный кэш, когда используется infrajs не подгружается даже
+		
 		$html = infra_admin_cache('index.php', function ($index, $div, $src, $query) {
 			@header('Infrajs-Cache: false');//Афигенный кэш, когда используется infrajs не подгружается даже
 			
@@ -306,6 +308,7 @@ class Infrajs
 				infrajs::checkAdd($layers);
 
 				infrajs::check();//В infra_html были добавленыs все указаные в layers слои
+				
 			}
 			$html = infra_html();
 			
