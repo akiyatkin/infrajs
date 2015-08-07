@@ -1,7 +1,11 @@
 <?php
+
 namespace itlife\infrajs;
-class test {
-	function init(){
+
+class test
+{
+	public function init()
+	{
 		echo 1;
 	}
 }

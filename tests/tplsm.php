@@ -1,20 +1,23 @@
 <?php
-	
-	require_once(__DIR__.'/../../infra/Infra.php');
 
-	$obj=array();
-	$obj['tpl']=array('1{:add}');
-	$obj['tplsm']=array('{add:}2');
-	$obj['data']=array('asdf'=>1);
+	require_once __DIR__.'/../../infra/Infra.php';
 
-	$tpls=infra_template_make($obj['tpl']);//С кэшем перепарсивания
-			
-	$repls=array();
-	$t=infra_template_make($obj['tplsm']);
-	$repls[]=$t;
-	$alltpls=array(&$repls,&$tpls);
+	$obj = array();
+	$obj['tpl'] = array('1{:add}');
+	$obj['tplsm'] = array('{add:}2');
+	$obj['data'] = array('asdf' => 1);
 
-	$html=infra_template_exec($alltpls,$obj['data'],@$layer['tplroot'],@$layer['dataroot']);
+	$tpls = infra_template_make($obj['tpl']);//С кэшем перепарсивания
 
-	if($html!='12') return infra_err($ans, 'err');
+	$repls = array();
+	$t = infra_template_make($obj['tplsm']);
+	$repls[] = $t;
+	$alltpls = array(&$repls,&$tpls);
+
+	$html = infra_template_exec($alltpls, $obj['data'], @$layer['tplroot'], @$layer['dataroot']);
+
+	if ($html != '12') {
+		return infra_err($ans, 'err');
+	}
+
 	return infra_ret($ans, 'ret');

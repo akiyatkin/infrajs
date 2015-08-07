@@ -24,7 +24,7 @@
 					}
 					scrollFromTop=delta;
 				}
-				window.roller.goTop(scrollFromTop);      
+				window.roller.goTop(scrollFromTop);	  
 			}
 			delete infrajs.scroll;
 		},1);

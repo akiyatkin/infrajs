@@ -1,25 +1,25 @@
 {
-    "name":"itlife/infrajs",
-    "description": "javascript php framework",
-    "license": "GPL3",
-    "authors": [{
-        "name": "itlife",
-        "email": "info@itlife-studio.ru"
+	"name":"itlife/infrajs",
+	"description": "javascript php framework",
+	"license": "GPL3",
+	"authors": [{
+		"name": "itlife",
+		"email": "info@itlife-studio.ru"
 	}],
 	"require": {
 		"components/jquery": "~2",
 		"malsup/form": "~3",
-        "twbs/bootstrap": "~3",
+		"twbs/bootstrap": "~3",
 		"itlife/phpdate":"~1",
-        "itlife/infra":"~1",
+		"itlife/infra":"~1",
 		"vsn4ik/bootstrap-checkbox": "~1"
 	},
-    "repositories":[{
-            "type":"vcs",
-            "url":"https://github.com/malsup/form"
-        }
-    ],
-    "autoload": {
-        "psr-4": { "itlife\\infrajs\\": "/" }
-    }
+	"repositories":[{
+			"type":"vcs",
+			"url":"https://github.com/malsup/form"
+		}
+	],
+	"autoload": {
+		"psr-4": { "itlife\\infrajs\\": "/" }
+	}
 }

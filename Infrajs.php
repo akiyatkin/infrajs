@@ -80,26 +80,26 @@ class Infrajs
 		Гипотетически можем работать вне клиента.. дай один html дай другой... выдай клиенту третий
 		без mainrun мы не считаем env
 	*/
-	
-	public static function check(&$layers = null)
-	{
+
+public static function check(&$layers = null)
+{
 
 		//Пробежка по слоям
 		$store = &self::store();
-		global $infrajs;
+	global $infrajs;
 		//if($store['process'])return;//Уже выполняется
 		//$store['process']=true;
 		//процесс характеризуется двумя переменными process и timer... true..true..false.....false
 		++$store['counter'];
-		$store['ismainrun'] = is_null($layers);
+	$store['ismainrun'] = is_null($layers);
 
-		if (!is_null($layers)) {
-			$store['wlayers'] = array(&$layers);
-		} else {
-			$store['wlayers'] = $store['alayers'];
-		}
+	if (!is_null($layers)) {
+		$store['wlayers'] = array(&$layers);
+	} else {
+		$store['wlayers'] = $store['alayers'];
+	}
 
-		infra_fire($infrajs, 'oninit');//сборка событий
+	infra_fire($infrajs, 'oninit');//сборка событий
 
 		self::run(self::getWorkLayers(), function (&$layer, &$parent) use (&$store) {
 			//Запускается у всех слоёв в работе которые wlayers
@@ -129,7 +129,7 @@ class Infrajs
 		infra_fire($infrajs, 'onshow');
 		//loader, setA, seo добавить в html, можно зациклить check
 		//$store['process']=false;
-	}
+}
 	public static function checkAdd(&$layers)
 	{
 		//Два раза вызов добавит слой повторно
@@ -281,10 +281,10 @@ class Infrajs
 		infra_require('*infrajs/make.php');
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
 		@header('Infrajs-Cache: true');//Афигенный кэш, когда используется infrajs не подгружается даже
-		
+
 		$html = infra_admin_cache('index.php', function ($index, $div, $src, $query) {
 			@header('Infrajs-Cache: false');//Афигенный кэш, когда используется infrajs не подгружается даже
-			
+
 			global $infrajs;
 			//if (is_string($index)) {
 				$h = infra_loadTEXT($index);
@@ -308,18 +308,16 @@ class Infrajs
 				infrajs::checkAdd($layers);
 
 				infrajs::check();//В infra_html были добавленыs все указаные в layers слои
-				
 			}
 			$html = infra_html();
-			
-			
-			if ($conf['infrajs']['client']) {
-				$script='<script src="?*infra/js.php"></script>';
-				
-				$html = str_replace('<head>', '<head>'."\n\t".$script, $html);
 
-				$script = '';
-				$script.= <<<END
+if ($conf['infrajs']['client']) {
+	$script = '<script src="?*infra/js.php"></script>';
+
+	$html = str_replace('<head>', '<head>'."\n\t".$script, $html);
+
+	$script = '';
+	$script .= <<<END
 \n<script src="?*infrajs/initjs.php?loadJSON={$src}"></script>
 <script type="text/javascript">
 	var layers=infra.loadJSON('{$src}');
@@ -332,8 +330,8 @@ class Infrajs
 	});
 </script>
 END;
-				$html .= $script;
-			}
+	$html .= $script;
+}
 
 			return $html;
 		}, array($index, $div, $src, $query));//Если не кэшировать то будет reparse
