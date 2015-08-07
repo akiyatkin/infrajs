@@ -326,5 +326,3 @@ infrajs.isSaveBranch=function(layer,val){
 infrajs.checkNow=function(){
 	
 };
-
-/**/
