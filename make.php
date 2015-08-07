@@ -62,7 +62,7 @@ infra_listen($infra, 'layer.oninit', function (&$layer) {
 		return;
 	}
 
-ext\crumb::set($layer, 'crumb', $layer['dyn']['crumb']);//Возможно у родителей обновился crumb из-за child у детей тоже должен обновиться хотя они не в child
+	ext\crumb::set($layer, 'crumb', $layer['dyn']['crumb']);//Возможно у родителей обновился crumb из-за child у детей тоже должен обновиться хотя они не в child
 });
 
 infra_listen($infra, 'layer.oninit', function (&$layer) {
@@ -97,7 +97,8 @@ infra_listen($infra, 'layer.oninit', function (&$layer) {
 //layer is check
 //========================
 
-infrajs::isAdd('check', function (&$layer) {//может быть у любого слоя в том числе и у не iswork, и когда нет старого значения
+infrajs::isAdd('check', function (&$layer) {
+	//может быть у любого слоя в том числе и у не iswork, и когда нет старого значения
 
 	//infrajs это исключение
 	if (!$layer) {
@@ -126,13 +127,15 @@ infra_listen($infra, 'layer.oncheck', function (&$layer) {
 		$layer['counter'] = 0;
 	}
 });
-infra_listen($infra, 'layer.oncheck', function (&$layer) {//В onchange слоя может не быть див// Это нужно чтобы в external мог быть определён div перед тем как наследовать div от родителя	
+infra_listen($infra, 'layer.oncheck', function (&$layer) {
+	//В onchange слоя может не быть див// Это нужно чтобы в external мог быть определён div перед тем как наследовать div от родителя
 	//div
 	if (@!$layer['div'] && @$layer['parent']) {
 		$layer['div'] = $layer['parent']['div'];
 	}
 });
-infra_listen($infra, 'layer.oncheck', function (&$layer) {//Без этого не показывается окно cо стилями.. только его заголовок.. 
+infra_listen($infra, 'layer.oncheck', function (&$layer) {
+	//Без этого не показывается окно cо стилями.. только его заголовок..
 	//div
 	infra_forx($layer['divs'], function (&$l, $div) {
 		if (@!$l['div']) {
@@ -155,22 +158,26 @@ infra_listen($infra, 'layer.oncheck', function (&$layer) {//Без этого н
 		if(!$val||!is_array($val))$val=array('_'=>'notempty');
 	});
 });*/
-infra_listen($infra, 'layer.oncheck', function (&$layer) {//external уже проверен
+infra_listen($infra, 'layer.oncheck', function (&$layer) {
+	//external уже проверен
 	//subs
 	ext\subs::check($layer);
 });
 
-infra_listen($infra, 'layer.oncheck', function (&$layer) {//external уже проверен
+infra_listen($infra, 'layer.oncheck', function (&$layer) {
+	//external уже проверен
 	//config
 	ext\config::configtpl($layer);
 });
-infra_listen($infra, 'layer.oncheck', function (&$layer) {//В onchange слоя может не быть див// Это нужно чтобы в external мог быть определён div перед тем как наследовать div от родителя	
+infra_listen($infra, 'layer.oncheck', function (&$layer) {
+	//В onchange слоя может не быть див// Это нужно чтобы в external мог быть определён div перед тем как наследовать div от родителя
 	//div
 	if (@!$layer['div'] && @$layer['parent']) {
 		$layer['div'] = $layer['parent']['div'];
 	}
 });
-infra_listen($infra, 'layer.oncheck', function (&$layer) {//Без этого не показывается окно cо стилями.. только его заголовок.. 
+infra_listen($infra, 'layer.oncheck', function (&$layer) {
+	//Без этого не показывается окно cо стилями.. только его заголовок..
 	//div
 	infra_forx($layer['divs'], function (&$l, $div) {
 		if (@!$l['div']) {
@@ -191,11 +198,13 @@ infra_listen($infra, 'layer.oncheck', function (&$layer) {
 	ext\tpl::jsontpl($layer);
 });
 
-infra_listen($infra, 'layer.oncheck', function (&$layer) {//external то ещё не применился у вложенных слоёв, по этому используется свойство envtochild
+infra_listen($infra, 'layer.oncheck', function (&$layer) {
+	//external то ещё не применился у вложенных слоёв, по этому используется свойство envtochild
 	//env envs
 	ext\env::checkinit($layer);
 });
-infra_listen($infra, 'layer.oncheck', function (&$layer) {//external то ещё не применился нельзя
+infra_listen($infra, 'layer.oncheck', function (&$layer) {
+	//external то ещё не применился нельзя
 	//env envtochild
 	ext\env::envtochild($layer);
 
@@ -208,7 +217,8 @@ infra_listen($infra, 'layer.oncheck', function (&$layer) {
 	//env envframe
 	ext\env::envframe2($layer);
 });
-infra_listen($infra, 'layer.oncheck', function (&$layer) {//external уже есть 
+infra_listen($infra, 'layer.oncheck', function (&$layer) {
+	//external уже есть
 	//env myenvtochild
 	ext\env::envmytochild($layer);
 });
@@ -251,9 +261,9 @@ infrajs::isAdd('show', function (&$layer) {
 
 	return false;
 });
-infrajs::isAdd('show', function (&$layer) {//Родитель скрывает ребёнка если у родителя нет опции что ветка остаётся целой
+infrajs::isAdd('show', function (&$layer) {
+	//Родитель скрывает ребёнка если у родителя нет опции что ветка остаётся целой
 	//infrajs
-
 	if (@!$layer['parent']) {
 		return;
 	}
@@ -353,7 +363,7 @@ infra_listen($infra, 'layer.onshow', function (&$layer) {
 	}
 	global $infrajs;
 
-$r = infra_html($layer['html'], $layer['div']);
+	$r = infra_html($layer['html'], $layer['div']);
 	if (!$r && (!isset($layer['divcheck']) || !$layer['divcheck'])) {
 		echo 'Не найден div '.$layer['div'].' infra_html<br>';
 	}
@@ -371,3 +381,8 @@ infra_listen($infra, 'layer.onshow', function (&$layer) {
 //infrajs onshow
 //========================
 
+//Add externals
+$conf=infra_config();
+foreach ($conf['infrajs_phpexts'] as $path) {
+	infra_require($path);
+}

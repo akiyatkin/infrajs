@@ -23,7 +23,7 @@ $html = infra_admin_cache('infra_initjs_php', function ($str) {
 	};
 	$html = '';
 
-$html .= $require('*infrajs/ext/once.js');//
+	$html .= $require('*infrajs/ext/once.js');//
 
 	$html .= $require('*infrajs/ext/crumb.js');//
 	$html .= $require('*infrajs/ext/external.js');//
@@ -32,7 +32,7 @@ $html .= $require('*infrajs/ext/once.js');//
 	$html .= $require('*infrajs/ext/subs.js');
 	$html .= $require('*infrajs/ext/divparent.js');
 
-//$html.=$require('*infrajs/ext/proptpl.js');//После external
+	//$html.=$require('*infrajs/ext/proptpl.js');//После external
 	$html .= $require('*infrajs/ext/tpl.js');//
 	$html .= $require('*infrajs/ext/parsed.js');//
 	$html .= $require('*infrajs/ext/div.js');//После subs, до tpl
@@ -47,14 +47,14 @@ $html .= $require('*infrajs/ext/once.js');//
 	$html .= $require('*infrajs/ext/config.js');//
 
 
-$html .= $require('*infra/ext/tablecommon.js');
+	$html .= $require('*infra/ext/tablecommon.js');
 
-$html .= $require('*infrajs/ext/scroll.js');
+	$html .= $require('*infrajs/ext/scroll.js');
 
-$html .= $require('*seo/seo.ext.js');
+	$html .= $require('*seo/seo.ext.js');
 	$html .= $require('*infrajs/ext/global.js');
 
-$html .= $require('*infrajs/ext/onsubmit.js');
+	$html .= $require('*infrajs/ext/onsubmit.js');
 	$html .= $require('*infrajs/ext/autosave.js');
 	$html .= $require('*popup/popup.js');
 	$html .= $require('*contacts/showContacts.js');
@@ -62,6 +62,12 @@ $html .= $require('*infrajs/ext/onsubmit.js');
 	$html .= $require('*infrajs/ext/session.js');
 	$html .= $require('*infrajs/ext/autofocus.js');
 	$html .= $require('*infrajs/make.js');
+
+	$conf=infra_config();
+	foreach ($conf['infrajs_jsexts'] as $path => $val) {
+		$html .= $require($path);
+	}
+
 
 	if (isset($_GET['loadJSON'])) {
 		$ts = explode(',', $_GET['loadJSON']);

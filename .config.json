@@ -10,5 +10,11 @@
 	"scroll":{
 		"pub":["scrollFromTop"],
 		"scrollFromTop":0
+	},
+	"infrajs_jsexts":{
+
+	},
+	"infrajs_phpexts":{
+		
 	}
 }
