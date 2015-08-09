@@ -131,10 +131,10 @@ class tpl
 		//Зависит если используется $_SESSION, infra_session, infra_admin
 		//примечательно что конект к базе не запрещает кэширование этого слоя
 		//Узнавать о всём этом мы будем по заголовкам
-		//Так чтобы следующий слой взялся уже нормально заголовки нужно заменять... 
+		//Так чтобы следующий слой взялся уже нормально заголовки нужно заменять...
 		//Тем более заменять заголовки нужно в любом случае если кэшируется чтобы и браузер кэшировал
 
-		//Проблема при первом session_get конект к базе и вызов session_init в следующем подключении init не вызывается 
+		//Проблема при первом session_get конект к базе и вызов session_init в следующем подключении init не вызывается
 		//но для следующего подключения нам нужно понять что есть динамика// По этому загловки отправляются в том числе и руками в скритпах  Cache-Control:no-cache
 		$dhtml = infra_admin_cache('infrajs_getHtml', function () use (&$layer) {
 			global $infrajs;
@@ -156,10 +156,12 @@ class tpl
 
 		if (@$layer['data'] || @$layer['json'] || @$layer['tpls'] || @$layer['tplroot']) {
 			$tpls = infra_template_make($layer['tpl']);//С кэшем перепарсивания
+			infra_template_includes($tpls);
 			global $infra,$infrajs;
 			$infrajs['com'] = @$infra['com'];
 			$repls = array();//- подшаблоны для замены, Важно, что оригинальный распаршеный шаблон не изменяется
-			infra_fora($layer['tplsm'], function ($tm) use (&$repls) {//mix tpl
+			infra_fora($layer['tplsm'], function ($tm) use (&$repls) {
+				//mix tpl
 				$t = infra_template_make($tm);//С кэшем перепарсивания
 				array_push($repls, $t);
 				//for(var i in t)repls[i]=t[i];//Нельзя подменять в оригинальном шаблоне, который в других местах может использоваться без подмен

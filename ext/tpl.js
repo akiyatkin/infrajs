@@ -120,6 +120,7 @@
 	infrajs.getHtml=function(layer){//Вызывается как для основных так и для подслойв tpls frame.
 		if(layer.data||layer.json||layer.tplsm||layer.tplroot){
 			var tpls=infra.template.make(layer.tpl);//С кэшем перепарсивания
+			infra.template.includes(tpls);
 			infrajs.com=infra.com;
 			var repls=[];//- подшаблоны для замены, Важно, что оригинальный распаршеный шаблон не изменяется
 			infra.fora(layer.tplsm,function(tm){//mix tpl
