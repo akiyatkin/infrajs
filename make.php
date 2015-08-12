@@ -15,7 +15,7 @@ global $infrajs,$infra;
 
 infra_wait($infrajs, 'oninit', function () {
 	ext\external::init();
-	ext\crumb::init();
+	ext\Crumb::init();
 	ext\subs::init();
 	ext\layers::init();
 	ext\unick::init();
@@ -52,7 +52,7 @@ infra_listen($infra, 'layer.oninit', function (&$layer) {
 	//crumb
 	if (!isset($layer['dyn'])) {
 		//Делается только один раз
-		ext\crumb::set($layer, 'crumb', $layer['crumb']);
+		ext\Crumb::set($layer, 'crumb', $layer['crumb']);
 	}
 
 });
@@ -62,14 +62,14 @@ infra_listen($infra, 'layer.oninit', function (&$layer) {
 		return;
 	}
 
-	ext\crumb::set($layer, 'crumb', $layer['dyn']['crumb']);//Возможно у родителей обновился crumb из-за child у детей тоже должен обновиться хотя они не в child
+	ext\Crumb::set($layer, 'crumb', $layer['dyn']['crumb']);//Возможно у родителей обновился crumb из-за child у детей тоже должен обновиться хотя они не в child
 });
 
 infra_listen($infra, 'layer.oninit', function (&$layer) {
 
 	//crumb child
 	if (@!$layer['child']) {
-		return;//Это услвие после crumb::set
+		return;//Это услвие после Crumb::set
 	}
 
 	$crumb = &$layer['crumb']->child;
@@ -80,7 +80,7 @@ infra_listen($infra, 'layer.oninit', function (&$layer) {
 	}
 
 	infra_fora($layer['child'], function (&$l) use (&$name) {
-		ext\crumb::set($l, 'crumb', $name);
+		ext\Crumb::set($l, 'crumb', $name);
 	});
 });
 infra_listen($infra, 'layer.oninit', function (&$layer) {
@@ -89,7 +89,7 @@ infra_listen($infra, 'layer.oninit', function (&$layer) {
 	infra_forx($layer['childs'], function (&$l, $key) {
 		//У этого childs ещё не взять external
 		if (empty($l['crumb'])) {
-			ext\crumb::set($l, 'crumb', $key);
+			ext\Crumb::set($l, 'crumb', $key);
 		}
 	});
 });

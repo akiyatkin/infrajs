@@ -2,7 +2,7 @@
 
 use itlife\infrajs\Infrajs;
 
-itlife\infra\ext\crumb::change('test');
+itlife\infra\ext\Crumb::change('test');
 infra_require('*infrajs/make.php');
 
 $ans = array();

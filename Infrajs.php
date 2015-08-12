@@ -301,7 +301,7 @@ class Infrajs
 					return $r;
 				});
 
-				//$crumb=infra\ext\crumb::getInstance();
+				//$crumb=infra\ext\Crumb::getInstance();
 
 				infrajs::checkAdd($layers);
 

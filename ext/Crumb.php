@@ -7,19 +7,27 @@ namespace itlife\infrajs\ext;
 use itlife\infrajs\Infrajs;
 use itlife\infra;
 
-class crumb
+class Crumb
 {
 	public static function init()
 	{
 		global $infra,$infrajs;
-		infra_wait($infrajs, 'oninit', function () {
-			$root = infra\ext\crumb::getInstance();
-			infra_seq_set($infra_template_scope, infra_seq_right('infra.Crumb.query'), $root->query);
-			$cl = function ($mix = null) { return infra\ext\crumb::getInstance($mix); };
-			infra_seq_set($infra_template_scope, infra_seq_right('infra.Crumb.getInstance'), $cl);
 
+		infra_wait($infrajs, 'oninit', function () {
+
+			$root = infra\ext\Crumb::getInstance();
+			global $infra_template_scope;
+			infra_seq_set($infra_template_scope, infra_seq_right('infra.Crumb.query'), $root->query);
+			infra_seq_set($infra_template_scope, infra_seq_right('infra.Crumb.params'), infra\ext\Crumb::$params);
+			infra_seq_set($infra_template_scope, infra_seq_right('infra.Crumb.get'), infra\ext\Crumb::$get);
+
+			$cl = function ($mix = null) {
+				return infra\ext\Crumb::getInstance($mix);
+			};
+			infra_seq_set($infra_template_scope, infra_seq_right('infra.Crumb.getInstance'), $cl);
 			external::add('child', 'layers');
-			external::add('childs', function (&$now, &$ext) {//Если уже есть значения этого свойства то дополняем
+			external::add('childs', function (&$now, &$ext) {
+				//Если уже есть значения этого свойства то дополняем
 				if (!$now) {
 					$now = array();
 				}
@@ -36,7 +44,7 @@ class crumb
 				return $now;
 			});
 			external::add('crumb', function (&$now, &$ext, &$layer, &$external, $i) {//проверка external в onchange
-				crumb::set($layer, 'crumb', $ext);
+				Crumb::set($layer, 'crumb', $ext);
 
 				return $layer[$i];
 			});
@@ -54,7 +62,7 @@ class crumb
 		if (isset($layer['parent'])) {
 			$root = &$layer['parent'][$name];
 		} else {
-			$root = &infra\ext\crumb::getInstance();
+			$root = &infra\ext\Crumb::getInstance();
 		}
 		if ($layer['dyn'][$name]) {
 			$layer[$name] = &$root->getInst(array($layer['dyn'][$name]));
