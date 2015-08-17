@@ -14,19 +14,37 @@
 		
 		if(infra.conf&&infra.conf.scroll&&infra.conf.scroll.scrollFromTop)scrollFromTop=infra.conf.scroll.scrollFromTop;
 		setTimeout(function(){
-			if(infrajs.scroll!==false){
+			if(typeof(infrajs.scroll)!='undefined'){ //depricated
+				infra.scroll=infrajs.scroll;
+			}
+			if(infra.scroll!==false){
 				var delta=0;
-				if(infrajs.scroll){
-					if(typeof(infrajs.scroll)=='number'){
-						delta=infrajs.scroll;
-					}else if(typeof(infrajs.scroll)=='string'){
-						delta=$(infrajs.scroll).offset().top;
+				
+				if(infra.scroll){
+					if(typeof(infra.scroll)=='number'){
+						delta=infra.scroll;
+					}else if(typeof(infra.scroll)=='string'){
+						delta=$(infra.scroll)
+						if(delta.length)delta=delta.offset().top;
+					}
+					if(infra.scroll_bias) {
+
+						if(typeof(infra.scroll_bias)=='number'){
+							delta=delta-infra.scroll_bias;
+						}else if(typeof(infra.scroll_bias)=='string'){
+							var bias=$(infra.scroll_bias);
+							if (bias.length) {
+								delta=delta-bias.height();
+							}
+						}
+						if(delta<0)delta=0;
 					}
 					scrollFromTop=delta;
 				}
 				window.roller.goTop(scrollFromTop);	  
 			}
 			delete infrajs.scroll;
+			delete infra.scroll;
 		},1);
 	});
 	infra.handle(infra.Crumb,'onchange',function(){

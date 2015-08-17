@@ -21,7 +21,7 @@ infrajs.autoview=function(layer){
 		var body=div.find('.autoviewbody');
 		if(!body.length)return;
 		
-		var size=div.height();//Доступная высота в которой нужно весь контент уместить
+		
 		//Для каждого дива свой set и check
 		var counter=layer.counter;//Сохранили 
 		var inwork=false;//Метка о том что идут уже проверки
@@ -37,6 +37,8 @@ infrajs.autoview=function(layer){
 		var check=function(){
 			if(counter!=layer.counter)return;//Слой уже перепашен а это обработка от старого показа
 			
+			var size=div.height();//Доступная высота в которой нужно весь контент уместить
+
 			var height=body.height();//Высота всего контента, так как иллюстрации долго грузятся может меняться
 			var scroll=$(document).scrollTop();
 			var top=div.offset().top;
@@ -98,7 +100,7 @@ infrajs.autoview=function(layer){
 				window.inwork=inwork;
 				return;
 			}
-			setTimeout(check,20);
+			setTimeout(check,30);
 		}			
 		var set=function(){}
 		
