@@ -169,34 +169,6 @@ infra_listen($infra, 'layer.oncheck', function (&$layer) {
 	//config
 	ext\config::configtpl($layer);
 });
-infra_listen($infra, 'layer.oncheck', function (&$layer) {
-	//В onchange слоя может не быть див// Это нужно чтобы в external мог быть определён div перед тем как наследовать div от родителя
-	//div
-	if (@!$layer['div'] && @$layer['parent']) {
-		$layer['div'] = $layer['parent']['div'];
-	}
-});
-infra_listen($infra, 'layer.oncheck', function (&$layer) {
-	//Без этого не показывается окно cо стилями.. только его заголовок..
-	//div
-	infra_forx($layer['divs'], function (&$l, $div) {
-		if (@!$l['div']) {
-			$l['div'] = $div;
-		}
-	});
-});
-infra_listen($infra, 'layer.oncheck', function (&$layer) {
-	//div
-	ext\div::divtpl($layer);
-
-});
-infra_listen($infra, 'layer.oncheck', function (&$layer) {
-	//tpl
-	ext\tpl::tplroottpl($layer);
-	ext\tpl::dataroottpl($layer);
-	ext\tpl::tpltpl($layer);
-	ext\tpl::jsontpl($layer);
-});
 
 infra_listen($infra, 'layer.oncheck', function (&$layer) {
 	//external то ещё не применился у вложенных слоёв, по этому используется свойство envtochild
@@ -222,6 +194,23 @@ infra_listen($infra, 'layer.oncheck', function (&$layer) {
 	//env myenvtochild
 	ext\env::envmytochild($layer);
 });
+
+
+infra_listen($infra, 'layer.oncheck', function (&$layer) {
+	//div
+	ext\div::divtpl($layer);
+
+});
+
+infra_listen($infra, 'layer.oncheck', function (&$layer) {
+	//tpl
+	ext\tpl::tplroottpl($layer);
+	ext\tpl::dataroottpl($layer);
+	ext\tpl::tpltpl($layer);
+	ext\tpl::jsontpl($layer);
+});
+
+
 
 //========================
 // infrajs oncheck

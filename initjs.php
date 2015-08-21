@@ -25,7 +25,7 @@ $html = infra_admin_cache('infra_initjs_php', function ($str) {
 
 	$html .= $require('*infrajs/ext/once.js');//
 
-	$html .= $require('*infrajs/ext/crumb.js');//
+	$html .= $require('*infrajs/ext/Crumb.js');//
 	$html .= $require('*infrajs/ext/external.js');//
 	$html .= $require('*infrajs/ext/env.js');//
 

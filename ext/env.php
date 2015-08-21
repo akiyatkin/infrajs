@@ -12,7 +12,7 @@ class env
 		infra_wait($infrajs, 'oninit', function () {
 			//Обработка envs, envtochild, myenvtochild, envframe
 			external::add('myenv', 'config');//Обрабатывается также как config
-			//infrajs_externalAdd('env','');//Никак не обрабатывается.. будет установлено только если нечего небыло
+			//external::add('env', '');//Никак не обрабатывается.. будет установлено только если нечего небыло
 			external::add('envs', 'childs');//Объединяется так же как childs
 
 			infrajs::runAddKeys('envs');//Теперь бегаем и по envs свойству
@@ -28,19 +28,20 @@ class env
 		//Слои myenv надо показывать тогдаже когда и показывается сам слой
 		$myenv = null;
 		$ll = null;
-		infrajs::run(infrajs::getWorkLayers(), function (&$l) use (&$layer, &$myenv, &$ll) {//Есть окружение и мы не нашли ни одного true для него
+		infrajs::run(infrajs::getWorkLayers(), function (&$l) use (&$layer, &$myenv, &$ll) {
+			//Есть окружение и мы не нашли ни одного true для него
 			if (!isset($l['myenv'])) {
 				return;
 			}
 
-if (!infrajs::is('check', $l)) {
-	return;
-}//В back режиме выйти нельзя.. смотрятся все слои
+			if (!infrajs::is('check', $l)) {
+				return;
+			}//В back режиме выйти нельзя.. смотрятся все слои
 
 
-if (infra_isEqual($l, $layer)) {
-	return;
-}//Значение по умолчанию смотрится отдельно 
+			if (infra_isEqual($l, $layer)) {
+				return;
+			}//Значение по умолчанию смотрится отдельно
 
 			if (!isset($l['myenv'][$layer['env']])) {
 				return;
@@ -112,10 +113,11 @@ if (infra_isEqual($l, $layer)) {
 
 	public static function checkinit(&$layer)
 	{
-		if (@!$layer['envs']) {
+		if (empty($layer['envs'])) {
 			return;
 		}
-		infra_forx($layer['envs'], function (&$l, $env) {//Из-за забегания вперёд external не применился а в external могут быть вложенные слои
+		infra_forx($layer['envs'], function (&$l, $env) {
+			//Из-за забегания вперёд external не применился а в external могут быть вложенные слои
 			$l['env'] = $env;
 			$l['envtochild'] = true;
 		});
