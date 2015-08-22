@@ -1,12 +1,12 @@
-﻿<p>24 февраля 2014</p>
+﻿<p>22 августа 2015</p>
 <ul>
-	<li>Скорректирован кэш. Браузер всегда запрашивает последнюю версию, но может быть ответ 304. Галочка в консоли не нужна. Header append Cache-Control "no-cache" автоматически генерируется в .httaccess или нужно добавлять эту запись.</li>
-	<li>по умолчанию config.session.sync=false сессия с сервером и базой данных не синхронизирутся session/.config.json</li>
-	<li>Добавлены тесты infra.test('plugin')</li>
-	<li>seo для всех страниц, в том числе для позиций каталога</li>
-	<li>Используется репозитарий GIT</li>
-	<li>Проверка кэша по заголовку infrajs-cache:FAIL если кэша нет. Если кэш есть то сообщений никаких нет</li>
-	<li>docx вставка нескольких значений окружения {env:company} {envdiv:contacts}.</li>
-	<li>Карта сайта автоматическая, нужно корректно указывать путь в robots.txt на продакшин</li>
-	<li>файл infra/update отмечает заход админа и иницирует обновлние кэша infra-update:OK</li>	
+	<li>Управление кэшем no-cache или no-store</li>
+	<li><a href="?*infra/tests.php">Тесты</a></li>
+	<li>Добавлены тесты javascript infra.test('plugin')</li>
+	<li>layer.seojson</li>
+	<li>Используется репозитарий GIT и composer для сборки проекта и всех зависимостей</li>
+	<li>Роли test debug admin</li>
+	<li>docx убраны {env:company}</li>
+	<li>Изменение конфига обновляет кэш</li>
+	<li>файл infra/data/update отмечает заход админа и иницирует обновлние кэша infra-update:OK</li>	
 </ul>
