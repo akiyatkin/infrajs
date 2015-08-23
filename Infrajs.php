@@ -279,7 +279,7 @@ class Infrajs
 		infra_require('*infrajs/make.php');
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
 		@header('Infrajs-Cache: true');//Афигенный кэш, когда используется infrajs не подгружается даже
-
+		$query=infra_toutf($_SERVER['QUERY_STRING']);
 		$html = infra_admin_cache('index.php', function ($index, $div, $src, $query) {
 			@header('Infrajs-Cache: false');//Афигенный кэш, когда используется infrajs не подгружается даже
 
