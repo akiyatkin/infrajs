@@ -136,6 +136,11 @@ infrajs.getAllLayers=function(){
 	},1);//Если вызывать infrajs.check() и вместе с этим переход по ссылке проверка слоёв сработает только один раз за счёт это паузы.. два вызова объединяться за это время в один.
 	
 };// child, layers*/
+infrajs.show=function(layer,div){
+	layer.div=div;
+	layer.parsed=Math.random();
+	infrajs.check(layer);
+}
 infrajs.check=function(layers){//Пробежка по слоям
 
 	var store=infrajs.store();

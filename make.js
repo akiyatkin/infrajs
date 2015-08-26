@@ -18,9 +18,9 @@
 				infra.scroll=infrajs.scroll;
 			}
 			if(infra.scroll!==false){
-				var delta=0;
+				var delta=scrollFromTop;
 				
-				if(infra.scroll){
+				if(!infra.scroll){
 					if(typeof(infra.scroll)=='number'){
 						delta=infra.scroll;
 					}else if(typeof(infra.scroll)=='string'){
@@ -28,7 +28,6 @@
 						if(delta.length)delta=delta.offset().top;
 					}
 					if(infra.scroll_bias) {
-
 						if(typeof(infra.scroll_bias)=='number'){
 							delta=delta-infra.scroll_bias;
 						}else if(typeof(infra.scroll_bias)=='string'){
@@ -37,10 +36,12 @@
 								delta=delta-bias.height();
 							}
 						}
-						if(delta<0)delta=0;
+						if(delta<scrollFromTop)delta=scrollFromTop;
 					}
-					scrollFromTop=delta;
 				}
+				
+
+				scrollFromTop=delta;
 				window.roller.goTop(scrollFromTop);	  
 			}
 			delete infrajs.scroll;

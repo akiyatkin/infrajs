@@ -67,8 +67,10 @@ infrajs.setonsubmit=function(layer){
 					if(ans.popup){
 						if(ans.result)popup.success(ans.msg);
 						else popup.error(ans.msg);
+					} else {
+						infrajs.check(layer);
+						infrajs.check();
 					}
-					else infrajs.check();
 				}
 			});
 		},1);
