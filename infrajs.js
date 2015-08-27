@@ -263,6 +263,10 @@ infrajs.is=function(name,layer){//def undefined быть не может
 
 
 
+/**
+ * Пробежка идёт сначало по спискам (layers,childs и только потом по divs, childs, subs) 
+ *занчения по ключу более важны и перехватывают инициативу в случае конфликат
+ */
 //run
 infrajs.run=function(layers,callback,parent){
 	var r;
@@ -277,7 +281,11 @@ infrajs.run=function(layers,callback,parent){
 			if(props['list'].hasOwnProperty(name)){
 				r=infrajs.run(val,callback,layer);
 				if(r!==undefined)return r;
-			}else if(props['keys'].hasOwnProperty(name)){
+			}
+		});
+		if(r!==undefined)return r;
+		r=infra.foro(layer,function(val,name){
+			if(props['keys'].hasOwnProperty(name)){
 				r=infra.foro(val,function(v,i){
 					r=infrajs.run(v,callback,layer);
 					if(r!==undefined)return r;
@@ -286,7 +294,6 @@ infrajs.run=function(layers,callback,parent){
 			}
 		});
 		if(r!==undefined)return r;
-
 	});
 	return r;
 }

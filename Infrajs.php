@@ -192,32 +192,43 @@ class Infrajs
 		//$store=&infrajs::store('run_array');//$r, $props=$infrajs_run_props;
 		//if($layers===true)$layers=&infrajs_getWorkLayers();
 		//if($layers===false)$layers=&infrajs_getAllLayers();
-		$r = &infra_fora($layers, function &(&$layer) use (&$parent, $callback) {
+
+		$store = &infrajs::store();
+		if (!$store['run']) {
+			$store['run'] = array();
+		}
+		$props = &$store['run'];
+
+		$r = &infra_fora($layers, function &(&$layer) use (&$parent, $callback, $props) {
 
 			$r = &$callback($layer, $parent);
-
 			if (!is_null($r)) {
 				return $r;
 			}
-			$r = &infra_foro($layer, function &(&$val, $name) use (&$layer, $callback) {
 
-				$store = &infrajs::store();
-				if (!$store['run']) {
-					$store['run'] = array();
-				}
-				$props = &$store['run'];
+			$r = &infra_foro($layer, function &(&$val, $name) use (&$layer, $callback, $props) {
 				$r = null;
 				if (isset($props['list'][$name])) {
 					$r = &infrajs::run($val, $callback, $layer);
 					if (!is_null($r)) {
 						return $r;
 					}
-				} elseif (isset($props['keys'][$name])) {
-					$r = &infra_foro($val, function &(&$v, $i) use (&$layer, $callback) {
+				}
 
+				return $r;
+			});
+			if (!is_null($r)) {
+				return $r;
+			}
+
+			$r = &infra_foro($layer, function &(&$val, $name) use (&$layer, $callback, $props) {
+				$r = null;
+				if (isset($props['keys'][$name])) {
+					$r = &infra_foro($val, function &(&$v, $i) use (&$layer, $callback) {
 						$r = &infrajs::run($v, $callback, $layer);
-						//if(!is_null($r))
-						return $r;
+						if (!is_null($r)) {
+							return $r;
+						}
 					});
 					if (!is_null($r)) {
 						return $r;
@@ -226,9 +237,9 @@ class Infrajs
 
 				return $r;
 			});
-
-			//if(!is_null($r))
-			return $r;
+			if (!is_null($r)) {
+				return $r;
+			}
 
 		});
 

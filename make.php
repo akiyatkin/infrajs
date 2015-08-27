@@ -32,6 +32,7 @@ infra_wait($infrajs, 'oninit', function () {
 infra_listen($infra, 'layer.oninit', function (&$layer) {
 	//external
 	ext\external::check($layer);
+
 });
 infra_listen($infra, 'layer.oninit', function (&$layer) {
 	//config
@@ -48,20 +49,18 @@ infra_listen($infra, 'layer.oninit', function (&$layer) {
 });
 
 infra_listen($infra, 'layer.oninit', function (&$layer) {
-		//это из-за child// всё что после child начинает плыть. по этому надо crumb каждый раз определять, брать от родителя.
+	//это из-за child// всё что после child начинает плыть. по этому надо crumb каждый раз определять, брать от родителя.
 	//crumb
 	if (!isset($layer['dyn'])) {
 		//Делается только один раз
 		ext\Crumb::set($layer, 'crumb', $layer['crumb']);
 	}
-
 });
 infra_listen($infra, 'layer.oninit', function (&$layer) {
 	//crumb
 	if (empty($layer['parent'])) {
 		return;
 	}
-
 	ext\Crumb::set($layer, 'crumb', $layer['dyn']['crumb']);//Возможно у родителей обновился crumb из-за child у детей тоже должен обновиться хотя они не в child
 });
 

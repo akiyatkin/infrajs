@@ -19,7 +19,9 @@
 			}
 			if(infra.scroll!==false){
 				var delta=scrollFromTop;
-				
+				if(typeof(delta)=='string'){
+					delta=$(delta).offset().top;
+				}
 				if(!infra.scroll){
 					if(typeof(infra.scroll)=='number'){
 						delta=infra.scroll;
