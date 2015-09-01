@@ -1,6 +1,6 @@
 /*
 Загружаются все файлы в initjs.php
-*/	
+*/
 //========================
 // infra.Crumb onchange
 //========================
@@ -11,7 +11,7 @@
 		var scrollFromTop=0;
 		var store=infrajs.store();
 		if(store.counter==0)return;//Вход на сайт.. не скролим
-		
+
 		if(infra.conf&&infra.conf.scroll&&infra.conf.scroll.scrollFromTop)scrollFromTop=infra.conf.scroll.scrollFromTop;
 		setTimeout(function(){
 			if(typeof(infrajs.scroll)!='undefined'){ //depricated
@@ -22,7 +22,7 @@
 				if(typeof(delta)=='string'){
 					delta=$(delta).offset().top;
 				}
-				if(!infra.scroll){
+				if(infra.scroll){
 					if(typeof(infra.scroll)=='number'){
 						delta=infra.scroll;
 					}else if(typeof(infra.scroll)=='string'){
@@ -41,10 +41,10 @@
 						if(delta<scrollFromTop)delta=scrollFromTop;
 					}
 				}
-				
+
 
 				scrollFromTop=delta;
-				window.roller.goTop(scrollFromTop);	  
+				window.roller.goTop(scrollFromTop);
 			}
 			delete infrajs.scroll;
 			delete infra.scroll;
@@ -52,7 +52,7 @@
 	});
 	infra.handle(infra.Crumb,'onchange',function(){
 		//div
-		infrajs.div_init();	
+		infrajs.div_init();
 	});
 
 //========================
@@ -65,10 +65,10 @@
 
 		//unick
 		infrajs.unickInit();
-	
+
 		//config
 		infrajs.configinit();
-	
+
 		//onsubmit
 		infrajs.onsubmitinit();
 		//parsed
@@ -84,12 +84,12 @@
 		var store=infrajs.store();
 		store.divs={};
 	});
-	
-	
+
+
 //========================
 //layer oninit
 //========================
-	
+
 	infra.listen(infra,'layer.oninit',function(layer){
 		//external
 		infrajs.external.check(layer);
@@ -118,9 +118,9 @@
 		if(!layer['parent'])return;//слой может быть в child с динамическим state только если есть родитель
 		infrajs.setCrumb(layer,'crumb',layer['dyn']['crumb']);//Возможно у родителей обновился state из-за child у детей тоже должен обновиться хотя они не в child
 	});
-	infra.listen(infra,'layer.oninit',function(layer){	
-		//Crumb child		
-		if(!layer['child'])return;//Это услвие после setCrumb 
+	infra.listen(infra,'layer.oninit',function(layer){
+		//Crumb child
+		if(!layer['child'])return;//Это услвие после setCrumb
 
 		var st=layer['crumb']['child'];
 		if(st) var name=st['name'];
@@ -135,36 +135,36 @@
 		infra.forx(layer['childs'],function(l,key){//У этого childs ещё не взять external
 			if(!l['crumb'])l['crumb']=infrajs.setCrumb(l,'crumb',key);
 		});
-		
-	});	
+
+	});
 
 	/*infra.listen(infra,'layer.oninit',function(layer){
 		//crumb link
 		if(!layer['link']&&!layer['linktpl'])layer['linktpl']='{crumb}';
 	});*/
-	
+
 //========================
 // layer is check
 //========================
-	
+
 	infrajs.isAdd('check',function(layer){//может быть у любого слоя в том числе и у не iswork, и когда нет старого значения
 		//infrajs исключение
 		if(!layer)return false;
 		if(!infrajs.isWork(layer))return false;//Нет сохранённого результата, и слой не в работе, если работа началась с infrajs.check(layer) и у layer есть родитель
 	});
-	
+
 
 	infrajs.isAdd('check',function(layer){
 		//crumb
 		if(!layer['crumb']['is'])return false;
 	});
-	
+
 	infrajs.isAdd('check',function(layer){
 		//tpl
 		if(layer['onlyserver'])return false;
-		
+
 	});
-	
+
 
 //========================
 // layer oncheck
@@ -174,13 +174,13 @@
 		//counter
 		if(!layer.counter)layer.counter=0;
 	});
-	infra.listen(infra,'layer.oncheck',function(layer){//Без этого не показывается окно cо стилями.. только его заголовок.. 
+	infra.listen(infra,'layer.oncheck',function(layer){//Без этого не показывается окно cо стилями.. только его заголовок..
 		//div
 		infra.forx(layer.divs,function(l,key){
 			if(!l.div)l.div=key;
 		});
 	});
-	infra.listen(infra,'layer.oncheck',function(layer){//В onchange слоя может не быть див// Это нужно чтобы в external мог быть определён div перед тем как наследовать div от родителя	
+	infra.listen(infra,'layer.oncheck',function(layer){//В onchange слоя может не быть див// Это нужно чтобы в external мог быть определён div перед тем как наследовать div от родителя
 		//div
 		if(!layer.div&&layer.parent)layer.div=layer.parent.div;
 	});
@@ -188,7 +188,7 @@
 	//	//свойства autosave у слоя нет свойства autosave со значениями из сессии, проблема первоисточника, при переавторизации autosave не обновлялся у слоёв это приводило к ошибкам, так как значения в autosave также считались значениями по умолчанию
 	//	infrajs.autosaveRestore(layer);
 	//});
-	
+
 
 	/*infra.listen(infra,'layer.oncheck',function(layer){//php {} возвращает как []
 		//subs
@@ -200,16 +200,16 @@
 		//subs
 		infrajs.subMake(layer);
 	});
-	
+
 	infra.listen(infra,'layer.oncheck',function(layer){
 		//config
 		infrajs.configtpl(layer);
 	});
-	/*infra.listen(infra,'layer.oncheck',function(layer){	
+	/*infra.listen(infra,'layer.oncheck',function(layer){
 		//crumb link
 		if(layer['linktpl'])layer['link']=infra.template.parse([layer['linktpl']],layer);
 	});	*/
-	
+
 	infra.listen(infra,'layer.oncheck',function(layer){
 		//envs
 		infrajs.envEnvs(layer);
@@ -230,10 +230,10 @@
 		//envtochild
 		infrajs.envtochild(layer)
 	});
-	
-	
-	
-	
+
+
+
+
 	infra.listen(infra,'layer.oncheck',function(layer){
 		//div
 		infrajs.divtpl(layer);
@@ -245,19 +245,19 @@
 		infrajs.tplTpl(layer);
 		infrajs.tplJson(layer);
 	});
-	
+
 
 	infra.listen(infra,'layer.oncheck',function(layer){
 		//autofocus
 		infrajs.autofocussave(layer);
 	});
-	
-	
+
+
 	infra.listen(infra,'layer.oncheck',function(layer){
 		//global
 		infrajs.checkGlobal(layer);
 	});
-	
+
 	infra.listen(infra,'layer.oncheck',function(layer){
 		//show
 		infrajs.show_animate(layer);
@@ -268,7 +268,7 @@
 
 //========================
 // layer is show
-//========================	
+//========================
 	infrajs.isAdd('show',function(layer){
 		//infrajs
 		if(!infrajs.is('check',layer))return false;
@@ -287,12 +287,12 @@
 			r=infrajs.isSaveBranch(layer['parent']);
 			if(typeof(r)=='undefined')r=true;
 		}
-		
+
 		infrajs.isSaveBranch(layer,r);
 
 		if(!layer.div)return false;//Такой слой игнорируется, события onshow не будет, но обработка пройдёт дальше у других дивов
 	});
-	
+
 	infrajs.isAdd('show',function(layer){//Родитель скрывает ребёнка если у родителя нет опции что ветка остаётся целой
 		//infrajs
 		if(!layer.parent)return;
@@ -307,7 +307,7 @@
 			layer=layer.parent;
 		}while(layer)
 	});
-	
+
 	infrajs.isAdd('show',function(layer){
 		//tpl
 		if(layer.tpl)return;
@@ -354,22 +354,22 @@
 		}
 		return infrajs.envCheck(layer);
 	});
-	
+
 
 //========================
 // layer is rest
 //========================
 	infrajs.isAdd('rest',function(layer){//Будем проверять все пока не найдём
 		//infrajs
-		
+
 		if(!infrajs.isWork(layer))return true;//На случай если забежали к родителю а он не в работе
 		if(!infrajs.is('show',layer))return true;//На случай если забежали окольными путями к слою который не показывается (вообще в check это исключено, но могут быть другие забеги)
-		
+
 		if(layer['parent']&&infrajs.isWork(layer['parent'])&&!infrajs.is('rest',layer['parent'])){
 			return false;//Парсится родитель парсимся и мы
 		}
 
-		if(!layer.showed)return false;//Ещё Непоказанный слой должен перепарситься..		
+		if(!layer.showed)return false;//Ещё Непоказанный слой должен перепарситься..
 	});
 	infrajs.isAdd('rest',function(layer){
 		//tpl parsed
@@ -377,7 +377,7 @@
 		if(!infrajs.is('show',layer))return true;//На случай если забежали окольными путями к слою который не показывается (вообще в check это исключено, но могут быть другие забеги)
 
 		if(layer._parsed!=infrajs.parsed(layer)){
-			return false;//'свойство parsed изменилось';	
+			return false;//'свойство parsed изменилось';
 		}
 	});
 	infrajs.isAdd('rest',function(layer){
@@ -388,11 +388,11 @@
 		var r=infrajs.divparentIsRest(layer);
 		return r;
 	});
-	
-	
 
-	
-	
+
+
+
+
 //========================
 // layer onshow
 //========================
@@ -407,20 +407,20 @@
 	infra.listen(infra,'layer.onshow',function(layer){//До того как сработает событие самого слоя в котором уже будут обработчики вешаться
 		//tpl
 		if(infrajs.ignoreDOM(layer))return;
-		layer.html=infrajs.getHtml(layer);		
+		layer.html=infrajs.getHtml(layer);
 	});
 	infra.listen(infra,'layer.onshow',function(layer){
 		//js
-		infrajs.jscheck(layer);	
+		infrajs.jscheck(layer);
 	});
 	infra.listen(infra,'layer.onshow',function(layer){
 		//css
 		if(infrajs.ignoreDOM(layer))return;
-		infrajs.csscheck(layer);	
+		infrajs.csscheck(layer);
 	});
 	infra.listen(infra,'layer.onshow',function(layer){//До того как сработает событие самого слоя в котором уже будут обработчики вешаться
 		//tpl
-		
+
 		var div=document.getElementById(layer.div);
 		if(div)div.style.display='';
 		if(infrajs.ignoreDOM(layer))return;
@@ -439,14 +439,14 @@
 		}
 	});
 
-	
+
 	infra.listen(infra,'layer.onshow',function(layer){
 		//tpl
 		//слой который показан и не перепарсивается сюда не попадает, но и скрывать из этого дива никого не надо будет ведь этот слой и был показан.
 		var store=infrajs.store();
 		store.divs[layer.div]=layer;
 	});
-	
+
 	/*infra.listen(infra,'layer.onshow',function(layer){
 		//popup
 		//layer.showmsg='popup';
@@ -455,7 +455,7 @@
 	infra.listen(infra,'layer.onshow',function(layer){//Анимация только для первого показываемого слоя, вначале это корневой.. потом это текстовый в центре ожидается
 		//show
 		infrajs.show_div(layer);
-		
+
 	});
 	infra.listen(infra,'layer.onshow',function(layer){
 		//autofocus
@@ -474,8 +474,8 @@
 		//autoview
 		infrajs.autoview(layer);
 	});
-	
-	
+
+
 //========================
 // layer onhide
 //========================
@@ -510,10 +510,9 @@
 		if(!window.popup||!popup.st)return;
 		popup.render();
 	});
-	
-	
+
+
 	infra.wait(infrajs,'onshow',function(){
 		//code
 		infrajs.code_restore();
 	});
-	
