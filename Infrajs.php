@@ -339,7 +339,9 @@ class Infrajs
 	});
 </script>
 END;
-				$html .= $script;
+				$html = str_replace('</body>', "\n\t".$script.'</body>', $html);
+
+				//$html .= $script;
 			}
 
 			return $html;
