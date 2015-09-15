@@ -189,10 +189,48 @@ class Infrajs
 	}
 	public static function &run(&$layers, $callback, &$parent = null)
 	{
-		//$store=&infrajs::store('run_array');//$r, $props=$infrajs_run_props;
-		//if($layers===true)$layers=&infrajs_getWorkLayers();
-		//if($layers===false)$layers=&infrajs_getAllLayers();
+		$store = &infrajs::store();
+		if (!$store['run']) {
+			$store['run'] = array();
+		}
+		$props = &$store['run'];
 
+		$r = &infra_fora($layers, function &(&$layer) use (&$parent, $callback, $props) {
+
+			$r = &$callback($layer, $parent);
+			if (!is_null($r)) {
+				return $r;
+			}
+
+			$r = &infra_foro($layer, function &(&$val, $name) use (&$layer, $callback, $props) {
+				$r = null;
+				if (isset($props['list'][$name])) {
+					$r = &infrajs::run($val, $callback, $layer);
+					if (!is_null($r)) {
+						return $r;
+					}
+				} else if (isset($props['keys'][$name])) {
+					$r = &infra_foro($val, function &(&$v, $i) use (&$layer, $callback) {
+						$r = &infrajs::run($v, $callback, $layer);
+						if (!is_null($r)) {
+							return $r;
+						}
+					});
+					if (!is_null($r)) {
+						return $r;
+					}
+				}
+
+				return $r;
+			});
+			if (!is_null($r)) {
+				return $r;
+			}
+		});
+		return $r;
+	}
+	/*public static function &run(&$layers, $callback, &$parent = null)
+	{
 		$store = &infrajs::store();
 		if (!$store['run']) {
 			$store['run'] = array();
@@ -244,7 +282,7 @@ class Infrajs
 		});
 
 		return $r;
-	}
+	}*/
 	public static function runAddKeys($name)
 	{
 		$store = &self::store();

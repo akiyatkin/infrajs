@@ -7,7 +7,7 @@ layer={
 	js:(mix),//Подключаются расширения
 	tplroot:(string),//начальный шаблон в указанном шаблоне
 	dataroot:(string),//hidden относительный путь до данных с которыми парсится шаблон... корневой объект данных это layer
-	data:(string),//Если data obj то каждое свойство data будет воспринято как путь до отдельного файла с данными 
+	data:(string),//Если data obj то каждое свойство data будет воспринято как путь до отдельного файла с данными
 	parent:layer;//Слой в котором был отмечен текущий слой. Автоматическое свойство
 	is:string;//При изменени is слой перепарсивается
 	reparse:(bool),//всегда перепарсивать слой при пробежке check
@@ -24,7 +24,7 @@ layer={
 	dyn:(mix),//hidden Выставляется системой автоматически. хранит значения пользователя crumb state
 
 	global:array,//external
-	
+
 	child:(layer), //слой с динмаическим state, state будет равен тому childs который в адресе сейчас... Такой слой привязывается сразу ко всем состояниям после состояния родителя
 	childs:(object layers), //распределение слоёв по состояниям
 	divs:(object layers), //распределение слоёв по дивам
@@ -62,7 +62,7 @@ infrajs.checkAdd(layer);
 infrajs={};
 infrajs.storeLayer=function(layer){//кэш на каждый iswork
 	if(!layer['store'])layer['store']={'counter':0};//Кэш используется во всех is функциях... iswork кэш, ischeck кэш используется для определения iswork слоя.. путём сравнения ))
-	return layer['store'];//Очищается кэш в checkNow	
+	return layer['store'];//Очищается кэш в checkNow
 }
 infrajs.store=function(){//Для единобразного доступа в php, набор глобальных переменных
 	if(!this.store.data)this.store.data={
@@ -71,7 +71,7 @@ infrajs.store=function(){//Для единобразного доступа в p
 			waits:[],
 			process:false,
 			counter:0,//Счётчик сколько раз перепарсивался сайт, посмотреть можно в firebug
-			alayers:[],//Записываются только слои у которых нет родителя... 
+			alayers:[],//Записываются только слои у которых нет родителя...
 			wlayers:[]//Записываются обрабатываемые сейчас слои
 	};
 	return this.store.data;
@@ -95,7 +95,7 @@ infrajs.getAllLayers=function(){
 };
 
 /*infrajs.check=function(layers){//Пробежка по слоям
-	
+
 	var store=infrajs.store();
 
 	if(store.process&&!store.timer){//Функция checkNow сейчас выполняется и в каком-то
@@ -115,13 +115,13 @@ infrajs.getAllLayers=function(){
 	if(store.timer)return;
 	//процесс характеризуется двумя переменными process и timer... true..true..false.....false
 	store.counter++;
-	
+
 	store.timer=setTimeout(function(){
 			store.ismainrun=!store.waits;
 			store.timer=false;//Все новые слои будут ждать пока не станет false
 			if(store.waits){
 				var wlayers=store.waits;
-			}else{//Если конкретные слои не указаны беруться все упоминавшиеся слои	
+			}else{//Если конкретные слои не указаны беруться все упоминавшиеся слои
 				var wlayers=store.alayers.concat();//далее alayers может наполняться, чтобы небыло копии
 			}
 			store.waits=[];//При запуске checkNow все ожидающие слои обнуляются
@@ -134,7 +134,7 @@ infrajs.getAllLayers=function(){
 
 			infra.fire(infrajs,'onshow');//loader, setA, в onshow можно зациклить check
 	},1);//Если вызывать infrajs.check() и вместе с этим переход по ссылке проверка слоёв сработает только один раз за счёт это паузы.. два вызова объединяться за это время в один.
-	
+
 };// child, layers*/
 infrajs.show=function(layer,div){
 	layer.div=div;
@@ -154,23 +154,23 @@ infrajs.check=function(layers){//Пробежка по слоям
 	store.process=true;
 	//процесс характеризуется двумя переменными process и timer... true..true..false.....false
 	store.counter++;
-	
-		
+
+
 	store.ismainrun=!layers;
 	//store.ismainrun=true;
-	
+
 	if(layers){
 		console.log('infrajs.check(layers)');
 		var wlayers=layers;
-	}else{//Если конкретные слои не указаны беруться все упоминавшиеся слои	
+	}else{//Если конкретные слои не указаны беруться все упоминавшиеся слои
 		console.log('infrajs.check()');
 		var wlayers=store.alayers.concat();//далее alayers может наполняться, чтобы не было копии
 	}
-	
+
 	store.wlayers=wlayers;
 	infra.fire(infrajs,'oninit');//loader
-	
-	
+
+
 	infrajs.run(infrajs.getWorkLayers(),function(layer,parent){//Запускается у всех слоёв в работе которые wlayers
 		if(parent)layer['parent']=parent;//Не обрабатывается ситуация когда check снутри иерархии
 		infra.fire(layer,'layer.oninit');//устанавливается state
@@ -181,7 +181,7 @@ infrajs.check=function(layers){//Пробежка по слоям
 
 	infra.fire(infrajs,'oncheck');//момент когда доступны слои для подписки и какой-то обработки, доступен unick
 
-	infrajs.run(infrajs.getWorkLayers(),function(layer){//С чего вдруг oncheck у всех слоёв.. надо только у активных		
+	infrajs.run(infrajs.getWorkLayers(),function(layer){//С чего вдруг oncheck у всех слоёв.. надо только у активных
 		if(infrajs.is('show',layer)){
 			if(!infrajs.is('rest',layer)){
 
@@ -197,8 +197,8 @@ infrajs.check=function(layers){//Пробежка по слоям
 		layer.showed=infrajs.is('show',layer);//Свойства showed. Нужно знать предыдущее значение isShow с последней проверки. Используется в admin.js
 	});//у родительского слоя showed будет реальное а не старое, назад showed проверять нельзя
 
-	
-	
+
+
 	infra.fire(infrajs,'onshow');//loader, setA, в onshow можно зациклить check
 	store.process=false;
 	//onshow1
@@ -207,8 +207,8 @@ infrajs.check=function(layers){//Пробежка по слоям
 			//вызван onshow2
 	//вызван onshow2
 	//событие будет сгенерировано два раза, с одним counter
-	
-	
+
+
 };// child, layers
 
 infrajs.checkAdd=function(layers){//Два раза вызов добавит слой повторно
@@ -233,7 +233,7 @@ infrajs.is=function(name,layer){//def undefined быть не может
 	var cache=infrajs.storeLayer(layer)//кэш сбрасываемый каждый iswork
 
 
-	if(!infrajs.isWork(layer)){//если не в работе. 
+	if(!infrajs.isWork(layer)){//если не в работе.
 			//return false;//Проверять isWork перед is( в функциях
 			//для show старое - показан, скрыт
 			//для rest всегда true - в покое
@@ -264,14 +264,35 @@ infrajs.is=function(name,layer){//def undefined быть не может
 
 
 /**
- * Пробежка идёт сначало по спискам (layers,childs и только потом по divs, childs, subs) 
+ * Пробежка идёт сначало по спискам (layers,childs и только потом по divs, childs, subs)
  *занчения по ключу более важны и перехватывают инициативу в случае конфликат
  */
 //run
 infrajs.run=function(layers,callback,parent){
 	var r;
-	//if(layers===true)layers=infrajs.getWorkLayers();
-	//if(layers===false)layers=infrajs.getLayers(false);
+	var props=infrajs.store();
+	props=props['run'];
+	r=infra.fora(layers,function(layer){
+		r=callback.apply(infrajs,[layer,parent]);
+		if(r!==undefined)return r;//выход
+		r=infra.foro(layer,function(val,name){
+			if(props['list'].hasOwnProperty(name)){
+				r=infrajs.run(val,callback,layer);
+				if(r!==undefined)return r;
+			}else if (props['keys'].hasOwnProperty(name)){
+				r=infra.foro(val,function(v,i){
+					r=infrajs.run(v,callback,layer);
+					if(r!==undefined)return r;
+				});
+				if(r!==undefined)return r;
+			}
+		});
+		if(r!==undefined)return r;
+	});
+	return r;
+}
+/*infrajs.run=function(layers,callback,parent){
+	var r;
 	var props=infrajs.store();
 	props=props['run'];
 	r=infra.fora(layers,function(layer){
@@ -296,7 +317,7 @@ infrajs.run=function(layers,callback,parent){
 		if(r!==undefined)return r;
 	});
 	return r;
-}
+}*/
 infrajs.runAddKeys=function(name){
 	var props=infrajs.store();
 	props['run']['keys'][name]=true;
@@ -323,7 +344,7 @@ infrajs.isParent=function(layer,parent){
 
 infrajs.isSaveBranch=function(layer,val){
 	var cache=infrajs.storeLayer(layer);
-	if(typeof(val)!=='undefined')cache.is_save_branch=val;	
+	if(typeof(val)!=='undefined')cache.is_save_branch=val;
 	return cache.is_save_branch;
 }
 /*infrajs.getParent=function(layer){//пробежка по infrajs_getWorkLayers не гарантирует правильного родителя
@@ -331,10 +352,10 @@ infrajs.isSaveBranch=function(layer,val){
 	var ls=[infrajs.getAllLayers(),infrajs.getWorkLayers()];
 	layer['parent']=infrajs.run(ls,function(l,parent){
 		if(layer===l)return parent;
-	});	
+	});
 	if(!layer['parent'])layer['parent']=false;
 	return layer['parent'];
 }*/
 infrajs.checkNow=function(){
-	
+
 };
