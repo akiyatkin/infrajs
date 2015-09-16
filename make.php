@@ -249,6 +249,7 @@ infrajs::isAdd('show', function (&$layer) {
 
 	return false;
 });
+
 infrajs::isAdd('show', function (&$layer) {
 	//Родитель скрывает ребёнка если у родителя нет опции что ветка остаётся целой
 	//infrajs
@@ -258,6 +259,7 @@ infrajs::isAdd('show', function (&$layer) {
 	if (infrajs::is('show', $layer['parent'])) {
 		return;
 	}
+
 	if (infrajs::isSaveBranch($layer['parent'])) {
 		return;
 	}//Какой-то родитель таки не показывается, например пустой слой, теперь нужно узнать скрывает родитель свою ветку или нет
@@ -301,25 +303,6 @@ infrajs::isAdd('show', function (&$layer) {
 });
 infrajs::isAdd('show', function (&$layer) {
 	//env
-	if (@!$layer['env']) {
-		if (ext\tpl::onlyclient($layer)) {
-			return;
-		}
-		ext\tpl::getHtml($layer);
-		global $infrajs;
-		if (isset($infrajs['com']['env'])) {
-			$vals = $infrajs['com']['env'];
-			if (!isset($layer['myenv'])) {
-				$layer['myenv'] = array();
-			}
-			infra_forr($vals, function ($val) use (&$layer) {
-				$layer['myenv'][$val] = true;
-			});
-		}
-
-		return;
-	}
-
 	return ext\env::check($layer);
 });
 //infrajs::isAdd('show', function (&$layer) {

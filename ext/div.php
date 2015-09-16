@@ -9,7 +9,7 @@ $store=&infrajs::store();
 $store['divs']=array();
 function layerindiv($div,&$layer=null){//Функция в любой момент говорит правду какой слой находится в каком диве
 	$store=&infrajs::store();
-	if($layer)$store['divs'][$div]=&$layer;	
+	if($layer)$store['divs'][$div]=&$layer;
 	return $store['divs'][$div];
 }
 global $infra;

@@ -271,6 +271,7 @@
 //========================
 	infrajs.isAdd('show',function(layer){
 		//infrajs
+
 		if(!infrajs.is('check',layer))return false;
 	});
 	infrajs.isAdd('show',function(layer){
@@ -278,25 +279,30 @@
 		infrajs.istplparse(layer);
 		return infrajs.isCheck(layer);
 	});
+
 	infrajs.isAdd('show',function(layer){
-		//div
-		layer.showmsg='Не показываем если не указан div';
-		//infrajs.isSaveBranch(layer,true);
+		//tpl
+		if (layer['tpl']) {
+			return;
+		}
 		var r=true;
 		if(layer['parent']){
 			r=infrajs.isSaveBranch(layer['parent']);
 			if(typeof(r)=='undefined')r=true;
 		}
-
+		if(layer['gist']){
+			alert(infrajs.isSaveBranch(infrajs.find('unick','gist')));
+			exit;
+		}
 		infrajs.isSaveBranch(layer,r);
-
-		if(!layer.div)return false;//Такой слой игнорируется, события onshow не будет, но обработка пройдёт дальше у других дивов
 	});
+
 
 	infrajs.isAdd('show',function(layer){//Родитель скрывает ребёнка если у родителя нет опции что ветка остаётся целой
 		//infrajs
 		if(!layer.parent)return;
 		if(infrajs.is('show',layer.parent))return;
+
 		if(infrajs.isSaveBranch(layer.parent))return;//Какой-то родитель таки не показывается.. теперь нужно узнать скрыт он своей веткой или чужой
 		return false;
 	});
@@ -314,6 +320,7 @@
 		infrajs.isSaveBranch(layer,true);//Когда нет шаблона слой скрывается, но не скрывает свою ветку
 		return false;
 	});
+
 	infrajs.isAdd('show',function(layer){//tpl должен существовать, ветка скрывается
 		//tpl
 		if(!layer.tplcheck)return;
@@ -332,26 +339,12 @@
 		return r;
 	});
 	infrajs.isAdd('show',function(layer){
+		//div
+		if(!layer.div)return false;//Такой слой игнорируется, события onshow не будет, но обработка пройдёт дальше у других дивов
+	});
+	infrajs.isAdd('show',function(layer){
 		//env, counter
-		if(!layer.env){
-			if(infrajs.ignoreDOM(layer))return;
-			layer.counter++;
-			infrajs.getHtml(layer);//чтобы установилось свойство infrajs['com'] после загрузки шаблонов
-			layer.counter--;//На самом деле ещё неизвестно... но если html и будет вставляться то counter дальше приибваться
-			if(infrajs['com']&&infrajs['com']['env']){
-				var envs=infrajs['com']['env'];
-				if(!layer['myenv'])layer['myenv']={};
-				infra.forr(envs,function(env){
-					var old=layer['myenv'][env];
-					layer['myenv'][env]=true;
-					infra.when(infrajs,'onshow',function(){
-						layer['myenv'][env]=false;
-					});
-				});
 
-			}
-			return;
-		}
 		return infrajs.envCheck(layer);
 	});
 
