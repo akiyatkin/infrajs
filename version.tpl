@@ -1,5 +1,7 @@
-﻿<p>22 августа 2015</p>
+﻿<p>1 октября 2015</p>
 <ul>
+	<li>Обновлённый каталог с универсальным фильтром</li>
+	<li>~ синоним infra/data/</li>
 	<li>Управление кэшем no-cache или no-store</li>
 	<li><a href="?*infra/tests.php">Тесты</a></li>
 	<li>Добавлены тесты javascript infra.test('plugin')</li>
