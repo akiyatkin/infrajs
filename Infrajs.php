@@ -385,7 +385,7 @@ END;
 			return $html;
 		}, array($index, $div, $src, $query));//Если не кэшировать то будет reparse
 
-		@header('HTTP/1.1 200 Ok');
+		//@header('HTTP/1.1 200 Ok'); Приводит к появлению странных 4х символов в начале страницы guard-service
 		echo $html;
 	}
 }
