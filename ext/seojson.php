@@ -86,15 +86,12 @@ class seojson
 			foreach ($item['external'] as $esrc) {
 				$ext = self::load($esrc);
 				foreach ($ext as $k => $v) {
-					if (in_array($k, array('itemprops', 'property', 'name'))) {
+					if (!isset($item[$k])) {
+						$item[$k] = $v;
 						continue;
 					}
-					if (isset($item[$k])) {
-						continue;
-					}
-					$item[$k] = $v;
 				}
-				if (!empty($item['properties'])) {
+				if (!empty($ext['properties'])) {
 					foreach ($ext['properties'] as $k => $v) {
 						if (isset($item['properties'][$k])) {
 							continue;
@@ -102,7 +99,7 @@ class seojson
 						$item['properties'][$k] = $v;
 					}
 				}
-				if (!empty($item['names'])) {
+				if (!empty($ext['names'])) {
 					foreach ($ext['names'] as $k => $v) {
 						if (isset($item['names'][$k])) {
 							continue;
@@ -110,7 +107,7 @@ class seojson
 						$item['names'][$k] = $v;
 					}
 				}
-				if (!empty($item['itemprops'])) {
+				if (!empty($ext['itemprops'])) {
 					foreach ($ext['itemprops'] as $k => $v) {
 						if (isset($item['itemprops'][$k])) {
 							continue;
