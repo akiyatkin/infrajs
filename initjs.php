@@ -4,15 +4,15 @@ require_once __DIR__.'/../infra/Infra.php';
 infra_admin_modified();
 $re = isset($_GET['re']);
 $html = infra_admin_cache('infra_initjs_php', function ($str) {
-
+	global $infra;
 	$loadTEXT = function ($path) {
 		$html = infra_loadTEXT($path);
 		$html = 'infra.store("loadTEXT")["'.$path.'"]={value:"'.$html.'",status:"pre"};'; //код отметки о выполненных файлах
 		return $html;
 	};
 	$loadJSON = function ($path) {
-		$obj = infra_loadTEXT($path);
-		$html = 'infra.store("loadJSON")["'.$path.'"]={value:'.$obj.',status:"pre"};'; //код отметки о выполненных файлах
+		$obj = infra_loadJSON($path);
+		$html = 'infra.store("loadJSON")["'.$path.'"]={value:'.infra_json_encode($obj).',status:"pre"};'; //код отметки о выполненных файлах
 		return $html;
 	};
 	$require = function ($path) {
@@ -21,6 +21,10 @@ $html = infra_admin_cache('infra_initjs_php', function ($str) {
 		$html .= 'infra.store("require")["'.$path.'"]={value:true};'; //код отметки о выполненных файлах
 		return $html;
 	};
+	$infra['require']=$require;
+	$infra['loadJSON']=$loadJSON;
+	$infra['loadTEXT']=$loadTEXT;
+
 	$html = '';
 
 	$html .= $require('*infrajs/ext/once.js');//
@@ -87,8 +91,9 @@ $html = infra_admin_cache('infra_initjs_php', function ($str) {
 			$html .= $loadTEXT($ts[$i]);
 		}
 	}
-
-	return $html;
+	$infra['js'] = $html;
+	infra_fire($infra, 'oninitjs');
+	return $infra['js'];
 }, array($_SERVER['QUERY_STRING']), $re);
 @header('content-type: text/javascript; charset=utf-8');
 echo $html;
