@@ -15,6 +15,9 @@
 		"itlife/session":"~1",
 		"vsn4ik/bootstrap-checkbox": "~1"
 	},
+	"config": {
+		"component-dir": "vendor"
+	},
 	"repositories":[{
 			"type":"vcs",
 			"url":"https://github.com/malsup/form"
