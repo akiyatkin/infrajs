@@ -388,4 +388,55 @@ END;
 		//@header('HTTP/1.1 200 Ok'); Приводит к появлению странных 4х символов в начале страницы guard-service
 		echo $html;
 	}
+	public static function controller($external)
+	{
+		\itlife\infra\Infra::init();
+
+		infra_require('*infrajs/make.php');
+		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
+		@header('Infrajs-Cache: true');//Афигенный кэш, когда используется infrajs не подгружается даже
+		$query=infra_toutf($_SERVER['QUERY_STRING']);
+		$args=array($external, $query);
+		$html = infra_admin_cache('index.php', function ($external, $query) {
+			@header('Infrajs-Cache: false');//Афигенный кэш, когда используется infrajs не подгружается даже
+
+			global $infrajs;
+			
+			$conf = infra_config();
+			if ($conf['infrajs']['server']) {
+				$layers = &infra_loadJSON($external);
+
+				infrajs::checkAdd($layers);
+
+				infrajs::check();//В infra_html были добавленыs все указаные в layers слои
+			}
+			$html = infra_html();
+
+			if ($conf['infrajs']['client']) {
+				$script = '<script src="?*infra/js.php"></script>';
+
+				$html = str_replace('<head>', '<head>'."\n\t".$script, $html);
+
+				$script = '';
+				$script .= <<<END
+\n<script src="?*infrajs/initjs.php?loadJSON={$external}"></script>
+<script type="text/javascript">
+	var layers=infra.loadJSON('{$external}');
+	infrajs.checkAdd(layers);
+	infra.listen(infra.Crumb, 'onchange', function(){
+		infrajs.check();
+	});
+</script>
+END;
+				$html = str_replace('</body>', "\n\t".$script.'</body>', $html);
+
+				//$html .= $script;
+			}
+
+			return $html;
+		}, $args);//Если не кэшировать то будет reparse
+
+		//@header('HTTP/1.1 200 Ok'); Приводит к появлению странных 4х символов в начале страницы guard-service
+		echo $html;
+	}
 }

@@ -333,15 +333,16 @@
 		//tpl
 		return infrajs.tplJsonCheck(layer);
 	});
+	infrajs.isAdd('show',function(layer){
+		//div
+		if(!layer.div)return false;//Такой слой игнорируется, события onshow не будет, но обработка пройдёт дальше у других дивов
+	});
 	infrajs.isAdd('show',function(layer){//isShow учитывала зависимости дивов layerindiv ещё не работает
 		//div
 		var r=infrajs.divCheck(layer);
 		return r;
 	});
-	infrajs.isAdd('show',function(layer){
-		//div
-		if(!layer.div)return false;//Такой слой игнорируется, события onshow не будет, но обработка пройдёт дальше у других дивов
-	});
+	
 	infrajs.isAdd('show',function(layer){
 		//env, counter
 

@@ -54,6 +54,7 @@ class div
 	}
 	public static function divcheck(&$layer)
 	{
+
 		$start = false;
 		if (infrajs::run(infrajs::getWorkLayers(), function (&$l) use (&$layer, &$start) {//Пробежка не по слоям на ветке, а по всем слоям обрабатываемых после.. .то есть и на других ветках тоже
 			if (!$start) {
@@ -63,15 +64,14 @@ class div
 
 				return;
 			}
-			if (@$l['div'] != @$layer['div']) {
-				return;
-			}//ищим совпадение дивов впереди
+			if (@$l['div'] !== @$layer['div']) return; //ищим совпадение дивов впереди
 			if (infrajs::is('show', $l)) {
-				infrajs::isSaveBranch($layer, infrajs::isParent($l, $layer));
 
+				infrajs::isSaveBranch($layer, infrajs::isParent($l, $layer));
 				return true;//Слой который дальше показывается в томже диве найден
 			}
 		})) {
+
 			return false;
 		}
 	}
