@@ -388,7 +388,7 @@ END;
 		//@header('HTTP/1.1 200 Ok'); Приводит к появлению странных 4х символов в начале страницы guard-service
 		echo $html;
 	}
-	public static function controller($external)
+	public static function controller($layer)
 	{
 		\itlife\infra\Infra::init();
 
@@ -396,17 +396,16 @@ END;
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
 		@header('Infrajs-Cache: true');//Афигенный кэш, когда используется infrajs не подгружается даже
 		$query=infra_toutf($_SERVER['QUERY_STRING']);
-		$args=array($external, $query);
-		$html = infra_admin_cache('index.php', function ($external, $query) {
+		$args=array($layer, $query);
+		$html = infra_admin_cache('index.php', function ($layer, $query) {
 			@header('Infrajs-Cache: false');//Афигенный кэш, когда используется infrajs не подгружается даже
-
+			$strlayer=json_encode($layer);
 			global $infrajs;
 			
 			$conf = infra_config();
 			if ($conf['infrajs']['server']) {
-				$layers = &infra_loadJSON($external);
 
-				infrajs::checkAdd($layers);
+				infrajs::checkAdd($layer);
 
 				infrajs::check();//В infra_html были добавленыs все указаные в layers слои
 			}
@@ -416,13 +415,11 @@ END;
 				$script = '<script src="?*infra/js.php"></script>';
 
 				$html = str_replace('<head>', '<head>'."\n\t".$script, $html);
-
 				$script = '';
 				$script .= <<<END
-\n<script src="?*infrajs/initjs.php?loadJSON={$external}"></script>
+\n<script src="?*infrajs/initjs.php"></script>
 <script type="text/javascript">
-	var layers=infra.loadJSON('{$external}');
-	infrajs.checkAdd(layers);
+	infrajs.checkAdd({$strlayer});
 	infra.listen(infra.Crumb, 'onchange', function(){
 		infrajs.check();
 	});
