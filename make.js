@@ -11,7 +11,7 @@
 		var scrollFromTop=0;
 		var store=infrajs.store();
 		if(store.counter==0)return;//Вход на сайт.. не скролим
-
+		if(!infra.conf.scroll)return;
 		if(infra.conf&&infra.conf.scroll&&infra.conf.scroll.scrollFromTop)scrollFromTop=infra.conf.scroll.scrollFromTop;
 		setTimeout(function(){
 			if(typeof(infrajs.scroll)!='undefined'){ //depricated
