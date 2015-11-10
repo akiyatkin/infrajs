@@ -403,6 +403,7 @@ END;
 			global $infrajs;
 			
 			$conf = infra_config();
+			
 			if ($conf['infrajs']['server']) {
 
 				infrajs::checkAdd($layer);
