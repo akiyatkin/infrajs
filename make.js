@@ -4,52 +4,8 @@
 //========================
 // infra.Crumb onchange
 //========================
-	infra.Crumb.init();
-	infra.listen(infra.Crumb,'onchange',function(){
-		//scroll
-		if(infra.Crumb.popstate)return;//Если движение по истории ничего не скролим
-		var scrollFromTop=0;
-		var store=infrajs.store();
-		if(store.counter==0)return;//Вход на сайт.. не скролим
-		if(!infra.conf.scroll)return;
-		if(infra.conf&&infra.conf.scroll&&infra.conf.scroll.scrollFromTop)scrollFromTop=infra.conf.scroll.scrollFromTop;
-		setTimeout(function(){
-			if(typeof(infrajs.scroll)!='undefined'){ //depricated
-				infra.scroll=infrajs.scroll;
-			}
-			if(infra.scroll!==false){
-				var delta=scrollFromTop;
-				if(typeof(delta)=='string'){
-					delta=$(delta).offset().top;
-				}
-				if(infra.scroll){
-					if(typeof(infra.scroll)=='number'){
-						delta=infra.scroll;
-					}else if(typeof(infra.scroll)=='string'){
-						delta=$(infra.scroll)
-						if(delta.length)delta=delta.offset().top;
-					}
-					if(infra.scroll_bias) {
-						if(typeof(infra.scroll_bias)=='number'){
-							delta=delta-infra.scroll_bias;
-						}else if(typeof(infra.scroll_bias)=='string'){
-							var bias=$(infra.scroll_bias);
-							if (bias.length) {
-								delta=delta-bias.height();
-							}
-						}
-						if(delta<scrollFromTop)delta=scrollFromTop;
-					}
-				}
-
-
-				scrollFromTop=delta;
-				window.roller.goTop(scrollFromTop);
-			}
-			delete infrajs.scroll;
-			delete infra.scroll;
-		},1);
-	});
+	infra.Crumb.init(); //setA и события при каждом изменении адресной строки
+	
 	infra.handle(infra.Crumb,'onchange',function(){
 		//div
 		infrajs.div_init();

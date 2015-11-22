@@ -24,7 +24,6 @@ infra_wait($infrajs, 'oninit', function () {
 	ext\config::init();
 	ext\parsed::init();
 	ext\session::init();
-	ext\Htaccess::init();
 });
 //========================
 //layer oninit

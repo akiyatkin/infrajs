@@ -53,8 +53,6 @@ $html = infra_admin_cache('infra_initjs_php', function ($str) {
 
 	$html .= $require('*infra/ext/tablecommon.js');
 
-	$html .= $require('*infrajs/ext/scroll.js');
-
 	$html .= $require('*seo/seo.ext.js');
 	$html .= $require('*infrajs/ext/global.js');
 

@@ -1,15 +1,8 @@
 {
 	"infrajs":{
-		"pub":["scroll","scrollup","server"],
-		"scroll":false,
-		"scrollup":false,
+		"pub":["server"],
 		"server":true,
-		"client":true,
-		"htaccess":false
-	},
-	"scroll":{
-		"pub":["scrollFromTop"],
-		"scrollFromTop":0
+		"client":true
 	},
 	"infrajs_jsexts":{
 
